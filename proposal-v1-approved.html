@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>NashOS — Proposal</title>
+<style>
+:root{--navy:#1a2332;--gold:#c8a85c;--green:#34a853;--green-bg:#e6f4ea;--blue:#4285f4;--blue-light:#e8f0fe;--orange:#e65100;--red:#d93025;--g50:#f8f9fa;--g100:#f1f3f4;--g200:#e8eaed;--g300:#dadce0;--g400:#bdc1c6;--g500:#9aa0a6;--g600:#80868b;--g700:#5f6368;--g800:#3c4043;--g900:#202124;--r:10px;--rs:6px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g50);color:var(--g900);-webkit-font-smoothing:antialiased;font-size:14px;max-width:430px;margin:0 auto;padding-bottom:110px}
+@media(min-width:431px){body{box-shadow:0 0 40px rgba(0,0,0,.1);min-height:100vh;border-left:1px solid var(--g200);border-right:1px solid var(--g200)}html{background:#e0e0e0}}
+
+.topbar{background:var(--navy);color:white;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.topbar-back{font-size:20px;cursor:pointer;padding:2px 4px}
+.topbar-logo{width:28px;height:28px;background:var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy);flex-shrink:0}
+.topbar-title{font-size:14px;font-weight:600;flex:1}
+.topbar-badge{font-size:10px;background:var(--green);padding:2px 8px;border-radius:8px;font-weight:700}
+
+.cust-header{background:white;padding:14px 16px;border-bottom:1px solid var(--g200)}
+.cust-name{font-size:18px;font-weight:700;color:var(--navy)}
+.cust-addr{font-size:12px;color:var(--g600);margin-top:2px}
+.cust-meta{display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--g500)}
+
+/* Package switcher */
+.pkg-wrap{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.pkg-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;padding:12px 14px 6px}
+.pkg-row{display:flex;gap:6px;padding:4px 14px 12px}
+.pkg-card{flex:1;border:2px solid var(--g200);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
+.pkg-card.active{border-color:var(--navy);background:rgba(26,35,50,.03)}
+.pkg-card.active::after{content:'✓';position:absolute;top:4px;right:6px;font-size:10px;color:var(--navy);font-weight:800}
+.pkg-card:active{transform:scale(.97)}
+.pkg-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--g600)}
+.pkg-card.active .pkg-label{color:var(--navy)}
+.pkg-price{font-size:17px;font-weight:800;color:var(--g800);margin-top:2px}
+.pkg-card.active .pkg-price{color:var(--navy)}
+.pkg-desc{font-size:9px;color:var(--g500);margin-top:2px;line-height:1.2}
+.pkg-compare{padding:0 14px 10px}
+.pkg-compare-btn{font-size:11px;color:var(--blue);font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px}
+.compare-panel{display:none;margin:0 14px 10px;background:var(--g50);border-radius:var(--rs);overflow:hidden;border:1px solid var(--g200);font-size:10px}
+.compare-panel.open{display:block}
+.cmp-row{display:grid;grid-template-columns:80px 1fr 1fr 1fr;border-bottom:1px solid var(--g200)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-row.hdr{background:var(--g100);font-weight:700;color:var(--g700)}
+.cmp-c{padding:5px 4px}
+.cmp-c:first-child{font-weight:600;color:var(--g600)}
+
+/* Section card */
+.sec{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.sec-header{display:flex;align-items:center;padding:10px 12px;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sec-header:active{background:var(--g50)}
+.sec-cb{width:22px;height:22px;border:2px solid var(--g300);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;transition:all .15s}
+.sec-cb.on{background:var(--navy);border-color:var(--navy)}
+.sec-icon{font-size:16px;flex-shrink:0}
+.sec-info{flex:1;min-width:0}
+.sec-name{font-size:13px;font-weight:700;color:var(--navy)}
+.sec-sub{font-size:10px;color:var(--g500);margin-top:1px}
+.sec-price{font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap}
+.sec-arrow{font-size:12px;color:var(--g400);transition:transform .2s;margin-left:4px}
+.sec-arrow.open{transform:rotate(90deg)}
+.sec.excluded .sec-name,.sec.excluded .sec-sub{color:var(--g400)}
+.sec.excluded .sec-price{color:var(--g400);text-decoration:line-through}
+
+/* Room rows */
+.sec-body{display:none;border-top:1px solid var(--g100)}
+.sec-body.open{display:block}
+.room{display:flex;align-items:center;padding:8px 12px 8px 20px;gap:8px;border-bottom:1px solid var(--g100);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.room:active{background:var(--g50)}
+.room-cb{width:18px;height:18px;border:2px solid var(--g300);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;transition:all .15s}
+.room-cb.on{background:var(--navy);border-color:var(--navy)}
+.room-info{flex:1;min-width:0}
+.room-name{font-size:12px;font-weight:600}
+.room-detail{font-size:10px;color:var(--g500);line-height:1.4}
+.room-note{margin-top:3px;padding:3px 6px;background:#FFF8E1;border-left:2px solid var(--gold);border-radius:0 3px 3px 0;font-size:10px;color:#8B6914;line-height:1.3}
+.room-price{font-size:13px;font-weight:700;color:var(--g800);white-space:nowrap}
+.room.excluded .room-name{color:var(--g400);text-decoration:line-through}
+.room.excluded .room-price{color:var(--g400);text-decoration:line-through}
+.room.excluded .room-detail{color:var(--g300)}
+
+/* Surface modifier drawer */
+.surf-drawer{border-top:1px solid var(--g200);background:var(--g50)}
+.surf-drawer-toggle{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 20px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.surf-drawer-toggle:active{background:var(--g100)}
+.surf-drawer-icon{font-size:13px;color:var(--g500)}
+.surf-drawer-label{font-size:11px;font-weight:600;color:var(--blue);flex:1}
+.surf-drawer-arrow{font-size:10px;color:var(--blue);transition:transform .2s}
+.surf-drawer-arrow.open{transform:rotate(180deg)}
+.surf-body{display:none;padding:4px 12px 10px 20px}
+.surf-body.open{display:block}
+.surf-hint{font-size:10px;color:var(--g500);margin-bottom:6px;font-style:italic}
+.surf-chips{display:flex;flex-wrap:wrap;gap:6px}
+.surf-chip{display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid var(--navy);background:rgba(26,35,50,.05);color:var(--navy);-webkit-tap-highlight-color:transparent}
+.surf-chip:active{transform:scale(.95)}
+.surf-chip.off{border-color:var(--g300);background:white;color:var(--g400)}
+.surf-chip .chip-check{font-size:10px}
+.surf-chip.off .chip-check{visibility:hidden}
+.surf-excluded-note{font-size:10px;color:var(--orange);font-weight:500;margin-top:6px;display:none}
+.surf-excluded-note.show{display:block}
+
+/* Optional */
+.opt-wrap{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.opt-title{display:flex;align-items:center;gap:6px;padding:10px 12px;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px}
+.opt-badge{font-size:9px;font-weight:700;background:#FFF8E1;color:#8B6914;border:1px solid var(--gold);padding:1px 7px;border-radius:8px;text-transform:none;letter-spacing:0}
+.opt-item{display:flex;align-items:center;padding:8px 12px;gap:8px;border-top:1px solid var(--g100);cursor:pointer}
+.opt-item:active{background:var(--g50)}
+.opt-saving{font-size:10px;color:var(--green);font-weight:600}
+
+/* Materials */
+.mat-card{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.mat-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px 2px}
+.mat-sub{font-size:10px;color:var(--g500);padding:0 12px 6px}
+.mat-row{display:flex;justify-content:space-between;padding:5px 12px;font-size:12px;border-bottom:1px solid var(--g100)}
+.mat-row:last-child{border-bottom:none}
+.mat-name{color:var(--g700)}
+.mat-price{font-weight:600}
+.mat-note{padding:6px 12px;font-size:10px;color:var(--g500);font-style:italic}
+
+/* Summary */
+.summary{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);padding:12px 14px}
+.sum-row{display:flex;justify-content:space-between;padding:2px 0;font-size:12px;color:var(--g600)}
+.sum-row.discount{color:var(--green)}
+.sum-div{border-top:2px solid var(--navy);margin:6px 0}
+.sum-total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:var(--navy)}
+
+/* Warranty */
+.warranty{background:linear-gradient(135deg,var(--navy),#2a3a52);color:white;margin:8px 10px;border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.warranty-icon{font-size:22px}
+.warranty-text{flex:1}
+.war-title{font-size:12px;font-weight:700}
+.war-desc{font-size:10px;opacity:.8;margin-top:2px}
+.war-link{font-size:10px;color:var(--gold);font-weight:600;margin-top:3px;cursor:pointer}
+
+/* Accordion */
+.acc{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.acc-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer}
+.acc-toggle:active{background:var(--g50)}
+.acc-title{font-size:12px;font-weight:700;color:var(--navy)}
+.acc-arrow{font-size:12px;color:var(--g500);transition:transform .2s}
+.acc-arrow.open{transform:rotate(90deg)}
+.acc-body{display:none;padding:0 14px 14px;font-size:12px;color:var(--g700);line-height:1.6}
+.acc-body.open{display:block}
+.acc-body h4{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;margin:8px 0 4px}
+.acc-body ul{padding-left:16px;margin:4px 0}
+.acc-body li{margin:2px 0}
+
+.expire{text-align:center;padding:8px;font-size:10px;color:var(--g500)}
+.expire strong{color:var(--orange)}
+
+.hist{background:var(--blue-light);margin:0 10px;border-radius:var(--r);padding:8px 12px;font-size:10px;color:var(--g700);display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.hist-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
+/* Bottom bar */
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid var(--g200);padding:8px 14px 12px;z-index:100}
+.bot-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.bot-label{font-size:11px;color:var(--g600)}
+.bot-price{font-size:22px;font-weight:800;color:var(--navy)}
+.bot-saved{font-size:11px;color:var(--green);font-weight:600}
+.btn-accept{width:100%;padding:14px;background:var(--navy);color:white;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px}
+.btn-accept:active{background:#0f1722;transform:scale(.99)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-back">‹</div>
+  <div class="topbar-logo">N</div>
+  <div class="topbar-title">Proposal #2847</div>
+  <div class="topbar-badge">DRAFT</div>
+  <div class="topbar-pdf" onclick="showPdfToast()" style="cursor:pointer;font-size:16px;padding:2px 4px" title="Download PDF">📄</div>
+</div>
+
+<div class="cust-header">
+  <div class="cust-name">Thompson Residence</div>
+  <div class="cust-addr">2841 Tyne Blvd, Nashville, TN 37215</div>
+  <div class="cust-meta">
+    <span>📅 Feb 21, 2026</span>
+    <span>👤 Larry</span>
+    <span>🏠 4 service types</span>
+  </div>
+</div>
+
+<div id="scopeArea"></div>
+
+<!-- Optional add-ons -->
+<div class="opt-wrap" id="optWrap"></div>
+
+<!-- Package Switcher — after scope, before materials -->
+<div class="pkg-wrap">
+  <div class="pkg-title">Choose Your Package</div>
+  <div class="pkg-row">
+    <div class="pkg-card" data-pkg="value" onclick="setPkg('value')"><div class="pkg-label">Value</div><div class="pkg-price" id="pvP"></div><div class="pkg-desc">Quality products, standard prep</div></div>
+    <div class="pkg-card active" data-pkg="standard" onclick="setPkg('standard')"><div class="pkg-label">Standard</div><div class="pkg-price" id="psP"></div><div class="pkg-desc">Premium products, elite prep</div></div>
+    <div class="pkg-card" data-pkg="premium" onclick="setPkg('premium')"><div class="pkg-label">Premium+</div><div class="pkg-price" id="ppP"></div><div class="pkg-desc">White-glove, highest grade</div></div>
+  </div>
+  <div class="pkg-compare"><div class="pkg-compare-btn" onclick="toggleCmp()"><span id="cmpA">▶</span> Compare Packages</div></div>
+  <div class="compare-panel" id="cmpPanel">
+    <div class="cmp-row hdr"><div class="cmp-c"></div><div class="cmp-c">Value</div><div class="cmp-c">Standard</div><div class="cmp-c">Premium+</div></div>
+    <div class="cmp-row"><div class="cmp-c">Prep</div><div class="cmp-c">Standard</div><div class="cmp-c">Elite</div><div class="cmp-c">White-Glove</div></div>
+    <div class="cmp-row"><div class="cmp-c">Wall Paint</div><div class="cmp-c">ProMar 200</div><div class="cmp-c">Cashmere</div><div class="cmp-c">Emerald</div></div>
+    <div class="cmp-row"><div class="cmp-c">Trim Paint</div><div class="cmp-c">ProMar 200</div><div class="cmp-c">Advance</div><div class="cmp-c">Emerald Ure.</div></div>
+    <div class="cmp-row"><div class="cmp-c">Ext Paint</div><div class="cmp-c">SuperPaint</div><div class="cmp-c">Element Guard</div><div class="cmp-c">Duration</div></div>
+    <div class="cmp-row"><div class="cmp-c">Warranty</div><div class="cmp-c">5 yr</div><div class="cmp-c">10 yr</div><div class="cmp-c">Lifetime</div></div>
+  </div>
+</div>
+
+<!-- Materials -->
+<div class="mat-card">
+  <div class="mat-title">Materials</div>
+  <div class="mat-sub" id="matSub">Premium products included</div>
+  <div id="matBody"></div>
+  <div class="mat-note">Product names shown · No gallon counts · 10% handling included</div>
+</div>
+
+<!-- Summary -->
+<div class="summary">
+  <div class="sum-row"><span>Labor subtotal</span><span id="sLab"></span></div>
+  <div class="sum-row"><span>Materials (10% handling)</span><span id="sMat"></span></div>
+  <div class="sum-row discount" id="sSaveRow" style="display:none"><span>Bundle savings</span><span id="sSave"></span></div>
+  <div class="sum-div"></div>
+  <div class="sum-total"><span>Total</span><span id="sTotal"></span></div>
+</div>
+
+<div class="expire">Proposal expires <strong>March 23, 2026</strong> · 30 days</div>
+
+<div class="warranty">
+  <div class="warranty-icon">🛡️</div>
+  <div class="warranty-text">
+    <div class="war-title" id="warTitle">10-Year Warranty</div>
+    <div class="war-desc">Covers defects from improper application. Most projects last 12–18 years.</div>
+    <div class="war-link">View Full Warranty →</div>
+  </div>
+</div>
+
+<div id="projArea"></div>
+
+<div class="acc">
+  <div class="acc-toggle" onclick="togAcc(this)"><span class="acc-title">💳 Payment Terms</span><span class="acc-arrow">▶</span></div>
+  <div class="acc-body">
+    <h4>Payment Terms</h4>
+    <ul>
+      <li>0% Deposit — We earn your trust before taking payment</li>
+      <li>100% due upon completion (see full payment terms below)</li>
+    </ul>
+    <h4>Accepted Payment</h4>
+    <ul>
+      <li>ACH, cash, or photo of your check (yes, that works!)</li>
+      <li>Credit cards accepted by phone — +3% fee</li>
+    </ul>
+  </div>
+</div>
+
+<div class="acc">
+  <div class="acc-toggle" onclick="togAcc(this)"><span class="acc-title">📄 Contract Terms</span><span class="acc-arrow">▶</span></div>
+  <div class="acc-body">
+    <p>Nash Painting, LLC · TN License #78623 · $2M liability + workers' comp</p>
+    <ul><li>Change orders require written client approval</li><li>Either party may terminate with 7 days' notice</li><li>Right to cancel within 3 business days per TN law</li><li>Disputes resolved via binding arbitration</li></ul>
+  </div>
+</div>
+
+<div class="hist">
+  <div class="hist-dot"></div>
+  <span>Client activity tracked — every package switch, room toggle, and scope change logged</span>
+</div>
+
+<div class="bottom">
+  <div class="bot-row">
+    <div><div class="bot-label" id="botLabel">Standard · Full Scope</div><div class="bot-saved" id="botSaved"></div></div>
+    <div class="bot-price" id="botPrice"></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-pdf" onclick="showPdfToast()" style="padding:14px 16px;background:white;color:var(--navy);border:2px solid var(--navy);border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">📄 PDF</button>
+    <button class="btn-accept" id="btnAccept" style="flex:1">Accept This Proposal</button>
+  </div>
+</div>
+
+<script>
+const PKG_MULT = { value: 0.60, standard: 1.0, premium: 2.10 };
+let pkg = 'standard';
+const BUNDLE_DISC = 0.09;
+
+// Surface types that can exist in rooms — each has a label
+const SURF_LABELS = {
+  walls:'Walls', ceil:'Ceilings', trim:'Trim / Baseboards', doors:'Doors', windows:'Windows',
+  crown:'Crown Molding', wains:'Wainscoting',
+  front:'Front', sides:'Sides', back:'Back',
+  cabdoors:'Doors & Drawers', boxes:'Boxes', island:'Island'
+};
+
+const SECTIONS = [
+  {
+    id:'interior', icon:'🏠', name:'Interior Painting', on:true,
+    // surfaceTypes present in this section (for the drawer)
+    surfTypes: ['walls','ceil','trim','doors','crown'],
+    surfOn: {walls:true, ceil:true, trim:true, doors:true, crown:true},
+    rooms: [
+      {id:'master', name:'Master Bedroom', std:3200, on:true,
+        summary:'Walls, ceiling, baseboards, 4 doors, 1 closet',
+        surfaces:'Walls, ceiling, baseboards',
+        items:'4 door & frame (single side), 1 closet door back',
+        coats:'2 coats walls, 2 coats ceiling, 1 coat trim & baseboards',
+        note:'Includes 2 extra door sides to cover the return air vent door and the attic access door in closet.',
+        surfs:{walls:1680, ceil:620, trim:560, doors:340}},
+      {id:'living', name:'Living Room', std:4100, on:true,
+        summary:'Walls, ceiling, baseboards, crown, fireplace mantle',
+        surfaces:'Walls, ceiling, baseboards, crown molding',
+        items:'Fireplace mantle, 2 door & frame (single side)',
+        coats:'2 coats walls, 2 coats ceiling, 2 coats crown, 1 coat trim & baseboards',
+        surfs:{walls:2100, ceil:780, trim:720, crown:500}},
+      {id:'dining', name:'Dining Room', std:2440, on:true,
+        summary:'Walls, ceiling, baseboards, chair rail, 1 door',
+        surfaces:'Walls, ceiling, baseboards, chair rail',
+        items:'1 door & frame (single side)',
+        coats:'2 coats walls, 1 coat ceiling, 1 coat trim & baseboards, 1 coat chair rail',
+        surfs:{walls:1240, ceil:480, trim:440, doors:280}},
+      {id:'kitchen', name:'Kitchen', std:2780, on:true,
+        summary:'Walls, ceiling, baseboards, 1 door',
+        surfaces:'Walls, ceiling, baseboards',
+        items:'1 door & frame (single side)',
+        coats:'2 coats walls, 1 coat ceiling, 1 coat trim & baseboards',
+        note:'Moisture-rated ceiling product used.',
+        surfs:{walls:1380, ceil:540, trim:520, doors:340}},
+      {id:'hallway', name:'Hallway', std:1240, on:true,
+        summary:'Walls, ceiling, baseboards, 3 doors',
+        surfaces:'Walls, ceiling, baseboards',
+        items:'3 door & frame (single side)',
+        coats:'2 coats walls, 1 coat ceiling, 1 coat baseboards',
+        surfs:{walls:620, ceil:280, trim:340}},
+      {id:'foyer', name:'Foyer', std:2380, on:true,
+        summary:'Walls, ceiling, baseboards, front door, 1 closet',
+        surfaces:'Walls, ceiling, baseboards',
+        items:'Front door (single side), 1 closet door back',
+        coats:'2 coats walls, 1 coat ceiling, 1 coat trim & baseboards',
+        note:'Front door interior side only. Exterior side quoted separately if needed.',
+        surfs:{walls:1180, ceil:420, trim:480, doors:300}},
+      {id:'powder', name:'Powder Room', std:860, on:true,
+        summary:'Walls, ceiling, baseboards, 1 door',
+        surfaces:'Walls, ceiling, baseboards',
+        items:'1 door & frame (single side)',
+        coats:'2 coats walls, 1 coat ceiling, 1 coat trim & baseboards',
+        surfs:{walls:420, ceil:180, trim:260}},
+    ]
+  },
+  {
+    id:'exterior', icon:'🏡', name:'Exterior Painting', on:true,
+    surfTypes: [],
+    surfOn: {},
+    // Exterior items are top-level substrates — no surface drawer needed
+    rooms: [
+      {id:'siding', name:'Siding', detail:'2,200 SF · spray + backroll · 2 coats · BM Element Guard', std:4180, on:true, surfs:{}, isMaskTrigger:true},
+      {id:'extrim', name:'Trim & Fascia', detail:'180 LF · brush · 2 coats · BM Advance', std:1840, on:true, surfs:{}},
+      {id:'soffit', name:'Soffit & Eaves', detail:'340 SF · spray · 2 coats', std:890, on:true, surfs:{}},
+      {id:'shutters', name:'Shutters', detail:'8 shutters · spray · 2 coats', std:560, on:true, surfs:{}},
+      {id:'garagedoor', name:'Garage Door', detail:'2-car · spray + backroll · 2 coats', std:420, on:true, surfs:{}},
+      {id:'wash', name:'Pressure Washing', detail:'2,800 SF · 3700 PSI wash · all coated surfaces', std:680, on:true, surfs:{}},
+    ],
+    // Masking auto-charge: siding SF × rate
+    maskingConfig: { sidingSF: 2200, laborPerSF: 0.35, matPerSF: 0.10, minCharge: 600 }
+  },
+  {
+    id:'cabinets', icon:'🪵', name:'Cabinet Refinishing', on:true,
+    surfTypes: [],
+    surfOn: {},
+    rooms: [
+      {id:'kitcab', name:'Kitchen Cabinets', detail:'42 doors/drawers · spray in booth · P+2 coats · boxes rolled onsite · 1 color · Renner 2k', std:8200, on:true, surfs:{}},
+      {id:'bathvan', name:'Master Bath Vanity', detail:'6 doors/drawers · spray in booth · P+2 coats · 1 color · Renner 2k', std:1200, on:true, surfs:{}},
+    ]
+  },
+  {
+    id:'carpentry', icon:'🔨', name:'Carpentry Repairs', on:true,
+    surfTypes: [],
+    surfOn: {},
+    rooms: [
+      {id:'rotfront', name:'Front Porch Rot Repair', detail:'Splice · 3 boards · PVC lumber · surface-level only · see estimate photos', std:1250, on:true, surfs:{}},
+      {id:'fascia', name:'Fascia Board Replacement', detail:'Full piece · 2 boards (7\'+) · pressure-treated lumber · primed + painted to match', std:980, on:true, surfs:{}},
+      {id:'sill', name:'Window Sill Repair', detail:'2 sills · epoxy fill · sanded + primed + painted to match', std:640, on:true, surfs:{}},
+    ]
+  }
+];
+
+const OPTIONALS = [
+  {id:'deckstain', name:'Deck Staining', detail:'480 SF · 2 coats', std:2800, on:false},
+  {id:'fencestain', name:'Fence Staining', detail:'120 LF · 6\' cedar', std:1950, on:false},
+];
+
+const MATERIALS = {
+  value:{
+    interior:[{name:'SW ProMar 200 Satin (walls)',p:380},{name:'SW ProMar 200 Semi-Gloss (trim)',p:220},{name:'SW ProMar Ceiling Flat',p:120},{name:'Primer',p:68},{name:'Caulk, sundries',p:45}],
+    exterior:[{name:'SW SuperPaint Exterior Satin',p:340},{name:'SW SuperPaint Exterior Gloss (trim)',p:165},{name:'Exterior primer',p:58},{name:'Caulk, sundries',p:42}],
+    cabinets:[{name:'Renner Cabinet Finish',p:480},{name:'Cabinet primer',p:62}],
+    carpentry:[{name:'PVC/cedar lumber',p:120}]
+  },
+  standard:{
+    interior:[{name:'SW Cashmere Interior Satin (walls)',p:624},{name:'BM Advance Semi-Gloss (trim)',p:412},{name:'BM Ultra Spec Ceiling Flat',p:186},{name:'Primer',p:78},{name:'Caulk, sundries',p:52}],
+    exterior:[{name:'BM Element Guard Satin (siding)',p:520},{name:'BM Advance Exterior (trim)',p:225},{name:'Exterior primer',p:72},{name:'Caulk, sundries',p:48}],
+    cabinets:[{name:'Renner 2k Polyurethane',p:640},{name:'Cabinet primer',p:78}],
+    carpentry:[{name:'PVC/cedar lumber',p:120}]
+  },
+  premium:{
+    interior:[{name:'SW Emerald Interior Matte (walls)',p:890},{name:'SW Emerald Urethane Semi-Gloss (trim)',p:640},{name:'BM Regal Select Ceiling',p:310},{name:'Premium primer',p:98},{name:'Caulk, sundries',p:62}],
+    exterior:[{name:'SW Duration Exterior (siding)',p:780},{name:'SW Emerald Urethane Exterior (trim)',p:340},{name:'Premium exterior primer',p:95},{name:'Caulk, sundries',p:55}],
+    cabinets:[{name:'Renner 2k Premium',p:840},{name:'Premium cabinet primer',p:95}],
+    carpentry:[{name:'PVC/cedar lumber',p:120}]
+  }
+};
+
+const _roomDetailOpen = {};
+function fmt(n){ return '$'+Math.round(n).toLocaleString(); }
+function m(){ return PKG_MULT[pkg]; }
+
+// Calculate room price considering which surfaces are excluded at section level
+function roomPrice(sec, r){
+  if(!r.on || !sec.on) return 0;
+  const hasSurfs = r.surfs && Object.keys(r.surfs).length > 0;
+  if(!hasSurfs) return r.std * m();
+  let total = 0;
+  for(const [sf, val] of Object.entries(r.surfs)){
+    if(sec.surfOn[sf] !== false) total += val;
+  }
+  return total * m();
+}
+
+function secPrice(sec){
+  if(!sec.on) return 0;
+  let base = sec.rooms.reduce((s,r) => s + roomPrice(sec, r), 0);
+  base += maskingCharge(sec);
+  return base;
+}
+
+// Exterior masking: siding OFF + any other exterior item ON → auto-charge
+function maskingCharge(sec){
+  if(!sec.maskingConfig || !sec.on) return 0;
+  const siding = sec.rooms.find(r => r.isMaskTrigger);
+  if(!siding || siding.on) return 0; // siding is included, no masking needed
+  const otherOn = sec.rooms.some(r => !r.isMaskTrigger && r.on);
+  if(!otherOn) return 0; // nothing else on, no masking needed
+  const cfg = sec.maskingConfig;
+  const charge = cfg.sidingSF * (cfg.laborPerSF + cfg.matPerSF);
+  return Math.max(charge, cfg.minCharge) * m();
+}
+
+function totalLabor(){
+  let t = SECTIONS.reduce((s,sec) => s + secPrice(sec), 0);
+  OPTIONALS.forEach(o => { if(o.on) t += o.std * m() * (1 - BUNDLE_DISC); });
+  return t;
+}
+function totalMat(){
+  let t = 0;
+  const mats = MATERIALS[pkg];
+  SECTIONS.forEach(sec => {
+    if(sec.on && mats[sec.id]) t += mats[sec.id].reduce((s,x) => s + x.p, 0);
+  });
+  return Math.round(t * 1.10);
+}
+function bundleSavings(){
+  let s = 0;
+  OPTIONALS.forEach(o => { if(o.on) s += o.std * m() * BUNDLE_DISC; });
+  return Math.round(s);
+}
+function allCoreStd(){ return SECTIONS.reduce((s,sec) => sec.rooms.reduce((ss,r) => ss + r.std, 0) + s, 0); }
+
+// Count excluded surfaces for a section
+function excludedSurfCount(sec){
+  return sec.surfTypes.filter(st => !sec.surfOn[st]).length;
+}
+
+function render(){
+  const cs = allCoreStd();
+  document.getElementById('pvP').textContent = fmt(cs * PKG_MULT.value);
+  document.getElementById('psP').textContent = fmt(cs * PKG_MULT.standard);
+  document.getElementById('ppP').textContent = fmt(cs * PKG_MULT.premium);
+
+  const sa = document.getElementById('scopeArea');
+  sa.innerHTML = '';
+
+  SECTIONS.forEach(sec => {
+    const sp = secPrice(sec);
+    const exp = sec._exp;
+    const excl = !sec.on;
+    const exSurf = excludedSurfCount(sec);
+    const roomsOn = sec.rooms.filter(r => r.on).length;
+    const roomsTotal = sec.rooms.length;
+
+    let subText = roomsOn + ' of ' + roomsTotal + ' items';
+    if(excl) subText = 'Excluded';
+    else if(exSurf > 0) subText += ' · ' + exSurf + ' surface' + (exSurf>1?'s':'') + ' excluded';
+
+    let h = `<div class="sec ${excl?'excluded':''}">`;
+    // Header
+    h += `<div class="sec-header">`;
+    h += `<div class="sec-cb ${sec.on?'on':''}" onclick="event.stopPropagation();togSec('${sec.id}')">✓</div>`;
+    h += `<div class="sec-icon">${sec.icon}</div>`;
+    h += `<div class="sec-info" onclick="togSecExp('${sec.id}')"><div class="sec-name">${sec.name}</div>`;
+    h += `<div class="sec-sub">${subText}</div></div>`;
+    h += `<div class="sec-price">${fmt(sp)}</div>`;
+    h += `<div class="sec-arrow ${exp?'open':''}" onclick="togSecExp('${sec.id}')">▶</div>`;
+    h += `</div>`;
+
+    // Body
+    h += `<div class="sec-body ${exp?'open':''}">`;
+    sec.rooms.forEach(r => {
+      const rp = roomPrice(sec, r);
+      const rExcl = !r.on || !sec.on;
+      // Build detail lines
+      let detailLines = [];
+      if(r.surfaces) detailLines.push(r.surfaces);
+      if(r.items) detailLines.push(r.items);
+      if(r.coats) detailLines.push(r.coats);
+      const detailText = detailLines.length ? detailLines.join(' · ') : (r.detail || '');
+
+      h += `<div class="room ${rExcl?'excluded':''}" onclick="togRoom('${sec.id}','${r.id}')">`;
+      h += `<div class="room-cb ${r.on?'on':''}">✓</div>`;
+      h += `<div class="room-info"><div class="room-name">${r.name}</div><div class="room-detail">${detailText}</div>`;
+      if(r.note) h += `<div class="room-note">📝 ${r.note}</div>`;
+      h += `</div>`;
+      h += `<div class="room-price">${fmt(rp)}</div>`;
+      h += `</div>`;
+    });
+
+    // Masking auto-charge line item
+    const mc = maskingCharge(sec);
+    if(mc > 0){
+      h += `<div style="display:flex;align-items:center;padding:8px 12px 8px 20px;gap:8px;border-bottom:1px solid var(--g100);background:#FFF8E1">`;
+      h += `<div style="font-size:14px;flex-shrink:0">⚠️</div>`;
+      h += `<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#8B6914">Exterior Masking & Protection</div>`;
+      h += `<div style="font-size:10px;color:var(--g600)">Siding must be masked to protect from drips & overspray</div></div>`;
+      h += `<div style="font-size:13px;font-weight:700;color:#8B6914;white-space:nowrap">${fmt(mc)}</div>`;
+      h += `</div>`;
+    }
+
+    // Surface modifier drawer (only if section has surface types)
+    if(sec.surfTypes.length > 0){
+      const drawerOpen = sec._surfExp;
+      h += `<div class="surf-drawer">`;
+      h += `<div class="surf-drawer-toggle" onclick="togSurfDrawer('${sec.id}')">`;
+      h += `<div class="surf-drawer-icon">⚙</div>`;
+      h += `<div class="surf-drawer-label">Customize Surfaces</div>`;
+      h += `<div class="surf-drawer-arrow ${drawerOpen?'open':''}">▼</div>`;
+      h += `</div>`;
+      h += `<div class="surf-body ${drawerOpen?'open':''}">`;
+      h += `<div class="surf-hint">Toggle surfaces across all rooms in this section</div>`;
+      h += `<div class="surf-chips">`;
+
+      // Figure out which surface types actually have data in at least one room
+      sec.surfTypes.forEach(st => {
+        const hasIt = sec.rooms.some(r => r.surfs && r.surfs[st] !== undefined);
+        if(!hasIt && !SURF_LABELS[st]) return;
+        const label = SURF_LABELS[st] || st;
+        const isOn = sec.surfOn[st] !== false;
+        // Calculate total price for this surface type across all active rooms
+        let surfTotal = 0;
+        sec.rooms.forEach(r => {
+          if(r.on && r.surfs && r.surfs[st] !== undefined) surfTotal += r.surfs[st] * m();
+        });
+        h += `<div class="surf-chip ${isOn?'':'off'}" onclick="event.stopPropagation();togSurf('${sec.id}','${st}')">`;
+        h += `<span class="chip-check">✓</span> ${label} · ${fmt(surfTotal)}`;
+        h += `</div>`;
+      });
+
+      h += `</div>`; // chips
+      const exNote = exSurf > 0;
+      h += `<div class="surf-excluded-note ${exNote?'show':''}">⚠ ${exSurf} surface type${exSurf!==1?'s':''} excluded — room prices adjusted</div>`;
+      h += `</div>`; // surf-body
+      h += `</div>`; // surf-drawer
+    }
+
+    h += `</div>`; // sec-body
+    h += `</div>`; // sec
+    sa.innerHTML += h;
+  });
+
+  // Optionals
+  const ow = document.getElementById('optWrap');
+  let oh = `<div class="opt-title"><span>Optional — Add Now & Save</span><span class="opt-badge">9% OFF</span></div>`;
+  OPTIONALS.forEach(o => {
+    const op = Math.round(o.std * m() * (1 - BUNDLE_DISC));
+    const sv = Math.round(o.std * m() * BUNDLE_DISC);
+    oh += `<div class="opt-item" onclick="togOpt('${o.id}')">`;
+    oh += `<div class="room-cb ${o.on?'on':''}">✓</div>`;
+    oh += `<div class="room-info"><div class="room-name">${o.name}</div><div class="room-detail">${o.detail}</div>`;
+    oh += `<div class="opt-saving">💰 Save ${fmt(sv)} vs. scheduling separately</div></div>`;
+    oh += `<div class="room-price">${fmt(op)}</div>`;
+    oh += `</div>`;
+  });
+  ow.innerHTML = oh;
+
+  // Materials — grouped by service type
+  const mb = document.getElementById('matBody');
+  const mats = MATERIALS[pkg];
+  const secLabels = {interior:'Interior Painting',exterior:'Exterior Painting',cabinets:'Cabinet Refinishing',carpentry:'Carpentry'};
+  let mh = '';
+  SECTIONS.forEach(sec => {
+    if(!sec.on || !mats[sec.id] || !mats[sec.id].length) return;
+    mh += `<div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.3px;padding:8px 12px 2px;border-top:1px solid var(--g100)">${secLabels[sec.id] || sec.name}</div>`;
+    mh += mats[sec.id].map(x => `<div class="mat-row"><span class="mat-name">${x.name}</span><span class="mat-price">${fmt(x.p)}</span></div>`).join('');
+  });
+  mb.innerHTML = mh;
+  const pn = {value:'Value products',standard:'Premium products',premium:'Highest-grade products'};
+  document.getElementById('matSub').textContent = pn[pkg] + ' included';
+
+  // Summary
+  const lab = Math.round(totalLabor());
+  const mat = totalMat();
+  const tot = lab + mat;
+  const bs = bundleSavings();
+  document.getElementById('sLab').textContent = fmt(lab);
+  document.getElementById('sMat').textContent = fmt(mat);
+  document.getElementById('sTotal').textContent = fmt(tot);
+  const saveRow = document.getElementById('sSaveRow');
+  if(bs > 0){ saveRow.style.display = 'flex'; document.getElementById('sSave').textContent = '-'+fmt(bs); }
+  else { saveRow.style.display = 'none'; }
+
+  // Bottom
+  document.getElementById('botPrice').textContent = fmt(tot);
+  const pkName = {value:'Value',standard:'Standard',premium:'Premium Plus'}[pkg];
+  const onSecs = SECTIONS.filter(s => s.on).length;
+  const totSecs = SECTIONS.length;
+  const optOn = OPTIONALS.filter(o => o.on).length;
+  let bl = pkName;
+  if(onSecs === totSecs) bl += ' · Full Scope'; else bl += ' · ' + onSecs + '/' + totSecs + ' services';
+  if(optOn) bl += ' + ' + optOn + ' add-on' + (optOn>1?'s':'');
+  document.getElementById('botLabel').textContent = bl;
+  document.getElementById('botSaved').textContent = '';
+
+  const wt = {value:'5-Year Warranty',standard:'10-Year Warranty',premium:'Lifetime Warranty'};
+  document.getElementById('warTitle').textContent = wt[pkg];
+
+  renderProjDetails();
+}
+
+// ─── INTERACTIONS ───
+function setPkg(p){
+  pkg = p;
+  document.querySelectorAll('.pkg-card').forEach(c => c.classList.toggle('active', c.dataset.pkg === p));
+  render();
+}
+function togSec(id){
+  const sec = SECTIONS.find(s => s.id === id);
+  sec.on = !sec.on;
+  render();
+}
+function togSecExp(id){
+  const sec = SECTIONS.find(s => s.id === id);
+  sec._exp = !sec._exp;
+  render();
+}
+function togRoom(secId, roomId){
+  const sec = SECTIONS.find(s => s.id === secId);
+  if(!sec.on) return;
+  const room = sec.rooms.find(r => r.id === roomId);
+  room.on = !room.on;
+  render();
+}
+function togSurfDrawer(secId){
+  const sec = SECTIONS.find(s => s.id === secId);
+  sec._surfExp = !sec._surfExp;
+  render();
+}
+function togSurf(secId, surfType){
+  const sec = SECTIONS.find(s => s.id === secId);
+  // For exterior, surface types map to room ids
+  if(sec.id === 'exterior'){
+    const room = sec.rooms.find(r => r.id === surfType);
+    if(room){ room.on = !room.on; render(); return; }
+  }
+  // For interior, toggle the surface across all rooms
+  sec.surfOn[surfType] = !sec.surfOn[surfType];
+  render();
+}
+function togRoomDetail(rid){
+  _roomDetailOpen[rid] = !_roomDetailOpen[rid];
+  const el = document.getElementById('rd_'+rid);
+  if(el) el.classList.toggle('open');
+}
+function togOpt(id){
+  const o = OPTIONALS.find(x => x.id === id);
+  o.on = !o.on;
+  render();
+}
+function toggleCmp(){
+  const p = document.getElementById('cmpPanel');
+  const a = document.getElementById('cmpA');
+  p.classList.toggle('open');
+  a.textContent = p.classList.contains('open') ? '▼' : '▶';
+}
+function togAcc(el){
+  const body = el.nextElementSibling;
+  const arrow = el.querySelector('.acc-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+document.getElementById('btnAccept').addEventListener('click', function(){
+  this.textContent = '✓ Accepted!';
+  this.style.background = 'var(--green)';
+  setTimeout(() => { this.textContent = 'Accept This Proposal'; this.style.background = 'var(--navy)'; }, 2000);
+});
+
+function showPdfToast(){
+  // In production: generates PDF server-side via @react-pdf/renderer or Puppeteer
+  // PDF reflects current scope/package selection
+  let toast = document.getElementById('pdfToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'pdfToast';
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:12px;padding:24px 20px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:200;max-width:320px;width:90%;text-align:center';
+    document.body.appendChild(toast);
+  }
+  const pkName = {value:'Value',standard:'Standard',premium:'Premium Plus'}[pkg];
+  toast.innerHTML = `
+    <div style="font-size:36px;margin-bottom:8px">📄</div>
+    <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px">Download Proposal PDF</div>
+    <div style="font-size:12px;color:var(--g600);margin-bottom:16px">
+      ${pkName} Package · Current scope selection<br>
+      Includes terms, warranty, and project details
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button onclick="pdfAction('download')" style="padding:12px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">⬇ Download PDF</button>
+      <button onclick="pdfAction('email')" style="padding:12px;background:white;color:var(--navy);border:2px solid var(--navy);border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">✉ Email PDF to Me</button>
+      <button onclick="pdfAction('print')" style="padding:12px;background:white;color:var(--g600);border:1px solid var(--g300);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">🖨 Print</button>
+    </div>
+    <div onclick="closePdfToast()" style="margin-top:12px;font-size:12px;color:var(--blue);cursor:pointer;font-weight:600">Cancel</div>
+  `;
+  toast.style.display = 'block';
+  // Overlay
+  let overlay = document.getElementById('pdfOverlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'pdfOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:199';
+    overlay.onclick = closePdfToast;
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display = 'block';
+}
+
+function closePdfToast(){
+  const t = document.getElementById('pdfToast');
+  const o = document.getElementById('pdfOverlay');
+  if(t) t.style.display = 'none';
+  if(o) o.style.display = 'none';
+}
+
+function pdfAction(type){
+  const labels = {download:'Downloading PDF…',email:'Sending to your email…',print:'Opening print dialog…'};
+  const toast = document.getElementById('pdfToast');
+  toast.innerHTML = `
+    <div style="font-size:36px;margin-bottom:8px">✅</div>
+    <div style="font-size:15px;font-weight:700;color:var(--green)">${labels[type]}</div>
+    <div style="font-size:12px;color:var(--g500);margin-top:4px">(Demo — not connected)</div>
+  `;
+  setTimeout(closePdfToast, 1500);
+}
+
+function renderProjDetails(){
+  const PB = 'https://nashpainting.com/assets/images/estimate-docs/';
+  const PBW = 'https://www.nashpainting.com/assets/images/estimate-docs/';
+  const lnk = (url, label) => `<a href="${url}" target="_blank" style="color:var(--blue);font-weight:600;text-decoration:none">${label}</a>`;
+
+  const details = {
+    interior:{title:'🎨 Interior Painting Details', html:`
+      <p><em>Designed for homes that deserve clean lines, rich color, and long-lasting results.</em> ${lnk(PB+'Interior-Painting-Process.pdf','📄 Interior Process')}</p>
+      <h4>This Estimate Includes</h4>
+      <ul>
+        <li><strong>7 rooms:</strong> Master Bedroom, Living Room, Dining Room, Kitchen, Hallway, Foyer, Powder Room</li>
+        <li>2 coats on walls across all rooms</li>
+        <li>2 coats on ceilings in Master Bedroom, Living Room; 1 coat in remaining rooms</li>
+        <li>1 coat on trim/baseboards in all rooms except Living Room (2 coats)</li>
+        <li>Crown molding in Living Room, Dining Room (2 coats)</li>
+        <li>Chair rail in Dining Room</li>
+        <li>Fireplace mantle in Living Room</li>
+        <li>Caulking between trim and walls in all rooms (both surfaces painted) ${lnk(PB+'Caulking-Policy-2.pdf','📄 Caulking Policy')}</li>
+        <li>14 door sides (single side), 2 closet door backs</li>
+        <li>Minor drywall repairs (nail pops, cracks, scuffs under nickel-size)</li>
+        <li>5 colors included. Additional colors: $75 each. ${lnk(PB+'Additional-Colors-Policy-3.pdf','📄 Full Color Policy')}</li>
+      </ul>
+      <h4>Products</h4>
+      <ul>
+        <li>Walls: SW Cashmere</li>
+        <li>Trim: BM Advance</li>
+        <li>Ceilings: BM Ultra Spec</li>
+        <li>Primer: BM/SW Multi-Purpose</li>
+      </ul>
+      <h4>Customer Prep for Arrival</h4>
+      <p>${lnk(PB+'Client-Responsibilities-Checklist.pdf','📄 Interior Client Checklist')}</p>
+      <h4>Warranty</h4>
+      <p>Covered for 10 years of everyday living — no fuss, just repainting done right. ${lnk(PBW+'Nash-Warranty.pdf','📄 Warranty Info')}</p>
+    `},
+    exterior:{title:'🎨 Exterior Painting Details', html:`
+      <p><em>Built to survive Tennessee weather with a look that gets compliments at every curb.</em> ${lnk(PB+'Exterior-Painting-Process.pdf','📄 Exterior Process')}</p>
+      <h4>Included by Default</h4>
+      <ul>
+        <li>3700 PSI wash</li>
+        <li>Scraping, spot priming, and minor repairs before painting</li>
+        <li>Caulking where needed ${lnk(PB+'Caulking-Policy-2.pdf','📄 Caulking Policy')}</li>
+        <li>2 coats: spray + backroll or brush (based on surface type) ${lnk(PB+'Spray-Back-Brush-Policy-2.pdf','📄 Spray vs. Brush Policy')}</li>
+        <li>3 colors included ${lnk(PB+'Additional-Colors-Policy-3.pdf','📄 Color Policy')}</li>
+      </ul>
+      <h4>Paints Used</h4>
+      <ul><li>Benjamin Moore Element Guard or Sherwin Williams SuperPaint</li></ul>
+      <h4>Customer Prep for Arrival</h4>
+      <p>${lnk(PB+'Client-Responsibilities-Checklist.pdf','📄 Exterior Client Checklist')}</p>
+      <h4>Warranty</h4>
+      <p>Peace of mind for 10 years — rain or shine. ${lnk(PBW+'Nash-Warranty.pdf','📄 Warranty Info')}</p>
+    `},
+    cabinets:{title:'🎨 Cabinet Painting Details', html:`
+      <p><em>Our cabinet finishes look like factory-new — without removing your whole kitchen.</em> ${lnk(PB+'Cabinet-Painting-Process.pdf','📄 Cabinet Process')}</p>
+      <h4>Included by Default</h4>
+      <ul>
+        <li>Doors/drawers removed and labeled</li>
+        <li>Sprayed in a commercial-grade booth with dust filtration, fine-finish prep, and a climate-controlled drying room — engineered for a flawless finish</li>
+        <li>Boxes masked and fine-finish rolled or sprayed onsite</li>
+        <li>Primer + 2 finish coats</li>
+        <li>1 cabinet color included — $300 per extra ${lnk(PB+'Additional-Colors-Policy-3.pdf','📄 Cabinet Color Policy')}</li>
+      </ul>
+      <h4>Paints Used</h4>
+      <ul><li>Renner 2k, or Sherwin-Williams Gallery</li></ul>
+      <h4>Customer Prep for Arrival</h4>
+      <p>${lnk(PB+'Client-Responsibilities-Checklist.pdf','📄 Cabinet Client Checklist')}</p>
+      <h4>Warranty</h4>
+      <p>Covered for 10 years of daily use. ${lnk(PBW+'Nash-Warranty.pdf','📄 Warranty Info')}</p>
+    `},
+    carpentry:{title:'🔨 Carpentry Details', html:`
+      <p><em>High-standard wood repairs done right the first time.</em></p>
+      <h4>Included by Default</h4>
+      <ul>
+        <li><strong>Products:</strong> Rot-resistant options such as PVC, Cedar, or pressure-treated lumber</li>
+        <li><strong>Procedures:</strong> "Splice" means partial board; "Full piece" is 7'+ or full frame sides</li>
+        <li><strong>Assumptions:</strong> Surface-level only. Hidden issues = change order before work continues</li>
+        <li><strong>Change Orders:</strong> Only what's documented in estimate photos is included. Any new findings are submitted with photo backup for approval</li>
+      </ul>
+      <h4>Warranty</h4>
+      <p>10-Year Warranty on installed materials. ${lnk(PBW+'Nash-Warranty.pdf','📄 Warranty Info')}</p>
+      <p style="font-size:11px;color:var(--g500)">Excludes shifting, settling, water, or insect intrusion</p>
+    `},
+    deck:{title:'🪵 Deck & Fence Staining Details', html:`
+      <p><em>Tailored to the condition of your wood — because one-size never fits all.</em> ${lnk(PB+'Deck-Staining-Policy-3.pdf','📄 Deck Staining Policy')}</p>
+      <h4>Included by Default</h4>
+      <ul>
+        <li>Pressure wash</li>
+        <li>2 coats</li>
+        <li>Spray and back-brush (unless noted)</li>
+        <li>Choose 1 color. Add more starting at $75 per color. ${lnk(PB+'Additional-Colors-Policy-3.pdf','📄 Deck Color Policy')}</li>
+      </ul>
+      <h4>Paints Used</h4>
+      <ul><li>Benjamin Moore Woodluxe or Sherwin Williams Deckscapes</li></ul>
+      <h4>Customer Prep for Arrival</h4>
+      <p>${lnk(PB+'Client-Responsibilities-Checklist.pdf','📄 Deck Client Checklist')}</p>
+      <h4>Warranty</h4>
+      <p>1-Year Limited — built to weather the elements. ${lnk(PBW+'Nash-Warranty.pdf','📄 Warranty Info')}</p>
+    `},
+    wooddoor:{title:'🚪 Wood Door Details', html:`
+      <p><em>We preserve and protect the natural beauty of your entry door.</em> ${lnk(PB+'Wood-Door-Refinishing-Process.pdf','📄 Wood Door Process')}</p>
+      <h4>Included by Default</h4>
+      <ul>
+        <li>Light sanding of exposed surfaces</li>
+        <li>Stain coat applied first</li>
+        <li>PROLUXE® Door & Window Wood Finish (up to 3–4 coats)</li>
+        <li>3–4 days for completion. Visits spaced 24 hours apart</li>
+        <li>No extra charge for a 4th visit if needed</li>
+        <li>Includes stain blending touch-ups — full color changes require restoration</li>
+        <li>We preserve what's there — no harsh stripping unless you request it</li>
+      </ul>
+      <h4>Warranty</h4>
+      <p>1 Year: Full recoat needed every 2 years for lasting protection. ${lnk(PBW+'Nash-Warranty.pdf','📄 Warranty Info')}</p>
+      <h4>Optional Maintenance Plan</h4>
+      <ul>
+        <li>Spring & Fall visits</li>
+        <li>Light sand + 1 coat of Urethane</li>
+        <li>Prevents sun damage and keeps finish fresh</li>
+      </ul>
+    `}
+  };
+  const pa = document.getElementById('projArea');
+  pa.innerHTML = '';
+  // Show details for active sections
+  SECTIONS.forEach(sec => {
+    if(!sec.on || !details[sec.id]) return;
+    const d = details[sec.id];
+    pa.innerHTML += `<div class="acc"><div class="acc-toggle" onclick="togAcc(this)"><span class="acc-title">${d.title}</span><span class="acc-arrow">▶</span></div><div class="acc-body">${d.html}</div></div>`;
+  });
+  // Show details for active optional add-ons
+  OPTIONALS.forEach(o => {
+    if(!o.on) return;
+    let dKey = null;
+    if(o.id === 'deckstain' || o.id === 'fencestain') dKey = 'deck';
+    if(dKey && details[dKey]){
+      // Only add once
+      if(!pa.innerHTML.includes(details[dKey].title)){
+        const d = details[dKey];
+        pa.innerHTML += `<div class="acc"><div class="acc-toggle" onclick="togAcc(this)"><span class="acc-title">${d.title}</span><span class="acc-arrow">▶</span></div><div class="acc-body">${d.html}</div></div>`;
+      }
+    }
+  });
+}
+
+render();
+</script>
+</body>
+</html>
