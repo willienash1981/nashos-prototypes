@@ -311,7 +311,7 @@
     <div class="comp-banner">
       <div>
         <div class="greeting">👋 Welcome, Larry</div>
-        <div class="plan"><strong>$50K base</strong> + <strong>5% commission on GP</strong> &nbsp;·&nbsp; GP gate: ≥40% &nbsp;·&nbsp; Effective Jan 1, 2026</div>
+        <div class="plan"><strong>Base + Commission on GP</strong> &nbsp;·&nbsp; GP gate: ≥40% &nbsp;·&nbsp; <a style="color:var(--accent-light);cursor:pointer;text-decoration:none;">View Plan Details →</a></div>
       </div>
       <div style="text-align:right">
         <div style="font-size:11px;color:var(--text-dim)">Today</div>
@@ -402,11 +402,11 @@
           <div class="goal-row" style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border);">
             <div class="goal-header">
               <span class="goal-label">🏁 Break-Even (Overhead Coverage)</span>
-              <span class="goal-value">$25,380 / $68,181 (37%)</span>
+              <span class="goal-value">37%</span>
             </div>
             <div class="goal-bar"><div class="goal-fill red" style="width:37%"></div></div>
             <div class="goal-sub">
-              <span>$42,801 to profitability</span>
+              <span>63% remaining to profitability</span>
               <span>GP contribution covers 37% of overhead</span>
             </div>
           </div>
@@ -424,6 +424,11 @@
           <a class="card-action">View Full Detail →</a>
         </div>
         <div class="card-body">
+          <div id="comm-hidden" style="text-align:center;padding:18px 0;">
+            <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px;">Commission details are hidden for privacy</div>
+            <button onclick="document.getElementById('comm-hidden').style.display='none';document.getElementById('comm-detail').style.display='block';" style="background:var(--accent);color:white;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer;">Show Commission</button>
+          </div>
+          <div id="comm-detail" style="display:none;">
           <div class="comm-grid">
             <div class="comm-item">
               <div class="comm-label">MTD Earned</div>
@@ -457,6 +462,7 @@
               <div class="comm-val" style="color:var(--text-dim)">$1,285</div>
               <div class="comm-sub">Pipeline × 58% rate</div>
             </div>
+          </div>
           </div>
           <!-- YTD Close Rate Gauge -->
           <div style="text-align:center;padding:6px 0 10px;border-top:1px solid var(--border);margin-top:4px;">
@@ -519,7 +525,7 @@
       <div class="chart-container">
         <!-- Break-even line at ~37% of max height = ~37% of 220px = 81px from bottom -->
         <div class="break-even-line" style="bottom:calc(20px + 81px);"></div>
-        <div class="break-even-label" style="bottom:calc(20px + 82px);">Break-Even $68K</div>
+        <div class="break-even-label" style="bottom:calc(20px + 82px);">Break-Even</div>
 
         <div class="chart-row">
           <!-- Jan -->
