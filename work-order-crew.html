@@ -114,14 +114,27 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .mat-pickup { background:var(--accent); color:#fff; text-align:center; padding:10px; border-radius:8px; margin-top:12px; font-size:13px; font-weight:500; }
 .mat-pickup a { color:#fff; text-decoration:underline; }
 
-.photo-btns { display:flex; gap:8px; margin-bottom:12px; }
+.photo-btns { display:flex; gap:8px; margin-bottom:8px; }
 .photo-btn { flex:1; padding:12px; border:2px dashed var(--border); border-radius:10px; background:var(--navy-mid); color:var(--text); font-size:13px; text-align:center; cursor:pointer; transition:all 0.15s; }
 .photo-btn:active { border-color:var(--accent); background:rgba(59,130,246,0.1); }
-.photo-day { margin:8px 0; }
-.photo-day-label { font-size:12px; color:var(--text-dim); margin-bottom:4px; }
-.photo-thumbs { display:flex; gap:6px; flex-wrap:wrap; }
+.photo-thumbs { display:flex; gap:6px; flex-wrap:wrap; min-height:0; }
 .photo-thumb { width:48px; height:48px; border-radius:6px; }
-.photo-total { font-size:12px; color:var(--text-dim); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+.photo-total { font-size:12px; color:var(--text-dim); margin-top:8px; padding:10px 0 0; border-top:1px solid var(--border); }
+
+.photo-section { border-bottom:1px solid var(--border); }
+.photo-section:last-of-type { border-bottom:none; }
+.photo-section-header { display:flex; align-items:center; justify-content:space-between; padding:12px 0; cursor:pointer; }
+.photo-section-header > div { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.photo-section-icon { font-size:16px; }
+.photo-section-name { font-size:13px; font-weight:600; color:var(--text-bright); }
+.photo-section-hint { font-size:12px; color:var(--red); font-weight:600; }
+.photo-section-count { font-size:12px; font-weight:700; color:var(--text-dim); background:var(--navy-mid); padding:2px 10px; border-radius:10px; min-width:28px; text-align:center; }
+.photo-section-body { display:none; padding-bottom:12px; }
+.photo-section-body.open { display:block; }
+.photo-section-desc { font-size:12px; color:var(--text-dim); line-height:1.5; margin-bottom:10px; padding:8px 10px; background:rgba(59,130,246,0.06); border-radius:6px; border-left:3px solid var(--accent); }
+.photo-section-damage .photo-section-header { }
+.photo-section-damage .photo-section-desc { border-left-color:var(--red); background:var(--red-bg); color:var(--red); }
+.photo-section-damage .photo-section-count { color:var(--red); }
 
 .co-badge { display:inline-block; background:var(--orange-bg); color:var(--orange); font-size:11px; font-weight:600; padding:2px 8px; border-radius:4px; }
 .co-item { font-size:13px; margin-top:8px; }
@@ -312,36 +325,126 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 <!-- Photos -->
 <div class="card">
   <div class="card-title">📷 <span data-i18n="photos">Photos</span></div>
-  <div class="photo-btns">
-    <div class="photo-btn" onclick="showToast(t('cameraToast'))">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-    <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-  </div>
-  <div class="photo-day">
-    <div class="photo-day-label" data-i18n="photoToday">Today (3)</div>
-    <div class="photo-thumbs">
-      <div class="photo-thumb" style="background:var(--accent);opacity:0.6"></div>
-      <div class="photo-thumb" style="background:var(--green);opacity:0.6"></div>
-      <div class="photo-thumb" style="background:var(--purple);opacity:0.6"></div>
+
+  <!-- Pre-Existing Damage — FIRST -->
+  <div class="photo-section photo-section-damage">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">⚠️</span>
+        <span class="photo-section-name" data-i18n="photoDamage">Pre-Existing Damage</span>
+        <span class="photo-section-hint" data-i18n="photoDamageHint">— take these FIRST</span>
+      </div>
+      <span class="photo-section-count" id="damage-count">0</span>
+    </div>
+    <div class="photo-section-body open">
+      <div class="photo-section-desc" data-i18n="photoDamageDesc">Photo any damage you see BEFORE starting work — cracks, rot, stains, broken boards, scratches. This protects you and Nash.</div>
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('damage')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="damage-thumbs"></div>
     </div>
   </div>
-  <div class="photo-day">
-    <div class="photo-day-label" data-i18n="photoYesterday">Yesterday (5)</div>
-    <div class="photo-thumbs">
-      <div class="photo-thumb" style="background:var(--accent);opacity:0.4"></div>
-      <div class="photo-thumb" style="background:var(--green);opacity:0.4"></div>
-      <div class="photo-thumb" style="background:var(--purple);opacity:0.4"></div>
-      <div class="photo-thumb" style="background:var(--yellow);opacity:0.4"></div>
-      <div class="photo-thumb" style="background:var(--orange);opacity:0.4"></div>
+
+  <!-- Pre-Job: Exterior Painting -->
+  <div class="photo-section">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">🏠</span>
+        <span class="photo-section-name" data-i18n="photoPreExterior">Pre-Job — Exterior Painting</span>
+      </div>
+      <span class="photo-section-count" id="pre-ext-count">0</span>
+    </div>
+    <div class="photo-section-body open">
+      <div class="photo-section-desc" data-i18n="photoPreExteriorDesc">Photo all exterior surfaces BEFORE painting — fascia, gutters, trim, doors, windows, eaves. Every surface on the scope.</div>
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('pre-ext')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="pre-ext-thumbs"></div>
     </div>
   </div>
-  <div class="photo-day">
-    <div class="photo-day-label" data-i18n="photoBefore">Before job (2)</div>
-    <div class="photo-thumbs">
-      <div class="photo-thumb" style="background:var(--text-dim);opacity:0.3"></div>
-      <div class="photo-thumb" style="background:var(--text-dim);opacity:0.3"></div>
+
+  <!-- Pre-Job: Deck Staining -->
+  <div class="photo-section">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">🪵</span>
+        <span class="photo-section-name" data-i18n="photoPreDeck">Pre-Job — Deck Staining</span>
+      </div>
+      <span class="photo-section-count" id="pre-deck-count">0</span>
+    </div>
+    <div class="photo-section-body">
+      <div class="photo-section-desc" data-i18n="photoPreDeckDesc">Photo all deck surfaces BEFORE staining — flooring, railings, stairs, posts, lattice. Each deck area.</div>
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('pre-deck')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="pre-deck-thumbs"></div>
     </div>
   </div>
-  <div class="photo-total" data-i18n="photoTotal">📊 Total: <strong>10 photos</strong> uploaded</div>
+
+  <!-- Pre-Job: Carpentry -->
+  <div class="photo-section">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">🔧</span>
+        <span class="photo-section-name" data-i18n="photoPreCarpentry">Pre-Job — Carpentry</span>
+      </div>
+      <span class="photo-section-count" id="pre-carp-count">0</span>
+    </div>
+    <div class="photo-section-body">
+      <div class="photo-section-desc" data-i18n="photoPreCarpentryDesc">Photo all carpentry areas BEFORE work — screens, damaged boards, trim to be removed.</div>
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('pre-carp')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="pre-carp-thumbs"></div>
+    </div>
+  </div>
+
+  <!-- During Job -->
+  <div class="photo-section">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">🔨</span>
+        <span class="photo-section-name" data-i18n="photoDuring">During Job</span>
+      </div>
+      <span class="photo-section-count" id="during-count">3</span>
+    </div>
+    <div class="photo-section-body">
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('during')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="during-thumbs">
+        <div class="photo-thumb" style="background:var(--accent);opacity:0.6"></div>
+        <div class="photo-thumb" style="background:var(--green);opacity:0.6"></div>
+        <div class="photo-thumb" style="background:var(--purple);opacity:0.6"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- After Completion -->
+  <div class="photo-section">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">✅</span>
+        <span class="photo-section-name" data-i18n="photoAfter">After Completion</span>
+      </div>
+      <span class="photo-section-count" id="after-count">0</span>
+    </div>
+    <div class="photo-section-body">
+      <div class="photo-section-desc" data-i18n="photoAfterDesc">Photo finished work — same angles as your pre-job photos for before/after comparison.</div>
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('after')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="after-thumbs"></div>
+    </div>
+  </div>
+
+  <div class="photo-total" id="photo-total">📊 Total: <strong>3 photos</strong> uploaded</div>
 </div>
 
 <!-- Change Orders -->
@@ -451,6 +554,18 @@ const translations = {
     from: 'From',
     estimatorWarning: '⚠️ Gutter and downspout color is NOT finalized yet. Customer is choosing between a lighter shade of Cityscape and a completely different accent. <strong>Do not spray gutters/downspouts until I confirm the color.</strong> Everything else is good to go. Call me if questions: 615-829-6858.',
     estimatorTip: 'Start with fascia, trim, and deck work. Save gutters/downspouts for last.',
+    photoDamage: 'Pre-Existing Damage',
+    photoDamageHint: '— take these FIRST',
+    photoDamageDesc: 'Photo any damage you see BEFORE starting work — cracks, rot, stains, broken boards, scratches. This protects you and Nash.',
+    photoPreExterior: 'Pre-Job — Exterior Painting',
+    photoPreExteriorDesc: 'Photo all exterior surfaces BEFORE painting — fascia, gutters, trim, doors, windows, eaves. Every surface on the scope.',
+    photoPreDeck: 'Pre-Job — Deck Staining',
+    photoPreDeckDesc: 'Photo all deck surfaces BEFORE staining — flooring, railings, stairs, posts, lattice. Each deck area.',
+    photoPreCarpentry: 'Pre-Job — Carpentry',
+    photoPreCarpentryDesc: 'Photo all carpentry areas BEFORE work — screens, damaged boards, trim to be removed.',
+    photoDuring: 'During Job',
+    photoAfter: 'After Completion',
+    photoAfterDesc: 'Photo finished work — same angles as your pre-job photos for before/after comparison.',
     cameraToast: '📸 Camera would open here',
     galleryToast: '📁 Gallery would open here',
     crewLabel: 'crew',
@@ -536,6 +651,18 @@ const translations = {
     from: 'De',
     estimatorWarning: '⚠️ El color de canaletas y bajantes NO está finalizado aún. La cliente está eligiendo entre un tono más claro de Cityscape y un acento completamente diferente. <strong>NO rociar canaletas/bajantes hasta que yo confirme el color.</strong> Todo lo demás está listo. Llámame si hay preguntas: 615-829-6858.',
     estimatorTip: 'Empezar con fascia, molduras y trabajo de terraza. Dejar canaletas/bajantes para el final.',
+    photoDamage: 'Daño Pre-Existente',
+    photoDamageHint: '— tomar estas PRIMERO',
+    photoDamageDesc: 'Fotografiar cualquier daño que veas ANTES de empezar — grietas, pudrición, manchas, tablas rotas, rasguños. Esto te protege a ti y a Nash.',
+    photoPreExterior: 'Pre-Trabajo — Pintura Exterior',
+    photoPreExteriorDesc: 'Fotografiar todas las superficies exteriores ANTES de pintar — fascia, canaletas, molduras, puertas, ventanas, aleros. Cada superficie del alcance.',
+    photoPreDeck: 'Pre-Trabajo — Teñido de Terraza',
+    photoPreDeckDesc: 'Fotografiar todas las superficies de la terraza ANTES de teñir — pisos, barandales, escaleras, postes, enrejado. Cada área.',
+    photoPreCarpentry: 'Pre-Trabajo — Carpintería',
+    photoPreCarpentryDesc: 'Fotografiar todas las áreas de carpintería ANTES del trabajo — mallas, tablas dañadas, molduras a remover.',
+    photoDuring: 'Durante el Trabajo',
+    photoAfter: 'Después de Completar',
+    photoAfterDesc: 'Fotografiar trabajo terminado — mismos ángulos que tus fotos pre-trabajo para comparación antes/después.',
     cameraToast: '📸 La cámara se abriría aquí',
     galleryToast: '📁 La galería se abriría aquí',
     crewLabel: 'equipo',
@@ -624,6 +751,44 @@ function toggleScope(el) {
   items.classList.toggle('open');
   if (count) {
     count.textContent = count.textContent.replace(/[▼▶]/, items.classList.contains('open') ? '▼' : '▶');
+  }
+}
+
+// Photo sections
+const photoColors = ['#3b82f6','#22c55e','#a855f7','#eab308','#f97316','#ef4444','#06b6d4','#ec4899'];
+let photoIdx = 0;
+let photoCounts = { damage:0, 'pre-ext':0, 'pre-deck':0, 'pre-carp':0, during:3, after:0 };
+
+function togglePhotoSection(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+function addPhoto(section) {
+  const thumbs = document.getElementById(section + '-thumbs');
+  const color = photoColors[photoIdx % photoColors.length];
+  photoIdx++;
+  const thumb = document.createElement('div');
+  thumb.className = 'photo-thumb';
+  thumb.style.background = color;
+  thumb.style.opacity = '0.7';
+  thumb.style.animation = 'fadeIn 0.3s ease';
+  thumbs.appendChild(thumb);
+
+  photoCounts[section] = (photoCounts[section] || 0) + 1;
+  document.getElementById(section + '-count').textContent = photoCounts[section];
+
+  updatePhotoTotal();
+  showToast(t('cameraToast'));
+}
+
+function updatePhotoTotal() {
+  const total = Object.values(photoCounts).reduce((a,b) => a+b, 0);
+  const el = document.getElementById('photo-total');
+  if (lang === 'es') {
+    el.innerHTML = `📊 Total: <strong>${total} fotos</strong> subidas`;
+  } else {
+    el.innerHTML = `📊 Total: <strong>${total} photos</strong> uploaded`;
   }
 }
 
