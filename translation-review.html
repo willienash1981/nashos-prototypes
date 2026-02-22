@@ -232,14 +232,24 @@
 <div class="instructions">
   <h2>How this works / Cómo funciona:</h2>
   <ol>
+    <li>Enter your name below</li>
     <li>Each row shows an <strong>English term</strong> and our <strong>proposed Spanish translation</strong></li>
     <li>Tap <strong>👍 Correct</strong> if the Spanish is what you'd actually say on a job site</li>
     <li>Tap <strong>✏️ Fix</strong> if it's wrong or sounds weird — type what you'd actually say</li>
     <li>When you're done, hit <strong>Send Results</strong> at the bottom</li>
   </ol>
   <p style="margin-top:10px;color:var(--yellow);font-size:13px;">
-    🇪🇸 Cada fila muestra un término en inglés y nuestra traducción propuesta. Toca 👍 si está bien, o ✏️ si necesita corrección y escribe cómo lo dirías tú.
+    🇪🇸 Escribe tu nombre abajo. Cada fila muestra un término en inglés y nuestra traducción propuesta. Toca 👍 si está bien, o ✏️ si necesita corrección y escribe cómo lo dirías tú.
   </p>
+</div>
+
+<div style="padding:0 16px;margin-bottom:8px;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <label style="font-size:14px;font-weight:600;color:var(--text-bright);white-space:nowrap;">👤 Your name / Tu nombre:</label>
+    <input type="text" id="reviewer-name" placeholder="e.g. Carlos, Miguel..." 
+      style="flex:1;min-width:150px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--navy-mid);color:var(--text-bright);font-size:15px;font-family:inherit;outline:none;"
+      oninput="localStorage.setItem('nash-reviewer-name',this.value)">
+  </div>
 </div>
 
 <div class="stats-bar">
@@ -403,6 +413,10 @@ function init() {
   document.getElementById('progress-total').textContent = totalTerms;
   updateStats();
   loadSaved();
+
+  // Restore reviewer name
+  const savedName = localStorage.getItem('nash-reviewer-name');
+  if (savedName) document.getElementById('reviewer-name').value = savedName;
 }
 
 function escHtml(s) {
@@ -482,15 +496,91 @@ function loadSaved() {
   updateStats();
 }
 
+// ============================================================
+// Google Apps Script endpoint — Bill deploys this, paste URL here
+// ============================================================
+const BACKEND_URL = ''; // Paste your Apps Script web app URL here
+
 function sendResults() {
-  // Build a text summary of all reviews
+  const reviewerName = document.getElementById('reviewer-name').value.trim();
+  if (!reviewerName) {
+    showToast('⚠️ Please enter your name first / Escribe tu nombre primero');
+    document.getElementById('reviewer-name').focus();
+    document.getElementById('reviewer-name').style.borderColor = 'var(--yellow)';
+    return;
+  }
+
+  // Build structured data for backend
+  let globalIdx = 0;
+  let termsData = [];
+  let good = 0, fixes = 0, reviewed = 0;
+
+  terms.forEach(section => {
+    section.items.forEach(item => {
+      const idx = globalIdx++;
+      const r = reviews[idx];
+      termsData.push({
+        en: item.en,
+        es: item.es,
+        status: r ? r.status : 'pending',
+        fix: r && r.status === 'fix' ? (r.fix || '') : ''
+      });
+      if (r) {
+        reviewed++;
+        if (r.status === 'good') good++;
+        if (r.status === 'fix') fixes++;
+      }
+    });
+  });
+
+  const payload = {
+    reviewer: reviewerName,
+    stats: { reviewed, correct: good, fixes, total: totalTerms },
+    terms: termsData,
+    submittedAt: new Date().toISOString()
+  };
+
+  // Send to backend if configured
+  if (BACKEND_URL) {
+    const btn = document.getElementById('send-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Sending...';
+
+    fetch(BACKEND_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(() => {
+      btn.textContent = '✅ Sent!';
+      btn.style.background = 'var(--green)';
+      showToast(`✅ Saved! ${reviewed} reviewed, ${fixes} corrections. ¡Gracias ${reviewerName}!`);
+      // Also build text summary as backup
+      buildAndShareText(reviewerName, fixes, reviewed);
+    }).catch(err => {
+      btn.textContent = '📤 Send Results';
+      btn.disabled = false;
+      showToast('⚠️ Could not save online — downloading backup file');
+      buildAndShareText(reviewerName, fixes, reviewed);
+    });
+  } else {
+    // No backend configured — use text export
+    buildAndShareText(reviewerName, fixes, reviewed);
+  }
+}
+
+function buildAndShareText(reviewerName, fixCount, reviewedCount) {
   let globalIdx = 0;
   let lines = [];
-  let fixes = 0;
-  let reviewed = 0;
 
-  lines.push('NASH PAINTING — TRANSLATION REVIEW RESULTS');
+  lines.push(`NASH PAINTING — TRANSLATION REVIEW`);
+  lines.push(`Reviewer: ${reviewerName}`);
+  lines.push(`Date: ${new Date().toLocaleDateString()}`);
   lines.push('==========================================\n');
+
+  if (fixCount === 0) {
+    lines.push('✅ All translations marked as correct! No fixes needed.\n');
+  }
 
   terms.forEach(section => {
     let sectionLines = [];
@@ -498,12 +588,10 @@ function sendResults() {
       const idx = globalIdx++;
       const r = reviews[idx];
       if (!r) return;
-      reviewed++;
       if (r.status === 'fix') {
-        fixes++;
         sectionLines.push(`❌ "${item.en}"`);
         sectionLines.push(`   Our translation: "${item.es}"`);
-        sectionLines.push(`   Your correction: "${r.fix || '(no correction entered)'}"`);
+        sectionLines.push(`   ${reviewerName}'s correction: "${r.fix || '(no correction entered)'}"`);
         sectionLines.push('');
       }
     });
@@ -514,23 +602,26 @@ function sendResults() {
     }
   });
 
-  if (fixes === 0) {
-    lines.push('\n✅ All translations marked as correct! No fixes needed.');
-  }
-
-  lines.push(`\n--- ${reviewed}/${totalTerms} reviewed, ${fixes} corrections ---`);
-
+  lines.push(`\n--- ${reviewedCount}/${totalTerms} reviewed, ${fixCount} corrections ---`);
   const text = lines.join('\n');
 
-  // Copy to clipboard
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('📋 Results copied! Paste and send to Bill.');
-  }).catch(() => {
-    // Fallback: show in a prompt
-    prompt('Copy these results and send to Bill:', text);
-  });
+  // Try native share (mobile), fall back to clipboard + download
+  if (navigator.share) {
+    navigator.share({
+      title: `Translation Review — ${reviewerName}`,
+      text: text
+    }).catch(() => clipboardFallback(text));
+  } else {
+    clipboardFallback(text);
+  }
+}
 
-  // Also save as download
+function clipboardFallback(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 Results copied to clipboard!');
+  }).catch(() => {});
+
+  // Also download as file
   const blob = new Blob([text], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
