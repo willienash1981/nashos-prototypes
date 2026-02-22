@@ -57,7 +57,6 @@
   .breadcrumb { font-size: 13px; color: var(--text-dim); }
   .breadcrumb a { color: var(--accent-light); text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
-
   .btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
   .btn-primary { background: var(--accent); color: white; }
   .btn-primary:hover { background: var(--accent-light); }
@@ -65,98 +64,113 @@
   .btn-outline:hover { background: var(--navy-mid); }
   .btn-green { background: var(--green); color: white; }
   .btn-green:hover { opacity: 0.9; }
+  .content { padding: 24px 32px; max-width: 1000px; }
 
-  .content { padding: 24px 32px; max-width: 1100px; }
+  /* No Pricing Banner */
+  .no-pricing-banner { background: var(--red-bg); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--red); font-weight: 500; margin-bottom: 20px; }
 
   /* Status Bar */
-  .status-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 14px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+  .status-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 14px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; flex-wrap: wrap; }
   .status-badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
   .status-active { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-  .status-scheduled { background: rgba(59,130,246,0.15); color: var(--accent-light); border: 1px solid rgba(59,130,246,0.3); }
   .status-separator { width: 1px; height: 24px; background: var(--border); }
   .status-item { font-size: 13px; color: var(--text-dim); }
   .status-item strong { color: var(--text-bright); font-weight: 500; }
 
-  /* Info Grid */
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  /* Cards */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
   .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .card-title { font-size: 14px; font-weight: 600; color: var(--text-bright); display: flex; align-items: center; gap: 8px; }
   .card-body { padding: 16px 20px; }
 
+  /* Info Grid */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
   .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(51,65,85,0.5); }
   .info-row:last-child { border-bottom: none; }
   .info-label { font-size: 13px; color: var(--text-dim); }
-  .info-value { font-size: 13px; color: var(--text-bright); font-weight: 500; text-align: right; }
+  .info-value { font-size: 13px; color: var(--text-bright); font-weight: 500; text-align: right; max-width: 60%; }
 
-  /* Room Sections */
-  .room-section { margin-bottom: 16px; }
-  .room-header { padding: 14px 20px; background: var(--navy-mid); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-  .room-name { font-size: 14px; font-weight: 600; color: var(--text-bright); }
-  .room-sf { font-size: 12px; color: var(--text-dim); background: var(--navy-light); padding: 3px 10px; border-radius: 12px; }
-  .room-body { padding: 0; }
-
-  .scope-table { width: 100%; border-collapse: collapse; }
-  .scope-table th { text-align: left; padding: 8px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); background: var(--card); border-bottom: 1px solid var(--border); }
-  .scope-table td { padding: 10px 20px; font-size: 13px; border-bottom: 1px solid rgba(51,65,85,0.4); }
-  .scope-table tr:last-child td { border-bottom: none; }
-  .scope-table tr:hover td { background: var(--card-hover); }
-
-  .check { color: var(--green); font-weight: 600; }
-  .coat-badge { display: inline-flex; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: rgba(59,130,246,0.15); color: var(--accent-light); }
-  .coat-badge.highlight { background: var(--yellow-bg); color: var(--yellow); }
-
-  /* Colors Section */
-  .color-row { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid rgba(51,65,85,0.4); }
-  .color-row:last-child { border-bottom: none; }
-  .color-swatch { width: 28px; height: 28px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-  .color-info { flex: 1; }
-  .color-name { font-size: 13px; font-weight: 500; color: var(--text-bright); }
-  .color-code { font-size: 11px; color: var(--text-dim); }
-  .color-location { font-size: 12px; color: var(--text-dim); margin-left: auto; }
-
-  /* Notes */
+  /* Estimator Notes */
   .note-item { padding: 12px 20px; border-bottom: 1px solid rgba(51,65,85,0.4); display: flex; gap: 10px; }
   .note-item:last-child { border-bottom: none; }
-  .note-icon { font-size: 14px; margin-top: 1px; }
+  .note-icon { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
   .note-text { font-size: 13px; line-height: 1.6; color: var(--text); }
   .note-alert { background: var(--yellow-bg); border-left: 3px solid var(--yellow); padding: 12px 20px; margin: 0; }
   .note-alert .note-text { color: var(--yellow); font-weight: 500; }
 
-  /* Materials Section */
-  .material-table { width: 100%; border-collapse: collapse; }
-  .material-table th { text-align: left; padding: 8px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); background: var(--card); border-bottom: 1px solid var(--border); }
-  .material-table td { padding: 10px 20px; font-size: 13px; border-bottom: 1px solid rgba(51,65,85,0.4); }
-  .material-table tr:last-child td { border-bottom: none; }
-  .material-qty { font-weight: 600; color: var(--accent-light); font-variant-numeric: tabular-nums; }
+  /* Scope Sections */
+  .scope-section { border-bottom: 1px solid var(--border); }
+  .scope-section:last-child { border-bottom: none; }
+  .scope-header { padding: 12px 20px; background: var(--navy-mid); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .scope-header-main { padding: 14px 20px; background: var(--navy-light); border-bottom: 1px solid var(--border); }
+  .scope-name { font-size: 14px; font-weight: 600; color: var(--text-bright); }
+  .scope-badge { font-size: 11px; color: var(--text-dim); background: var(--navy-light); padding: 2px 10px; border-radius: 10px; }
 
-  /* Photos placeholder */
+  /* Line Items */
+  .line-item { padding: 12px 20px; border-bottom: 1px solid rgba(51,65,85,0.3); }
+  .line-item:last-child { border-bottom: none; }
+  .line-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .line-surface { font-size: 13px; font-weight: 500; color: var(--text-bright); }
+  .line-tags { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+  .tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+  .tag-labor { background: rgba(59,130,246,0.15); color: var(--accent-light); }
+  .tag-product { background: rgba(168,85,247,0.15); color: var(--purple); }
+  .tag-pw { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-carp { background: rgba(249,115,22,0.15); color: var(--orange); }
+  .line-desc { font-size: 12px; color: var(--text-dim); margin-top: 4px; line-height: 1.5; }
+  .line-worknote { font-size: 12px; color: var(--yellow); background: rgba(234,179,8,0.06); border-left: 2px solid var(--yellow); padding: 6px 10px; margin-top: 6px; border-radius: 0 4px 4px 0; line-height: 1.5; }
+
+  /* Colors */
+  .color-row { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid rgba(51,65,85,0.4); }
+  .color-row:last-child { border-bottom: none; }
+  .color-swatch { width: 32px; height: 32px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+  .color-info { flex: 1; }
+  .color-name { font-size: 13px; font-weight: 500; color: var(--text-bright); }
+  .color-code { font-size: 11px; color: var(--text-dim); }
+  .color-location { font-size: 12px; color: var(--text-dim); }
+
+  /* Access Info */
+  .access-row { display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(51,65,85,0.4); font-size: 13px; }
+  .access-row:last-child { border-bottom: none; }
+  .access-icon { flex-shrink: 0; width: 20px; text-align: center; }
+  .access-label { color: var(--text-dim); min-width: 100px; flex-shrink: 0; }
+  .access-value { color: var(--text-bright); font-weight: 500; }
+  .access-alert { color: var(--red); font-weight: 600; }
+
+  /* Materials Table */
+  .mat-table { width: 100%; border-collapse: collapse; }
+  .mat-table th { text-align: left; padding: 8px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); background: var(--navy-light); border-bottom: 1px solid var(--border); }
+  .mat-table td { padding: 10px 20px; font-size: 13px; border-bottom: 1px solid rgba(51,65,85,0.4); }
+  .mat-table tr:last-child td { border-bottom: none; }
+  .mat-qty { font-weight: 600; color: var(--accent-light); font-variant-numeric: tabular-nums; }
+
+  /* Change Order */
+  .co-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); margin-bottom: 12px; }
+
+  /* Labor Summary */
+  .labor-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 1px solid rgba(51,65,85,0.4); }
+  .labor-row:last-child { border-bottom: none; }
+  .labor-type { font-size: 13px; color: var(--text-bright); font-weight: 500; }
+  .labor-badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+
+  /* Photos */
   .photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 16px 20px; }
-  .photo-placeholder { aspect-ratio: 4/3; background: var(--navy-mid); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-dim); border: 1px dashed var(--border); }
-
-  /* Checklist */
-  .checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 20px; border-bottom: 1px solid rgba(51,65,85,0.4); }
-  .checklist-item:last-child { border-bottom: none; }
-  .checklist-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; margin-top: 1px; flex-shrink: 0; cursor: pointer; }
-  .checklist-box:hover { border-color: var(--accent); }
-  .checklist-box.checked { background: var(--green); border-color: var(--green); position: relative; }
-  .checklist-box.checked::after { content: '✓'; position: absolute; top: -2px; left: 2px; font-size: 12px; color: white; font-weight: 700; }
-  .checklist-label { font-size: 13px; color: var(--text); }
+  .photo-placeholder { aspect-ratio: 4/3; background: var(--navy-mid); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-dim); border: 1px dashed var(--border); }
 
   /* Timeline */
-  .timeline-item { display: flex; gap: 12px; padding: 12px 20px; }
+  .timeline-item { display: flex; gap: 12px; padding: 10px 20px; }
   .timeline-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
   .timeline-content { flex: 1; }
   .timeline-title { font-size: 13px; color: var(--text); }
   .timeline-date { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-  .timeline-connector { width: 2px; background: var(--border); margin-left: 4px; height: 20px; }
 
-  /* Print-friendly banner */
-  .no-pricing-banner { background: var(--red-bg); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--red); font-weight: 500; margin-bottom: 20px; }
+  /* Bottom Grid */
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 
-  /* ========= RESPONSIVE ========= */
+  /* Table scroll wrapper */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* Tablet */
+  /* =========== RESPONSIVE =========== */
   @media (max-width: 1024px) {
     .sidebar { display: none; }
     body { display: block; }
@@ -166,72 +180,35 @@
     .topbar-right { width: 100%; display: flex; gap: 8px; }
     .topbar-right .btn { flex: 1; justify-content: center; font-size: 12px; padding: 8px 10px; }
     .info-grid { grid-template-columns: 1fr; }
-    .photo-grid { grid-template-columns: repeat(4, 1fr); }
+    .bottom-grid { grid-template-columns: 1fr; }
   }
-
-  /* Phone */
   @media (max-width: 680px) {
     .content { padding: 12px; }
     .topbar { padding: 10px 12px; }
     .topbar h1 { font-size: 15px; line-height: 1.3; }
     .breadcrumb { font-size: 11px; }
     .topbar-right .btn { font-size: 11px; padding: 7px 6px; }
-
-    /* Status bar wraps */
     .status-bar { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
     .status-separator { display: none; }
     .status-item { font-size: 12px; flex-basis: 45%; }
-
-    /* Cards */
     .card-header { padding: 12px 14px; }
     .card-body { padding: 12px 14px; }
     .info-row { flex-direction: column; gap: 2px; padding: 6px 0; }
-    .info-value { text-align: left; }
-
-    /* Scope tables scroll horizontally */
-    .room-section { overflow: hidden; }
-    .scope-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .scope-table { min-width: 520px; }
-    .scope-table th, .scope-table td { padding: 8px 10px; font-size: 12px; white-space: nowrap; }
-    .scope-table td:last-child { white-space: normal; min-width: 100px; }
-    .room-header { padding: 10px 14px; }
-    .room-name { font-size: 13px; }
-    .room-sf { font-size: 11px; }
-
-    /* Color rows stack */
+    .info-value { text-align: left; max-width: 100%; }
+    .line-item { padding: 10px 14px; }
+    .line-top { flex-direction: column; gap: 6px; }
+    .line-tags { flex-wrap: wrap; }
     .color-row { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
-    .color-location { flex-basis: 100%; margin-left: 40px; font-size: 11px; }
-
-    /* Materials table scrolls */
-    .material-table { min-width: 440px; }
-    .material-table th, .material-table td { padding: 8px 10px; font-size: 12px; }
-
-    /* Notes */
+    .color-location { flex-basis: 100%; margin-left: 44px; }
     .note-item { padding: 10px 14px; }
     .note-alert { padding: 10px 14px; }
     .note-text { font-size: 12px; }
-
-    /* Bottom grid stacks */
-    .bottom-grid, [style*="grid-template-columns: 1fr 1fr 1fr"] {
-      display: grid !important;
-      grid-template-columns: 1fr !important;
-      gap: 16px !important;
-    }
-
-    /* Photos grid */
+    .access-row { flex-wrap: wrap; }
+    .access-label { min-width: 80px; }
+    .mat-table { min-width: 440px; }
     .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 12px 14px; }
-
-    /* Checklist */
-    .checklist-item { padding: 8px 14px; }
-    .checklist-label { font-size: 12px; }
-
-    /* Timeline */
-    .timeline-item { padding: 10px 14px; }
-    .timeline-title { font-size: 12px; }
-    .timeline-date { font-size: 10px; }
-
-    /* No-pricing banner */
     .no-pricing-banner { font-size: 11px; padding: 8px 12px; }
+    .scope-header, .scope-header-main { padding: 10px 14px; }
   }
 </style>
 </head>
@@ -243,23 +220,19 @@
     <div class="logo-icon">N</div>
     <div class="logo-text">Nash<span>OS</span></div>
   </div>
-
   <div class="nav-section">Sales</div>
   <a class="nav-item"><span class="icon">📊</span> Dashboard</a>
   <a class="nav-item"><span class="icon">📝</span> Estimates</a>
   <a class="nav-item"><span class="icon">📋</span> Proposals</a>
   <a class="nav-item"><span class="icon">👥</span> Customers</a>
-
   <div class="nav-section">Operations</div>
   <a class="nav-item"><span class="icon">🔨</span> Jobs</a>
   <a class="nav-item active"><span class="icon">📦</span> Work Orders</a>
   <a class="nav-item"><span class="icon">🧾</span> Invoices</a>
   <a class="nav-item"><span class="icon">📸</span> Photos</a>
-
   <div class="nav-section">Admin</div>
   <a class="nav-item"><span class="icon">📈</span> Reports</a>
   <a class="nav-item"><span class="icon">⚙️</span> Settings</a>
-
   <div class="sidebar-footer">
     <div class="user-info">
       <div class="avatar">BN</div>
@@ -276,8 +249,8 @@
   <div class="topbar">
     <div class="topbar-left">
       <div>
-        <div class="breadcrumb"><a href="#">Jobs</a> / <a href="#">Johnson Residence</a> / Work Order</div>
-        <h1>WO-2026-0218-EXT — Exterior Painting</h1>
+        <div class="breadcrumb"><a href="#">Jobs</a> / <a href="#">Greil Residence</a> / Work Order</div>
+        <h1>WO-40618331 — Exterior Painting + Deck Staining</h1>
       </div>
     </div>
     <div class="topbar-right">
@@ -291,511 +264,548 @@
 
     <!-- No Pricing Banner -->
     <div class="no-pricing-banner">
-      🔒 This work order contains NO pricing information. Crews do not see dollar amounts, margins, or customer-facing terms.
+      🔒 CREW WORK ORDER — No pricing, margins, or customer-facing terms. Internal use only.
     </div>
 
     <!-- Status Bar -->
     <div class="status-bar">
       <span class="status-badge status-active">● In Progress</span>
       <div class="status-separator"></div>
-      <span class="status-item"><strong>Crew:</strong> Carlos Villanueva</span>
+      <span class="status-item"><strong>Crew:</strong> Carlos Villanueva (3 painters)</span>
       <div class="status-separator"></div>
-      <span class="status-item"><strong>Start:</strong> Mon Feb 24, 2026</span>
+      <span class="status-item"><strong>Supervisor:</strong> Anthony Mitchell</span>
       <div class="status-separator"></div>
-      <span class="status-item"><strong>Est. Complete:</strong> Fri Feb 28</span>
-      <div class="status-separator"></div>
-      <span class="status-item"><strong>Day:</strong> 1 of 5</span>
+      <span class="status-item"><strong>Start:</strong> Feb 18, 2026</span>
       <div class="status-separator"></div>
       <span class="status-item"><strong>Prep Level:</strong> Standard</span>
     </div>
 
-    <!-- Info Grid -->
+    <!-- Job Info + Access Info -->
     <div class="info-grid">
       <!-- Job Info -->
-      <div class="card">
+      <div class="card" style="margin-bottom:0">
         <div class="card-header">
           <span class="card-title">📍 Job Information</span>
         </div>
         <div class="card-body">
           <div class="info-row">
             <span class="info-label">Customer</span>
-            <span class="info-value">Michael & Sarah Johnson</span>
+            <span class="info-value">Gail Greil</span>
           </div>
           <div class="info-row">
             <span class="info-label">Address</span>
-            <span class="info-value">1847 Woodmont Blvd, Nashville TN 37215</span>
+            <span class="info-value">4 Strawberry Hill, Nashville, TN 37215</span>
           </div>
           <div class="info-row">
-            <span class="info-label">Phone</span>
-            <span class="info-value">(615) 555-0142</span>
+            <span class="info-label">Estimator</span>
+            <span class="info-value">Larry Morrison</span>
           </div>
           <div class="info-row">
-            <span class="info-label">Gate / Access</span>
-            <span class="info-value">No gate. Park on street. Back deck via side gate (code: 4821)</span>
+            <span class="info-label">PO Number</span>
+            <span class="info-value" style="color:var(--orange)">CALL OFFICE 615-829-6858</span>
           </div>
           <div class="info-row">
-            <span class="info-label">Water Access</span>
-            <span class="info-value">Spigot on right side of house near garage</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Restroom</span>
-            <span class="info-value">Half bath on main floor through garage door</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Pets / Kids</span>
-            <span class="info-value">2 friendly dogs — keep fence gate closed at all times</span>
+            <span class="info-label">Service Type</span>
+            <span class="info-value">Exterior Painting · Deck Staining · Carpentry</span>
           </div>
         </div>
       </div>
 
-      <!-- Crew Assignment -->
-      <div class="card">
+      <!-- Customer Access / Site Info -->
+      <div class="card" style="margin-bottom:0">
         <div class="card-header">
-          <span class="card-title">👷 Crew Assignment</span>
+          <span class="card-title">🏠 Site Access & Instructions</span>
         </div>
         <div class="card-body">
-          <div class="info-row">
-            <span class="info-label">Lead</span>
-            <span class="info-value">Carlos Villanueva</span>
+          <div class="access-row">
+            <span class="access-icon">🚪</span>
+            <span class="access-label">Gate</span>
+            <span class="access-value">Guard at gate at 8am</span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Crew Size</span>
-            <span class="info-value">3 painters</span>
+          <div class="access-row">
+            <span class="access-icon">🚗</span>
+            <span class="access-label">Parking</span>
+            <span class="access-value">Park at tennis courts, come up driveway in one car if possible</span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Supervisor</span>
-            <span class="info-value">Anthony Mitchell</span>
+          <div class="access-row">
+            <span class="access-icon">🚿</span>
+            <span class="access-label">Clean up</span>
+            <span class="access-value">Water hose at top of driveway</span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Estimator</span>
-            <span class="info-value">Larry Rodriguez</span>
+          <div class="access-row">
+            <span class="access-icon">🚻</span>
+            <span class="access-label">Restroom</span>
+            <span class="access-value access-alert">❌ No restroom access</span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Service Type</span>
-            <span class="info-value">Exterior Painting — Standard Package</span>
+          <div class="access-row">
+            <span class="access-icon">🎵</span>
+            <span class="access-label">Music</span>
+            <span class="access-value">Yes — OK to play</span>
           </div>
-          <div class="info-row">
-            <span class="info-label">Height Tier</span>
-            <span class="info-value">2-Story (12–24 ft) — 0.65× production rate</span>
+          <div class="access-row">
+            <span class="access-icon">🐕</span>
+            <span class="access-label">Pets</span>
+            <span class="access-value access-alert">⚠️ Do NOT let dog out of backyard</span>
+          </div>
+          <div class="access-row">
+            <span class="access-icon">🗑️</span>
+            <span class="access-label">Trash</span>
+            <span class="access-value">Haul away — do not leave bags on site</span>
+          </div>
+          <div class="access-row">
+            <span class="access-icon">⏰</span>
+            <span class="access-label">Time rules</span>
+            <span class="access-value access-alert">Saturday work must end at 2pm</span>
+          </div>
+          <div class="access-row">
+            <span class="access-icon">⚠️</span>
+            <span class="access-label">Special</span>
+            <span class="access-value access-alert">Do NOT leave food in yard — chicken bones are dangerous for dog</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Scope - By Section -->
-    <div class="card" style="margin-bottom:20px;">
+    <!-- Estimator Notes -->
+    <div class="card">
       <div class="card-header">
-        <span class="card-title">📋 Scope of Work — By Section</span>
-        <span style="font-size:12px;color:var(--text-dim)">4 sections · 47 surfaces</span>
+        <span class="card-title">📝 Estimator Notes</span>
+        <span style="font-size:12px;color:var(--text-dim)">Larry Morrison</span>
       </div>
-
-      <!-- Front Section -->
-      <div class="room-section">
-        <div class="room-header">
-          <span class="room-name">Front Elevation</span>
-          <span class="room-sf">2-Story · 1,240 SF siding</span>
-        </div>
-        <div class="scope-table-wrap"><table class="scope-table">
-          <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Siding (HardiePlank)</td>
-              <td>Spray + back-roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Scrape · Caulk · Spot prime</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Trim & Fascia</td>
-              <td>Brush & roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Sand · Caulk</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Soffit</td>
-              <td>Spray</td>
-              <td><span class="coat-badge">1 coat</span></td>
-              <td>PW · Light sand</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Shutters (8)</td>
-              <td>Spray</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Sand</td>
-              <td>Remove, spray, reinstall</td>
-            </tr>
-            <tr>
-              <td>Front Door</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>Sand · Clean · Tape hardware</td>
-              <td>Both sides — opens inward</td>
-            </tr>
-            <tr>
-              <td>Garage Door</td>
-              <td>Spray + back-roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Sand</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Foundation Band</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">1 coat</span></td>
-              <td>PW · Scrape loose</td>
-              <td>8" visible above grade</td>
-            </tr>
-          </tbody>
-        </table></div>
+      <div class="note-alert">
+        <span class="note-icon">⚠️</span>
+        <span class="note-text">Gail mentioned wanting gutters/downspouts and garage doors a lighter color. The main color was SW Cityscape. No stucco was included in this estimate.</span>
       </div>
-
-      <!-- Left Section -->
-      <div class="room-section">
-        <div class="room-header">
-          <span class="room-name">Left Elevation</span>
-          <span class="room-sf">2-Story · 680 SF siding</span>
-        </div>
-        <div class="scope-table-wrap"><table class="scope-table">
-          <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Siding (HardiePlank)</td>
-              <td>Spray + back-roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Scrape · Caulk · Spot prime</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Trim & Fascia</td>
-              <td>Brush & roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Sand · Caulk</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Windows (6)</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>Scrape · Caulk · Prime bare</td>
-              <td>2 are 2nd floor — ladder work</td>
-            </tr>
-            <tr>
-              <td>Soffit</td>
-              <td>Spray</td>
-              <td><span class="coat-badge">1 coat</span></td>
-              <td>PW · Light sand</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table></div>
-      </div>
-
-      <!-- Right Section -->
-      <div class="room-section">
-        <div class="room-header">
-          <span class="room-name">Right Elevation</span>
-          <span class="room-sf">2-Story · 720 SF siding</span>
-        </div>
-        <div class="scope-table-wrap"><table class="scope-table">
-          <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Siding (HardiePlank)</td>
-              <td>Spray + back-roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Scrape · Caulk · Spot prime</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Trim & Fascia</td>
-              <td>Brush & roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Sand · Caulk</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Windows (5)</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>Scrape · Caulk · Prime bare</td>
-              <td>3 are 2nd floor</td>
-            </tr>
-            <tr>
-              <td>Downspouts (3)</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">1 coat</span></td>
-              <td>Sand</td>
-              <td>Match trim color</td>
-            </tr>
-          </tbody>
-        </table></div>
-      </div>
-
-      <!-- Back Section -->
-      <div class="room-section">
-        <div class="room-header">
-          <span class="room-name">Back Elevation</span>
-          <span class="room-sf">2-Story · 960 SF siding</span>
-        </div>
-        <div class="scope-table-wrap"><table class="scope-table">
-          <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Siding (HardiePlank)</td>
-              <td>Spray + back-roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Scrape · Caulk · Spot prime</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Trim & Fascia</td>
-              <td>Brush & roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>PW · Sand · Caulk</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Soffit (covered porch area)</td>
-              <td>Spray</td>
-              <td><span class="coat-badge">1 coat</span></td>
-              <td>PW · Light sand</td>
-              <td>Mask deck railing before spraying</td>
-            </tr>
-            <tr>
-              <td>French Doors (2 sets)</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>Sand · Tape glass</td>
-              <td>Exterior faces only — interior not in scope</td>
-            </tr>
-            <tr>
-              <td>Windows (4)</td>
-              <td>Brush</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>Scrape · Caulk · Prime bare</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Columns (4)</td>
-              <td>Brush & roll</td>
-              <td><span class="coat-badge">2 coats</span></td>
-              <td>Sand · Fill cracks · Prime</td>
-              <td>Wrap-around — all faces</td>
-            </tr>
-          </tbody>
-        </table></div>
+      <div class="note-item">
+        <span class="note-icon">🎨</span>
+        <span class="note-text">Nash Painting is providing the paint. Trim and deck color: SW 7067 Cityscape (Sher-color formula).</span>
       </div>
     </div>
 
     <!-- Colors -->
-    <div class="card" style="margin-bottom:20px;">
+    <div class="card">
       <div class="card-header">
         <span class="card-title">🎨 Color Selections</span>
-        <span style="font-size:12px;color:var(--text-dim)">3 colors</span>
+        <span style="font-size:12px;color:var(--text-dim)">Nash providing paint</span>
       </div>
       <div class="color-row">
-        <div class="color-swatch" style="background:#C5C0B8"></div>
+        <div class="color-swatch" style="background:#6B6F73"></div>
         <div class="color-info">
-          <div class="color-name">Agreeable Gray — Satin</div>
-          <div class="color-code">SW 7029 · Sherwin-Williams Emerald</div>
+          <div class="color-name">Cityscape — Satin</div>
+          <div class="color-code">SW 7067 · Sher-color formula</div>
         </div>
-        <div class="color-location">Siding — all elevations</div>
+        <div class="color-location">Trim, Fascia, Deck</div>
       </div>
       <div class="color-row">
-        <div class="color-swatch" style="background:#F5F0E8"></div>
+        <div class="color-swatch" style="background:#9EA2A5"></div>
         <div class="color-info">
-          <div class="color-name">Extra White — Semi-Gloss</div>
-          <div class="color-code">SW 7006 · Sherwin-Williams Emerald</div>
+          <div class="color-name">TBD — Lighter Accent</div>
+          <div class="color-code">Per customer request</div>
         </div>
-        <div class="color-location">Trim, Fascia, Soffit, Columns, Windows</div>
-      </div>
-      <div class="color-row">
-        <div class="color-swatch" style="background:#4A4843"></div>
-        <div class="color-info">
-          <div class="color-name">Urban Bronze — Satin</div>
-          <div class="color-code">SW 7048 · Sherwin-Williams Emerald</div>
-        </div>
-        <div class="color-location">Front Door, Shutters, Garage Door</div>
+        <div class="color-location">Gutters, Downspouts, Garage Doors</div>
       </div>
     </div>
 
-    <!-- Two Column: Materials + Notes -->
+    <!-- SCOPE: Exterior Painting -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Scope of Work</span>
+        <span style="font-size:12px;color:var(--text-dim)">3 service types · 4 zones</span>
+      </div>
+
+      <!-- Zone: Exterior Painting -->
+      <div class="scope-section">
+        <div class="scope-header-main">
+          <span class="scope-name">Exterior Painting</span>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Pressure Washing — All Painted Surfaces</span>
+            <div class="line-tags"><span class="tag tag-pw">PW Labor</span></div>
+          </div>
+          <div class="line-worknote">Avoid window and door openings. Use appropriate pressure to avoid damage to wood. Watch closely on decks. Catch paint chips to minimize cleanup.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Fascia Only</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+          <div class="line-desc">Fascia boards & associated shingle trim. Areas where fascia is mounted directly to house.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Gutters</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+          <div class="line-desc">Gutters are not removed. Painting on outward and down facing sides included.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Downspouts</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+          <div class="line-desc">Downspouts are not removed. Outward facing sides included.</div>
+          <div class="line-worknote">Make sure unpainted areas behind downspouts are not visible with sprayers, whizz rollers, or brushes.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Doors & Frames</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Attic Vents</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Advance — Accent</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Windows (Standard)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Painted Eaves</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Porch Ceiling</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Garage Door & Frame</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Window Trim Only</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Porch Columns</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Door Frame Only</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zone: Back Left - Screened Porch -->
+      <div class="scope-section">
+        <div class="scope-header">
+          <span class="scope-name">Back Left — Screened Porch (Under Upper Deck)</span>
+          <span class="scope-badge">Deck + Carpentry</span>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Deck Flooring (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Porch Ceiling</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span></div>
+          </div>
+          <div class="line-desc">Scrape, caulk, and prime raw wood. Paint 2 coats.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Screen Removal</span>
+            <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span></div>
+          </div>
+          <div class="line-desc">Remove screen and loose staples.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Screen Installation</span>
+            <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span><span class="tag tag-product">Charcoal Fiberglass Screen</span></div>
+          </div>
+          <div class="line-desc">Install new screen. Standard screen included. Upgraded or non-standard screen to be researched.</div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Skirting, Lattice & Posts (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Wood Railing (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Reuse Old Wood Trim</span>
+            <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span></div>
+          </div>
+          <div class="line-desc">Gently remove old wood trim. Reinstall after porch is stained and rescreened.</div>
+          <div class="line-worknote">Painters to stain/paint per work order PRIOR to carpenters reinstalling wood. Broken/damaged boards needing replacement = additional labor + material cost. New boards will not match with semi-transparent decks.</div>
+        </div>
+      </div>
+
+      <!-- Zone: Main Deck -->
+      <div class="scope-section">
+        <div class="scope-header">
+          <span class="scope-name">Main Deck</span>
+          <span class="scope-badge">Deck Staining</span>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Deck Flooring (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Staircase — Steps, Stairs & Risers (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Wood Railing (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Skirting, Lattice & Posts (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zone: Back Right Deck -->
+      <div class="scope-section">
+        <div class="scope-header">
+          <span class="scope-name">Back Right Side Deck (Upper and Lower)</span>
+          <span class="scope-badge">Deck + Carpentry</span>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Deck Flooring (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Skirting, Lattice & Posts (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Wood Railing (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Screen Removal + Reinstall</span>
+            <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span><span class="tag tag-product">Charcoal Fiberglass Screen</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Reuse Old Wood Trim</span>
+            <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span></div>
+          </div>
+          <div class="line-worknote">Painters to stain/paint per work order PRIOR to carpenters reinstalling wood.</div>
+        </div>
+      </div>
+
+      <!-- Zone: Lower Deck -->
+      <div class="scope-section">
+        <div class="scope-header">
+          <span class="scope-name">Lower Deck</span>
+          <span class="scope-badge">Deck Staining</span>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Deck Flooring (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Staircase — Steps, Stairs & Risers (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+
+        <div class="line-item">
+          <div class="line-top">
+            <span class="line-surface">Wood Railing (Premium)</span>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Order -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔄 Change Orders</span>
+        <span style="font-size:12px;color:var(--text-dim)">1 change order</span>
+      </div>
+      <div style="padding:16px 20px;">
+        <div class="co-badge">CO-1 · Deck Boards</div>
+        <div class="line-item" style="padding:0;">
+          <div class="line-top">
+            <span class="line-surface">Deck Floor Boards — Pressure Treated Pine 1×8×8</span>
+            <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span></div>
+          </div>
+          <div class="line-worknote">Match board gaps with existing. See pics for exact locations.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Materials + Labor Summary -->
     <div class="info-grid">
       <!-- Materials -->
-      <div class="card">
+      <div class="card" style="margin-bottom:0">
         <div class="card-header">
-          <span class="card-title">🪣 Materials — Pick Up from Hoover Paint (Cool Springs)</span>
+          <span class="card-title">🪣 Materials — Pick Up</span>
         </div>
-        <div class="scope-table-wrap"><table class="material-table">
-          <thead><tr><th>Product</th><th>Color / Spec</th><th>Size</th><th>Qty</th></tr></thead>
+        <div class="table-scroll">
+        <table class="mat-table">
+          <thead><tr><th>Product</th><th>Spec / Color</th><th>Qty</th></tr></thead>
           <tbody>
             <tr>
-              <td>SW Emerald Exterior — Satin</td>
-              <td>Agreeable Gray (SW 7029)</td>
-              <td>5 gal</td>
-              <td class="material-qty">3</td>
+              <td>Benjamin Moore Ultra Spec</td>
+              <td>Trim — Cityscape formula</td>
+              <td class="mat-qty">TBD</td>
             </tr>
             <tr>
-              <td>SW Emerald Exterior — Semi-Gloss</td>
-              <td>Extra White (SW 7006)</td>
-              <td>1 gal</td>
-              <td class="material-qty">4</td>
+              <td>Benjamin Moore Advance</td>
+              <td>Accent</td>
+              <td class="mat-qty">TBD</td>
             </tr>
             <tr>
-              <td>SW Emerald Exterior — Satin</td>
-              <td>Urban Bronze (SW 7048)</td>
-              <td>1 gal</td>
-              <td class="material-qty">2</td>
+              <td>Benjamin Moore Woodluxe</td>
+              <td>Deck stain — Cityscape formula</td>
+              <td class="mat-qty">TBD</td>
             </tr>
             <tr>
-              <td>SW PVA Primer</td>
-              <td>White</td>
-              <td>1 gal</td>
-              <td class="material-qty">2</td>
+              <td>Porch Screen</td>
+              <td>Charcoal fiberglass insect screen</td>
+              <td class="mat-qty">2 rolls</td>
             </tr>
             <tr>
-              <td>SW 950A Caulk</td>
-              <td>White</td>
-              <td>10.1 oz</td>
-              <td class="material-qty">24</td>
+              <td>Deck Board 8'</td>
+              <td>Pressure treated pine 1×8×8</td>
+              <td class="mat-qty">Per CO-1</td>
             </tr>
             <tr>
-              <td>Frog Tape (green)</td>
-              <td>1.41" × 60 yd</td>
-              <td>roll</td>
-              <td class="material-qty">6</td>
-            </tr>
-            <tr>
-              <td>3M Sandpaper (150 grit)</td>
+              <td>Deck Screws</td>
               <td>—</td>
-              <td>pack</td>
-              <td class="material-qty">3</td>
+              <td class="mat-qty">1 box</td>
             </tr>
             <tr>
-              <td>9" Roller Covers (3/8 nap)</td>
-              <td>—</td>
-              <td>each</td>
-              <td class="material-qty">8</td>
+              <td>Carpentry Perishables</td>
+              <td>Fuel, nails, screws, blades</td>
+              <td class="mat-qty">Trip charge</td>
             </tr>
           </tbody>
-        </table></div>
+        </table>
+        </div>
       </div>
 
-      <!-- Crew Notes -->
-      <div class="card">
+      <!-- Labor Summary -->
+      <div class="card" style="margin-bottom:0">
         <div class="card-header">
-          <span class="card-title">📝 Crew Instructions</span>
+          <span class="card-title">👷 Labor Summary</span>
         </div>
-        <div class="note-alert">
-          <span class="note-icon">⚠️</span>
-          <span class="note-text">Neighbor's new concrete driveway on RIGHT side — lay tarps over concrete, notify neighbor before working that side. He is particular but cooperative.</span>
+        <div class="labor-row">
+          <span class="labor-type">Exterior Labor</span>
+          <span class="tag tag-labor">Painting + Staining</span>
         </div>
-        <div class="note-item">
-          <span class="note-icon">🔧</span>
-          <span class="note-text">Pressure wash ALL painted surfaces first. 3700 PSI. Include gutters, downspouts, and soffit (light wash on soffit).</span>
+        <div class="labor-row">
+          <span class="labor-type">Carpentry Labor</span>
+          <span class="tag tag-carp">Screen + Board Replacement</span>
         </div>
-        <div class="note-item">
-          <span class="note-icon">🔧</span>
-          <span class="note-text">Remove all 8 shutters before painting. Spray off-site on sawhorses. Reinstall after dry (use new stainless screws — old ones are rusted).</span>
+        <div class="labor-row">
+          <span class="labor-type">Pressure Washing Labor</span>
+          <span class="tag tag-pw">All Painted + Deck Surfaces</span>
         </div>
-        <div class="note-item">
-          <span class="note-icon">🔧</span>
-          <span class="note-text">Front door: paint BOTH sides. Opens inward, door belongs to front entry. Tape all hardware — customer does NOT want hardware removed.</span>
-        </div>
-        <div class="note-item">
-          <span class="note-icon">🔧</span>
-          <span class="note-text">Back porch soffit: mask deck railing BEFORE spraying. Protect deck flooring with drop cloths — customer just had it re-stained.</span>
-        </div>
-        <div class="note-item">
-          <span class="note-icon">🐕</span>
-          <span class="note-text">Two friendly dogs. KEEP FENCE GATE CLOSED at all times. Dogs use a doggy door to the backyard.</span>
-        </div>
-        <div class="note-item">
-          <span class="note-icon">🚗</span>
-          <span class="note-text">Park on street or end of driveway. Do NOT block garage doors.</span>
-        </div>
-        <div class="note-item">
-          <span class="note-icon">🚿</span>
-          <span class="note-text">Clean brushes at outdoor spigot (right side near garage). Do NOT use indoor plumbing for cleanup.</span>
+        <div class="labor-row">
+          <span class="labor-type">Carpentry Additional (Hourly)</span>
+          <span class="tag tag-carp">Manual — per CO-1</span>
         </div>
       </div>
     </div>
 
-    <!-- Bottom Row: Photos + Completion Checklist + Timeline -->
-    <div class="bottom-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px; margin-top:20px;">
+    <!-- Bottom: Photos + Timeline -->
+    <div class="info-grid" style="margin-top:20px;">
       <!-- Pre-Job Photos -->
-      <div class="card">
+      <div class="card" style="margin-bottom:0">
         <div class="card-header">
           <span class="card-title">📸 Pre-Job Photos</span>
-          <span style="font-size:12px;color:var(--text-dim)">8 photos</span>
+          <span style="font-size:12px;color:var(--text-dim)">23 photos</span>
         </div>
         <div class="photo-grid">
           <div class="photo-placeholder">Front</div>
-          <div class="photo-placeholder">Left</div>
-          <div class="photo-placeholder">Right</div>
-          <div class="photo-placeholder">Back</div>
-          <div class="photo-placeholder">Front Door</div>
-          <div class="photo-placeholder">Shutters</div>
-          <div class="photo-placeholder">Deck Area</div>
-          <div class="photo-placeholder">Damage</div>
+          <div class="photo-placeholder">Back Left Porch</div>
+          <div class="photo-placeholder">Main Deck</div>
+          <div class="photo-placeholder">Railing Detail</div>
+          <div class="photo-placeholder">Deck Boards</div>
+          <div class="photo-placeholder">Garage Doors</div>
+          <div class="photo-placeholder">Gutters</div>
+          <div class="photo-placeholder">Screen Damage</div>
+        </div>
+        <div style="padding:8px 20px 12px;text-align:center;">
+          <a style="font-size:12px;color:var(--accent-light);cursor:pointer;">View all 23 photos →</a>
         </div>
       </div>
 
-      <!-- Completion Checklist -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">✅ Completion Checklist</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box checked"></div>
-          <span class="checklist-label">Pressure wash complete — all surfaces</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box checked"></div>
-          <span class="checklist-label">Scraping & sanding complete</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box checked"></div>
-          <span class="checklist-label">Caulking & priming complete</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">First coat — all siding</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">First coat — all trim & fascia</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">Second coat — all siding</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">Second coat — all trim & fascia</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">Shutters sprayed & reinstalled</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">Front door — both sides, 2 coats</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">Cleanup & final walkthrough</span>
-        </div>
-        <div class="checklist-item">
-          <div class="checklist-box"></div>
-          <span class="checklist-label">Post-job photos uploaded</span>
-        </div>
-      </div>
-
-      <!-- Project Timeline -->
-      <div class="card">
+      <!-- Timeline -->
+      <div class="card" style="margin-bottom:0">
         <div class="card-header">
           <span class="card-title">📅 Project Timeline</span>
         </div>
@@ -804,56 +814,42 @@
             <div class="timeline-dot" style="background:var(--green)"></div>
             <div class="timeline-content">
               <div class="timeline-title">Estimate sent</div>
-              <div class="timeline-date">Feb 10 · Larry Rodriguez</div>
+              <div class="timeline-date">Jan 28 · Larry Morrison</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="timeline-dot" style="background:var(--green)"></div>
             <div class="timeline-content">
-              <div class="timeline-title">Proposal accepted — Premium Plus</div>
-              <div class="timeline-date">Feb 14 · Customer portal</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot" style="background:var(--green)"></div>
-            <div class="timeline-content">
-              <div class="timeline-title">Colors confirmed</div>
-              <div class="timeline-date">Feb 17 · Customer portal</div>
+              <div class="timeline-title">Proposal accepted</div>
+              <div class="timeline-date">Feb 3 · Customer portal</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="timeline-dot" style="background:var(--green)"></div>
             <div class="timeline-content">
               <div class="timeline-title">Work order generated</div>
-              <div class="timeline-date">Feb 18 · Auto-generated</div>
+              <div class="timeline-date">Feb 5 · WO-40618331</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="timeline-dot" style="background:var(--green)"></div>
             <div class="timeline-content">
-              <div class="timeline-title">Materials PO sent to Hoover</div>
-              <div class="timeline-date">Feb 19 · PO-2026-0219-001</div>
+              <div class="timeline-title">CO-1: Deck boards added</div>
+              <div class="timeline-date">Feb 12 · Per site inspection</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="timeline-dot" style="background:var(--accent)"></div>
             <div class="timeline-content">
-              <div class="timeline-title"><strong>Work started — Day 1</strong></div>
-              <div class="timeline-date">Feb 24 · Carlos crew on site</div>
+              <div class="timeline-title"><strong>Work started</strong></div>
+              <div class="timeline-date">Feb 18 · Carlos crew on site</div>
             </div>
           </div>
           <div class="timeline-item">
             <div class="timeline-dot" style="background:var(--border)"></div>
             <div class="timeline-content">
               <div class="timeline-title" style="color:var(--text-dim)">Target completion</div>
-              <div class="timeline-date">Feb 28</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot" style="background:var(--border)"></div>
-            <div class="timeline-content">
-              <div class="timeline-title" style="color:var(--text-dim)">Final walkthrough & invoice</div>
-              <div class="timeline-date">Feb 28</div>
+              <div class="timeline-date">Mar 20 (final date per customer)</div>
             </div>
           </div>
         </div>
