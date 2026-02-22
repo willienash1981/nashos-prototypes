@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nash Painting — Revisión de Traducción / Translation Review</title>
+<style>
+  :root {
+    --navy: #1a2332;
+    --navy-light: #243044;
+    --navy-mid: #2a3a52;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.12);
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.08);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-bright: #f8fafc;
+    --border: #334155;
+    --card: #1e293b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; }
+
+  .header {
+    background: var(--navy-light);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .header h1 { font-size: 20px; color: var(--text-bright); margin-bottom: 6px; }
+  .header p { font-size: 14px; color: var(--text-dim); line-height: 1.5; max-width: 600px; margin: 0 auto; }
+
+  .instructions {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+  .instructions h2 { font-size: 16px; color: var(--accent-light); margin-bottom: 8px; }
+  .instructions li { margin-left: 20px; margin-bottom: 4px; }
+  .instructions .es-text { color: var(--yellow); font-style: italic; }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px 16px;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-pending { background: var(--text-dim); }
+  .dot-good { background: var(--green); }
+  .dot-fix { background: var(--yellow); }
+
+  .section-header {
+    padding: 14px 16px;
+    background: var(--navy-mid);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-light);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-top: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .term-row {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(51,65,85,0.5);
+    transition: background 0.15s;
+  }
+  .term-row.reviewed-good { background: rgba(34,197,94,0.06); }
+  .term-row.reviewed-fix { background: rgba(234,179,8,0.06); }
+
+  .term-en {
+    font-size: 14px;
+    color: var(--text-bright);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .term-en .flag { font-size: 16px; }
+
+  .term-es {
+    font-size: 14px;
+    color: var(--yellow);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .term-es .flag { font-size: 16px; }
+
+  .term-context {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .term-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-vote {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+  .btn-vote:hover { border-color: var(--accent); color: var(--text); }
+  .btn-good { }
+  .btn-good.active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .btn-fix { }
+  .btn-fix.active { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
+
+  .fix-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--yellow);
+    background: rgba(234,179,8,0.06);
+    color: var(--text-bright);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    display: none;
+  }
+  .fix-input:focus { border-color: var(--accent-light); background: var(--navy-mid); }
+  .fix-input.visible { display: block; }
+  .fix-input::placeholder { color: var(--text-dim); }
+
+  .bottom-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--navy-light);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    z-index: 20;
+  }
+  .progress-text { font-size: 13px; color: var(--text-dim); }
+  .progress-text strong { color: var(--text-bright); }
+  .btn-send {
+    padding: 10px 24px;
+    border-radius: 8px;
+    background: var(--green);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-send:hover { opacity: 0.9; }
+  .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .toast.show { display: block; animation: fadeInUp 0.3s ease; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  .done-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .done-screen.show { display: block; }
+  .done-screen h2 { font-size: 24px; color: var(--green); margin-bottom: 12px; }
+  .done-screen p { font-size: 15px; color: var(--text-dim); line-height: 1.6; max-width: 400px; margin: 0 auto; }
+  .done-screen .big-emoji { font-size: 64px; margin-bottom: 16px; }
+
+  @media (max-width: 430px) {
+    .header h1 { font-size: 17px; }
+    .term-actions { flex-direction: column; align-items: stretch; }
+    .btn-vote { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎨 Nash Painting — Translation Review</h1>
+  <p>Help us get the Spanish work order translations right.<br>
+  <em style="color:var(--yellow)">Ayúdanos a corregir las traducciones en español para las órdenes de trabajo.</em></p>
+</div>
+
+<div class="instructions">
+  <h2>How this works / Cómo funciona:</h2>
+  <ol>
+    <li>Each row shows an <strong>English term</strong> and our <strong>proposed Spanish translation</strong></li>
+    <li>Tap <strong>👍 Correct</strong> if the Spanish is what you'd actually say on a job site</li>
+    <li>Tap <strong>✏️ Fix</strong> if it's wrong or sounds weird — type what you'd actually say</li>
+    <li>When you're done, hit <strong>Send Results</strong> at the bottom</li>
+  </ol>
+  <p style="margin-top:10px;color:var(--yellow);font-size:13px;">
+    🇪🇸 Cada fila muestra un término en inglés y nuestra traducción propuesta. Toca 👍 si está bien, o ✏️ si necesita corrección y escribe cómo lo dirías tú.
+  </p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-dot dot-pending"></div> <span id="stat-pending">0</span> Pending</div>
+  <div class="stat"><div class="stat-dot dot-good"></div> <span id="stat-good">0</span> Correct</div>
+  <div class="stat"><div class="stat-dot dot-fix"></div> <span id="stat-fix">0</span> Needs Fix</div>
+</div>
+
+<div id="terms-container"></div>
+
+<div class="bottom-bar">
+  <div class="progress-text"><strong id="progress-count">0</strong> of <strong id="progress-total">0</strong> reviewed</div>
+  <button class="btn-send" id="send-btn" onclick="sendResults()">📤 Send Results</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="done-screen" id="done-screen">
+  <div class="big-emoji">🎉</div>
+  <h2>Thank you! / ¡Gracias!</h2>
+  <p>Your corrections have been saved. Bill and the team will review them and update NashOS.<br><br>
+  <em style="color:var(--yellow)">Tus correcciones han sido guardadas. Bill y el equipo las revisarán.</em></p>
+</div>
+
+<script>
+const terms = [
+  // === PAINT TRADE TERMS ===
+  { section: '🎨 Paint & Surface Terms / Términos de Pintura y Superficies', items: [
+    { en: 'Pressure Washing', es: 'Lavado a Presión', ctx: 'When we spray the house before painting' },
+    { en: 'Spray + Backroll', es: 'Rociado + Repaso con Rodillo', ctx: 'Spray then go over with roller' },
+    { en: 'Fascia boards', es: 'Tablas de Fascia / Alero', ctx: 'The boards along the roofline' },
+    { en: 'Gutters', es: 'Canaletas', ctx: 'Rain gutters on the house' },
+    { en: 'Downspouts', es: 'Bajantes', ctx: 'The vertical pipes from the gutters' },
+    { en: 'Painted Eaves', es: 'Aleros Pintados', ctx: 'Underside of the roof overhang' },
+    { en: 'Porch Ceiling', es: 'Techo del Porche', ctx: 'Ceiling of a covered porch' },
+    { en: 'Porch Columns', es: 'Columnas del Porche', ctx: 'Posts holding up the porch roof' },
+    { en: 'Window Trim', es: 'Moldura de Ventana', ctx: 'The wood/trim around windows' },
+    { en: 'Door Frame', es: 'Marco de Puerta', ctx: 'The frame around a door' },
+    { en: 'Garage Door & Frame', es: 'Puerta y Marco del Garaje', ctx: '' },
+    { en: 'Attic Vents', es: 'Ventilaciones del Ático', ctx: 'Vents on the gable or soffit' },
+    { en: 'Shutters', es: 'Persianas', ctx: 'Decorative shutters on the house exterior' },
+    { en: 'Skirting, Lattice & Posts', es: 'Faldón, Enrejado y Postes', ctx: 'Under-deck structure' },
+    { en: 'Baseboard', es: 'Rodapié / Moldura de Base', ctx: 'Trim at the bottom of interior walls' },
+    { en: 'Crown Moulding', es: 'Moldura de Corona', ctx: 'Decorative trim where wall meets ceiling' },
+    { en: 'Trim (general)', es: 'Molduras / Acabados', ctx: 'General trim work' },
+    { en: 'Satin (paint finish)', es: 'Satinado', ctx: 'The sheen level of paint' },
+    { en: 'Semi-transparent (stain)', es: 'Semi-transparente', ctx: 'Deck/fence stain type' },
+  ]},
+
+  // === DECK & FENCE TERMS ===
+  { section: '🪵 Deck & Fence / Terraza y Cerca', items: [
+    { en: 'Deck Flooring', es: 'Piso de Terraza', ctx: 'The walking surface of a deck' },
+    { en: 'Deck Railing', es: 'Barandal de Terraza', ctx: 'Railing around the deck' },
+    { en: 'Wood Railing', es: 'Barandal de Madera', ctx: '' },
+    { en: 'Staircase — Steps, Stairs & Risers', es: 'Escalera — Peldaños, Escalones y Contrahuellas', ctx: 'All parts of deck stairs' },
+    { en: 'Deck Floor Boards', es: 'Tablas del Piso de Terraza', ctx: 'Individual deck boards' },
+    { en: 'Pressure Treated Pine', es: 'Pino Tratado a Presión', ctx: 'Lumber type for decks' },
+    { en: 'Screened Porch', es: 'Porche con Malla', ctx: 'A porch with bug screen' },
+    { en: 'Screen Removal', es: 'Remoción de Malla', ctx: 'Taking out old screen' },
+    { en: 'Screen Installation', es: 'Instalación de Malla', ctx: 'Putting in new screen' },
+    { en: 'Screen Frame', es: 'Marco de Malla', ctx: 'The frame that holds the screen' },
+    { en: 'Stain — Roll & Back-brush', es: 'Teñir — Rodillo y Repaso con Brocha', ctx: 'Staining technique' },
+  ]},
+
+  // === PREP & PROCESS TERMS ===
+  { section: '🔧 Prep & Process / Preparación y Proceso', items: [
+    { en: 'Scrape, caulk, and prime raw wood', es: 'Raspar, sellar y aplicar primer a madera sin acabado', ctx: 'Standard prep steps' },
+    { en: 'Paint 2 coats', es: 'Pintar 2 capas', ctx: '' },
+    { en: 'Prime raw wood', es: 'Aplicar primer a madera sin acabado', ctx: '' },
+    { en: 'Caulk / Caulking', es: 'Sellador / Sellar', ctx: 'Filling gaps and seams' },
+    { en: 'Skim Coat', es: 'Capa de Alisado / Resane', ctx: 'Thin layer to smooth a surface' },
+  ]},
+
+  // === WORK ORDER INSTRUCTIONS ===
+  { section: '📋 Work Instructions / Instrucciones de Trabajo', items: [
+    { en: 'Avoid window and door openings. Use appropriate pressure to avoid damage to wood.', es: 'Evitar aberturas de ventanas y puertas. Usar presión apropiada para evitar daño a la madera.', ctx: 'Pressure washing note' },
+    { en: 'Watch closely on decks. Catch paint chips to minimize cleanup.', es: 'Vigilar de cerca en las terrazas. Atrapar los pedazos de pintura para minimizar la limpieza.', ctx: 'Pressure washing note' },
+    { en: 'Unpainted areas behind downspouts should not be visible. Use sprayers, small rollers, or brushes to cover.', es: 'Las áreas sin pintar detrás de los bajantes no deben ser visibles. Usar rociadores, rodillos pequeños o brochas para cubrir.', ctx: 'Downspout painting note' },
+    { en: 'Gently remove old wood trim. Reinstall after porch is stained and rescreened.', es: 'Remover con cuidado la moldura de madera vieja. Reinstalar después de que el porche esté teñido y con malla nueva.', ctx: 'Porch rescreen instructions' },
+    { en: 'Painters should stain/paint PRIOR to carpenters reinstalling wood.', es: 'Los pintores deben teñir/pintar ANTES de que los carpinteros reinstalen la madera.', ctx: 'Sequencing note' },
+    { en: 'New boards will not match with semi-transparent decks.', es: 'Las tablas nuevas no combinarán con terrazas semi-transparentes.', ctx: 'Setting expectations on deck board replacement' },
+    { en: 'Match board gaps with existing. See pics for exact locations.', es: 'Igualar los espacios entre tablas con los existentes. Ver fotos para ubicaciones exactas.', ctx: 'Deck board replacement' },
+    { en: 'Start with fascia, trim, and deck work. Save gutters/downspouts for last.', es: 'Empezar con fascia, molduras y trabajo de terraza. Dejar canaletas/bajantes para el final.', ctx: 'Estimator tip on work order' },
+  ]},
+
+  // === SITE ACCESS ===
+  { section: '🏠 Site Access / Acceso al Sitio', items: [
+    { en: 'Gate guard opens at 8:00 AM', es: 'Guardia en el portón a las 8:00 AM', ctx: 'Gated community access' },
+    { en: 'Park at the tennis courts', es: 'Estacionar en las canchas de tenis', ctx: 'Parking instructions' },
+    { en: 'No restroom on site', es: 'Sin acceso a baño', ctx: '' },
+    { en: "Don't let the dog out!", es: '¡NO dejar salir al perro!', ctx: 'Pet safety' },
+    { en: 'Saturday work ends at 2:00 PM', es: 'El trabajo del sábado debe terminar a las 2:00 PM', ctx: 'HOA or customer time restriction' },
+    { en: 'No food in yard — dog safety', es: 'NO dejar comida en el patio — seguridad del perro', ctx: '' },
+    { en: 'Haul away trash — do not leave bags on site', es: 'Llevar la basura — no dejar bolsas en el sitio', ctx: 'Cleanup instructions' },
+  ]},
+
+  // === DAILY UPDATE / APP UI ===
+  { section: '📱 Work Order App Labels / Etiquetas de la App', items: [
+    { en: 'Daily Update', es: 'Actualización Diaria', ctx: 'Section header on the work order' },
+    { en: 'How many on site today?', es: '¿Cuántos en el sitio hoy?', ctx: 'Headcount question' },
+    { en: 'When do you think you\'ll finish?', es: '¿Cuándo crees que terminarás?', ctx: 'Estimated completion question' },
+    { en: 'Notes (optional)', es: 'Notas (opcional)', ctx: '' },
+    { en: 'Submit Today\'s Update', es: 'Enviar Actualización de Hoy', ctx: 'Button text' },
+    { en: 'Your Crew Score', es: 'Puntuación de tu Equipo', ctx: 'Cooperation score header' },
+    { en: 'Daily updates', es: 'Actualizaciones diarias', ctx: 'Score category' },
+    { en: 'Photo uploads', es: 'Subida de fotos', ctx: 'Score category' },
+    { en: 'Finish accuracy', es: 'Precisión de finalización', ctx: 'Score category' },
+    { en: 'Higher score = priority scheduling = less downtime', es: 'Mayor puntuación = programación prioritaria = menos tiempo sin trabajo', ctx: 'Motivational message' },
+    { en: 'Scope of Work', es: 'Alcance del Trabajo', ctx: 'Main section header' },
+    { en: 'Color Selections', es: 'Selección de Colores', ctx: '' },
+    { en: 'Materials Pickup', es: 'Materiales — Recoger', ctx: '' },
+    { en: 'Change Orders', es: 'Órdenes de Cambio', ctx: '' },
+    { en: 'Estimator Notes', es: 'Notas del Estimador', ctx: '' },
+    { en: 'Take Photo', es: 'Tomar Foto', ctx: 'Button text' },
+    { en: 'Upload from Gallery', es: 'Subir de Galería', ctx: 'Button text' },
+    { en: 'Exterior Painting', es: 'Pintura Exterior', ctx: 'Service type header' },
+    { en: 'Main Deck', es: 'Terraza Principal', ctx: 'Scope section' },
+    { en: 'Lower Deck', es: 'Terraza Inferior', ctx: '' },
+    { en: 'Site Access & Instructions', es: 'Acceso al Sitio e Instrucciones', ctx: '' },
+    { en: 'Day 3 of 5', es: 'Día 3 de 5', ctx: 'Progress tracker' },
+    { en: 'Started', es: 'Inicio', ctx: '' },
+    { en: 'Scheduled finish', es: 'Finalización programada', ctx: '' },
+    { en: 'Your estimate', es: 'Tu estimación', ctx: 'Crew\'s own finish date' },
+  ]},
+];
+
+// State
+const reviews = {};
+let totalTerms = 0;
+
+function init() {
+  const container = document.getElementById('terms-container');
+  let globalIdx = 0;
+
+  terms.forEach(section => {
+    const sectionEl = document.createElement('div');
+    sectionEl.innerHTML = `<div class="section-header">${section.section}</div>`;
+
+    section.items.forEach(item => {
+      const idx = globalIdx++;
+      totalTerms++;
+      const div = document.createElement('div');
+      div.className = 'term-row';
+      div.id = `term-${idx}`;
+      div.innerHTML = `
+        <div class="term-en"><span class="flag">🇺🇸</span> ${escHtml(item.en)}</div>
+        <div class="term-es"><span class="flag">🇪🇸</span> ${escHtml(item.es)}</div>
+        ${item.ctx ? `<div class="term-context">Context: ${escHtml(item.ctx)}</div>` : ''}
+        <div class="term-actions">
+          <button class="btn-vote btn-good" onclick="vote(${idx},'good')">👍 Correct / Correcto</button>
+          <button class="btn-vote btn-fix" onclick="vote(${idx},'fix')">✏️ Fix / Corregir</button>
+        </div>
+        <input class="fix-input" id="fix-${idx}" placeholder="Type the correct translation here / Escribe la traducción correcta aquí" oninput="saveFix(${idx},this.value)">
+      `;
+      sectionEl.appendChild(div);
+    });
+
+    container.appendChild(sectionEl);
+  });
+
+  document.getElementById('progress-total').textContent = totalTerms;
+  updateStats();
+  loadSaved();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function vote(idx, type) {
+  const row = document.getElementById(`term-${idx}`);
+  const goodBtn = row.querySelector('.btn-good');
+  const fixBtn = row.querySelector('.btn-fix');
+  const fixInput = document.getElementById(`fix-${idx}`);
+
+  goodBtn.classList.remove('active');
+  fixBtn.classList.remove('active');
+  row.classList.remove('reviewed-good', 'reviewed-fix');
+
+  if (type === 'good') {
+    goodBtn.classList.add('active');
+    row.classList.add('reviewed-good');
+    fixInput.classList.remove('visible');
+    reviews[idx] = { status: 'good', fix: '' };
+  } else {
+    fixBtn.classList.add('active');
+    row.classList.add('reviewed-fix');
+    fixInput.classList.add('visible');
+    fixInput.focus();
+    reviews[idx] = { status: 'fix', fix: fixInput.value || '' };
+  }
+
+  updateStats();
+  saveToStorage();
+}
+
+function saveFix(idx, value) {
+  if (reviews[idx]) {
+    reviews[idx].fix = value;
+    saveToStorage();
+  }
+}
+
+function updateStats() {
+  let good = 0, fix = 0;
+  Object.values(reviews).forEach(r => {
+    if (r.status === 'good') good++;
+    if (r.status === 'fix') fix++;
+  });
+  const pending = totalTerms - good - fix;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-good').textContent = good;
+  document.getElementById('stat-fix').textContent = fix;
+  document.getElementById('progress-count').textContent = good + fix;
+}
+
+function saveToStorage() {
+  localStorage.setItem('nash-translation-review', JSON.stringify(reviews));
+}
+
+function loadSaved() {
+  const saved = localStorage.getItem('nash-translation-review');
+  if (!saved) return;
+  const data = JSON.parse(saved);
+  Object.entries(data).forEach(([idx, r]) => {
+    reviews[idx] = r;
+    const row = document.getElementById(`term-${idx}`);
+    if (!row) return;
+    if (r.status === 'good') {
+      row.querySelector('.btn-good').classList.add('active');
+      row.classList.add('reviewed-good');
+    } else if (r.status === 'fix') {
+      row.querySelector('.btn-fix').classList.add('active');
+      row.classList.add('reviewed-fix');
+      const fixInput = document.getElementById(`fix-${idx}`);
+      fixInput.classList.add('visible');
+      fixInput.value = r.fix || '';
+    }
+  });
+  updateStats();
+}
+
+function sendResults() {
+  // Build a text summary of all reviews
+  let globalIdx = 0;
+  let lines = [];
+  let fixes = 0;
+  let reviewed = 0;
+
+  lines.push('NASH PAINTING — TRANSLATION REVIEW RESULTS');
+  lines.push('==========================================\n');
+
+  terms.forEach(section => {
+    let sectionLines = [];
+    section.items.forEach(item => {
+      const idx = globalIdx++;
+      const r = reviews[idx];
+      if (!r) return;
+      reviewed++;
+      if (r.status === 'fix') {
+        fixes++;
+        sectionLines.push(`❌ "${item.en}"`);
+        sectionLines.push(`   Our translation: "${item.es}"`);
+        sectionLines.push(`   Your correction: "${r.fix || '(no correction entered)'}"`);
+        sectionLines.push('');
+      }
+    });
+    if (sectionLines.length) {
+      lines.push(section.section);
+      lines.push('-'.repeat(40));
+      lines = lines.concat(sectionLines);
+    }
+  });
+
+  if (fixes === 0) {
+    lines.push('\n✅ All translations marked as correct! No fixes needed.');
+  }
+
+  lines.push(`\n--- ${reviewed}/${totalTerms} reviewed, ${fixes} corrections ---`);
+
+  const text = lines.join('\n');
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 Results copied! Paste and send to Bill.');
+  }).catch(() => {
+    // Fallback: show in a prompt
+    prompt('Copy these results and send to Bill:', text);
+  });
+
+  // Also save as download
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'nash-translation-review.txt';
+  a.click();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
