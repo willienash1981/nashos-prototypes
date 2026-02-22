@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Admin Configuration Center</title>
+<style>
+  :root {
+    --navy: #1a2332;
+    --navy-light: #243044;
+    --navy-mid: #2a3a52;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,0.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.1);
+    --orange: #f97316;
+    --purple: #a855f7;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-bright: #f8fafc;
+    --border: #334155;
+    --card: #1e293b;
+    --card-hover: #263548;
+    --sidebar-w: 240px;
+    --config-sidebar-w: 200px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--navy); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* Main Sidebar */
+  .sidebar { width: var(--sidebar-w); background: var(--navy-light); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+  .logo { padding: 0 20px 24px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  .logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; }
+  .logo-text { font-size: 18px; font-weight: 700; color: var(--text-bright); }
+  .logo-text span { color: var(--accent-light); }
+  .nav-section { padding: 12px 12px 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: var(--text-dim); text-decoration: none; font-size: 14px; cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
+  .nav-item:hover { background: var(--navy-mid); color: var(--text); }
+  .nav-item.active { background: rgba(59,130,246,0.1); color: var(--accent-light); border-left-color: var(--accent); font-weight: 500; }
+  .nav-item .icon { width: 18px; text-align: center; font-size: 15px; }
+  .sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+  .user-info { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 32px; height: 32px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: white; }
+  .user-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .user-role { font-size: 11px; color: var(--text-dim); }
+
+  /* Config Sidebar */
+  .config-sidebar { width: var(--config-sidebar-w); background: var(--card); border-right: 1px solid var(--border); flex-shrink: 0; overflow-y: auto; }
+  .config-sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+  .config-sidebar-title { font-size: 13px; font-weight: 600; color: var(--text-bright); margin-bottom: 10px; }
+  .config-search { width: 100%; padding: 7px 10px; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; outline: none; }
+  .config-search::placeholder { color: var(--text-dim); }
+  .config-search:focus { border-color: var(--accent); }
+  .config-nav-item { display: flex; align-items: center; gap: 8px; padding: 9px 16px; font-size: 13px; color: var(--text-dim); cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+  .config-nav-item:hover { background: var(--navy-mid); color: var(--text); }
+  .config-nav-item.active { color: var(--accent-light); border-left-color: var(--accent); background: rgba(59,130,246,0.08); font-weight: 500; }
+  .config-nav-item .cnt { margin-left: auto; font-size: 11px; color: var(--text-dim); background: var(--navy-mid); padding: 1px 7px; border-radius: 8px; }
+  .config-nav-icon { font-size: 13px; width: 16px; text-align: center; }
+
+  /* Main Content */
+  .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+  .topbar { padding: 16px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--navy-light); flex-shrink: 0; }
+  .topbar h1 { font-size: 18px; font-weight: 600; color: var(--text-bright); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .btn { padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-light); }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { background: var(--navy-mid); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-danger { background: transparent; border: 1px solid rgba(239,68,68,0.4); color: var(--red); }
+  .btn-danger:hover { background: var(--red-bg); }
+
+  .content { padding: 24px 28px; flex: 1; overflow-y: auto; }
+
+  /* Filter Bar */
+  .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-pill { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); color: var(--text-dim); background: transparent; transition: all 0.15s; }
+  .filter-pill:hover { border-color: var(--accent); color: var(--text); }
+  .filter-pill.active { background: rgba(59,130,246,0.15); border-color: var(--accent); color: var(--accent-light); }
+  .search-input { padding: 7px 12px; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 13px; width: 220px; outline: none; }
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus { border-color: var(--accent); }
+
+  /* Table */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text-bright); }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); background: var(--navy-light); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 11px 16px; font-size: 13px; border-bottom: 1px solid rgba(51,65,85,0.5); }
+  tr:hover td { background: var(--card-hover); cursor: pointer; }
+  tr:last-child td { border-bottom: none; }
+  .mono { font-family: 'SF Mono', 'Menlo', monospace; font-size: 12px; color: var(--accent-light); }
+  .dim { color: var(--text-dim); }
+  .bright { color: var(--text-bright); font-weight: 500; }
+  .badge { display: inline-flex; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+  .badge-labor { background: rgba(59,130,246,0.15); color: var(--accent-light); }
+  .badge-material { background: rgba(168,85,247,0.15); color: var(--purple); }
+  .badge-active { background: var(--green-bg); color: var(--green); }
+  .badge-inactive { background: var(--red-bg); color: var(--red); }
+  .link-count { color: var(--accent-light); cursor: pointer; font-size: 12px; }
+  .link-count:hover { text-decoration: underline; }
+
+  /* Detail Panel (slide-in) */
+  .detail-overlay { position: fixed; top: 0; right: 0; bottom: 0; width: 520px; background: var(--card); border-left: 1px solid var(--border); box-shadow: -8px 0 30px rgba(0,0,0,0.4); z-index: 100; display: flex; flex-direction: column; }
+  .detail-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .detail-title { font-size: 16px; font-weight: 600; color: var(--text-bright); }
+  .detail-close { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .detail-close:hover { background: var(--navy-mid); color: var(--text); }
+  .detail-body { padding: 20px 24px; flex: 1; overflow-y: auto; }
+  .detail-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-shrink: 0; }
+
+  /* Form Elements */
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .form-input { width: 100%; padding: 9px 12px; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 6px; color: var(--text-bright); font-size: 13px; outline: none; }
+  .form-input:focus { border-color: var(--accent); }
+  .form-select { width: 100%; padding: 9px 12px; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 6px; color: var(--text-bright); font-size: 13px; outline: none; appearance: auto; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-toggle { display: flex; align-items: center; gap: 10px; }
+  .toggle { width: 36px; height: 20px; background: var(--border); border-radius: 10px; position: relative; cursor: pointer; transition: background 0.2s; }
+  .toggle.on { background: var(--accent); }
+  .toggle::after { content: ''; width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; }
+  .toggle.on::after { left: 18px; }
+  .toggle-label { font-size: 13px; color: var(--text); }
+
+  .form-divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* Component Recipe */
+  .recipe-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--navy-mid); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+  .recipe-icon { font-size: 12px; }
+  .recipe-name { font-size: 13px; color: var(--text-bright); flex: 1; }
+  .recipe-detail { font-size: 11px; color: var(--text-dim); }
+  .recipe-cost { font-size: 12px; font-weight: 600; color: var(--accent-light); font-family: 'SF Mono', monospace; }
+  .recipe-remove { width: 20px; height: 20px; border-radius: 4px; border: none; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 12px; }
+  .recipe-remove:hover { background: var(--red-bg); color: var(--red); }
+
+  /* Cost Rollup */
+  .cost-rollup { background: var(--navy-mid); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-top: 16px; }
+  .cost-row { display: flex; justify-content: space-between; padding: 4px 0; }
+  .cost-label { font-size: 12px; color: var(--text-dim); }
+  .cost-value { font-size: 12px; font-weight: 600; color: var(--text-bright); font-family: 'SF Mono', monospace; }
+  .cost-divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .cost-total .cost-label { color: var(--text-bright); font-weight: 600; }
+  .cost-total .cost-value { color: var(--green); font-size: 14px; }
+  .cost-gp { font-size: 11px; color: var(--text-dim); text-align: right; margin-top: 4px; }
+
+  /* Impact Warning */
+  .impact-banner { background: var(--yellow-bg); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 10px 14px; margin-top: 12px; display: flex; align-items: flex-start; gap: 8px; }
+  .impact-text { font-size: 12px; color: var(--yellow); line-height: 1.5; }
+
+  /* History */
+  .history-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(51,65,85,0.4); }
+  .history-item:last-child { border-bottom: none; }
+  .history-date { font-size: 11px; color: var(--text-dim); white-space: nowrap; min-width: 80px; }
+  .history-text { font-size: 12px; color: var(--text); }
+
+  /* Tabs within detail */
+  .detail-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .detail-tab { padding: 10px 20px; font-size: 13px; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; }
+  .detail-tab:hover { color: var(--text); }
+  .detail-tab.active { color: var(--accent-light); border-bottom-color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- Main Sidebar -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">N</div>
+    <div class="logo-text">Nash<span>OS</span></div>
+  </div>
+
+  <div class="nav-section">Sales</div>
+  <a class="nav-item"><span class="icon">📊</span> Dashboard</a>
+  <a class="nav-item"><span class="icon">📝</span> Estimates</a>
+  <a class="nav-item"><span class="icon">📋</span> Proposals</a>
+  <a class="nav-item"><span class="icon">👥</span> Customers</a>
+
+  <div class="nav-section">Operations</div>
+  <a class="nav-item"><span class="icon">🔨</span> Jobs</a>
+  <a class="nav-item"><span class="icon">📦</span> Work Orders</a>
+  <a class="nav-item"><span class="icon">🧾</span> Invoices</a>
+
+  <div class="nav-section">Admin</div>
+  <a class="nav-item"><span class="icon">📈</span> Reports</a>
+  <a class="nav-item active"><span class="icon">⚙️</span> Settings</a>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar">BN</div>
+      <div>
+        <div class="user-name">Bill Nash</div>
+        <div class="user-role">Owner / Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Config Sidebar -->
+<div class="config-sidebar">
+  <div class="config-sidebar-header">
+    <div class="config-sidebar-title">Estimating Engine</div>
+    <input class="config-search" placeholder="Search config..." />
+  </div>
+  <div class="config-nav-item active">
+    <span class="config-nav-icon">🧩</span> Service Bundles <span class="cnt">142</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">⚛️</span> Micro-Components <span class="cnt">87</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">🪣</span> Material Items <span class="cnt">64</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">💰</span> Labor Rates <span class="cnt">3</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">📏</span> Height Tiers <span class="cnt">3</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">📦</span> Pricing Packages <span class="cnt">9</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">📈</span> Volume Pricing <span class="cnt">1</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">🎯</span> Margins <span class="cnt">5</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">🎨</span> Color Allowances <span class="cnt">1</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">🔬</span> Primer Rules <span class="cnt">3</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">🏷️</span> Product Defaults <span class="cnt">28</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">🔧</span> Prep Modifiers <span class="cnt">4</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">⏱️</span> T&M Presets <span class="cnt">4</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">📄</span> Estimate Templates <span class="cnt">9</span>
+  </div>
+  <div class="config-nav-item">
+    <span class="config-nav-icon">📋</span> Audit Log
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <div class="topbar">
+    <h1>Service Bundles</h1>
+    <div class="topbar-right">
+      <button class="btn btn-outline">📤 Export JSON</button>
+      <button class="btn btn-primary">+ New Bundle</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Filters -->
+    <div class="filter-bar">
+      <input class="search-input" placeholder="🔍 Search bundles..." />
+      <div class="filter-pill active">All</div>
+      <div class="filter-pill">Interior</div>
+      <div class="filter-pill">Exterior</div>
+      <div class="filter-pill">Cabinets</div>
+      <div class="filter-pill">Deck</div>
+      <div class="filter-pill">Fence</div>
+      <div class="filter-pill">Carpentry</div>
+      <div class="filter-pill">Doors</div>
+      <div class="filter-pill">Drywall</div>
+      <div class="filter-pill">Floor</div>
+      <div class="filter-pill">Popcorn</div>
+      <div class="filter-pill">T&M</div>
+    </div>
+
+    <!-- Bundle List -->
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Bundle Name</th>
+            <th>Customer Name</th>
+            <th>Category</th>
+            <th>Package</th>
+            <th>Unit</th>
+            <th>Components</th>
+            <th>Cost/Unit</th>
+            <th>Sell/Unit</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(59,130,246,0.05);">
+            <td class="bright">Paint Wall — 2 Coats, Standard Prep</td>
+            <td class="dim">Interior Wall Painting</td>
+            <td><span class="badge badge-labor">Interior</span></td>
+            <td>Standard</td>
+            <td class="mono">SF</td>
+            <td><span class="link-count">4 MCs</span></td>
+            <td class="mono">$0.41</td>
+            <td class="mono">$0.82</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Paint Wall — 2 Coats, Premium Prep</td>
+            <td class="dim">Interior Wall Painting (Premium)</td>
+            <td><span class="badge badge-labor">Interior</span></td>
+            <td>Premium+</td>
+            <td class="mono">SF</td>
+            <td><span class="link-count">6 MCs</span></td>
+            <td class="mono">$0.86</td>
+            <td class="mono">$1.72</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Paint Ceiling — 1 Coat</td>
+            <td class="dim">Ceiling Painting</td>
+            <td><span class="badge badge-labor">Interior</span></td>
+            <td>Standard</td>
+            <td class="mono">SF</td>
+            <td><span class="link-count">3 MCs</span></td>
+            <td class="mono">$0.29</td>
+            <td class="mono">$0.58</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Paint Baseboard — 2 Coats</td>
+            <td class="dim">Baseboard Painting</td>
+            <td><span class="badge badge-labor">Interior</span></td>
+            <td>Standard</td>
+            <td class="mono">LF</td>
+            <td><span class="link-count">3 MCs</span></td>
+            <td class="mono">$0.68</td>
+            <td class="mono">$1.36</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Paint Door & Frame — 2 Coats</td>
+            <td class="dim">Interior Door Painting</td>
+            <td><span class="badge badge-labor">Interior</span></td>
+            <td>Standard</td>
+            <td class="mono">EA</td>
+            <td><span class="link-count">4 MCs</span></td>
+            <td class="mono">$32.50</td>
+            <td class="mono">$65.00</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Exterior Siding — Spray + Backroll</td>
+            <td class="dim">Exterior Siding Painting</td>
+            <td><span style="background:rgba(34,197,94,0.15);color:var(--green)" class="badge">Exterior</span></td>
+            <td>Standard</td>
+            <td class="mono">SF</td>
+            <td><span class="link-count">5 MCs</span></td>
+            <td class="mono">$0.52</td>
+            <td class="mono">$1.04</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Exterior Trim — Brush & Roll</td>
+            <td class="dim">Exterior Trim Painting</td>
+            <td><span style="background:rgba(34,197,94,0.15);color:var(--green)" class="badge">Exterior</span></td>
+            <td>Standard</td>
+            <td class="mono">LF</td>
+            <td><span class="link-count">4 MCs</span></td>
+            <td class="mono">$1.12</td>
+            <td class="mono">$2.24</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Cabinet Body — Paint, Level 5</td>
+            <td class="dim">Cabinet Body Painting</td>
+            <td><span style="background:rgba(168,85,247,0.15);color:var(--purple)" class="badge">Cabinets</span></td>
+            <td>Standard</td>
+            <td class="mono">LF</td>
+            <td><span class="link-count">5 MCs</span></td>
+            <td class="mono">$18.40</td>
+            <td class="mono">$36.80</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Deck Flooring — Semi-Transparent Stain</td>
+            <td class="dim">Deck Floor Staining</td>
+            <td><span style="background:rgba(234,179,8,0.15);color:var(--yellow)" class="badge">Deck</span></td>
+            <td>—</td>
+            <td class="mono">SF</td>
+            <td><span class="link-count">4 MCs</span></td>
+            <td class="mono">$0.58</td>
+            <td class="mono">$1.16</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">6' Privacy Fence — 1 Side</td>
+            <td class="dim">Fence Stain (6ft, One Side)</td>
+            <td><span style="background:rgba(249,115,22,0.15);color:var(--orange)" class="badge">Fence</span></td>
+            <td>—</td>
+            <td class="mono">LF</td>
+            <td><span class="link-count">4 MCs</span></td>
+            <td class="mono">$5.07</td>
+            <td class="mono">$10.13</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright">Drywall Patch Repair</td>
+            <td class="dim">Drywall Patching</td>
+            <td><span style="background:rgba(148,163,184,0.15);color:var(--text-dim)" class="badge">Drywall</span></td>
+            <td>Standard</td>
+            <td class="mono">EA</td>
+            <td><span class="link-count">3 MCs</span></td>
+            <td class="mono">$37.50</td>
+            <td class="mono">$75.00</td>
+            <td><span class="badge badge-active">Active</span></td>
+          </tr>
+          <tr>
+            <td class="bright" style="color:var(--text-dim); text-decoration:line-through;">Wallpaper Strip — Per SF</td>
+            <td class="dim" style="text-decoration:line-through;">Wallpaper Removal</td>
+            <td><span class="badge badge-labor">Interior</span></td>
+            <td>Standard</td>
+            <td class="mono">SF</td>
+            <td><span class="link-count">2 MCs</span></td>
+            <td class="mono">$0.95</td>
+            <td class="mono">$1.90</td>
+            <td><span class="badge badge-inactive">Inactive</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Panel (editing "Paint Wall — 2 Coats, Standard Prep") -->
+<div class="detail-overlay">
+  <div class="detail-header">
+    <span class="detail-title">Edit Service Bundle</span>
+    <button class="detail-close">✕</button>
+  </div>
+  <div class="detail-tabs">
+    <div class="detail-tab active">Definition</div>
+    <div class="detail-tab">Components</div>
+    <div class="detail-tab">History</div>
+  </div>
+  <div class="detail-body">
+    <!-- Definition Tab -->
+    <div class="form-group">
+      <label class="form-label">Internal Name</label>
+      <input class="form-input" value="Paint Wall — 2 Coats, Standard Prep" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Customer-Facing Name</label>
+      <input class="form-input" value="Interior Wall Painting" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select">
+          <option selected>Interior Painting</option>
+          <option>Exterior Painting</option>
+          <option>Cabinets</option>
+          <option>Deck</option>
+          <option>Fence</option>
+          <option>Carpentry</option>
+          <option>Doors</option>
+          <option>Drywall</option>
+          <option>Floor Coatings</option>
+          <option>Popcorn</option>
+          <option>T&M</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Package</label>
+        <select class="form-select">
+          <option>Value</option>
+          <option selected>Standard</option>
+          <option>Premium Plus</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Primary Unit</label>
+        <select class="form-select">
+          <option selected>SF</option>
+          <option>LF</option>
+          <option>EACH</option>
+          <option>HOUR</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Work Category (V1)</label>
+        <select class="form-select">
+          <option selected>INTERIOR</option>
+          <option>EXTERIOR</option>
+          <option>CABINET</option>
+          <option>DECK_FENCE</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-toggle">
+        <div class="toggle"></div>
+        <span class="toggle-label">Exterior</span>
+      </div>
+      <div class="form-toggle">
+        <div class="toggle"></div>
+        <span class="toggle-label">Excluded from Value</span>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Components Section -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+      <label class="form-label" style="margin:0;">Components (Recipe)</label>
+      <button class="btn btn-sm btn-outline">+ Add</button>
+    </div>
+
+    <div class="recipe-item">
+      <span class="recipe-icon">🔵</span>
+      <div class="recipe-name">Brush/Roll First Coat — Wall</div>
+      <div class="recipe-detail">LABOR · 350 SF/hr</div>
+      <div class="recipe-cost">$0.086/SF</div>
+      <button class="recipe-remove">✕</button>
+    </div>
+    <div class="recipe-item">
+      <span class="recipe-icon">🔵</span>
+      <div class="recipe-name">Brush/Roll Second Coat — Wall</div>
+      <div class="recipe-detail">LABOR · 350 SF/hr</div>
+      <div class="recipe-cost">$0.086/SF</div>
+      <button class="recipe-remove">✕</button>
+    </div>
+    <div class="recipe-item">
+      <span class="recipe-icon">🟣</span>
+      <div class="recipe-name">Interior Wall Paint — Eggshell</div>
+      <div class="recipe-detail">MATERIAL · 0.00571 gal/SF</div>
+      <div class="recipe-cost">$0.236/SF</div>
+      <button class="recipe-remove">✕</button>
+    </div>
+    <div class="recipe-item">
+      <span class="recipe-icon">🟣</span>
+      <div class="recipe-name">Caulk — Interior Joints</div>
+      <div class="recipe-detail">MATERIAL · 0.001 tube/SF</div>
+      <div class="recipe-cost">$0.005/SF</div>
+      <button class="recipe-remove">✕</button>
+    </div>
+
+    <!-- Cost Rollup -->
+    <div class="cost-rollup">
+      <div style="font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:10px;">CALCULATED COST PER SF</div>
+      <div class="cost-row">
+        <span class="cost-label">Labor (2 coats)</span>
+        <span class="cost-value">$0.172</span>
+      </div>
+      <div class="cost-row">
+        <span class="cost-label">Material (paint + caulk)</span>
+        <span class="cost-value">$0.241</span>
+      </div>
+      <div class="cost-divider"></div>
+      <div class="cost-row cost-total">
+        <span class="cost-label">Total Cost</span>
+        <span class="cost-value">$0.413/SF</span>
+      </div>
+      <div class="cost-divider"></div>
+      <div class="cost-row">
+        <span class="cost-label">At 50% GP target → Sell price</span>
+        <span class="cost-value" style="color:var(--green)">$0.826/SF</span>
+      </div>
+      <div class="cost-gp">500 SF room → $206.50 cost / $413.00 sell</div>
+    </div>
+
+    <!-- Impact Warning -->
+    <div class="impact-banner">
+      <span>⚠️</span>
+      <span class="impact-text">This bundle is used in <strong>47 active estimates</strong>. Changes will only affect NEW estimates — existing estimates keep their snapshot pricing.</span>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Mini History -->
+    <label class="form-label">Recent Changes</label>
+    <div class="history-item">
+      <span class="history-date">Feb 15</span>
+      <span class="history-text">Material cost $0.228 → $0.241 (paint price increase) — Bill</span>
+    </div>
+    <div class="history-item">
+      <span class="history-date">Jan 8</span>
+      <span class="history-text">Added caulk MC (was missing from recipe) — Bill</span>
+    </div>
+    <div class="history-item">
+      <span class="history-date">Dec 12</span>
+      <span class="history-text">Labor rate $28/hr → $30/hr (annual adjustment) — Bill</span>
+    </div>
+  </div>
+  <div class="detail-footer">
+    <button class="btn btn-danger">Deactivate</button>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline">Cancel</button>
+      <button class="btn btn-green">💾 Save Bundle</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
