@@ -155,10 +155,99 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--navy-light); border:1px solid var(--border); color:var(--text); padding:10px 20px; border-radius:10px; font-size:13px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:100; }
 .toast.show { opacity:1; }
 
+/* Day 1 Modal */
+.d1-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; padding:16px; }
+.d1-overlay.hidden { display:none; }
+.d1-modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:100%; max-width:400px; max-height:90vh; overflow-y:auto; padding:20px; }
+.d1-title { font-size:18px; font-weight:700; color:var(--text-bright); text-align:center; margin-bottom:4px; }
+.d1-subtitle { font-size:13px; color:var(--text-dim); text-align:center; margin-bottom:16px; }
+.d1-section { margin-bottom:16px; }
+.d1-section-title { font-size:14px; font-weight:600; color:var(--text-bright); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.d1-check { width:22px; height:22px; border-radius:6px; border:2px solid var(--border); display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.d1-check.done { border-color:var(--green); background:rgba(34,197,94,0.15); color:var(--green); }
+.d1-hint { font-size:12px; color:var(--text-dim); margin-bottom:8px; line-height:1.5; }
+.d1-photo-area { border:2px dashed var(--border); border-radius:10px; padding:20px; text-align:center; cursor:pointer; transition:all 0.15s; }
+.d1-photo-area:hover { border-color:var(--accent); background:rgba(59,130,246,0.05); }
+.d1-photo-area .icon { font-size:28px; margin-bottom:4px; }
+.d1-photo-area .label { font-size:13px; color:var(--text-dim); }
+.d1-photo-area.has-photos { border-color:var(--green); border-style:solid; background:rgba(34,197,94,0.05); }
+.d1-photo-count { font-size:13px; color:var(--green); font-weight:600; margin-top:6px; text-align:center; }
+.d1-est-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+.d1-est-row .d1-label { font-size:13px; color:var(--text-dim); width:90px; flex-shrink:0; }
+.d1-est-btns { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+.d1-est-btn { width:40px; height:40px; border-radius:8px; border:2px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:15px; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+.d1-est-btn.active { border-color:var(--accent); background:rgba(59,130,246,0.2); color:var(--accent-light); }
+.d1-est-btn.custom { font-size:12px; }
+.d1-submit { width:100%; padding:14px; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+.d1-submit.ready { background:var(--green); color:#fff; }
+.d1-submit.not-ready { background:var(--navy-mid); color:var(--text-dim); cursor:not-allowed; }
+.d1-skip { text-align:center; margin-top:10px; }
+.d1-skip a { font-size:12px; color:var(--text-dim); cursor:pointer; text-decoration:underline; }
+
 .footer { text-align:center; padding:24px; font-size:11px; color:var(--text-dim); }
 </style>
 </head>
 <body>
+
+<!-- Day 1 Modal -->
+<div class="d1-overlay" id="d1-overlay">
+  <div class="d1-modal">
+    <div class="d1-title" data-i18n="d1Title">📋 Before You Start</div>
+    <div class="d1-subtitle" data-i18n="d1Subtitle">Complete these before beginning work</div>
+
+    <!-- Pre-Job Photos -->
+    <div class="d1-section">
+      <div class="d1-section-title">
+        <span class="d1-check" id="d1-photo-check"></span>
+        <span data-i18n="d1PhotoTitle">Pre-Job Site Photos</span>
+      </div>
+      <div class="d1-hint" data-i18n="d1PhotoHint">Document the site BEFORE work begins — pre-existing damage, current condition. This protects you and the company.</div>
+      <div class="d1-photo-area" id="d1-photo-area" onclick="d1AddPhotos()">
+        <div class="icon">📸</div>
+        <div class="label" data-i18n="d1PhotoLabel">Tap to take pre-job photos</div>
+      </div>
+      <div class="d1-photo-count hidden" id="d1-photo-count"></div>
+    </div>
+
+    <!-- Crew Estimate -->
+    <div class="d1-section">
+      <div class="d1-section-title">
+        <span class="d1-check" id="d1-est-check"></span>
+        <span data-i18n="d1EstTitle">Your Estimate</span>
+      </div>
+      <div class="d1-hint" data-i18n="d1EstHint">How many men and how many days do you think this job will take?</div>
+      <div class="d1-est-row">
+        <div class="d1-label" data-i18n="d1MenLabel">👷 Men</div>
+        <div class="d1-est-btns" id="d1-men-btns">
+          <button class="d1-est-btn" data-val="1">1</button>
+          <button class="d1-est-btn" data-val="2">2</button>
+          <button class="d1-est-btn" data-val="3">3</button>
+          <button class="d1-est-btn" data-val="4">4</button>
+          <button class="d1-est-btn" data-val="5">5</button>
+          <button class="d1-est-btn" data-val="6">6</button>
+          <button class="d1-est-btn" data-val="7">7</button>
+          <button class="d1-est-btn custom" data-val="custom">✏️</button>
+        </div>
+      </div>
+      <div class="d1-est-row">
+        <div class="d1-label" data-i18n="d1DaysLabel">📅 Days</div>
+        <div class="d1-est-btns" id="d1-days-btns">
+          <button class="d1-est-btn" data-val="1">1</button>
+          <button class="d1-est-btn" data-val="2">2</button>
+          <button class="d1-est-btn" data-val="3">3</button>
+          <button class="d1-est-btn" data-val="4">4</button>
+          <button class="d1-est-btn" data-val="5">5</button>
+          <button class="d1-est-btn" data-val="6">6</button>
+          <button class="d1-est-btn" data-val="7">7</button>
+          <button class="d1-est-btn custom" data-val="custom">✏️</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="d1-submit not-ready" id="d1-submit" onclick="d1Submit()" data-i18n="d1Submit">Complete all items above</button>
+    <div class="d1-skip"><a onclick="d1Dismiss()" data-i18n="d1Skip">I'll do this later</a></div>
+  </div>
+</div>
 
 <div class="smart-link-badge" data-i18n="smartLink">🔗 Live Work Order — Smart Link</div>
 
@@ -512,6 +601,21 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 // ============================================================
 const translations = {
   en: {
+    d1Title: '📋 Before You Start',
+    d1Subtitle: 'Complete these before beginning work',
+    d1PhotoTitle: 'Pre-Job Site Photos',
+    d1PhotoHint: 'Document the site BEFORE work begins — pre-existing damage, current condition. This protects you and the company.',
+    d1PhotoLabel: 'Tap to take pre-job photos',
+    d1PhotoCount: '{n} photos added ✓',
+    d1EstTitle: 'Your Estimate',
+    d1EstHint: 'How many men and how many days do you think this job will take?',
+    d1MenLabel: '👷 Men',
+    d1DaysLabel: '📅 Days',
+    d1Submit: 'Complete all items above',
+    d1SubmitReady: "Let's go! ✅",
+    d1Skip: "I'll do this later",
+    d1CustomMen: 'How many men?',
+    d1CustomDays: 'How many days?',
     smartLink: '🔗 Live Work Order — Smart Link',
     jobAddress: 'Job Address',
     customer: 'Customer',
@@ -616,6 +720,21 @@ const translations = {
     estFinishLabel: 'Est. finish'
   },
   es: {
+    d1Title: '📋 Antes de Empezar',
+    d1Subtitle: 'Completar antes de iniciar el trabajo',
+    d1PhotoTitle: 'Fotos del Sitio — Antes del Trabajo',
+    d1PhotoHint: 'Documentar el sitio ANTES de comenzar — daños existentes, condición actual. Esto protege a usted y a la empresa.',
+    d1PhotoLabel: 'Toque para tomar fotos del sitio',
+    d1PhotoCount: '{n} fotos agregadas ✓',
+    d1EstTitle: 'Su Estimación',
+    d1EstHint: '¿Cuántos hombres y cuántos días cree que tomará este trabajo?',
+    d1MenLabel: '👷 Hombres',
+    d1DaysLabel: '📅 Días',
+    d1Submit: 'Complete todos los elementos arriba',
+    d1SubmitReady: '¡Vamos! ✅',
+    d1Skip: 'Lo haré después',
+    d1CustomMen: '¿Cuántos hombres?',
+    d1CustomDays: '¿Cuántos días?',
     smartLink: '🔗 Orden de Trabajo en Vivo — Enlace Directo',
     jobAddress: 'Dirección del Trabajo',
     customer: 'Cliente',
@@ -863,6 +982,116 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2000);
 }
+
+// ============================================================
+// Day 1 Modal — Before You Start
+// ============================================================
+const D1_KEY = 'wo-40618331-day1';
+let d1Photos = 0;
+let d1Men = null;
+let d1Days = null;
+
+function d1Init() {
+  if (localStorage.getItem(D1_KEY) === 'done') {
+    document.getElementById('d1-overlay').classList.add('hidden');
+    return;
+  }
+  document.getElementById('d1-overlay').classList.remove('hidden');
+
+  // Men buttons
+  document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.val === 'custom') {
+        const val = prompt(t('d1CustomMen'));
+        const num = parseInt(val, 10);
+        if (!num || num < 1) return;
+        document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(b => b.classList.remove('active'));
+        btn.textContent = num;
+        btn.dataset.val = String(num);
+        btn.classList.add('active');
+        d1Men = num;
+      } else {
+        document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(b => {
+          b.classList.remove('active');
+          if (b.classList.contains('custom') && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; }
+        });
+        btn.classList.add('active');
+        d1Men = parseInt(btn.dataset.val, 10);
+      }
+      d1Update();
+    });
+  });
+
+  // Days buttons
+  document.querySelectorAll('#d1-days-btns .d1-est-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.val === 'custom') {
+        const val = prompt(t('d1CustomDays'));
+        const num = parseInt(val, 10);
+        if (!num || num < 1) return;
+        document.querySelectorAll('#d1-days-btns .d1-est-btn').forEach(b => b.classList.remove('active'));
+        btn.textContent = num;
+        btn.dataset.val = String(num);
+        btn.classList.add('active');
+        d1Days = num;
+      } else {
+        document.querySelectorAll('#d1-days-btns .d1-est-btn').forEach(b => {
+          b.classList.remove('active');
+          if (b.classList.contains('custom') && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; }
+        });
+        btn.classList.add('active');
+        d1Days = parseInt(btn.dataset.val, 10);
+      }
+      d1Update();
+    });
+  });
+}
+
+function d1AddPhotos() {
+  // Simulate photo capture (in production: native camera/file picker)
+  d1Photos += Math.floor(Math.random() * 3) + 1;
+  const area = document.getElementById('d1-photo-area');
+  area.classList.add('has-photos');
+  area.innerHTML = '<div class="icon">✅</div><div class="label">' + t('d1PhotoCount').replace('{n}', d1Photos) + '</div>';
+  const countEl = document.getElementById('d1-photo-count');
+  countEl.classList.remove('hidden');
+  countEl.textContent = t('d1PhotoCount').replace('{n}', d1Photos);
+  d1Update();
+}
+
+function d1Update() {
+  const photoOk = d1Photos > 0;
+  const estOk = d1Men !== null && d1Days !== null;
+  document.getElementById('d1-photo-check').className = 'd1-check' + (photoOk ? ' done' : '');
+  document.getElementById('d1-photo-check').textContent = photoOk ? '✓' : '';
+  document.getElementById('d1-est-check').className = 'd1-check' + (estOk ? ' done' : '');
+  document.getElementById('d1-est-check').textContent = estOk ? '✓' : '';
+  const btn = document.getElementById('d1-submit');
+  if (photoOk && estOk) {
+    btn.className = 'd1-submit ready';
+    btn.textContent = t('d1SubmitReady');
+    btn.onclick = d1Submit;
+  } else {
+    btn.className = 'd1-submit not-ready';
+    btn.textContent = t('d1Submit');
+    btn.onclick = null;
+  }
+}
+
+function d1Submit() {
+  if (d1Photos === 0 || d1Men === null || d1Days === null) return;
+  localStorage.setItem(D1_KEY, 'done');
+  document.getElementById('d1-overlay').classList.add('hidden');
+  showToast('Day 1 checklist complete — ' + d1Men + ' men, ' + d1Days + ' days ✅');
+}
+
+function d1Dismiss() {
+  // Temporarily hide — will come back on next page open
+  document.getElementById('d1-overlay').classList.add('hidden');
+}
+
+// Initialize Day 1 modal on load
+d1Init();
 </script>
 </body>
 </html>
