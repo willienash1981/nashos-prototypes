@@ -210,6 +210,13 @@
     .no-pricing-banner { font-size: 11px; padding: 8px 12px; }
     .scope-header, .scope-header-main { padding: 10px 14px; }
   }
+
+  /* Package switcher */
+  .pkg-btn { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); color: var(--text-dim); background: transparent; transition: all 0.15s; }
+  .pkg-btn:hover { border-color: var(--accent); color: var(--text); }
+  .pkg-btn.active { background: rgba(59,130,246,0.15); border-color: var(--accent); color: var(--accent-light); }
+  .pkg-btn.val-active { background: var(--orange-bg); border-color: var(--orange); color: var(--orange); }
+  .pkg-btn.prem-active { background: rgba(168,85,247,0.15); border-color: var(--purple); color: var(--purple); }
 </style>
 </head>
 <body>
@@ -267,6 +274,14 @@
       🔒 CREW WORK ORDER — No pricing, margins, or customer-facing terms. Internal use only.
     </div>
 
+    <!-- Package Switcher (prototype demo) -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Demo — Switch Package:</span>
+      <button class="pkg-btn active" onclick="setPkg('standard')" id="pkg-std">Standard</button>
+      <button class="pkg-btn" onclick="setPkg('value')" id="pkg-val">Value</button>
+      <button class="pkg-btn" onclick="setPkg('premium')" id="pkg-prem">Premium Plus</button>
+    </div>
+
     <!-- Status Bar -->
     <div class="status-bar">
       <span class="status-badge status-active">● In Progress</span>
@@ -277,7 +292,44 @@
       <div class="status-separator"></div>
       <span class="status-item"><strong>Start:</strong> Feb 18, 2026</span>
       <div class="status-separator"></div>
-      <span class="status-item"><strong>Prep Level:</strong> Standard</span>
+      <span class="status-item" id="pkg-label"><strong>Package:</strong> <span id="pkg-name" style="color:var(--accent-light)">Standard</span></span>
+      <div class="status-separator"></div>
+      <span class="status-item" id="prep-label"><strong>Prep Level:</strong> <span id="prep-name">Standard</span></span>
+    </div>
+
+    <!-- VALUE: Customer Buys Paint Banner -->
+    <div id="value-banner" style="display:none;background:var(--orange-bg);border:1px solid rgba(249,115,22,0.4);border-radius:10px;padding:14px 20px;margin-bottom:20px;">
+      <div style="font-size:15px;font-weight:700;color:var(--orange);margin-bottom:6px;">🎨 VALUE PACKAGE — CUSTOMER SUPPLIES PAINT</div>
+      <div style="font-size:13px;color:var(--orange);line-height:1.6;">
+        Customer is responsible for purchasing all paint and stain products.<br>
+        Crew provides labor, prep materials, and equipment only.
+      </div>
+      <div style="margin-top:10px;padding:10px 14px;background:rgba(249,115,22,0.08);border-radius:6px;border-left:3px solid var(--orange);">
+        <div style="font-size:12px;color:var(--text-bright);font-weight:600;">💡 Crew Paint Purchase Option</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5;">If crew wants Nash to buy paint and deduct from their pay: <strong style="color:var(--text-bright)">Call office BEFORE purchasing.</strong> Office will create a separate PO and track the deduction. Do not use the job PO for crew-purchased paint.</div>
+      </div>
+    </div>
+
+    <!-- PREMIUM PLUS: Quality Banner -->
+    <div id="premium-banner" style="display:none;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);border-radius:10px;padding:14px 20px;margin-bottom:20px;">
+      <div style="font-size:15px;font-weight:700;color:var(--purple);margin-bottom:6px;">💎 PREMIUM PLUS — HIGHEST QUALITY FINISH</div>
+      <div style="font-size:13px;color:var(--purple);line-height:1.6;">
+        This is a premium job. Every detail matters. Finish quality must exceed standard expectations.
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text);line-height:1.7;">
+        <strong style="color:var(--text-bright);">Premium Plus Prep Requirements:</strong><br>
+        ✦ Full scrape and sand ALL surfaces (not just loose/peeling)<br>
+        ✦ Caulk ALL joints, seams, and nail holes — no gaps<br>
+        ✦ Spot prime every bare/repaired area with bonding primer<br>
+        ✦ Sand between coats (120-150 grit) for smooth finish<br>
+        ✦ 3 coats on high-traffic/high-visibility surfaces if needed for full hide<br>
+        ✦ Cut lines must be razor-sharp — no tape bleed, no wobble<br>
+        ✦ Final walkthrough with supervisor BEFORE marking complete
+      </div>
+      <div style="margin-top:10px;padding:10px 14px;background:rgba(168,85,247,0.06);border-radius:6px;border-left:3px solid var(--purple);">
+        <div style="font-size:12px;color:var(--text-bright);font-weight:600;">🪣 Premium Products</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Premium Plus uses top-tier products: Benjamin Moore Aura / Sherwin-Williams Emerald (not Ultra Spec or SuperPaint). Confirm product labels match before starting.</div>
+      </div>
     </div>
 
     <!-- Job Info + Access Info -->
@@ -390,7 +442,7 @@
     <div class="card">
       <div class="card-header">
         <span class="card-title">🎨 Color Selections</span>
-        <span style="font-size:12px;color:var(--text-dim)">Nash providing paint</span>
+        <span style="font-size:12px;color:var(--text-dim)" id="paint-provider">Nash providing paint</span>
       </div>
       <div class="color-row">
         <div class="color-swatch" style="background:#6B6F73"></div>
@@ -434,7 +486,7 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Fascia Only</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
           <div class="line-desc">Fascia boards & associated shingle trim. Areas where fascia is mounted directly to house.</div>
         </div>
@@ -442,7 +494,7 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Gutters</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
           <div class="line-desc">Gutters are not removed. Painting on outward and down facing sides included.</div>
         </div>
@@ -450,7 +502,7 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Downspouts</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
           <div class="line-desc">Downspouts are not removed. Outward facing sides included.</div>
           <div class="line-worknote">Make sure unpainted areas behind downspouts are not visible with sprayers, whizz rollers, or brushes.</div>
@@ -459,63 +511,63 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Doors & Frames</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Attic Vents</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Advance — Accent</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="accent">BM Advance — Accent</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Windows (Standard)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Painted Eaves</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Porch Ceiling</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Garage Door & Frame</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Window Trim Only</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Porch Columns</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Door Frame Only</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Ultra Spec — Trim</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
         </div>
       </div>
@@ -530,7 +582,7 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Deck Flooring (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
@@ -561,14 +613,14 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Skirting, Lattice & Posts (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Wood Railing (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
@@ -592,28 +644,28 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Deck Flooring (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Staircase — Steps, Stairs & Risers (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Wood Railing (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Skirting, Lattice & Posts (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
       </div>
@@ -628,21 +680,21 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Deck Flooring (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Skirting, Lattice & Posts (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Wood Railing (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
@@ -672,21 +724,21 @@
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Deck Flooring (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Staircase — Steps, Stairs & Risers (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
 
         <div class="line-item">
           <div class="line-top">
             <span class="line-surface">Wood Railing (Premium)</span>
-            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product">BM Woodluxe</span></div>
+            <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="deck">BM Woodluxe</span></div>
           </div>
         </div>
       </div>
@@ -716,46 +768,13 @@
       <div class="card" style="margin-bottom:0">
         <div class="card-header">
           <span class="card-title">🪣 Materials — Pick Up</span>
+          <span style="font-size:12px;color:var(--text-dim)" id="mat-note"></span>
         </div>
         <div class="table-scroll">
         <table class="mat-table">
           <thead><tr><th>Product</th><th>Spec / Color</th><th>Qty</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Benjamin Moore Ultra Spec</td>
-              <td>Trim — Cityscape formula</td>
-              <td class="mat-qty">TBD</td>
-            </tr>
-            <tr>
-              <td>Benjamin Moore Advance</td>
-              <td>Accent</td>
-              <td class="mat-qty">TBD</td>
-            </tr>
-            <tr>
-              <td>Benjamin Moore Woodluxe</td>
-              <td>Deck stain — Cityscape formula</td>
-              <td class="mat-qty">TBD</td>
-            </tr>
-            <tr>
-              <td>Porch Screen</td>
-              <td>Charcoal fiberglass insect screen</td>
-              <td class="mat-qty">2 rolls</td>
-            </tr>
-            <tr>
-              <td>Deck Board 8'</td>
-              <td>Pressure treated pine 1×8×8</td>
-              <td class="mat-qty">Per CO-1</td>
-            </tr>
-            <tr>
-              <td>Deck Screws</td>
-              <td>—</td>
-              <td class="mat-qty">1 box</td>
-            </tr>
-            <tr>
-              <td>Carpentry Perishables</td>
-              <td>Fuel, nails, screws, blades</td>
-              <td class="mat-qty">Trip charge</td>
-            </tr>
+          <tbody id="mat-body">
+            <!-- Populated by JS based on package -->
           </tbody>
         </table>
         </div>
@@ -863,5 +882,125 @@
   </div>
 </div>
 
+<script>
+const pkgData = {
+  standard: {
+    name: 'Standard',
+    nameColor: 'var(--accent-light)',
+    prep: 'Standard',
+    paintProvider: 'Nash providing paint',
+    paintProducts: {
+      trim: 'BM Ultra Spec',
+      accent: 'BM Advance',
+      deck: 'BM Woodluxe'
+    },
+    materials: [
+      ['Benjamin Moore Ultra Spec', 'Trim — Cityscape formula', 'TBD'],
+      ['Benjamin Moore Advance', 'Accent', 'TBD'],
+      ['Benjamin Moore Woodluxe', 'Deck stain — Cityscape formula', 'TBD'],
+      ['Porch Screen', 'Charcoal fiberglass insect screen', '2 rolls'],
+      ['Deck Board 8\'', 'Pressure treated pine 1×8×8', 'Per CO-1'],
+      ['Deck Screws', '—', '1 box'],
+      ['Carpentry Perishables', 'Fuel, nails, screws, blades', 'Trip charge']
+    ],
+    matNote: ''
+  },
+  value: {
+    name: 'Value',
+    nameColor: 'var(--orange)',
+    prep: 'Light',
+    paintProvider: '⚠️ Customer supplies paint',
+    paintProducts: {
+      trim: 'Customer-supplied',
+      accent: 'Customer-supplied',
+      deck: 'Customer-supplied'
+    },
+    materials: [
+      ['Porch Screen', 'Charcoal fiberglass insect screen', '2 rolls'],
+      ['Deck Board 8\'', 'Pressure treated pine 1×8×8', 'Per CO-1'],
+      ['Deck Screws', '—', '1 box'],
+      ['Carpentry Perishables', 'Fuel, nails, screws, blades', 'Trip charge'],
+      ['Caulk (prep only)', 'Standard', '12 tubes'],
+      ['Sandpaper 150 grit', '—', '2 packs']
+    ],
+    matNote: 'No paint — customer supplied'
+  },
+  premium: {
+    name: 'Premium Plus',
+    nameColor: 'var(--purple)',
+    prep: 'Full Prep (sand all, caulk all, prime all bare)',
+    paintProducts: {
+      trim: 'BM Aura / SW Emerald',
+      accent: 'BM Advance',
+      deck: 'BM Woodluxe'
+    },
+    paintProvider: 'Nash providing premium paint',
+    materials: [
+      ['Benjamin Moore Aura Exterior', 'Trim — Cityscape formula', 'TBD'],
+      ['Benjamin Moore Advance', 'Accent — Cityscape formula', 'TBD'],
+      ['Benjamin Moore Woodluxe', 'Deck stain — Cityscape formula', 'TBD'],
+      ['Bonding Primer (spot prime)', 'All bare/repaired areas', '2 gal'],
+      ['Sandpaper 120 grit', 'Sand between coats', '4 packs'],
+      ['Sandpaper 150 grit', 'Final sand', '3 packs'],
+      ['Porch Screen', 'Charcoal fiberglass insect screen', '2 rolls'],
+      ['Deck Board 8\'', 'Pressure treated pine 1×8×8', 'Per CO-1'],
+      ['Deck Screws', '—', '1 box'],
+      ['Carpentry Perishables', 'Fuel, nails, screws, blades', 'Trip charge']
+    ],
+    matNote: ''
+  }
+};
+
+function setPkg(pkg) {
+  const d = pkgData[pkg];
+
+  // Update buttons
+  document.querySelectorAll('.pkg-btn').forEach(b => b.className = 'pkg-btn');
+  const btn = document.getElementById('pkg-' + {standard:'std',value:'val',premium:'prem'}[pkg]);
+  btn.classList.add(pkg === 'value' ? 'val-active' : pkg === 'premium' ? 'prem-active' : 'active');
+
+  // Status bar
+  document.getElementById('pkg-name').textContent = d.name;
+  document.getElementById('pkg-name').style.color = d.nameColor;
+  document.getElementById('prep-name').textContent = d.prep;
+
+  // Banners
+  document.getElementById('value-banner').style.display = pkg === 'value' ? '' : 'none';
+  document.getElementById('premium-banner').style.display = pkg === 'premium' ? '' : 'none';
+
+  // Paint provider
+  document.getElementById('paint-provider').textContent = d.paintProvider;
+  if (pkg === 'value') {
+    document.getElementById('paint-provider').style.color = 'var(--orange)';
+  } else if (pkg === 'premium') {
+    document.getElementById('paint-provider').style.color = 'var(--purple)';
+  } else {
+    document.getElementById('paint-provider').style.color = 'var(--text-dim)';
+  }
+
+  // Update all product tags via data attributes
+  document.querySelectorAll('[data-prod]').forEach(tag => {
+    const key = tag.getAttribute('data-prod');
+    if (d.paintProducts[key]) {
+      tag.textContent = d.paintProducts[key];
+      tag.style.color = pkg === 'value' ? 'var(--orange)' : '';
+      tag.style.borderColor = pkg === 'value' ? 'rgba(249,115,22,0.3)' : '';
+    }
+  });
+
+  // Materials table
+  const mb = document.getElementById('mat-body');
+  mb.innerHTML = d.materials.map(m =>
+    `<tr><td>${m[0]}</td><td>${m[1]}</td><td class="mat-qty">${m[2]}</td></tr>`
+  ).join('');
+
+  // Materials note
+  document.getElementById('mat-note').textContent = d.matNote;
+  document.getElementById('mat-note').style.color = pkg === 'value' ? 'var(--orange)' : 'var(--text-dim)';
+}
+
+// Initialize
+setPkg('standard');
+</script>
 </body>
 </html>
