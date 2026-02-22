@@ -299,14 +299,14 @@
 
     <!-- VALUE: Customer Buys Paint Banner -->
     <div id="value-banner" style="display:none;background:var(--orange-bg);border:1px solid rgba(249,115,22,0.4);border-radius:10px;padding:14px 20px;margin-bottom:20px;">
-      <div style="font-size:15px;font-weight:700;color:var(--orange);margin-bottom:6px;">🎨 VALUE PACKAGE — CUSTOMER SUPPLIES PAINT</div>
+      <div style="font-size:15px;font-weight:700;color:var(--orange);margin-bottom:6px;">🎨 VALUE PACKAGE — SUB SUPPLIES PAINT</div>
       <div style="font-size:13px;color:var(--orange);line-height:1.6;">
-        Customer is responsible for purchasing all paint and stain products.<br>
-        Crew provides labor, prep materials, and equipment only.
+        The sub is responsible for purchasing all paint and stain products for this job.<br>
+        Nash provides labor coordination, prep materials, and equipment only.
       </div>
       <div style="margin-top:10px;padding:10px 14px;background:rgba(249,115,22,0.08);border-radius:6px;border-left:3px solid var(--orange);">
-        <div style="font-size:12px;color:var(--text-bright);font-weight:600;">💡 Crew Paint Purchase Option</div>
-        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5;">If crew wants Nash to buy paint and deduct from their pay: <strong style="color:var(--text-bright)">Call office BEFORE purchasing.</strong> Office will create a separate PO and track the deduction. Do not use the job PO for crew-purchased paint.</div>
+        <div style="font-size:12px;color:var(--text-bright);font-weight:600;">💡 Nash Paint Purchase Option</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5;">If the sub wants Nash to purchase paint and deduct from their pay: <strong style="color:var(--text-bright)">Call office BEFORE purchasing.</strong> The office will create a separate PO and track the deduction. The job PO should not be used for sub-purchased paint.</div>
       </div>
     </div>
 
@@ -324,11 +324,11 @@
         ✦ Sand between coats (120-150 grit) for smooth finish<br>
         ✦ 3 coats on high-traffic/high-visibility surfaces if needed for full hide<br>
         ✦ Cut lines must be razor-sharp — no tape bleed, no wobble<br>
-        ✦ Final walkthrough with supervisor BEFORE marking complete
+        ✦ Supervisor must do a final walkthrough BEFORE the job is marked complete
       </div>
       <div style="margin-top:10px;padding:10px 14px;background:rgba(168,85,247,0.06);border-radius:6px;border-left:3px solid var(--purple);">
         <div style="font-size:12px;color:var(--text-bright);font-weight:600;">🪣 Premium Products</div>
-        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Premium Plus uses top-tier products: Benjamin Moore Aura / Sherwin-Williams Emerald (not Ultra Spec or SuperPaint). Confirm product labels match before starting.</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">Premium Plus uses top-tier products: Benjamin Moore Aura / Sherwin-Williams Emerald (not Ultra Spec or SuperPaint). Product labels should be confirmed before work begins.</div>
       </div>
     </div>
 
@@ -480,7 +480,7 @@
             <span class="line-surface">Pressure Washing — All Painted Surfaces</span>
             <div class="line-tags"><span class="tag tag-pw">PW Labor</span></div>
           </div>
-          <div class="line-worknote">Avoid window and door openings. Use appropriate pressure to avoid damage to wood. Watch closely on decks. Catch paint chips to minimize cleanup.</div>
+          <div class="line-worknote">Avoid window and door openings. Appropriate pressure should be used to avoid damage to wood. Watch closely on decks. Paint chips should be caught to minimize cleanup.</div>
         </div>
 
         <div class="line-item">
@@ -505,7 +505,7 @@
             <div class="line-tags"><span class="tag tag-labor">Exterior Labor</span><span class="tag tag-product" data-prod="trim">BM Ultra Spec — Trim</span></div>
           </div>
           <div class="line-desc">Downspouts are not removed. Outward facing sides included.</div>
-          <div class="line-worknote">Make sure unpainted areas behind downspouts are not visible with sprayers, whizz rollers, or brushes.</div>
+          <div class="line-worknote">Unpainted areas behind downspouts should not be visible. Use sprayers, whizz rollers, or brushes to cover.</div>
         </div>
 
         <div class="line-item">
@@ -630,7 +630,7 @@
             <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span></div>
           </div>
           <div class="line-desc">Gently remove old wood trim. Reinstall after porch is stained and rescreened.</div>
-          <div class="line-worknote">Painters to stain/paint per work order PRIOR to carpenters reinstalling wood. Broken/damaged boards needing replacement = additional labor + material cost. New boards will not match with semi-transparent decks.</div>
+          <div class="line-worknote">Painters should stain/paint per work order PRIOR to carpenters reinstalling wood. Broken/damaged boards needing replacement will result in additional labor + material cost. New boards will not match with semi-transparent decks.</div>
         </div>
       </div>
 
@@ -710,7 +710,7 @@
             <span class="line-surface">Reuse Old Wood Trim</span>
             <div class="line-tags"><span class="tag tag-carp">Carpentry Labor</span></div>
           </div>
-          <div class="line-worknote">Painters to stain/paint per work order PRIOR to carpenters reinstalling wood.</div>
+          <div class="line-worknote">Painters should stain/paint per work order PRIOR to carpenters reinstalling wood.</div>
         </div>
       </div>
 
@@ -909,11 +909,11 @@ const pkgData = {
     name: 'Value',
     nameColor: 'var(--orange)',
     prep: 'Light',
-    paintProvider: '⚠️ Customer supplies paint',
+    paintProvider: '⚠️ Sub supplies paint',
     paintProducts: {
-      trim: 'Customer-supplied',
-      accent: 'Customer-supplied',
-      deck: 'Customer-supplied'
+      trim: 'Sub-supplied',
+      accent: 'Sub-supplied',
+      deck: 'Sub-supplied'
     },
     materials: [
       ['Porch Screen', 'Charcoal fiberglass insect screen', '2 rolls'],
@@ -923,7 +923,7 @@ const pkgData = {
       ['Caulk (prep only)', 'Standard', '12 tubes'],
       ['Sandpaper 150 grit', '—', '2 packs']
     ],
-    matNote: 'No paint — customer supplied'
+    matNote: 'No paint — sub supplied'
   },
   premium: {
     name: 'Premium Plus',
