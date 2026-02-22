@@ -52,6 +52,7 @@ a { color:var(--accent-light); text-decoration:none; }
 .headcount-btns { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 12px; }
 .hc-btn { width:44px; height:44px; border-radius:10px; border:2px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:16px; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
 .hc-btn.active { border-color:var(--accent); background:rgba(59,130,246,0.2); color:var(--accent-light); }
+.hc-custom { font-size:14px; }
 
 .field-label { font-size:13px; color:var(--text-dim); margin-bottom:4px; margin-top:12px; }
 input[type="date"], textarea { width:100%; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-size:14px; font-family:inherit; }
@@ -205,7 +206,9 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
       <button class="hc-btn active" data-val="3">3</button>
       <button class="hc-btn" data-val="4">4</button>
       <button class="hc-btn" data-val="5">5</button>
-      <button class="hc-btn" data-val="6+">6+</button>
+      <button class="hc-btn" data-val="6">6</button>
+      <button class="hc-btn" data-val="7">7</button>
+      <button class="hc-btn hc-custom" data-val="custom">✏️</button>
     </div>
     <div class="field-label" data-i18n="whenFinish">When do you think you'll finish?</div>
     <input type="date" id="est-date" value="2026-02-26">
@@ -762,8 +765,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // Headcount buttons
 document.querySelectorAll('.hc-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.hc-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn.dataset.val === 'custom') {
+      const val = prompt(lang === 'es' ? '¿Cuántos hombres en sitio?' : 'How many men on site?');
+      const num = parseInt(val, 10);
+      if (!num || num < 1) return;
+      document.querySelectorAll('.hc-btn').forEach(b => b.classList.remove('active'));
+      btn.textContent = num;
+      btn.dataset.val = String(num);
+      btn.classList.add('active');
+    } else {
+      document.querySelectorAll('.hc-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.val === 'custom' && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; }
+      });
+      btn.classList.add('active');
+    }
   });
 });
 
