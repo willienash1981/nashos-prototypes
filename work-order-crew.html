@@ -166,12 +166,21 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .d1-check { width:22px; height:22px; border-radius:6px; border:2px solid var(--border); display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
 .d1-check.done { border-color:var(--green); background:rgba(34,197,94,0.15); color:var(--green); }
 .d1-hint { font-size:12px; color:var(--text-dim); margin-bottom:8px; line-height:1.5; }
-.d1-photo-area { border:2px dashed var(--border); border-radius:10px; padding:20px; text-align:center; cursor:pointer; transition:all 0.15s; }
-.d1-photo-area:hover { border-color:var(--accent); background:rgba(59,130,246,0.05); }
-.d1-photo-area .icon { font-size:28px; margin-bottom:4px; }
-.d1-photo-area .label { font-size:13px; color:var(--text-dim); }
-.d1-photo-area.has-photos { border-color:var(--green); border-style:solid; background:rgba(34,197,94,0.05); }
-.d1-photo-count { font-size:13px; color:var(--green); font-weight:600; margin-top:6px; text-align:center; }
+.d1-progress-wrap { margin-bottom:16px; }
+.d1-progress-bar { height:6px; background:var(--navy-mid); border-radius:3px; overflow:hidden; }
+.d1-progress-fill { height:100%; background:var(--green); border-radius:3px; transition:width 0.4s ease; }
+.d1-progress-text { font-size:12px; color:var(--text-dim); text-align:right; margin-top:4px; }
+.d1-checklist { display:flex; flex-direction:column; gap:2px; }
+.d1-item { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--navy-mid); border-radius:8px; transition:all 0.2s; }
+.d1-item.done { background:rgba(34,197,94,0.08); }
+.d1-item-check { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
+.d1-item.done .d1-item-check { color:var(--green); }
+.d1-item-label { flex:1; font-size:13px; color:var(--text); }
+.d1-item.done .d1-item-label { color:var(--text-dim); text-decoration:line-through; }
+.d1-cam-btn { background:var(--accent); border:none; border-radius:6px; width:36px; height:36px; font-size:16px; cursor:pointer; flex-shrink:0; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+.d1-cam-btn:hover { background:var(--accent-light); }
+.d1-item.done .d1-cam-btn { background:var(--green); }
+.d1-thumb { width:36px; height:36px; border-radius:6px; object-fit:cover; flex-shrink:0; border:1px solid var(--border); }
 .d1-est-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
 .d1-est-row .d1-label { font-size:13px; color:var(--text-dim); width:90px; flex-shrink:0; }
 .d1-est-btns { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
@@ -195,18 +204,82 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     <div class="d1-title" data-i18n="d1Title">📋 Before You Start</div>
     <div class="d1-subtitle" data-i18n="d1Subtitle">Complete these before beginning work</div>
 
-    <!-- Pre-Job Photos -->
+    <!-- Progress -->
+    <div class="d1-progress-wrap">
+      <div class="d1-progress-bar"><div class="d1-progress-fill" id="d1-progress-fill" style="width:0%"></div></div>
+      <div class="d1-progress-text" id="d1-progress-text">0 / 0</div>
+    </div>
+
+    <!-- Pre-Existing Conditions -->
     <div class="d1-section">
       <div class="d1-section-title">
-        <span class="d1-check" id="d1-photo-check"></span>
-        <span data-i18n="d1PhotoTitle">Pre-Job Site Photos</span>
+        <span>⚠️</span>
+        <span data-i18n="d1PreExTitle">Pre-Existing Conditions</span>
       </div>
-      <div class="d1-hint" data-i18n="d1PhotoHint">Document the site BEFORE work begins — pre-existing damage, current condition. This protects you and the company.</div>
-      <div class="d1-photo-area" id="d1-photo-area" onclick="d1AddPhotos()">
-        <div class="icon">📸</div>
-        <div class="label" data-i18n="d1PhotoLabel">Tap to take pre-job photos</div>
+      <div class="d1-hint" data-i18n="d1PreExHint">Photo anything already damaged — this protects YOU. Not your work areas, the surroundings.</div>
+      <div class="d1-checklist" id="d1-preex-list">
+        <div class="d1-item" data-key="preex-driveway">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1PreExDriveway">Driveway & walkways</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="preex-landscaping">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1PreExLandscaping">Landscaping near house</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="preex-windows">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1PreExWindows">Windows & screens</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="preex-fixtures">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1PreExFixtures">Outdoor furniture & fixtures</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
       </div>
-      <div class="d1-photo-count hidden" id="d1-photo-count"></div>
+    </div>
+
+    <!-- Before Photos — Work Surfaces -->
+    <div class="d1-section">
+      <div class="d1-section-title">
+        <span>📸</span>
+        <span data-i18n="d1BeforeTitle">Before Photos — Your Work Areas</span>
+      </div>
+      <div class="d1-hint" data-i18n="d1BeforeHint">Photo every surface BEFORE you start. This is the "before" in before & after.</div>
+      <div class="d1-checklist" id="d1-before-list">
+        <div class="d1-item" data-key="before-ext-front">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1BeforeExtFront">Exterior — front of house</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="before-ext-sides">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1BeforeExtSides">Exterior — sides & back</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="before-trim">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1BeforeTrim">Trim, fascia & eaves</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="before-deck">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1BeforeDeck">Deck — boards & surface</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="before-deck-rail">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1BeforeDeckRail">Deck — railing & stairs</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+        <div class="d1-item" data-key="before-gutters">
+          <span class="d1-item-check">☐</span>
+          <span class="d1-item-label" data-i18n="d1BeforeGutters">Gutters & downspouts</span>
+          <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+        </div>
+      </div>
     </div>
 
     <!-- Crew Estimate -->
@@ -603,15 +676,25 @@ const translations = {
   en: {
     d1Title: '📋 Before You Start',
     d1Subtitle: 'Complete these before beginning work',
-    d1PhotoTitle: 'Pre-Job Site Photos',
-    d1PhotoHint: 'Document the site BEFORE work begins — pre-existing damage, current condition. This protects you and the company.',
-    d1PhotoLabel: 'Tap to take pre-job photos',
-    d1PhotoCount: '{n} photos added ✓',
+    d1PreExTitle: 'Pre-Existing Conditions',
+    d1PreExHint: 'Photo anything already damaged — this protects YOU. Not your work areas, the surroundings.',
+    d1PreExDriveway: 'Driveway & walkways',
+    d1PreExLandscaping: 'Landscaping near house',
+    d1PreExWindows: 'Windows & screens',
+    d1PreExFixtures: 'Outdoor furniture & fixtures',
+    d1BeforeTitle: 'Before Photos — Your Work Areas',
+    d1BeforeHint: 'Photo every surface BEFORE you start. This is the "before" in before & after.',
+    d1BeforeExtFront: 'Exterior — front of house',
+    d1BeforeExtSides: 'Exterior — sides & back',
+    d1BeforeTrim: 'Trim, fascia & eaves',
+    d1BeforeDeck: 'Deck — boards & surface',
+    d1BeforeDeckRail: 'Deck — railing & stairs',
+    d1BeforeGutters: 'Gutters & downspouts',
     d1EstTitle: 'Your Estimate',
     d1EstHint: 'How many men and how many days do you think this job will take?',
     d1MenLabel: '👷 Men',
     d1DaysLabel: '📅 Days',
-    d1Submit: 'Complete all items above',
+    d1Submit: 'Complete all items to continue',
     d1SubmitReady: "Let's go! ✅",
     d1Skip: "I'll do this later",
     d1CustomMen: 'How many men?',
@@ -722,15 +805,25 @@ const translations = {
   es: {
     d1Title: '📋 Antes de Empezar',
     d1Subtitle: 'Completar antes de iniciar el trabajo',
-    d1PhotoTitle: 'Fotos del Sitio — Antes del Trabajo',
-    d1PhotoHint: 'Documentar el sitio ANTES de comenzar — daños existentes, condición actual. Esto protege a usted y a la empresa.',
-    d1PhotoLabel: 'Toque para tomar fotos del sitio',
-    d1PhotoCount: '{n} fotos agregadas ✓',
+    d1PreExTitle: 'Condiciones Preexistentes',
+    d1PreExHint: 'Fotografíe cualquier daño existente — esto lo protege a USTED. No las áreas de trabajo, los alrededores.',
+    d1PreExDriveway: 'Entrada y caminos',
+    d1PreExLandscaping: 'Jardín cerca de la casa',
+    d1PreExWindows: 'Ventanas y mallas',
+    d1PreExFixtures: 'Muebles y accesorios exteriores',
+    d1BeforeTitle: 'Fotos de Antes — Sus Áreas de Trabajo',
+    d1BeforeHint: 'Fotografíe cada superficie ANTES de empezar. Este es el "antes" del antes y después.',
+    d1BeforeExtFront: 'Exterior — frente de la casa',
+    d1BeforeExtSides: 'Exterior — lados y parte trasera',
+    d1BeforeTrim: 'Molduras, fascia y aleros',
+    d1BeforeDeck: 'Terraza — tablas y superficie',
+    d1BeforeDeckRail: 'Terraza — barandas y escaleras',
+    d1BeforeGutters: 'Canaletas y bajantes',
     d1EstTitle: 'Su Estimación',
     d1EstHint: '¿Cuántos hombres y cuántos días cree que tomará este trabajo?',
     d1MenLabel: '👷 Hombres',
     d1DaysLabel: '📅 Días',
-    d1Submit: 'Complete todos los elementos arriba',
+    d1Submit: 'Complete todos los elementos para continuar',
     d1SubmitReady: '¡Vamos! ✅',
     d1Skip: 'Lo haré después',
     d1CustomMen: '¿Cuántos hombres?',
@@ -987,7 +1080,6 @@ function showToast(msg) {
 // Day 1 Modal — Before You Start
 // ============================================================
 const D1_KEY = 'wo-40618331-day1';
-let d1Photos = 0;
 let d1Men = null;
 let d1Days = null;
 
@@ -997,6 +1089,7 @@ function d1Init() {
     return;
   }
   document.getElementById('d1-overlay').classList.remove('hidden');
+  d1UpdateProgress();
 
   // Men buttons
   document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(btn => {
@@ -1018,7 +1111,7 @@ function d1Init() {
         btn.classList.add('active');
         d1Men = parseInt(btn.dataset.val, 10);
       }
-      d1Update();
+      d1UpdateProgress();
     });
   });
 
@@ -1042,55 +1135,83 @@ function d1Init() {
         btn.classList.add('active');
         d1Days = parseInt(btn.dataset.val, 10);
       }
-      d1Update();
+      d1UpdateProgress();
     });
   });
 }
 
-function d1AddPhotos() {
-  // Simulate photo capture (in production: native camera/file picker)
-  d1Photos += Math.floor(Math.random() * 3) + 1;
-  const area = document.getElementById('d1-photo-area');
-  area.classList.add('has-photos');
-  area.innerHTML = '<div class="icon">✅</div><div class="label">' + t('d1PhotoCount').replace('{n}', d1Photos) + '</div>';
-  const countEl = document.getElementById('d1-photo-count');
-  countEl.classList.remove('hidden');
-  countEl.textContent = t('d1PhotoCount').replace('{n}', d1Photos);
-  d1Update();
+// Simulate taking a photo for a checklist item
+function d1TakePhoto(camBtn) {
+  const item = camBtn.closest('.d1-item');
+  if (item.classList.contains('done')) {
+    // Already done — add another photo (increment count)
+    let count = parseInt(item.dataset.photos || '1', 10) + 1;
+    item.dataset.photos = count;
+    item.querySelector('.d1-thumb-count').textContent = count;
+    return;
+  }
+  // Mark as done
+  item.classList.add('done');
+  item.dataset.photos = '1';
+  item.querySelector('.d1-item-check').textContent = '✅';
+  // Replace camera button with thumbnail + count
+  camBtn.outerHTML = '<div class="d1-thumb" style="background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700"><span class="d1-thumb-count">1</span>📷</div>';
+  d1UpdateProgress();
 }
 
-function d1Update() {
-  const photoOk = d1Photos > 0;
-  const estOk = d1Men !== null && d1Days !== null;
-  document.getElementById('d1-photo-check').className = 'd1-check' + (photoOk ? ' done' : '');
-  document.getElementById('d1-photo-check').textContent = photoOk ? '✓' : '';
-  document.getElementById('d1-est-check').className = 'd1-check' + (estOk ? ' done' : '');
-  document.getElementById('d1-est-check').textContent = estOk ? '✓' : '';
+function d1GetCounts() {
+  const allItems = document.querySelectorAll('.d1-item');
+  const doneItems = document.querySelectorAll('.d1-item.done');
+  const preExDone = document.querySelectorAll('#d1-preex-list .d1-item.done').length;
+  const beforeDone = document.querySelectorAll('#d1-before-list .d1-item.done').length;
+  const estDone = (d1Men !== null && d1Days !== null) ? 1 : 0;
+  // Total steps = all photo items + 1 for estimate
+  const total = allItems.length + 1;
+  const done = doneItems.length + estDone;
+  return { total, done, preExDone, beforeDone, estDone };
+}
+
+function d1UpdateProgress() {
+  const c = d1GetCounts();
+  const pct = Math.round((c.done / c.total) * 100);
+  document.getElementById('d1-progress-fill').style.width = pct + '%';
+  document.getElementById('d1-progress-text').textContent = c.done + ' / ' + c.total;
+
+  // Update estimate section check
+  const estCheck = document.getElementById('d1-est-check');
+  estCheck.className = 'd1-check' + (c.estDone ? ' done' : '');
+  estCheck.textContent = c.estDone ? '✓' : '';
+
+  // Submit button — require at least 1 pre-existing + 1 before + estimate
   const btn = document.getElementById('d1-submit');
-  if (photoOk && estOk) {
+  const ready = c.preExDone >= 1 && c.beforeDone >= 1 && c.estDone;
+  if (ready) {
     btn.className = 'd1-submit ready';
-    btn.textContent = t('d1SubmitReady');
+    btn.textContent = t('d1SubmitReady') + '  (' + c.done + '/' + c.total + ')';
     btn.onclick = d1Submit;
   } else {
     btn.className = 'd1-submit not-ready';
-    btn.textContent = t('d1Submit');
+    const missing = [];
+    if (c.preExDone < 1) missing.push(lang === 'es' ? 'condiciones' : 'conditions');
+    if (c.beforeDone < 1) missing.push(lang === 'es' ? 'fotos de antes' : 'before photos');
+    if (!c.estDone) missing.push(lang === 'es' ? 'estimación' : 'estimate');
+    btn.textContent = (lang === 'es' ? 'Falta: ' : 'Need: ') + missing.join(', ');
     btn.onclick = null;
   }
 }
 
 function d1Submit() {
-  if (d1Photos === 0 || d1Men === null || d1Days === null) return;
+  const c = d1GetCounts();
+  if (c.preExDone < 1 || c.beforeDone < 1 || !c.estDone) return;
   localStorage.setItem(D1_KEY, 'done');
   document.getElementById('d1-overlay').classList.add('hidden');
-  showToast('Day 1 checklist complete — ' + d1Men + ' men, ' + d1Days + ' days ✅');
+  showToast((lang === 'es' ? 'Lista del Día 1 completa — ' : 'Day 1 checklist complete — ') + d1Men + (lang === 'es' ? ' hombres, ' : ' men, ') + d1Days + (lang === 'es' ? ' días ✅' : ' days ✅'));
 }
 
 function d1Dismiss() {
-  // Temporarily hide — will come back on next page open
   document.getElementById('d1-overlay').classList.add('hidden');
 }
 
-// Initialize Day 1 modal on load
 d1Init();
 </script>
 </body>
