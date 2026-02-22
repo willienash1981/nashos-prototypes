@@ -29,9 +29,9 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--navy); color: var(--text); display: flex; min-height: 100vh; }
-  
+
   /* Sidebar */
-  .sidebar { width: var(--sidebar-w); background: var(--navy-light); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; }
+  .sidebar { width: var(--sidebar-w); background: var(--navy-light); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
   .logo { padding: 0 20px 24px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
   .logo-icon { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; }
   .logo-text { font-size: 18px; font-weight: 700; color: var(--text-bright); }
@@ -56,61 +56,146 @@
   .date-range { background: var(--navy-mid); border: 1px solid var(--border); color: var(--text); padding: 7px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; }
   .btn-primary { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; }
   .btn-primary:hover { background: var(--accent-light); }
-
   .content { padding: 24px 32px; }
 
+  /* Comp Plan Banner */
+  .comp-banner { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .comp-banner .greeting { font-size: 18px; font-weight: 600; color: var(--text-bright); }
+  .comp-banner .plan { font-size: 13px; color: var(--text-dim); }
+  .comp-banner .plan strong { color: var(--accent-light); font-weight: 500; }
+
   /* KPI Cards */
-  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-  .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
-  .kpi-label { font-size: 12px; color: var(--text-dim); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-  .kpi-value { font-size: 28px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
-  .kpi-change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
+  .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .kpi-label { font-size: 11px; color: var(--text-dim); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi-value { font-size: 26px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+  .kpi-change { font-size: 11px; display: flex; align-items: center; gap: 4px; }
   .kpi-change.up { color: var(--green); }
   .kpi-change.down { color: var(--red); }
   .kpi-change.neutral { color: var(--text-dim); }
+  .kpi-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
 
-  /* Two Column Layout */
-  .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
+  /* Two Column: Goals + Commission */
+  .goals-comm { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
 
-  /* Pipeline Table */
+  /* Card generic */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-size: 15px; font-weight: 600; color: var(--text-bright); }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text-bright); display: flex; align-items: center; gap: 8px; }
   .card-action { font-size: 12px; color: var(--accent-light); cursor: pointer; text-decoration: none; }
   .card-action:hover { text-decoration: underline; }
+  .card-body { padding: 16px 20px; }
 
+  /* Progress Bars */
+  .goal-row { margin-bottom: 16px; }
+  .goal-row:last-child { margin-bottom: 0; }
+  .goal-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .goal-label { font-size: 13px; color: var(--text); }
+  .goal-value { font-size: 13px; font-weight: 600; color: var(--text-bright); }
+  .goal-bar { height: 10px; background: var(--navy-mid); border-radius: 5px; overflow: hidden; position: relative; }
+  .goal-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+  .goal-fill.green { background: linear-gradient(90deg, #16a34a, #22c55e); }
+  .goal-fill.yellow { background: linear-gradient(90deg, #ca8a04, #eab308); }
+  .goal-fill.red { background: linear-gradient(90deg, #dc2626, #ef4444); }
+  .goal-fill.blue { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+  .goal-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; display: flex; justify-content: space-between; }
+  .on-track { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .on-track.good { background: var(--green-bg); color: var(--green); }
+  .on-track.warn { background: var(--yellow-bg); color: var(--yellow); }
+  .on-track.bad { background: var(--red-bg); color: var(--red); }
+
+  /* Commission Grid */
+  .comm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .comm-item { text-align: center; padding: 12px 8px; background: var(--navy-mid); border-radius: 8px; }
+  .comm-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .comm-val { font-size: 20px; font-weight: 700; color: var(--text-bright); }
+  .comm-sub { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+  .comm-deal { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(51,65,85,0.5); font-size: 12px; }
+  .comm-deal:last-child { border-bottom: none; }
+  .comm-deal .name { color: var(--text-bright); font-weight: 500; }
+  .comm-deal .val { font-weight: 600; color: var(--text-bright); }
+  .comm-deal .gp-ok { color: var(--green); }
+  .comm-deal .gp-bad { color: var(--red); }
+
+  /* Performance KPIs row */
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .perf-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; text-align: center; }
+  .perf-val { font-size: 22px; font-weight: 700; color: var(--text-bright); }
+  .perf-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+  .perf-trend { font-size: 11px; margin-top: 2px; }
+  .perf-trend.up { color: var(--green); }
+  .perf-trend.down { color: var(--red); }
+  .perf-trend.neutral { color: var(--text-dim); }
+
+  /* Monthly Chart */
+  .chart-container { position: relative; padding: 20px; }
+  .chart-row { display: flex; align-items: flex-end; gap: 6px; height: 220px; padding-bottom: 24px; border-bottom: 1px solid var(--border); position: relative; }
+  .chart-month { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; }
+  .chart-bars { display: flex; gap: 3px; align-items: flex-end; width: 100%; justify-content: center; }
+  .chart-bar { border-radius: 3px 3px 0 0; min-width: 12px; flex: 1; max-width: 22px; }
+  .chart-bar.actual { background: var(--green); }
+  .chart-bar.goal-bar-vis { background: var(--accent); opacity: 0.4; }
+  .chart-month-label { font-size: 10px; color: var(--text-dim); margin-top: 8px; position: absolute; bottom: -20px; }
+  .chart-val-label { font-size: 9px; color: var(--text-dim); text-align: center; margin-bottom: 3px; white-space: nowrap; }
+  /* Break-even line */
+  .break-even-line { position: absolute; left: 0; right: 0; border-top: 2px dashed var(--red); opacity: 0.6; }
+  .break-even-label { position: absolute; right: 4px; font-size: 9px; color: var(--red); opacity: 0.8; transform: translateY(-12px); }
+  /* Goal line (SVG overlay) */
+  .chart-overlay { position: absolute; top: 20px; left: 20px; right: 20px; height: 220px; pointer-events: none; }
+  .chart-legend { display: flex; gap: 16px; padding-top: 28px; }
+  .chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Gauge */
+  .gauge-wrapper { display: flex; flex-direction: column; align-items: center; padding: 16px 0; }
+  .gauge-svg { width: 140px; height: 80px; }
+  .gauge-val { font-size: 28px; font-weight: 700; color: var(--text-bright); margin-top: 4px; }
+  .gauge-label { font-size: 11px; color: var(--text-dim); }
+
+  /* Two Col pipeline + right col */
+  .pipeline-row { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* Table */
   table { width: 100%; border-collapse: collapse; }
   th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); background: var(--navy-light); border-bottom: 1px solid var(--border); }
-  td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  td { padding: 11px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
   tr:hover td { background: var(--card-hover); }
   tr:last-child td { border-bottom: none; }
-
   .customer-name { font-weight: 500; color: var(--text-bright); cursor: pointer; }
   .customer-name:hover { color: var(--accent-light); text-decoration: underline; }
   .customer-addr { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-
   .badge { display: inline-flex; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
   .badge-sent { background: rgba(59,130,246,0.15); color: var(--accent-light); }
   .badge-viewed { background: var(--yellow-bg); color: var(--yellow); }
   .badge-draft { background: rgba(148,163,184,0.15); color: var(--text-dim); }
   .badge-accepted { background: var(--green-bg); color: var(--green); }
-  .badge-expired { background: var(--red-bg); color: var(--red); }
   .badge-follow-up { background: rgba(249,115,22,0.15); color: var(--orange); }
-
   .service-tags { display: flex; gap: 4px; flex-wrap: wrap; }
   .service-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: var(--navy-mid); color: var(--text-dim); }
-
   .amount { font-weight: 600; color: var(--text-bright); font-variant-numeric: tabular-nums; }
   .gp-good { color: var(--green); }
   .gp-warn { color: var(--yellow); }
   .gp-bad { color: var(--red); }
-
   .days-ago { color: var(--text-dim); font-size: 12px; }
   .days-ago.urgent { color: var(--orange); font-weight: 500; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* Activity Feed */
-  .activity-list { padding: 0; }
-  .activity-item { display: flex; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+  /* Schedule */
+  .sched-item { display: flex; gap: 14px; padding: 12px 20px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .sched-item:last-child { border-bottom: none; }
+  .sched-time { font-size: 13px; font-weight: 600; color: var(--accent-light); min-width: 70px; flex-shrink: 0; }
+  .sched-info { flex: 1; }
+  .sched-name { font-size: 13px; font-weight: 500; color: var(--text-bright); }
+  .sched-addr { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .sched-type { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+  .sched-drive { font-size: 10px; color: var(--orange); margin-top: 3px; }
+  .sched-btn { font-size: 11px; padding: 5px 12px; border-radius: 5px; background: var(--accent); color: white; border: none; cursor: pointer; white-space: nowrap; align-self: center; }
+
+  /* Three col bottom */
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* Activity */
+  .activity-item { display: flex; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
   .activity-item:last-child { border-bottom: none; }
   .activity-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
   .activity-dot.blue { background: var(--accent); }
@@ -118,57 +203,57 @@
   .activity-dot.yellow { background: var(--yellow); }
   .activity-dot.red { background: var(--red); }
   .activity-dot.purple { background: var(--purple); }
-  .activity-text { font-size: 13px; line-height: 1.5; }
+  .activity-text { font-size: 13px; line-height: 1.4; }
   .activity-text strong { color: var(--text-bright); font-weight: 500; }
-  .activity-time { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
-
-  /* Commission Card */
-  .commission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; }
-  .commission-item { text-align: center; }
-  .commission-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
-  .commission-value { font-size: 22px; font-weight: 700; color: var(--text-bright); }
-  .commission-sub { font-size: 11px; color: var(--text-dim); }
-
-  /* Progress Bar */
-  .progress-section { padding: 20px; }
-  .progress-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-  .progress-label { font-size: 13px; color: var(--text); }
-  .progress-value { font-size: 13px; font-weight: 600; color: var(--text-bright); }
-  .progress-bar { height: 8px; background: var(--navy-mid); border-radius: 4px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
-  .progress-fill.green { background: var(--green); }
-  .progress-fill.yellow { background: var(--yellow); }
-  .progress-fill.blue { background: var(--accent); }
-
-  /* Bottom Row */
-  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-
-  /* Chart Placeholder */
-  .chart-area { padding: 20px; min-height: 200px; display: flex; align-items: flex-end; gap: 8px; }
-  .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .chart-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
-  .chart-bar.sent { background: var(--accent); }
-  .chart-bar.won { background: var(--green); }
-  .chart-bar.lost { background: var(--red); opacity: 0.6; }
-  .chart-label { font-size: 10px; color: var(--text-dim); }
-  .chart-legend { display: flex; gap: 16px; padding: 0 20px 16px; }
-  .chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
-  .chart-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+  .activity-time { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
 
   /* Task List */
-  .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+  .task-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 20px; border-bottom: 1px solid var(--border); }
   .task-item:last-child { border-bottom: none; }
   .task-checkbox { width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; margin-top: 2px; cursor: pointer; flex-shrink: 0; }
   .task-checkbox:hover { border-color: var(--accent); }
   .task-checkbox.overdue { border-color: var(--red); }
-  .task-content { flex: 1; }
   .task-title { font-size: 13px; color: var(--text); }
   .task-meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
   .task-meta .overdue { color: var(--red); font-weight: 500; }
 
-  /* Responsive */
-  @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 1200px) { .two-col { grid-template-columns: 1fr; } .three-col { grid-template-columns: 1fr; } }
+  /* Lead source table */
+  .lead-src-row { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-bottom: 1px solid rgba(51,65,85,0.5); font-size: 12px; }
+  .lead-src-row:last-child { border-bottom: none; }
+  .lead-src-name { flex: 1; color: var(--text); font-weight: 500; min-width: 80px; }
+  .lead-src-stat { text-align: right; color: var(--text-dim); min-width: 50px; }
+  .lead-src-stat strong { color: var(--text-bright); }
+
+  /* =========== RESPONSIVE =========== */
+  @media (max-width: 1400px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    .perf-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 1100px) {
+    .sidebar { display: none; }
+    body { display: block; }
+    .goals-comm { grid-template-columns: 1fr; }
+    .pipeline-row { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+  }
+  @media (max-width: 680px) {
+    .topbar { padding: 12px 16px; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .topbar h1 { font-size: 16px; }
+    .topbar-right { width: 100%; }
+    .content { padding: 12px; }
+    .comp-banner { flex-direction: column; gap: 4px; padding: 12px 16px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .kpi-value { font-size: 22px; }
+    .perf-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .comm-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .comm-val { font-size: 16px; }
+    .chart-row { height: 160px; }
+    .sched-item { flex-wrap: wrap; gap: 8px; }
+    .sched-time { min-width: 60px; }
+    .sched-btn { width: 100%; text-align: center; margin-top: 4px; }
+    table { min-width: 600px; }
+  }
 </style>
 </head>
 <body>
@@ -179,24 +264,20 @@
     <div class="logo-icon">N</div>
     <div class="logo-text">Nash<span>OS</span></div>
   </div>
-  
   <div class="nav-section">Sales</div>
   <a class="nav-item active"><span class="icon">📊</span> Dashboard</a>
   <a class="nav-item"><span class="icon">📝</span> Estimates <span class="nav-badge">3</span></a>
   <a class="nav-item"><span class="icon">📋</span> Proposals</a>
   <a class="nav-item"><span class="icon">👥</span> Customers</a>
   <a class="nav-item"><span class="icon">📅</span> Appointments</a>
-  
   <div class="nav-section">Operations</div>
   <a class="nav-item"><span class="icon">🔨</span> Jobs</a>
   <a class="nav-item"><span class="icon">📦</span> Work Orders</a>
   <a class="nav-item"><span class="icon">🧾</span> Invoices</a>
   <a class="nav-item"><span class="icon">📸</span> Photos</a>
-  
   <div class="nav-section">Admin</div>
   <a class="nav-item"><span class="icon">📈</span> Reports</a>
   <a class="nav-item"><span class="icon">⚙️</span> Settings</a>
-  
   <div class="sidebar-footer">
     <div class="user-info">
       <div class="avatar">LR</div>
@@ -218,49 +299,389 @@
         <option>Last 30 Days</option>
         <option>This Quarter</option>
         <option>Year to Date</option>
+        <option>Last Year Comparison</option>
       </select>
       <button class="btn-primary">+ New Estimate</button>
     </div>
   </div>
 
   <div class="content">
-    <!-- KPI Cards -->
+
+    <!-- Comp Plan Banner -->
+    <div class="comp-banner">
+      <div>
+        <div class="greeting">👋 Welcome, Larry</div>
+        <div class="plan"><strong>$50K base</strong> + <strong>5% commission on GP</strong> &nbsp;·&nbsp; GP gate: ≥40% &nbsp;·&nbsp; Effective Jan 1, 2026</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--text-dim)">Today</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-bright)">Tue, Feb 17, 2026</div>
+      </div>
+    </div>
+
+    <!-- KPI Cards Row -->
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-label">Active Pipeline</div>
-        <div class="kpi-value">$287,450</div>
-        <div class="kpi-change up">▲ 12% vs last month</div>
+        <div class="kpi-label">Leads This Month</div>
+        <div class="kpi-value">15</div>
+        <div class="kpi-change up">▲ 3 vs Jan</div>
+        <div class="kpi-sub">YTD: 27</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Estimates Sent</div>
-        <div class="kpi-value">24</div>
-        <div class="kpi-change up">▲ 3 vs last month</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-change up">▲ 2 vs Jan</div>
+        <div class="kpi-sub">Pending: 4 · Declined: 1</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Close Rate</div>
-        <div class="kpi-value">42%</div>
-        <div class="kpi-change down">▼ 3% vs last month</div>
+        <div class="kpi-value">58%</div>
+        <div class="kpi-change neutral">→ same as Jan</div>
+        <div class="kpi-sub">YTD: 56% · 7 accepted</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Revenue Closed</div>
-        <div class="kpi-value">$118,300</div>
-        <div class="kpi-change up">▲ $14K vs last month</div>
+        <div class="kpi-label">Revenue Sold</div>
+        <div class="kpi-value">$54,000</div>
+        <div class="kpi-change up">▲ $8K vs Jan</div>
+        <div class="kpi-sub">YTD: $100,500</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Avg Estimate Size</div>
-        <div class="kpi-value">$11,975</div>
-        <div class="kpi-change neutral">→ No change</div>
+        <div class="kpi-label">Avg Deal Size</div>
+        <div class="kpi-value">$7,714</div>
+        <div class="kpi-change up">▲ $420 vs Jan</div>
+        <div class="kpi-sub">vs same month last yr: $6,980</div>
+      </div>
+    </div>
+
+    <!-- Goal Tracking + Commission Row -->
+    <div class="goals-comm">
+      <!-- Goal Tracking -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🎯 Goal Tracking</span>
+          <span class="on-track good">✅ ON TRACK</span>
+        </div>
+        <div class="card-body">
+          <!-- Monthly Goal -->
+          <div class="goal-row">
+            <div class="goal-header">
+              <span class="goal-label">Monthly Goal</span>
+              <span class="goal-value">$54,000 / $75,000 (72%)</span>
+            </div>
+            <div class="goal-bar"><div class="goal-fill green" style="width:72%"></div></div>
+            <div class="goal-sub">
+              <span>$21,000 remaining · 11 days left</span>
+              <span>Weekly target: $13,125</span>
+            </div>
+          </div>
+          <!-- QTD -->
+          <div class="goal-row">
+            <div class="goal-header">
+              <span class="goal-label">Quarter to Date (Q1)</span>
+              <span class="goal-value">$100,500 / $225,000 (45%)</span>
+            </div>
+            <div class="goal-bar"><div class="goal-fill yellow" style="width:45%"></div></div>
+            <div class="goal-sub">
+              <span>$124,500 remaining</span>
+              <span>Pace: on track (33% through Q1, 45% to goal)</span>
+            </div>
+          </div>
+          <!-- YTD -->
+          <div class="goal-row">
+            <div class="goal-header">
+              <span class="goal-label">Year to Date</span>
+              <span class="goal-value">$100,500 / $900,000 (11%)</span>
+            </div>
+            <div class="goal-bar"><div class="goal-fill blue" style="width:11%"></div></div>
+            <div class="goal-sub">
+              <span>vs same point last year: $88,200 (+14%)</span>
+              <span>Annual goal: $900K</span>
+            </div>
+          </div>
+          <!-- Break-Even -->
+          <div class="goal-row" style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border);">
+            <div class="goal-header">
+              <span class="goal-label">🏁 Break-Even (Overhead Coverage)</span>
+              <span class="goal-value">$25,380 / $68,181 (37%)</span>
+            </div>
+            <div class="goal-bar"><div class="goal-fill red" style="width:37%"></div></div>
+            <div class="goal-sub">
+              <span>$42,801 to profitability</span>
+              <span>GP contribution covers 37% of overhead</span>
+            </div>
+          </div>
+          <!-- Team Context -->
+          <div style="margin-top:12px;padding:10px 14px;background:var(--navy-mid);border-radius:8px;font-size:12px;color:var(--text-dim);">
+            <strong style="color:var(--text-bright)">Team Monthly Goal:</strong> $225,000 &nbsp;·&nbsp; <strong style="color:var(--text-bright)">Your Share:</strong> 33% &nbsp;·&nbsp; Team MTD: $162,000 (72%)
+          </div>
+        </div>
+      </div>
+
+      <!-- Commission -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">💰 Commission — February</span>
+          <a class="card-action">View Full Detail →</a>
+        </div>
+        <div class="card-body">
+          <div class="comm-grid">
+            <div class="comm-item">
+              <div class="comm-label">MTD Earned</div>
+              <div class="comm-val" style="color:var(--green)">$2,847</div>
+              <div class="comm-sub">5 jobs</div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-label">QTD Earned</div>
+              <div class="comm-val">$5,412</div>
+              <div class="comm-sub">Jan + Feb</div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-label">YTD Earned</div>
+              <div class="comm-val">$5,412</div>
+              <div class="comm-sub">↑ 18% vs last yr</div>
+            </div>
+          </div>
+          <div class="comm-grid" style="margin-bottom:12px;">
+            <div class="comm-item">
+              <div class="comm-label">Paid</div>
+              <div class="comm-val">$2,565</div>
+              <div class="comm-sub">Jan disbursed</div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-label">Pending</div>
+              <div class="comm-val" style="color:var(--yellow)">$2,847</div>
+              <div class="comm-sub">Awaiting payment</div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-label">Projected</div>
+              <div class="comm-val" style="color:var(--text-dim)">$1,285</div>
+              <div class="comm-sub">Pipeline × 58% rate</div>
+            </div>
+          </div>
+          <!-- YTD Close Rate Gauge -->
+          <div style="text-align:center;padding:6px 0 10px;border-top:1px solid var(--border);margin-top:4px;">
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">YTD CLOSE RATE</div>
+            <svg class="gauge-svg" viewBox="0 0 140 80">
+              <path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
+              <path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="172.8" stroke-dashoffset="76"/>
+              <defs><linearGradient id="gaugeGrad"><stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#eab308"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs>
+              <!-- Needle -->
+              <line x1="70" y1="70" x2="88" y2="32" stroke="var(--text-bright)" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="70" cy="70" r="4" fill="var(--text-bright)"/>
+              <text x="15" y="78" font-size="8" fill="var(--text-dim)">0%</text>
+              <text x="115" y="78" font-size="8" fill="var(--text-dim)">100%</text>
+            </svg>
+            <div style="font-size:26px;font-weight:700;color:var(--text-bright);margin-top:-4px;">56%</div>
+          </div>
+          <!-- Recent Deals -->
+          <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px;">
+            <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;padding:0 0;">Recent Deals</div>
+            <div class="comm-deal"><span class="name">Cooper Cabinets</span><span>$12,400 <span class="gp-ok">55% ✅</span></span><span class="val" style="color:var(--green)">$352.00</span></div>
+            <div class="comm-deal"><span class="name">Johnson Exterior</span><span>$10,330 <span class="gp-ok">47% ✅</span></span><span class="val" style="color:var(--green)">$243.18</span></div>
+            <div class="comm-deal"><span class="name">Smith Kitchen</span><span>$5,200 <span class="gp-ok">52% ✅</span></span><span class="val" style="color:var(--yellow)">$134.68 pending</span></div>
+            <div class="comm-deal"><span class="name">Williams Interior</span><span>$7,100 <span class="gp-bad">38% 🔴</span></span><span class="val" style="color:var(--red)">$0 — below gate</span></div>
+            <div class="comm-deal"><span class="name">Garcia Exterior</span><span>$3,800 <span class="gp-ok">44% ✅</span></span><span class="val" style="color:var(--green)">$86.12</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance KPIs -->
+    <div class="perf-grid">
+      <div class="perf-card">
+        <div class="perf-val">4.2</div>
+        <div class="perf-label">Avg Days to Close</div>
+        <div class="perf-trend up">↓ 0.8 from Jan (faster)</div>
+      </div>
+      <div class="perf-card">
+        <div class="perf-val">2.3</div>
+        <div class="perf-label">Avg Follow-ups / Close</div>
+        <div class="perf-trend neutral">→ same</div>
+      </div>
+      <div class="perf-card">
+        <div class="perf-val">18%</div>
+        <div class="perf-label">Repeat Customer %</div>
+        <div class="perf-trend up">▲ 4% from Jan</div>
+      </div>
+      <div class="perf-card">
+        <div class="perf-val">47.3%</div>
+        <div class="perf-label">Avg GP%</div>
+        <div class="perf-trend neutral">→ stable</div>
+      </div>
+    </div>
+
+    <!-- Monthly Sales Goals vs Actual Chart -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header">
+        <span class="card-title">📊 Monthly Sales — Goals vs Actual (2026)</span>
+        <span style="font-size:11px;color:var(--text-dim)">Personal Goal Line · Break-Even Line</span>
+      </div>
+      <div class="chart-container">
+        <!-- Break-even line at ~37% of max height = ~37% of 220px = 81px from bottom -->
+        <div class="break-even-line" style="bottom:calc(20px + 81px);"></div>
+        <div class="break-even-label" style="bottom:calc(20px + 82px);">Break-Even $68K</div>
+
+        <div class="chart-row">
+          <!-- Jan -->
+          <div class="chart-month">
+            <div class="chart-val-label">$46K</div>
+            <div class="chart-bars">
+              <div class="chart-bar actual" style="height:92px"></div>
+              <div class="chart-bar goal-bar-vis" style="height:150px"></div>
+            </div>
+            <span class="chart-month-label">Jan</span>
+          </div>
+          <!-- Feb (in progress) -->
+          <div class="chart-month">
+            <div class="chart-val-label">$54K</div>
+            <div class="chart-bars">
+              <div class="chart-bar actual" style="height:108px;background:linear-gradient(to top, var(--green), var(--green) 80%, var(--navy-mid) 80%)"></div>
+              <div class="chart-bar goal-bar-vis" style="height:150px"></div>
+            </div>
+            <span class="chart-month-label">Feb</span>
+          </div>
+          <!-- Mar-Dec projected -->
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0px;background:var(--navy-mid);border:1px dashed var(--border);min-height:2px;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:170px"></div>
+            </div>
+            <span class="chart-month-label">Mar</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:170px"></div>
+            </div>
+            <span class="chart-month-label">Apr</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:190px"></div>
+            </div>
+            <span class="chart-month-label">May</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:200px"></div>
+            </div>
+            <span class="chart-month-label">Jun</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:200px"></div>
+            </div>
+            <span class="chart-month-label">Jul</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:190px"></div>
+            </div>
+            <span class="chart-month-label">Aug</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:170px"></div>
+            </div>
+            <span class="chart-month-label">Sep</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:150px"></div>
+            </div>
+            <span class="chart-month-label">Oct</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:130px"></div>
+            </div>
+            <span class="chart-month-label">Nov</span>
+          </div>
+          <div class="chart-month">
+            <div class="chart-val-label">&nbsp;</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:0;"></div>
+              <div class="chart-bar goal-bar-vis" style="height:110px"></div>
+            </div>
+            <span class="chart-month-label">Dec</span>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="chart-legend-item"><div class="legend-dot" style="background:var(--green)"></div> Actual Sales</div>
+          <div class="chart-legend-item"><div class="legend-dot" style="background:var(--accent);opacity:0.4"></div> Monthly Goal</div>
+          <div class="chart-legend-item"><div class="legend-dot" style="background:var(--red);opacity:0.6;width:16px;height:2px;border-radius:0;"></div> Break-Even</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Schedule -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header">
+        <span class="card-title">📅 Today's Schedule</span>
+        <span style="font-size:12px;color:var(--text-dim)">Tue, Feb 17 · 3 appointments</span>
+      </div>
+      <div class="sched-item">
+        <div class="sched-time">10:00 AM</div>
+        <div class="sched-info">
+          <div class="sched-name">Chen, David</div>
+          <div class="sched-addr">789 Elm St, Franklin TN 37064</div>
+          <div class="sched-type">Estimate — Cabinets</div>
+          <div class="sched-drive">📍 ~22 min drive from office</div>
+        </div>
+        <button class="sched-btn">Start Wizard</button>
+      </div>
+      <div class="sched-item" style="background:var(--navy-mid);">
+        <div class="sched-time" style="color:var(--text-dim)">12:30 PM</div>
+        <div class="sched-info"><div class="sched-name" style="color:var(--text-dim)">Lunch</div></div>
+        <div></div>
+      </div>
+      <div class="sched-item">
+        <div class="sched-time">2:00 PM</div>
+        <div class="sched-info">
+          <div class="sched-name">Davis, Margaret</div>
+          <div class="sched-addr">321 Pine Ave, Brentwood TN 37027</div>
+          <div class="sched-type">Re-measure — Exterior ($18,200 existing estimate)</div>
+          <div class="sched-drive">📍 ~15 min drive from Chen</div>
+        </div>
+        <button class="sched-btn">Start Wizard</button>
+      </div>
+      <div class="sched-item">
+        <div class="sched-time">4:00 PM</div>
+        <div class="sched-info">
+          <div class="sched-name">Park, Joon-ho</div>
+          <div class="sched-addr">555 Maple Dr, Spring Hill TN 37174</div>
+          <div class="sched-type">Estimate — Interior (3BR/2BA)</div>
+          <div class="sched-drive">📍 ~25 min drive from Davis</div>
+        </div>
+        <button class="sched-btn">Start Wizard</button>
       </div>
     </div>
 
     <!-- Pipeline + Activity -->
-    <div class="two-col">
+    <div class="pipeline-row">
       <!-- Pipeline Table -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Active Pipeline</span>
           <a class="card-action">View All Estimates →</a>
         </div>
+        <div class="table-scroll">
         <table>
           <thead>
             <tr>
@@ -278,12 +699,7 @@
                 <div class="customer-name">Johnson, Michael</div>
                 <div class="customer-addr">1847 Woodmont Blvd, Nashville</div>
               </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Exterior</span>
-                  <span class="service-tag">Deck</span>
-                </div>
-              </td>
+              <td><div class="service-tags"><span class="service-tag">Exterior</span><span class="service-tag">Deck</span></div></td>
               <td class="amount">$18,450</td>
               <td><span class="gp-good">52%</span></td>
               <td><span class="badge badge-viewed">Viewed 2×</span></td>
@@ -294,12 +710,7 @@
                 <div class="customer-name">Patel, Priya</div>
                 <div class="customer-addr">4210 Granny White Pike, Brentwood</div>
               </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Interior</span>
-                  <span class="service-tag">Cabinets</span>
-                </div>
-              </td>
+              <td><div class="service-tags"><span class="service-tag">Interior</span><span class="service-tag">Cabinets</span></div></td>
               <td class="amount">$24,800</td>
               <td><span class="gp-good">48%</span></td>
               <td><span class="badge badge-sent">Sent</span></td>
@@ -310,11 +721,7 @@
                 <div class="customer-name">Williams, Sandra</div>
                 <div class="customer-addr">305 Ellendale Ave, Berry Hill</div>
               </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Interior</span>
-                </div>
-              </td>
+              <td><div class="service-tags"><span class="service-tag">Interior</span></div></td>
               <td class="amount">$8,200</td>
               <td><span class="gp-good">54%</span></td>
               <td><span class="badge badge-viewed">Viewed 4×</span></td>
@@ -325,13 +732,7 @@
                 <div class="customer-name">Chen, David</div>
                 <div class="customer-addr">2201 Castleman Dr, Franklin</div>
               </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Exterior</span>
-                  <span class="service-tag">Carpentry</span>
-                  <span class="service-tag">Deck</span>
-                </div>
-              </td>
+              <td><div class="service-tags"><span class="service-tag">Exterior</span><span class="service-tag">Carpentry</span><span class="service-tag">Deck</span></div></td>
               <td class="amount">$31,600</td>
               <td><span class="gp-warn">43%</span></td>
               <td><span class="badge badge-draft">Draft</span></td>
@@ -342,12 +743,7 @@
                 <div class="customer-name">Baker, Thomas</div>
                 <div class="customer-addr">810 Battlefield Dr, Nashville</div>
               </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Interior</span>
-                  <span class="service-tag">Drywall</span>
-                </div>
-              </td>
+              <td><div class="service-tags"><span class="service-tag">Interior</span><span class="service-tag">Drywall</span></div></td>
               <td class="amount">$6,950</td>
               <td><span class="gp-good">56%</span></td>
               <td><span class="badge badge-follow-up">Follow-Up 3</span></td>
@@ -358,183 +754,105 @@
                 <div class="customer-name">Martinez, Elena</div>
                 <div class="customer-addr">1522 Tyne Blvd, Nashville</div>
               </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Exterior</span>
-                  <span class="service-tag">Fence</span>
-                </div>
-              </td>
+              <td><div class="service-tags"><span class="service-tag">Exterior</span><span class="service-tag">Fence</span></div></td>
               <td class="amount">$22,100</td>
               <td><span class="gp-good">49%</span></td>
               <td><span class="badge badge-sent">Sent</span></td>
               <td><span class="days-ago">3d</span></td>
             </tr>
-            <tr>
-              <td>
-                <div class="customer-name">Cooper, James & Lisa</div>
-                <div class="customer-addr">4408 Lone Oak Rd, Nashville</div>
-              </td>
-              <td>
-                <div class="service-tags">
-                  <span class="service-tag">Cabinets</span>
-                </div>
-              </td>
-              <td class="amount">$9,800</td>
-              <td><span class="gp-good">55%</span></td>
-              <td><span class="badge badge-accepted">Accepted ✓</span></td>
-              <td><span class="days-ago">5d</span></td>
-            </tr>
           </tbody>
         </table>
+        </div>
       </div>
 
-      <!-- Right Column -->
-      <div style="display:flex; flex-direction:column; gap:20px;">
+      <!-- Right Column: Activity + Revenue by Service -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
         <!-- Activity Feed -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Recent Activity</span>
             <a class="card-action">All Activity →</a>
           </div>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-dot green"></div>
-              <div>
-                <div class="activity-text"><strong>Cooper</strong> accepted $9,800 cabinet estimate</div>
-                <div class="activity-time">Today, 2:14 PM</div>
-              </div>
+          <div class="activity-item">
+            <div class="activity-dot green"></div>
+            <div>
+              <div class="activity-text"><strong>Cooper</strong> accepted $9,800 cabinet estimate</div>
+              <div class="activity-time">Today, 2:14 PM</div>
             </div>
-            <div class="activity-item">
-              <div class="activity-dot blue"></div>
-              <div>
-                <div class="activity-text"><strong>Johnson</strong> viewed proposal (2nd time)</div>
-                <div class="activity-time">Today, 11:45 AM</div>
-              </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot blue"></div>
+            <div>
+              <div class="activity-text"><strong>Johnson</strong> viewed proposal (2nd time)</div>
+              <div class="activity-time">Today, 11:45 AM</div>
             </div>
-            <div class="activity-item">
-              <div class="activity-dot yellow"></div>
-              <div>
-                <div class="activity-text">Follow-Up 3 sent to <strong>Baker</strong> — financing offer included</div>
-                <div class="activity-time">Today, 9:00 AM</div>
-              </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot yellow"></div>
+            <div>
+              <div class="activity-text">Follow-Up 3 sent to <strong>Baker</strong> — financing offer</div>
+              <div class="activity-time">Today, 9:00 AM</div>
             </div>
-            <div class="activity-item">
-              <div class="activity-dot purple"></div>
-              <div>
-                <div class="activity-text"><strong>Patel</strong> estimate sent — $24.8K interior + cabinets</div>
-                <div class="activity-time">Yesterday, 4:30 PM</div>
-              </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot purple"></div>
+            <div>
+              <div class="activity-text"><strong>Patel</strong> estimate sent — $24.8K interior + cabinets</div>
+              <div class="activity-time">Yesterday, 4:30 PM</div>
             </div>
-            <div class="activity-item">
-              <div class="activity-dot red"></div>
-              <div>
-                <div class="activity-text"><strong>Nguyen</strong> declined — "went with another company"</div>
-                <div class="activity-time">Yesterday, 10:22 AM</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot blue"></div>
-              <div>
-                <div class="activity-text">New lead: <strong>Martinez</strong> — exterior + fence, Tyne Blvd</div>
-                <div class="activity-time">Feb 19, 3:15 PM</div>
-              </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot red"></div>
+            <div>
+              <div class="activity-text"><strong>Nguyen</strong> declined — "went with another company"</div>
+              <div class="activity-time">Yesterday, 10:22 AM</div>
             </div>
           </div>
         </div>
-
-        <!-- Commission Card -->
+        <!-- Revenue by Service Type -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">My Commission — February</span>
+            <span class="card-title">Revenue by Service — MTD</span>
           </div>
-          <div class="commission-grid">
-            <div class="commission-item">
-              <div class="commission-label">Earned (Closed)</div>
-              <div class="commission-value" style="color:var(--green)">$4,732</div>
-              <div class="commission-sub">5 jobs closed</div>
+          <div style="padding:16px 20px;">
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;">
+                <span>Interior</span><span style="color:var(--text-bright);font-weight:600">$22,680 (42%)</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill blue" style="width:42%"></div></div>
             </div>
-            <div class="commission-item">
-              <div class="commission-label">Pending (Pipeline)</div>
-              <div class="commission-value">$8,614</div>
-              <div class="commission-sub">If all pipeline closes</div>
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;">
+                <span>Exterior</span><span style="color:var(--text-bright);font-weight:600">$15,120 (28%)</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill green" style="width:28%"></div></div>
             </div>
-            <div class="commission-item">
-              <div class="commission-label">YTD Earned</div>
-              <div class="commission-value">$9,218</div>
-              <div class="commission-sub">Jan + Feb</div>
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;">
+                <span>Cabinets</span><span style="color:var(--text-bright);font-weight:600">$9,720 (18%)</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill" style="width:18%;background:var(--purple)"></div></div>
             </div>
-            <div class="commission-item">
-              <div class="commission-label">Avg GP%</div>
-              <div class="commission-value" style="color:var(--green)">50.2%</div>
-              <div class="commission-sub">Above 40% gate ✓</div>
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;">
+                <span>Deck & Fence</span><span style="color:var(--text-bright);font-weight:600">$4,320 (8%)</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill" style="width:8%;background:var(--orange)"></div></div>
             </div>
-          </div>
-          <div class="progress-section" style="padding-top:0">
-            <div class="progress-header">
-              <span class="progress-label">Monthly target: $150K</span>
-              <span class="progress-value">$118,300 / $150,000 (79%)</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill green" style="width:79%"></div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;">
+                <span>Other (Drywall, Carpentry)</span><span style="color:var(--text-bright);font-weight:600">$2,160 (4%)</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill" style="width:4%;background:var(--yellow)"></div></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Bottom Row -->
+    <!-- Bottom Row: Tasks + Lead Sources + Estimates Chart -->
     <div class="three-col">
-      <!-- Close Rate Chart -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Estimates — Last 6 Months</span>
-        </div>
-        <div class="chart-legend">
-          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--accent)"></div> Sent</div>
-          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--green)"></div> Won</div>
-          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--red);opacity:0.6"></div> Lost</div>
-        </div>
-        <div class="chart-area">
-          <div class="chart-bar-group">
-            <div class="chart-bar sent" style="height:80px"></div>
-            <div class="chart-bar won" style="height:36px"></div>
-            <div class="chart-bar lost" style="height:24px"></div>
-            <div class="chart-label">Sep</div>
-          </div>
-          <div class="chart-bar-group">
-            <div class="chart-bar sent" style="height:96px"></div>
-            <div class="chart-bar won" style="height:44px"></div>
-            <div class="chart-bar lost" style="height:28px"></div>
-            <div class="chart-label">Oct</div>
-          </div>
-          <div class="chart-bar-group">
-            <div class="chart-bar sent" style="height:72px"></div>
-            <div class="chart-bar won" style="height:32px"></div>
-            <div class="chart-bar lost" style="height:20px"></div>
-            <div class="chart-label">Nov</div>
-          </div>
-          <div class="chart-bar-group">
-            <div class="chart-bar sent" style="height:64px"></div>
-            <div class="chart-bar won" style="height:28px"></div>
-            <div class="chart-bar lost" style="height:16px"></div>
-            <div class="chart-label">Dec</div>
-          </div>
-          <div class="chart-bar-group">
-            <div class="chart-bar sent" style="height:88px"></div>
-            <div class="chart-bar won" style="height:40px"></div>
-            <div class="chart-bar lost" style="height:28px"></div>
-            <div class="chart-label">Jan</div>
-          </div>
-          <div class="chart-bar-group">
-            <div class="chart-bar sent" style="height:100px"></div>
-            <div class="chart-bar won" style="height:42px"></div>
-            <div class="chart-bar lost" style="height:20px"></div>
-            <div class="chart-label">Feb</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Today's Tasks -->
+      <!-- Tasks -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">My Tasks</span>
@@ -542,85 +860,155 @@
         </div>
         <div class="task-item">
           <div class="task-checkbox overdue"></div>
-          <div class="task-content">
+          <div>
             <div class="task-title">Call Williams — viewed 4× without accepting</div>
             <div class="task-meta"><span class="overdue">Overdue — due yesterday</span></div>
           </div>
         </div>
         <div class="task-item">
           <div class="task-checkbox"></div>
-          <div class="task-content">
+          <div>
             <div class="task-title">Follow up Baker — no response in 12 days</div>
             <div class="task-meta">Due today · Auto-generated</div>
           </div>
         </div>
         <div class="task-item">
           <div class="task-checkbox"></div>
-          <div class="task-content">
+          <div>
             <div class="task-title">Send Chen estimate — draft ready</div>
             <div class="task-meta">Due today</div>
           </div>
         </div>
         <div class="task-item">
           <div class="task-checkbox"></div>
-          <div class="task-content">
+          <div>
             <div class="task-title">Estimate appointment: Rivera, 2:00 PM</div>
             <div class="task-meta">Tomorrow · 308 Hillsboro Pike</div>
           </div>
         </div>
         <div class="task-item">
           <div class="task-checkbox"></div>
-          <div class="task-content">
+          <div>
             <div class="task-title">Text Johnson — viewed proposal twice today</div>
             <div class="task-meta">Due tomorrow · System suggested</div>
           </div>
         </div>
       </div>
 
-      <!-- Lead Sources -->
+      <!-- Lead Source Conversion -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Lead Sources — This Month</span>
+          <span class="card-title">Lead Source Conversion — MTD</span>
         </div>
-        <div style="padding:20px;">
-          <div style="margin-bottom:16px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <span style="font-size:13px;color:var(--text)">Google / Organic</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-bright)">9 leads · $94,200</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill blue" style="width:38%"></div></div>
+        <div style="padding:4px 0;">
+          <div class="lead-src-row" style="border-bottom:1px solid var(--border);padding-bottom:8px;font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
+            <span class="lead-src-name">Source</span>
+            <span class="lead-src-stat">Leads</span>
+            <span class="lead-src-stat">Sold</span>
+            <span class="lead-src-stat">Rate</span>
+            <span class="lead-src-stat">Avg Deal</span>
           </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <span style="font-size:13px;color:var(--text)">Referral</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-bright)">6 leads · $72,600</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill green" style="width:30%"></div></div>
+          <div class="lead-src-row">
+            <span class="lead-src-name">Google / Organic</span>
+            <span class="lead-src-stat"><strong>6</strong></span>
+            <span class="lead-src-stat"><strong>4</strong></span>
+            <span class="lead-src-stat" style="color:var(--green)"><strong>67%</strong></span>
+            <span class="lead-src-stat"><strong>$7,200</strong></span>
           </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <span style="font-size:13px;color:var(--text)">Google Ads / PPC</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-bright)">5 leads · $58,400</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill yellow" style="width:24%"></div></div>
+          <div class="lead-src-row">
+            <span class="lead-src-name">Referral</span>
+            <span class="lead-src-stat"><strong>5</strong></span>
+            <span class="lead-src-stat"><strong>3</strong></span>
+            <span class="lead-src-stat" style="color:var(--green)"><strong>60%</strong></span>
+            <span class="lead-src-stat"><strong>$11,400</strong></span>
           </div>
-          <div style="margin-bottom:16px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <span style="font-size:13px;color:var(--text)">Repeat Customer</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-bright)">3 leads · $41,200</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:17%;background:var(--purple)"></div></div>
+          <div class="lead-src-row">
+            <span class="lead-src-name">Angi</span>
+            <span class="lead-src-stat"><strong>2</strong></span>
+            <span class="lead-src-stat"><strong>1</strong></span>
+            <span class="lead-src-stat" style="color:var(--yellow)"><strong>50%</strong></span>
+            <span class="lead-src-stat"><strong>$3,800</strong></span>
           </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <span style="font-size:13px;color:var(--text)">Nextdoor / Social</span>
-              <span style="font-size:13px;font-weight:600;color:var(--text-bright)">1 lead · $21,050</span>
+          <div class="lead-src-row">
+            <span class="lead-src-name">Yard Sign</span>
+            <span class="lead-src-stat"><strong>1</strong></span>
+            <span class="lead-src-stat"><strong>0</strong></span>
+            <span class="lead-src-stat" style="color:var(--red)"><strong>0%</strong></span>
+            <span class="lead-src-stat"><strong>—</strong></span>
+          </div>
+          <div class="lead-src-row">
+            <span class="lead-src-name">Repeat Customer</span>
+            <span class="lead-src-stat"><strong>1</strong></span>
+            <span class="lead-src-stat"><strong>1</strong></span>
+            <span class="lead-src-stat" style="color:var(--green)"><strong>100%</strong></span>
+            <span class="lead-src-stat"><strong>$9,800</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estimates Sent/Won/Lost Chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Estimates — Last 6 Months</span>
+        </div>
+        <div class="chart-legend" style="padding:12px 20px 0;">
+          <div class="chart-legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Sent</div>
+          <div class="chart-legend-item"><div class="legend-dot" style="background:var(--green)"></div> Won</div>
+          <div class="chart-legend-item"><div class="legend-dot" style="background:var(--red);opacity:0.6"></div> Lost</div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px;padding:16px 20px;min-height:180px;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;">
+              <div style="flex:1;max-width:16px;height:80px;background:var(--accent);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:36px;background:var(--green);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:24px;background:var(--red);opacity:0.6;border-radius:3px 3px 0 0;"></div>
             </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:9%;background:var(--orange)"></div></div>
+            <span style="font-size:10px;color:var(--text-dim)">Sep</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;">
+              <div style="flex:1;max-width:16px;height:96px;background:var(--accent);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:44px;background:var(--green);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:28px;background:var(--red);opacity:0.6;border-radius:3px 3px 0 0;"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text-dim)">Oct</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;">
+              <div style="flex:1;max-width:16px;height:72px;background:var(--accent);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:32px;background:var(--green);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:20px;background:var(--red);opacity:0.6;border-radius:3px 3px 0 0;"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text-dim)">Nov</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;">
+              <div style="flex:1;max-width:16px;height:64px;background:var(--accent);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:28px;background:var(--green);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:16px;background:var(--red);opacity:0.6;border-radius:3px 3px 0 0;"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text-dim)">Dec</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;">
+              <div style="flex:1;max-width:16px;height:88px;background:var(--accent);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:40px;background:var(--green);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:28px;background:var(--red);opacity:0.6;border-radius:3px 3px 0 0;"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text-dim)">Jan</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;">
+              <div style="flex:1;max-width:16px;height:100px;background:var(--accent);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:42px;background:var(--green);border-radius:3px 3px 0 0;"></div>
+              <div style="flex:1;max-width:16px;height:12px;background:var(--red);opacity:0.6;border-radius:3px 3px 0 0;"></div>
+            </div>
+            <span style="font-size:10px;color:var(--text-dim)">Feb</span>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 

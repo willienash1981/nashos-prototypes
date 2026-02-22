@@ -153,6 +153,86 @@
 
   /* Print-friendly banner */
   .no-pricing-banner { background: var(--red-bg); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--red); font-weight: 500; margin-bottom: 20px; }
+
+  /* ========= RESPONSIVE ========= */
+
+  /* Tablet */
+  @media (max-width: 1024px) {
+    .sidebar { display: none; }
+    body { display: block; }
+    .content { padding: 16px; }
+    .topbar { padding: 12px 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .topbar h1 { font-size: 17px; }
+    .topbar-right { width: 100%; display: flex; gap: 8px; }
+    .topbar-right .btn { flex: 1; justify-content: center; font-size: 12px; padding: 8px 10px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .photo-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* Phone */
+  @media (max-width: 680px) {
+    .content { padding: 12px; }
+    .topbar { padding: 10px 12px; }
+    .topbar h1 { font-size: 15px; line-height: 1.3; }
+    .breadcrumb { font-size: 11px; }
+    .topbar-right .btn { font-size: 11px; padding: 7px 6px; }
+
+    /* Status bar wraps */
+    .status-bar { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+    .status-separator { display: none; }
+    .status-item { font-size: 12px; flex-basis: 45%; }
+
+    /* Cards */
+    .card-header { padding: 12px 14px; }
+    .card-body { padding: 12px 14px; }
+    .info-row { flex-direction: column; gap: 2px; padding: 6px 0; }
+    .info-value { text-align: left; }
+
+    /* Scope tables scroll horizontally */
+    .room-section { overflow: hidden; }
+    .scope-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .scope-table { min-width: 520px; }
+    .scope-table th, .scope-table td { padding: 8px 10px; font-size: 12px; white-space: nowrap; }
+    .scope-table td:last-child { white-space: normal; min-width: 100px; }
+    .room-header { padding: 10px 14px; }
+    .room-name { font-size: 13px; }
+    .room-sf { font-size: 11px; }
+
+    /* Color rows stack */
+    .color-row { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+    .color-location { flex-basis: 100%; margin-left: 40px; font-size: 11px; }
+
+    /* Materials table scrolls */
+    .material-table { min-width: 440px; }
+    .material-table th, .material-table td { padding: 8px 10px; font-size: 12px; }
+
+    /* Notes */
+    .note-item { padding: 10px 14px; }
+    .note-alert { padding: 10px 14px; }
+    .note-text { font-size: 12px; }
+
+    /* Bottom grid stacks */
+    .bottom-grid, [style*="grid-template-columns: 1fr 1fr 1fr"] {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+
+    /* Photos grid */
+    .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 12px 14px; }
+
+    /* Checklist */
+    .checklist-item { padding: 8px 14px; }
+    .checklist-label { font-size: 12px; }
+
+    /* Timeline */
+    .timeline-item { padding: 10px 14px; }
+    .timeline-title { font-size: 12px; }
+    .timeline-date { font-size: 10px; }
+
+    /* No-pricing banner */
+    .no-pricing-banner { font-size: 11px; padding: 8px 12px; }
+  }
 </style>
 </head>
 <body>
@@ -315,7 +395,7 @@
           <span class="room-name">Front Elevation</span>
           <span class="room-sf">2-Story · 1,240 SF siding</span>
         </div>
-        <table class="scope-table">
+        <div class="scope-table-wrap"><table class="scope-table">
           <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
           <tbody>
             <tr>
@@ -368,7 +448,7 @@
               <td>8" visible above grade</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       <!-- Left Section -->
@@ -377,7 +457,7 @@
           <span class="room-name">Left Elevation</span>
           <span class="room-sf">2-Story · 680 SF siding</span>
         </div>
-        <table class="scope-table">
+        <div class="scope-table-wrap"><table class="scope-table">
           <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
           <tbody>
             <tr>
@@ -409,7 +489,7 @@
               <td>—</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       <!-- Right Section -->
@@ -418,7 +498,7 @@
           <span class="room-name">Right Elevation</span>
           <span class="room-sf">2-Story · 720 SF siding</span>
         </div>
-        <table class="scope-table">
+        <div class="scope-table-wrap"><table class="scope-table">
           <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
           <tbody>
             <tr>
@@ -450,7 +530,7 @@
               <td>Match trim color</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       <!-- Back Section -->
@@ -459,7 +539,7 @@
           <span class="room-name">Back Elevation</span>
           <span class="room-sf">2-Story · 960 SF siding</span>
         </div>
-        <table class="scope-table">
+        <div class="scope-table-wrap"><table class="scope-table">
           <thead><tr><th>Surface</th><th>Method</th><th>Coats</th><th>Prep</th><th>Notes</th></tr></thead>
           <tbody>
             <tr>
@@ -505,7 +585,7 @@
               <td>Wrap-around — all faces</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
 
@@ -548,7 +628,7 @@
         <div class="card-header">
           <span class="card-title">🪣 Materials — Pick Up from Hoover Paint (Cool Springs)</span>
         </div>
-        <table class="material-table">
+        <div class="scope-table-wrap"><table class="material-table">
           <thead><tr><th>Product</th><th>Color / Spec</th><th>Size</th><th>Qty</th></tr></thead>
           <tbody>
             <tr>
@@ -600,7 +680,7 @@
               <td class="material-qty">8</td>
             </tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       <!-- Crew Notes -->
@@ -644,7 +724,7 @@
     </div>
 
     <!-- Bottom Row: Photos + Completion Checklist + Timeline -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px; margin-top:20px;">
+    <div class="bottom-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px; margin-top:20px;">
       <!-- Pre-Job Photos -->
       <div class="card">
         <div class="card-header">
