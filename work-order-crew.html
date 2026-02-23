@@ -185,6 +185,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .d1-cam-btn:hover { background:var(--accent-light); }
 .d1-item.done .d1-cam-btn { background:var(--green); }
 .d1-photo-badge { background:var(--green); color:#fff; border-radius:6px; width:32px; height:32px; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; gap:1px; }
+.d1-area-divider { font-size:12px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin:12px 0 6px 2px; padding-top:8px; border-top:1px solid var(--border); }
+.d1-area-divider:first-child { border-top:none; margin-top:0; padding-top:0; }
 .d1-est-row { margin-bottom:12px; }
 .d1-est-label { font-size:13px; color:var(--text-dim); margin-bottom:6px; }
 .d1-est-btns { display:flex; gap:6px; flex-wrap:wrap; }
@@ -221,27 +223,44 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
       <div class="d1-section-title" data-i18n="d1Sec1Title">Section 1: Document Pre-Existing Conditions</div>
       <div class="d1-hint" data-i18n="d1Sec1Hint">Walk the property and photograph any existing damage. This protects you from being blamed.</div>
 
+      <!-- ★ UNIVERSAL — appears on EVERY job -->
+      <div class="d1-area-divider" data-i18n="d1EveryJob">⭐ Every Job</div>
       <div class="d1-item" data-tag="damage">
         <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgGutters">Gutters &amp; Downspouts</div><div class="d1-item-hint" data-i18n="d1HintGutters">Look for: dents, dings, missing pieces</div></div>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgPaint">🚨 Paint on Unpainted Surfaces</div><div class="d1-item-hint" data-i18n="d1HintPaint">THE BIG ONE — aluminum window sills, brick window sills, horizontal surfaces, hose bibs, porch floors, brick, concrete, glass. Any paint where it's not supposed to be.</div></div>
         <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
         <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
       </div>
       <div class="d1-item" data-tag="damage">
         <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgSiding">Siding</div><div class="d1-item-hint" data-i18n="d1HintSiding">Look for: missing pieces, cracks, holes</div></div>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgWindows">Windows &amp; Glass</div><div class="d1-item-hint" data-i18n="d1HintWindows">Look for: broken/chipped glass, paint on glass, cracked screens</div></div>
         <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
         <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
       </div>
       <div class="d1-item" data-tag="damage">
         <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgTrim">Trim &amp; Aluminum</div><div class="d1-item-hint" data-i18n="d1HintTrim">Look for: dents, bent pieces, existing damage</div></div>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgFurniture">Furniture &amp; Items to Move</div><div class="d1-item-hint" data-i18n="d1HintFurniture">Look for: existing damage on anything you'll need to move or cover</div></div>
+        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
+        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+      </div>
+
+      <!-- EXTERIOR-SPECIFIC (this is an exterior + deck job) -->
+      <div class="d1-area-divider" data-i18n="d1ExtItems">🏠 Exterior</div>
+      <div class="d1-item" data-tag="damage">
+        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgGutters">Gutters &amp; Downspouts</div><div class="d1-item-hint" data-i18n="d1HintGutters">Look for: dents, dings, missing pieces, sagging sections</div></div>
         <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
         <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
       </div>
       <div class="d1-item" data-tag="damage">
         <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgWindows">Windows &amp; Glass</div><div class="d1-item-hint" data-i18n="d1HintWindows">Look for: broken/chipped glass, paint on glass, screens</div></div>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgSiding">Siding</div><div class="d1-item-hint" data-i18n="d1HintSiding">Look for: missing pieces, cracks, holes, warped boards</div></div>
+        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
+        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
+      </div>
+      <div class="d1-item" data-tag="damage">
+        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgTrim">Trim &amp; Aluminum</div><div class="d1-item-hint" data-i18n="d1HintTrim">Look for: dents in aluminum, bent pieces, rotted wood</div></div>
         <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
         <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
       </div>
@@ -253,25 +272,13 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
       </div>
       <div class="d1-item" data-tag="damage">
         <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgUnpainted">Unpainted Surfaces</div><div class="d1-item-hint" data-i18n="d1HintUnpainted">Look for: paint on hose bibs, porch floors, brick, concrete</div></div>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgGarage">Garage Door</div><div class="d1-item-hint" data-i18n="d1HintGarage">Look for: dents, scratches, panel damage</div></div>
         <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
         <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
       </div>
       <div class="d1-item" data-tag="damage">
         <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgGarage">Garage Door</div><div class="d1-item-hint" data-i18n="d1HintGarage">Look for: dents, scratches, existing damage</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgShutters">Shutters</div><div class="d1-item-hint" data-i18n="d1HintShutters">Look for: broken louvers, cracked vinyl</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgFurniture">Furniture &amp; Items to Move</div><div class="d1-item-hint" data-i18n="d1HintFurniture">Look for: existing damage on anything you'll need to move</div></div>
+        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgShutters">Shutters</div><div class="d1-item-hint" data-i18n="d1HintShutters">Look for: broken louvers, cracked vinyl, faded/peeling</div></div>
         <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
         <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
       </div>
@@ -708,24 +715,29 @@ const translations = {
     d1BadgeDmg: 'DMG',
     d1BadgeBef: 'BEF',
     d1None: 'None ✓',
-    d1DmgGutters: 'Gutters & Downspouts',
-    d1HintGutters: 'Look for: dents, dings, missing pieces',
-    d1DmgSiding: 'Siding',
-    d1HintSiding: 'Look for: missing pieces, cracks, holes',
-    d1DmgTrim: 'Trim & Aluminum',
-    d1HintTrim: 'Look for: dents, bent pieces, existing damage',
+    d1EveryJob: '⭐ Every Job',
+    d1ExtItems: '🏠 Exterior',
+    d1IntItems: '🏠 Interior',
+    d1DmgPaint: '🚨 Paint on Unpainted Surfaces',
+    d1HintPaint: 'THE BIG ONE — aluminum window sills, brick window sills, horizontal surfaces, hose bibs, porch floors, brick, concrete, glass. Any paint where it\'s not supposed to be.',
     d1DmgWindows: 'Windows & Glass',
-    d1HintWindows: 'Look for: broken/chipped glass, paint on glass, screens',
+    d1HintWindows: 'Look for: broken/chipped glass, paint on glass, cracked screens',
+    d1DmgFurniture: 'Furniture & Items to Move',
+    d1HintFurniture: 'Look for: existing damage on anything you\'ll need to move or cover',
+    d1DmgGutters: 'Gutters & Downspouts',
+    d1HintGutters: 'Look for: dents, dings, missing pieces, sagging sections',
+    d1DmgSiding: 'Siding',
+    d1HintSiding: 'Look for: missing pieces, cracks, holes, warped boards',
+    d1DmgTrim: 'Trim & Aluminum',
+    d1HintTrim: 'Look for: dents in aluminum, bent pieces, rotted wood',
     d1DmgHVAC: 'HVAC Equipment',
     d1HintHVAC: 'Look for: dents, scratches, bent condenser fins',
-    d1DmgUnpainted: 'Unpainted Surfaces',
-    d1HintUnpainted: 'Look for: paint on hose bibs, porch floors, brick, concrete',
     d1DmgGarage: 'Garage Door',
-    d1HintGarage: 'Look for: dents, scratches, existing damage',
+    d1HintGarage: 'Look for: dents, scratches, panel damage',
     d1DmgShutters: 'Shutters',
-    d1HintShutters: 'Look for: broken louvers, cracked vinyl',
-    d1DmgFurniture: 'Furniture & Items to Move',
-    d1HintFurniture: 'Look for: existing damage on anything you\'ll need to move',
+    d1HintShutters: 'Look for: broken louvers, cracked vinyl, faded/peeling',
+    d1DmgDeck: 'Deck',
+    d1HintDeck: 'Look for: loose/rotted boards, existing stain damage, railing condition',
     d1DmgDeck: 'Deck',
     d1HintDeck: 'Look for: loose/rotted boards, existing stain damage, railing condition',
     d1Sec2Title: 'Section 2: Before Photos — Work Surfaces',
@@ -869,8 +881,11 @@ const translations = {
     d1HintWindows: 'Buscar: vidrio roto/astillado, pintura en vidrio, mallas',
     d1DmgHVAC: 'Equipo HVAC',
     d1HintHVAC: 'Buscar: abolladuras, rasguños, aletas de condensador dobladas',
-    d1DmgUnpainted: 'Superficies Sin Pintar',
-    d1HintUnpainted: 'Buscar: pintura en grifos, pisos de porche, ladrillo, concreto',
+    d1EveryJob: '⭐ Cada Trabajo',
+    d1ExtItems: '🏠 Exterior',
+    d1IntItems: '🏠 Interior',
+    d1DmgPaint: '🚨 Pintura en Superficies Sin Pintar',
+    d1HintPaint: 'EL MÁS IMPORTANTE — marcos de ventana de aluminio, marcos de ladrillo, superficies horizontales, grifos, pisos de porche, ladrillo, concreto, vidrio. Cualquier pintura donde no debe estar.',
     d1DmgGarage: 'Puerta del Garaje',
     d1HintGarage: 'Buscar: abolladuras, rasguños, daño existente',
     d1DmgShutters: 'Persianas',
