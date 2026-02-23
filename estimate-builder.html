@@ -107,6 +107,21 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 .sheet-item { display:flex; align-items:center; gap:10px; padding:12px; border-radius:var(--radius); border:1.5px solid var(--border); cursor:pointer; font-size:13px; font-weight:600; transition:.15s; }
 .sheet-item:active { border-color:var(--gold); background:#faf8f2; }
 .sheet-icon { font-size:20px; }
+/* Room search typeahead */
+.room-search-input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:var(--radius); font-size:15px; font-family:inherit; outline:none; transition:border-color .15s; }
+.room-search-input:focus { border-color:var(--gold); }
+.room-suggest-box { position:absolute; top:100%; left:0; right:0; background:var(--card); border:1px solid var(--border); border-radius:0 0 var(--radius) var(--radius); box-shadow:0 4px 12px rgba(0,0,0,.1); max-height:260px; overflow-y:auto; display:none; z-index:10; }
+.room-suggest-box.open { display:block; }
+.room-sug-item { padding:10px 14px; cursor:pointer; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; transition:background .1s; }
+.room-sug-item:active,.room-sug-item:hover { background:#faf8f2; }
+.room-sug-name { font-size:14px; font-weight:600; }
+.room-sug-name .match { color:var(--gold); }
+.room-sug-sub { font-size:11px; color:var(--text-light); }
+.room-sug-used { font-size:10px; color:var(--green); font-weight:600; }
+.room-prefix-chip { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:.15s; }
+.room-prefix-chip.active { background:var(--gold); color:var(--navy); border-color:var(--gold); }
+.room-prefix-custom { padding:6px 10px; border-radius:20px; font-size:12px; border:1.5px solid var(--border); background:var(--card); color:var(--text); width:90px; outline:none; font-family:inherit; }
+.room-prefix-custom:focus { border-color:var(--gold); }
 /* Swipe delete */
 .swipe-delete { position:absolute; right:0; top:0; bottom:0; width:80px; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; transform:translateX(80px); transition:transform .2s; border-bottom:1px solid rgba(255,255,255,.2); }
 </style>
@@ -353,16 +368,19 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 <div class="sheet" id="sheet-room">
   <div class="sheet-handle"></div>
   <h3>Add Room</h3>
-  <div class="sheet-grid">
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🛏️</span>Bedroom</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🛋️</span>Living Room</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🍳</span>Kitchen</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🚿</span>Bathroom</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🚪</span>Hallway</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🍽️</span>Dining Room</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">📚</span>Office / Study</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">👕</span>Closet</div>
+  <!-- Location prefix chips -->
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+    <div class="room-prefix-chip active" onclick="setRoomPrefix(this)">Main</div>
+    <div class="room-prefix-chip" onclick="setRoomPrefix(this)">Upstairs</div>
+    <div class="room-prefix-chip" onclick="setRoomPrefix(this)">Basement</div>
+    <input class="room-prefix-custom" id="room-prefix-custom" placeholder="Custom..." oninput="setCustomRoomPrefix(this)">
   </div>
+  <!-- Type-ahead room name input -->
+  <div style="position:relative;margin-bottom:8px">
+    <input type="text" id="room-search" class="room-search-input" placeholder="Start typing room name..." autocomplete="off" oninput="filterRoomSuggest()" onfocus="filterRoomSuggest()">
+    <div class="room-suggest-box" id="room-suggest-box"></div>
+  </div>
+  <div style="font-size:11px;color:var(--text-light);margin-bottom:8px" id="room-preview-line">Main Floor — <span style="color:var(--gold)">select a room</span></div>
 </div>
 
 <div class="sheet" id="sheet-section">
@@ -530,6 +548,158 @@ document.querySelectorAll('.line-item').forEach(li => {
 });
 
 recalcAll();
+
+// ===== Room Type-Ahead (matches Room Wizard pattern) =====
+const ROOM_LIST = [
+  {name:'Master Bedroom', sub:'Most common first room'},
+  {name:'Bedroom 2', sub:''},
+  {name:'Bedroom 3', sub:''},
+  {name:'Bedroom 4', sub:''},
+  {name:'Living Room', sub:''},
+  {name:'Dining Room', sub:''},
+  {name:'Kitchen', sub:'Different product defaults'},
+  {name:'Family Room', sub:''},
+  {name:'Great Room', sub:''},
+  {name:'Office / Study', sub:''},
+  {name:'Hallway', sub:'Narrow — consider L×W'},
+  {name:'Stairwell', sub:'Tall walls — check height'},
+  {name:'Foyer / Entry', sub:''},
+  {name:'Laundry Room', sub:''},
+  {name:'Mudroom', sub:''},
+  {name:'Master Bathroom', sub:'Moisture-rated products'},
+  {name:'Bathroom 2', sub:'Moisture-rated products'},
+  {name:'Bathroom 3', sub:'Moisture-rated products'},
+  {name:'Powder Room', sub:'Half bath'},
+  {name:'Garage', sub:''},
+  {name:'Bonus Room', sub:''},
+  {name:'Sunroom', sub:''},
+  {name:'Pantry', sub:'Small — quick entry'},
+  {name:'Nursery', sub:''},
+];
+
+// Track rooms already on this estimate
+const usedRoomNames = ['Master Bedroom','Living Room','Kitchen','Hallway','Bedroom 2','Bedroom 3'];
+let currentRoomPrefix = 'Main';
+
+function setRoomPrefix(chip) {
+  document.querySelectorAll('.room-prefix-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  currentRoomPrefix = chip.textContent.trim();
+  document.getElementById('room-prefix-custom').value = '';
+  updateRoomPreviewLine();
+}
+
+function setCustomRoomPrefix(input) {
+  if (input.value.trim()) {
+    document.querySelectorAll('.room-prefix-chip').forEach(c => c.classList.remove('active'));
+    currentRoomPrefix = input.value.trim();
+    updateRoomPreviewLine();
+  }
+}
+
+function updateRoomPreviewLine() {
+  const roomVal = document.getElementById('room-search').value.trim();
+  const prefixMap = {'Main':'Main Floor','Upstairs':'Upstairs','Basement':'Basement'};
+  const prefix = prefixMap[currentRoomPrefix] || currentRoomPrefix;
+  const el = document.getElementById('room-preview-line');
+  if (roomVal) {
+    el.innerHTML = prefix + ' — <strong style="color:var(--navy)">' + roomVal + '</strong>';
+  } else {
+    el.innerHTML = prefix + ' — <span style="color:var(--gold)">select a room</span>';
+  }
+}
+
+function filterRoomSuggest() {
+  const q = (document.getElementById('room-search').value || '').toLowerCase();
+  const box = document.getElementById('room-suggest-box');
+
+  // Sort: unused first, then alphabetical
+  const sorted = [...ROOM_LIST].sort((a, b) => {
+    const aUsed = usedRoomNames.includes(a.name) ? 1 : 0;
+    const bUsed = usedRoomNames.includes(b.name) ? 1 : 0;
+    return aUsed - bUsed;
+  });
+
+  const filtered = q.length > 0 ? sorted.filter(r => r.name.toLowerCase().includes(q)) : sorted;
+
+  let html = '';
+
+  if (filtered.length === 0 && q.length > 0) {
+    // Custom room name option
+    html = '<div class="room-sug-item" onclick="selectRoomSug(\'' + q.replace(/'/g,"\\'") + '\')"><div><div class="room-sug-name">' + q + '</div><div class="room-sug-sub">Custom room name</div></div></div>';
+  } else {
+    html = filtered.slice(0, 10).map(r => {
+      const idx = r.name.toLowerCase().indexOf(q);
+      let display = r.name;
+      if (q.length > 0 && idx >= 0) {
+        display = r.name.slice(0, idx) + '<span class="match">' + r.name.slice(idx, idx + q.length) + '</span>' + r.name.slice(idx + q.length);
+      }
+      const usedBadge = usedRoomNames.includes(r.name) ? '<span class="room-sug-used">✓ used</span>' : '';
+      const subLine = r.sub ? '<div class="room-sug-sub">' + r.sub + '</div>' : '';
+      return '<div class="room-sug-item" onclick="selectRoomSug(\'' + r.name.replace(/'/g,"\\'") + '\')"><div><div class="room-sug-name">' + display + '</div>' + subLine + '</div>' + usedBadge + '</div>';
+    }).join('');
+
+    // Always add custom option at bottom if user is typing
+    if (q.length > 0) {
+      html += '<div class="room-sug-item" onclick="selectRoomSug(\'' + q.replace(/'/g,"\\'") + '\')" style="border-top:2px solid var(--border)"><div><div class="room-sug-name">"' + q + '"</div><div class="room-sug-sub">Use as custom room name</div></div></div>';
+    }
+  }
+
+  box.innerHTML = html;
+  box.classList.add('open');
+}
+
+function selectRoomSug(name) {
+  document.getElementById('room-search').value = name;
+  document.getElementById('room-suggest-box').classList.remove('open');
+  updateRoomPreviewLine();
+
+  // Brief confirmation, then simulate opening wizard
+  const prefixMap = {'Main':'Main Floor','Upstairs':'Upstairs','Basement':'Basement'};
+  const prefix = prefixMap[currentRoomPrefix] || currentRoomPrefix;
+  const fullName = prefix + ' — ' + name;
+
+  // Show toast and close sheet after a beat
+  setTimeout(() => {
+    hideSheet();
+    showToast('Opening Room Wizard for "' + fullName + '"');
+    document.getElementById('room-search').value = '';
+    document.getElementById('room-suggest-box').classList.remove('open');
+    updateRoomPreviewLine();
+  }, 300);
+}
+
+// Close suggest box when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#sheet-room')) {
+    document.getElementById('room-suggest-box').classList.remove('open');
+  }
+});
+
+// Reset room search when sheet opens
+const origShowSheet = showSheet;
+showSheet = function(type) {
+  origShowSheet(type);
+  if (type === 'room') {
+    document.getElementById('room-search').value = '';
+    updateRoomPreviewLine();
+    setTimeout(() => document.getElementById('room-search').focus(), 350);
+  }
+};
+
+// Toast notification
+function showToast(msg) {
+  let toast = document.getElementById('toast-msg');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast-msg';
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+}
 </script>
 </body>
 </html>
