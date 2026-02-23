@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fence Staining Wizard — NashOS</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --red-bg: #FEF2F2;
+  --blue: #3B82F6;
+  --orange: #F59E0B;
+  --purple: #8B5CF6;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.shell { max-width:430px; margin:0 auto; padding-bottom:160px; }
+
+/* Topbar */
+.topbar { position:fixed; top:0; left:0; right:0; z-index:100; background:var(--navy); color:#fff; }
+.topbar-inner { max-width:430px; margin:0 auto; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.topbar .back { color:var(--gold); font-size:14px; text-decoration:none; white-space:nowrap; }
+.topbar .title { font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.content { padding:68px 16px 16px; display:flex; flex-direction:column; gap:16px; }
+
+/* Cards */
+.card { background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.card-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.card-title .step { background:var(--navy); color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+
+/* Fence type chips */
+.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.type-chip { border:2px solid var(--border); border-radius:var(--radius); padding:12px; cursor:pointer; text-align:center; transition:.15s; background:#fff; }
+.type-chip.active { border-color:var(--gold); background:linear-gradient(135deg,#FFFDF7,#FFF9E6); }
+.type-chip .icon { font-size:24px; margin-bottom:4px; }
+.type-chip .name { font-size:13px; font-weight:600; color:var(--text); }
+.type-chip .meta { font-size:11px; color:var(--text-light); margin-top:2px; }
+.type-chip.full { grid-column:1/-1; }
+
+/* Info banner */
+.info-banner { background:var(--green-bg); border:1px solid #A7F3D0; border-radius:8px; padding:10px 12px; font-size:12px; color:#065F46; display:flex; gap:8px; align-items:flex-start; }
+.info-banner.warn { background:#FFFBEB; border-color:#FDE68A; color:#92400E; }
+.info-banner.error { background:var(--red-bg); border-color:#FECACA; color:#991B1B; }
+
+/* Form elements */
+.field { margin-bottom:12px; }
+.field:last-child { margin-bottom:0; }
+.field label { display:block; font-size:12px; font-weight:600; color:var(--text-light); margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+.field input, .field select { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:15px; font-family:inherit; background:#fff; color:var(--text); }
+.field input:focus, .field select:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(196,169,98,.15); }
+.field .hint { font-size:11px; color:var(--text-light); margin-top:3px; }
+
+/* Buttons */
+.btn-group { display:flex; gap:8px; flex-wrap:wrap; }
+.btn-opt { padding:8px 14px; border:1.5px solid var(--border); border-radius:8px; background:#fff; font-size:13px; font-weight:500; cursor:pointer; transition:.15s; color:var(--text); }
+.btn-opt.active { border-color:var(--gold); background:linear-gradient(135deg,#FFFDF7,#FFF9E6); color:var(--navy); font-weight:600; }
+.btn-opt.active-green { border-color:var(--green); background:var(--green-bg); color:#065F46; }
+
+/* Toggle */
+.toggle-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+.toggle-row:last-child { border-bottom:none; }
+.toggle-row .label { font-size:13px; font-weight:500; }
+.toggle-row .sub { font-size:11px; color:var(--text-light); }
+.toggle-row .price { font-size:13px; font-weight:600; color:var(--navy); margin-left:auto; margin-right:12px; }
+.switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+.switch input { opacity:0; width:0; height:0; }
+.switch .slider { position:absolute; inset:0; background:var(--border); border-radius:24px; cursor:pointer; transition:.2s; }
+.switch .slider::before { content:''; position:absolute; width:18px; height:18px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s; }
+.switch input:checked+.slider { background:var(--green); }
+.switch input:checked+.slider::before { transform:translateX(20px); }
+
+/* Counter */
+.counter { display:flex; align-items:center; gap:0; }
+.counter button { width:32px; height:32px; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; color:var(--text); display:flex; align-items:center; justify-content:center; }
+.counter button:first-child { border-radius:8px 0 0 8px; }
+.counter button:last-child { border-radius:0 8px 8px 0; }
+.counter .val { width:40px; height:32px; border-top:1.5px solid var(--border); border-bottom:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; background:#fff; }
+
+/* Calc display */
+.calc { background:#F9FAFB; border-radius:8px; padding:10px 12px; margin-top:8px; }
+.calc-row { display:flex; justify-content:space-between; font-size:13px; padding:3px 0; }
+.calc-row.total { font-weight:700; color:var(--navy); border-top:1px solid var(--border); margin-top:4px; padding-top:6px; font-size:14px; }
+
+/* Recommendation card */
+.rec-card { border:2px solid var(--green); border-radius:var(--radius); padding:14px; background:var(--green-bg); }
+.rec-card .rec-title { font-size:14px; font-weight:700; color:#065F46; margin-bottom:4px; }
+.rec-card .rec-desc { font-size:12px; color:#065F46; line-height:1.4; }
+.rec-card.warn { border-color:var(--orange); background:#FFFBEB; }
+.rec-card.warn .rec-title, .rec-card.warn .rec-desc { color:#92400E; }
+
+/* Collapsible */
+.collapsible { cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+.collapsible .arrow { transition:.2s; font-size:12px; color:var(--text-light); }
+.collapsible.open .arrow { transform:rotate(180deg); }
+.collapse-body { display:none; margin-top:12px; }
+.collapse-body.show { display:block; }
+
+/* Running total bar */
+.running-total { position:fixed; bottom:64px; left:0; right:0; z-index:90; background:var(--navy); }
+.running-total-inner { max-width:430px; margin:0 auto; padding:10px 16px; color:#fff; font-size:12px; display:flex; flex-wrap:wrap; gap:4px 16px; align-items:baseline; }
+.running-total .amount { font-size:18px; font-weight:700; color:var(--gold); }
+.running-total .pipe { color:rgba(255,255,255,.3); }
+.running-total .detail { color:rgba(255,255,255,.7); }
+
+/* Sticky bottom */
+.bottom-bar { position:fixed; bottom:0; left:0; right:0; z-index:100; background:#fff; border-top:1px solid var(--border); box-shadow:0 -2px 8px rgba(0,0,0,.08); }
+.bottom-inner { max-width:430px; margin:0 auto; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; }
+.bottom-inner .left .lbl { font-size:12px; color:var(--text-light); }
+.bottom-inner .left .price { font-size:22px; font-weight:700; color:var(--navy); }
+.btn-save { background:var(--gold); color:#fff; border:none; padding:12px 32px; border-radius:var(--radius); font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+.btn-save:active { background:var(--gold-light); }
+
+/* Step indicator */
+.steps-bar { display:flex; gap:4px; padding:4px 16px 0; }
+.steps-bar .dot { flex:1; height:3px; border-radius:2px; background:var(--border); }
+.steps-bar .dot.done { background:var(--gold); }
+.steps-bar .dot.active { background:var(--navy); }
+
+/* Color input */
+.color-swatch { width:32px; height:32px; border-radius:8px; border:2px solid var(--border); display:inline-block; vertical-align:middle; margin-right:8px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="#" class="back">← Estimate</a>
+    <div class="title">Fence Staining — Johnson Residence</div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="steps-bar">
+    <div class="dot done" id="dot1"></div>
+    <div class="dot" id="dot2"></div>
+    <div class="dot" id="dot3"></div>
+    <div class="dot" id="dot4"></div>
+    <div class="dot" id="dot5"></div>
+  </div>
+  <div class="content" id="app"></div>
+</div>
+
+<div class="running-total" id="runningTotal">
+  <div class="running-total-inner">
+    <span class="amount" id="rtAmount">$0</span>
+    <span class="pipe">|</span>
+    <span class="detail" id="rtDetail">—</span>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-inner">
+    <div class="left">
+      <div class="lbl">Fence Staining</div>
+      <div class="price" id="bottomPrice">$0</div>
+    </div>
+    <button class="btn-save" onclick="alert('Saved to estimate!')">Save</button>
+  </div>
+</div>
+
+<script>
+// ── State ──
+const S = {
+  fenceType: 'privacy6',
+  customHeight: 6,
+  customSides: 1,
+  // Condition
+  waterBeading: false,
+  lastCoated: '',
+  prevCoating: 'bare',
+  woodType: 'cedar',
+  condition: 'minimal',
+  // Measurements
+  lf: 200,
+  heightOverride: null,
+  sidesOverride: null,
+  gates: 2,
+  postCaps: 0,
+  replacementSF: 0,
+  secondCoat: false,
+  // Add-ons
+  extraColors: 0,
+  brushOnly: false,
+  heavyMasking: false,
+  addSecondSide: false,
+  // Color
+  colorName: 'Natural Cedar',
+};
+
+// ── Fence type definitions ──
+const TYPES = {
+  privacy6:  { label:'Privacy Fence', icon:'🔒', height:6, sides:1, meta:'6 ft · 1 side · Most common' },
+  picket4:   { label:'Picket Fence',  icon:'🏡', height:4, sides:2, meta:'4 ft · 2 sides' },
+  splitrail:  { label:'Split Rail',   icon:'🌿', height:3, sides:2, meta:'3 ft · 2 sides' },
+  boardon6:  { label:'Board-on-Board',icon:'📐', height:6, sides:2, meta:'6 ft · 2 sides' },
+  custom:    { label:'Custom',        icon:'✏️', height:6, sides:1, meta:'Enter height & sides' },
+};
+
+// ── Pricing from PRD (per LF) ──
+function getRate(height, sides) {
+  // PRD ER Rate Summary Table
+  const rates1 = { 3:7.60, 4:5.06, 6:10.13, 8:10.13, 10:12.67 };
+  const rates2 = { 3:15.20, 4:10.13, 6:20.28, 8:20.28, 10:25.34 };
+  const h = Math.round(height);
+  if (sides >= 2) return rates2[h] || (rates2[6] * height/6);
+  return rates1[h] || (rates1[6] * height/6);
+}
+
+function getHeight() {
+  if (S.heightOverride !== null) return S.heightOverride;
+  if (S.fenceType === 'custom') return S.customHeight;
+  return TYPES[S.fenceType].height;
+}
+function getSides() {
+  const effective = S.addSecondSide ? 2 : null;
+  if (S.sidesOverride !== null) return S.sidesOverride;
+  if (effective) return 2;
+  if (S.fenceType === 'custom') return S.customSides;
+  return TYPES[S.fenceType].sides;
+}
+
+function getProduct() {
+  if (S.prevCoating === 'deckover') return { name:'SuperDeck Restore', type:'solid', warn:'DeckOver previously applied. SuperDeck required — no warranty on standard stain over DeckOver.' };
+  if (S.prevCoating === 'stained_weathered') return { name:'Solid Stain', type:'solid', warn:null };
+  if (S.prevCoating === 'stained_good') return { name:'Semi-Transparent Stain', type:'semi', warn:'Color waiver required — semi-transparent shows wood grain; color varies with wood tone.' };
+  if (S.prevCoating === 'bare') return { name:'Semi-Transparent Stain', type:'semi', warn:'Color waiver required — semi-transparent shows wood grain; color varies with wood tone.' };
+  if (S.prevCoating === 'unknown') return { name:'Solid Stain', type:'solid', warn:'Unknown previous coating — solid stain recommended for best adhesion.' };
+  return { name:'Semi-Transparent Stain', type:'semi', warn:null };
+}
+
+// ── Calculate total ──
+function calcTotal() {
+  const h = getHeight(), s = getSides(), lf = S.lf;
+  const rate = getRate(h, s);
+  let fencePrice = lf * rate;
+  
+  // 2nd coat: same rate × 0.85 labor multiplier. Approximate as full rate × 0.85
+  let secondCoatPrice = 0;
+  if (S.secondCoat) {
+    secondCoatPrice = lf * rate * 0.85;
+  }
+
+  // Gates: ~$45/ea for 6ft 1-side equivalent
+  const gateRate = rate * 3; // ~3 LF equivalent per gate
+  let gatePrice = S.gates * gateRate;
+
+  // Post caps: $8/ea
+  let capPrice = S.postCaps * 8;
+
+  // Replacement boards: 2 coats at per-SF rate
+  const sfRate = rate / h; // approximate per-SF
+  let replPrice = S.replacementSF * sfRate * 2;
+
+  // Add-ons
+  let addons = 0;
+  addons += S.extraColors * 75;
+  if (S.brushOnly) addons += lf * 0.50; // brush-only upcharge ~$0.50/LF
+  if (S.heavyMasking) addons += lf * 0.35; // heavy masking ~$0.35/LF
+
+  return {
+    fencePrice: Math.round(fencePrice),
+    secondCoatPrice: Math.round(secondCoatPrice),
+    gatePrice: Math.round(gatePrice),
+    capPrice: Math.round(capPrice),
+    replPrice: Math.round(replPrice),
+    addons: Math.round(addons),
+    sf: lf * h * s,
+    rate,
+    total: Math.round(fencePrice + secondCoatPrice + gatePrice + capPrice + replPrice + addons)
+  };
+}
+
+// ── Render ──
+function render() {
+  const app = document.getElementById('app');
+  const t = TYPES[S.fenceType];
+  const h = getHeight(), s = getSides();
+  const product = getProduct();
+  const c = calcTotal();
+
+  // Step dots
+  [1,2,3,4,5].forEach(i => {
+    const d = document.getElementById('dot'+i);
+    d.className = 'dot done'; // all visible in single-page mode
+  });
+
+  app.innerHTML = `
+    <!-- STEP 1: FENCE TYPE -->
+    <div class="card">
+      <div class="card-title"><span class="step">1</span> Fence Type</div>
+      <div class="type-grid">
+        ${Object.entries(TYPES).map(([k,v]) => `
+          <div class="type-chip ${S.fenceType===k?'active':''} ${k==='custom'?'full':''}" onclick="S.fenceType='${k}';S.heightOverride=null;S.sidesOverride=null;S.addSecondSide=false;render()">
+            <div class="icon">${v.icon}</div>
+            <div class="name">${v.label}</div>
+            <div class="meta">${v.meta}</div>
+          </div>
+        `).join('')}
+      </div>
+      ${S.fenceType==='custom'?`
+        <div style="margin-top:12px;display:flex;gap:12px">
+          <div class="field" style="flex:1"><label>Height (ft)</label>
+            <input type="number" value="${S.customHeight}" min="2" max="12" onchange="S.customHeight=+this.value;render()">
+          </div>
+          <div class="field" style="flex:1"><label>Sides</label>
+            <select onchange="S.customSides=+this.value;render()">
+              <option value="1" ${S.customSides===1?'selected':''}>1 Side</option>
+              <option value="2" ${S.customSides===2?'selected':''}>2 Sides</option>
+            </select>
+          </div>
+        </div>
+      `:''}
+      <div class="info-banner" style="margin-top:12px">
+        <span>📏</span>
+        <span><strong>${t.label}</strong> — ${h} ft tall · ${s} side${s>1?'s':''} · Pressure wash included</span>
+      </div>
+    </div>
+
+    <!-- STEP 2: CONDITION ASSESSMENT -->
+    <div class="card">
+      <div class="card-title"><span class="step">2</span> Condition Assessment</div>
+      
+      <div class="field">
+        <label>Water Beading on Surface?</label>
+        <div class="btn-group">
+          <div class="btn-opt ${!S.waterBeading?'active':''}" onclick="S.waterBeading=false;render()">No</div>
+          <div class="btn-opt ${S.waterBeading?'active':''}" onclick="S.waterBeading=true;render()">Yes</div>
+        </div>
+        ${S.waterBeading?`<div class="hint" style="margin-top:6px">⚠️ Water beading indicates existing sealer/stain — may need stripping or solid stain.</div>`:''}
+      </div>
+
+      <div class="field">
+        <label>Previous Coating</label>
+        <div class="btn-group">
+          ${[['bare','Bare / New'],['stained_good','Stained (Good)'],['stained_weathered','Stained (Weathered)'],['deckover','DeckOver / Restore'],['unknown','Unknown']].map(([v,l])=>
+            `<div class="btn-opt ${S.prevCoating===v?'active':''}" onclick="S.prevCoating='${v}';render()">${l}</div>`
+          ).join('')}
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Wood Type</label>
+        <div class="btn-group">
+          ${[['standard','Standard'],['cedar','Cedar'],['ipe','IPE / Hardwood']].map(([v,l])=>
+            `<div class="btn-opt ${S.woodType===v?'active':''}" onclick="S.woodType='${v}';render()">${l}</div>`
+          ).join('')}
+        </div>
+        ${S.woodType==='ipe'?`<div class="info-banner warn" style="margin-top:6px"><span>⚠️</span><span>IPE/hardwood requires specialty products and longer dry times. Additional cost may apply.</span></div>`:''}
+      </div>
+
+      <div class="field">
+        <label>Overall Condition</label>
+        <div class="btn-group">
+          ${[['minimal','Minimal Prep'],['moderate','Moderate'],['severe','Severe']].map(([v,l])=>
+            `<div class="btn-opt ${S.condition===v?'active':''}" onclick="S.condition='${v}';render()">${l}</div>`
+          ).join('')}
+        </div>
+      </div>
+
+      <div class="rec-card ${product.type==='solid'&&S.prevCoating==='deckover'?'warn':''}" style="margin-top:12px">
+        <div class="rec-title">✅ Recommended: ${product.name}</div>
+        ${product.warn?`<div class="rec-desc">${product.warn}</div>`:''}
+      </div>
+    </div>
+
+    <!-- STEP 3: MEASUREMENTS -->
+    <div class="card">
+      <div class="card-title"><span class="step">3</span> Measurements</div>
+      
+      <div style="display:flex;gap:10px">
+        <div class="field" style="flex:2">
+          <label>Linear Feet</label>
+          <input type="number" value="${S.lf}" min="1" onchange="S.lf=Math.max(1,+this.value);render()">
+        </div>
+        <div class="field" style="flex:1">
+          <label>Height</label>
+          <input type="number" value="${h}" min="2" max="12" onchange="S.heightOverride=+this.value;render()">
+        </div>
+        <div class="field" style="flex:1">
+          <label>Sides</label>
+          <select onchange="S.sidesOverride=+this.value;S.addSecondSide=false;render()">
+            <option value="1" ${s===1?'selected':''}>1</option>
+            <option value="2" ${s===2?'selected':''}>2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="calc">
+        <div class="calc-row"><span>SF = ${S.lf} LF × ${h} ft × ${s} side${s>1?'s':''}</span><span><strong>${c.sf.toLocaleString()} SF</strong></span></div>
+        <div class="calc-row"><span>Rate: $${c.rate.toFixed(2)}/LF (${s} side${s>1?'s':''})</span><span>$${c.fencePrice.toLocaleString()}</span></div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div style="display:flex;gap:10px;align-items:flex-end">
+          <div class="field" style="flex:1;margin-bottom:0">
+            <label>Gates (EA)</label>
+            <div class="counter">
+              <button onclick="S.gates=Math.max(0,S.gates-1);render()">−</button>
+              <div class="val">${S.gates}</div>
+              <button onclick="S.gates++;render()">+</button>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--text-light);padding-bottom:4px">
+            ${S.gates>0?`$${c.gatePrice.toLocaleString()} (${S.gates} × $${Math.round(c.gatePrice/Math.max(1,S.gates))}/ea)`:'—'}
+          </div>
+        </div>
+      </div>
+
+      <!-- Post Caps (collapsible) -->
+      <div style="margin-top:14px">
+        <div class="collapsible ${S.postCaps>0?'open':''}" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+          <span style="font-size:13px;font-weight:500">Post Caps (EA) — decorative</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="collapse-body ${S.postCaps>0?'show':''}">
+          <div style="display:flex;gap:10px;align-items:center;margin-top:4px">
+            <div class="counter">
+              <button onclick="S.postCaps=Math.max(0,S.postCaps-1);render()">−</button>
+              <div class="val">${S.postCaps}</div>
+              <button onclick="S.postCaps++;render()">+</button>
+            </div>
+            <span style="font-size:12px;color:var(--text-light)">${S.postCaps>0?`$${c.capPrice} ($8/ea)`:''}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Replacement boards -->
+      <div style="margin-top:14px">
+        <div class="collapsible ${S.replacementSF>0?'open':''}" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+          <span style="font-size:13px;font-weight:500">Replacement Boards (SF) — 2 coats auto</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="collapse-body ${S.replacementSF>0?'show':''}">
+          <div class="field" style="margin-top:4px">
+            <input type="number" value="${S.replacementSF}" min="0" placeholder="0" onchange="S.replacementSF=Math.max(0,+this.value);render()">
+            <div class="hint">${S.replacementSF>0?`$${c.replPrice} — new boards get 2 coats automatically`:''}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2nd coat toggle -->
+      <div class="toggle-row" style="margin-top:8px">
+        <div>
+          <div class="label">2nd Coat</div>
+          <div class="sub">Full fence · 0.85× labor</div>
+        </div>
+        <span class="price">${S.secondCoat?'+$'+c.secondCoatPrice.toLocaleString():''}</span>
+        <label class="switch">
+          <input type="checkbox" ${S.secondCoat?'checked':''} onchange="S.secondCoat=this.checked;render()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- STEP 4: ADD-ONS -->
+    <div class="card">
+      <div class="card-title"><span class="step">4</span> Add-Ons</div>
+      
+      <div class="toggle-row">
+        <div>
+          <div class="label">Additional Colors</div>
+          <div class="sub">+$75 per color beyond 1 included</div>
+        </div>
+        <div class="counter" style="margin-left:auto;margin-right:0">
+          <button onclick="S.extraColors=Math.max(0,S.extraColors-1);render()">−</button>
+          <div class="val">${S.extraColors}</div>
+          <button onclick="S.extraColors++;render()">+</button>
+        </div>
+      </div>
+      ${S.extraColors>0?`<div style="text-align:right;font-size:12px;color:var(--text-light);margin-top:-4px;margin-bottom:8px">+$${S.extraColors*75}</div>`:''}
+
+      <div class="toggle-row">
+        <div>
+          <div class="label">Brush-Only Application</div>
+          <div class="sub">No spray — brush/roller only</div>
+        </div>
+        <span class="price">${S.brushOnly?'+$'+Math.round(S.lf*0.50):''}</span>
+        <label class="switch">
+          <input type="checkbox" ${S.brushOnly?'checked':''} onchange="S.brushOnly=this.checked;render()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="label">Heavy Masking</div>
+          <div class="sub">Adjacent landscaping, structures</div>
+        </div>
+        <span class="price">${S.heavyMasking?'+$'+Math.round(S.lf*0.35):''}</span>
+        <label class="switch">
+          <input type="checkbox" ${S.heavyMasking?'checked':''} onchange="S.heavyMasking=this.checked;render()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      ${TYPES[S.fenceType].sides===1 && !S.sidesOverride?`
+      <div class="toggle-row">
+        <div>
+          <div class="label">Stain Both Sides</div>
+          <div class="sub">Add 2nd side to ${TYPES[S.fenceType].label}</div>
+        </div>
+        <span class="price">${S.addSecondSide?'+$'+Math.round(S.lf*getRate(h,2)-S.lf*getRate(h,1)):''}</span>
+        <label class="switch">
+          <input type="checkbox" ${S.addSecondSide?'checked':''} onchange="S.addSecondSide=this.checked;S.sidesOverride=null;render()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      `:''}
+    </div>
+
+    <!-- STEP 5: COLOR -->
+    <div class="card">
+      <div class="card-title"><span class="step">5</span> Color Selection</div>
+      <div class="info-banner" style="margin-bottom:12px">
+        <span>🎨</span>
+        <span>Product: <strong>${product.name}</strong></span>
+      </div>
+      <div class="field">
+        <label>Color Name</label>
+        <input type="text" value="${S.colorName}" onchange="S.colorName=this.value;render()" placeholder="e.g., Natural Cedar, Honey Gold...">
+      </div>
+      ${product.type==='semi'?`
+        <div class="info-banner warn" style="margin-top:8px">
+          <span>📋</span>
+          <span><strong>Color Waiver Required</strong> — Semi-transparent stain shows wood grain. Final color varies with wood tone and age. Customer must sign color waiver.</span>
+        </div>
+      `:''}
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="card">
+      <div class="card-title">💰 Price Breakdown</div>
+      <div class="calc">
+        <div class="calc-row"><span>Fence Run (${S.lf} LF × $${c.rate.toFixed(2)})</span><span>$${c.fencePrice.toLocaleString()}</span></div>
+        ${S.secondCoat?`<div class="calc-row"><span>2nd Coat (0.85×)</span><span>$${c.secondCoatPrice.toLocaleString()}</span></div>`:''}
+        ${S.gates>0?`<div class="calc-row"><span>Gates (${S.gates})</span><span>$${c.gatePrice.toLocaleString()}</span></div>`:''}
+        ${S.postCaps>0?`<div class="calc-row"><span>Post Caps (${S.postCaps})</span><span>$${c.capPrice.toLocaleString()}</span></div>`:''}
+        ${S.replacementSF>0?`<div class="calc-row"><span>Replacement Boards (${S.replacementSF} SF)</span><span>$${c.replPrice.toLocaleString()}</span></div>`:''}
+        ${c.addons>0?`<div class="calc-row"><span>Add-Ons</span><span>$${c.addons.toLocaleString()}</span></div>`:''}
+        <div class="calc-row total"><span>Total</span><span>$${c.total.toLocaleString()}</span></div>
+      </div>
+    </div>
+  `;
+
+  // Running total bar
+  document.getElementById('rtAmount').textContent = '$' + c.total.toLocaleString();
+  document.getElementById('rtDetail').textContent = `${product.name} · ${TYPES[S.fenceType].label} ${h}ft · ${S.lf} LF · ${s} Side${s>1?'s':''} · ${S.secondCoat?'2':'1'} Coat${S.secondCoat?'s':''}`;
+  document.getElementById('bottomPrice').textContent = '$' + c.total.toLocaleString();
+}
+
+render();
+</script>
+</body>
+</html>
