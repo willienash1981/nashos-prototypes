@@ -363,8 +363,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="card-title">🎨 <span data-i18n="scopeOfWork">Scope of Work</span></div>
 
   <div class="scope-section">
-    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="exteriorPainting">Exterior Painting</span> <span class="count">13 items ▼</span></div>
-    <div class="scope-items open">
+    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="exteriorPainting">Exterior Painting</span> <span class="count">13 items ▶</span></div>
+    <div class="scope-items">
       <div class="scope-item"><div class="surface" data-i18n="frontFascia">Front Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
       <div class="scope-item"><div class="surface" data-i18n="leftFascia">Left Side Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
       <div class="scope-item"><div class="surface" data-i18n="rightFascia">Right Side Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
@@ -491,80 +491,53 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 <div class="card">
   <div class="card-title">📷 <span data-i18n="photos">Photos</span></div>
 
-  <!-- Pre-Existing Damage — FIRST -->
+  <!-- Before Photos — big picture angles for before/after marketing -->
+  <div class="photo-section" style="border-left:3px solid var(--accent);">
+    <div class="photo-section-header" onclick="togglePhotoSection(this)">
+      <div>
+        <span class="photo-section-icon">📸</span>
+        <span class="photo-section-name" data-i18n="photoBefore">Before Photos</span>
+        <span class="photo-section-hint" data-i18n="photoBeforeHint">— take Day 1</span>
+      </div>
+      <span class="photo-section-count" id="before-count">0</span>
+    </div>
+    <div class="photo-section-body open">
+      <div class="photo-section-desc" data-i18n="photoBeforeDesc">Wide-angle "before" shots from each side. These become your before & after marketing photos. Stand back, get the whole view.</div>
+      <div style="font-size:12px;color:var(--text-dim);margin:6px 0 10px;line-height:1.5;">
+        <div>🏠 <span data-i18n="beforeFront">House — Front</span></div>
+        <div>🏠 <span data-i18n="beforeBack">House — Back</span></div>
+        <div>🏠 <span data-i18n="beforeLeft">House — Left Side</span></div>
+        <div>🏠 <span data-i18n="beforeRight">House — Right Side</span></div>
+        <div>🪵 <span data-i18n="beforeDeckMain">Main Deck — wide shot</span></div>
+        <div>🪵 <span data-i18n="beforeDeckBack">Back Right Deck — wide shot</span></div>
+        <div>🪵 <span data-i18n="beforeDeckLower">Lower Deck — wide shot</span></div>
+        <div>🚪 <span data-i18n="beforeEntry">Front Entry / Door</span></div>
+        <div>🏗️ <span data-i18n="beforePorch">Screened Porch — wide shot</span></div>
+      </div>
+      <div class="photo-btns">
+        <div class="photo-btn" onclick="addPhoto('before')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
+        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
+      </div>
+      <div class="photo-thumbs" id="before-thumbs"></div>
+    </div>
+  </div>
+
+  <!-- Pre-Existing Damage -->
   <div class="photo-section photo-section-damage">
     <div class="photo-section-header" onclick="togglePhotoSection(this)">
       <div>
         <span class="photo-section-icon">⚠️</span>
         <span class="photo-section-name" data-i18n="photoDamage">Pre-Existing Damage</span>
-        <span class="photo-section-hint" data-i18n="photoDamageHint">— take these FIRST</span>
       </div>
       <span class="photo-section-count" id="damage-count">0</span>
     </div>
-    <div class="photo-section-body open">
-      <div class="photo-section-desc" data-i18n="photoDamageDesc">Photo any damage you see BEFORE starting work — cracks, rot, stains, broken boards, scratches. This protects you and Nash.</div>
+    <div class="photo-section-body">
+      <div class="photo-section-desc" data-i18n="photoDamageDesc">Close-ups of any damage you find BEFORE starting — cracks, rot, stains, broken boards, scratches. Protects you and Nash.</div>
       <div class="photo-btns">
         <div class="photo-btn" onclick="addPhoto('damage')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
         <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
       </div>
       <div class="photo-thumbs" id="damage-thumbs"></div>
-    </div>
-  </div>
-
-  <!-- Pre-Job: Exterior Painting -->
-  <div class="photo-section">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">🏠</span>
-        <span class="photo-section-name" data-i18n="photoPreExterior">Pre-Job — Exterior Painting</span>
-      </div>
-      <span class="photo-section-count" id="pre-ext-count">0</span>
-    </div>
-    <div class="photo-section-body open">
-      <div class="photo-section-desc" data-i18n="photoPreExteriorDesc">Photo all exterior surfaces BEFORE painting — fascia, gutters, trim, doors, windows, eaves. Every surface on the scope.</div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('pre-ext')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="pre-ext-thumbs"></div>
-    </div>
-  </div>
-
-  <!-- Pre-Job: Deck Staining -->
-  <div class="photo-section">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">🪵</span>
-        <span class="photo-section-name" data-i18n="photoPreDeck">Pre-Job — Deck Staining</span>
-      </div>
-      <span class="photo-section-count" id="pre-deck-count">0</span>
-    </div>
-    <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoPreDeckDesc">Photo all deck surfaces BEFORE staining — flooring, railings, stairs, posts, lattice. Each deck area.</div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('pre-deck')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="pre-deck-thumbs"></div>
-    </div>
-  </div>
-
-  <!-- Pre-Job: Carpentry -->
-  <div class="photo-section">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">🔧</span>
-        <span class="photo-section-name" data-i18n="photoPreCarpentry">Pre-Job — Carpentry</span>
-      </div>
-      <span class="photo-section-count" id="pre-carp-count">0</span>
-    </div>
-    <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoPreCarpentryDesc">Photo all carpentry areas BEFORE work — screens, damaged boards, trim to be removed.</div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('pre-carp')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="pre-carp-thumbs"></div>
     </div>
   </div>
 
@@ -578,6 +551,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
       <span class="photo-section-count" id="during-count">3</span>
     </div>
     <div class="photo-section-body">
+      <div class="photo-section-desc" data-i18n="photoDuringDesc">Progress shots as you go. Great for showing the crew at work.</div>
       <div class="photo-btns">
         <div class="photo-btn" onclick="addPhoto('during')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
         <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
@@ -590,17 +564,17 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     </div>
   </div>
 
-  <!-- After Completion -->
-  <div class="photo-section">
+  <!-- After Completion — match your before angles -->
+  <div class="photo-section" style="border-left:3px solid var(--green);">
     <div class="photo-section-header" onclick="togglePhotoSection(this)">
       <div>
         <span class="photo-section-icon">✅</span>
-        <span class="photo-section-name" data-i18n="photoAfter">After Completion</span>
+        <span class="photo-section-name" data-i18n="photoAfter">After Photos</span>
       </div>
       <span class="photo-section-count" id="after-count">0</span>
     </div>
     <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoAfterDesc">Photo finished work — same angles as your pre-job photos for before/after comparison.</div>
+      <div class="photo-section-desc" data-i18n="photoAfterDesc">Same angles as your before photos. Stand in the same spots — these are your before & after pairs.</div>
       <div class="photo-btns">
         <div class="photo-btn" onclick="addPhoto('after')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
         <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
@@ -712,18 +686,24 @@ const translations = {
     from: 'From',
     estimatorWarning: '⚠️ Gutter and downspout color is NOT finalized yet. Customer is choosing between a lighter shade of Cityscape and a completely different accent. <strong>Do not spray gutters/downspouts until I confirm the color.</strong> Everything else is good to go. Call me if questions: 615-829-6858.',
     estimatorTip: 'Start with fascia, trim, and deck work. Save gutters/downspouts for last.',
+    photoBefore: 'Before Photos',
+    photoBeforeHint: '— take Day 1',
+    photoBeforeDesc: 'Wide-angle "before" shots from each side. These become your before & after marketing photos. Stand back, get the whole view.',
+    beforeFront: 'House — Front',
+    beforeBack: 'House — Back',
+    beforeLeft: 'House — Left Side',
+    beforeRight: 'House — Right Side',
+    beforeDeckMain: 'Main Deck — wide shot',
+    beforeDeckBack: 'Back Right Deck — wide shot',
+    beforeDeckLower: 'Lower Deck — wide shot',
+    beforeEntry: 'Front Entry / Door',
+    beforePorch: 'Screened Porch — wide shot',
     photoDamage: 'Pre-Existing Damage',
-    photoDamageHint: '— take these FIRST',
-    photoDamageDesc: 'Photo any damage you see BEFORE starting work — cracks, rot, stains, broken boards, scratches. This protects you and Nash.',
-    photoPreExterior: 'Pre-Job — Exterior Painting',
-    photoPreExteriorDesc: 'Photo all exterior surfaces BEFORE painting — fascia, gutters, trim, doors, windows, eaves. Every surface on the scope.',
-    photoPreDeck: 'Pre-Job — Deck Staining',
-    photoPreDeckDesc: 'Photo all deck surfaces BEFORE staining — flooring, railings, stairs, posts, lattice. Each deck area.',
-    photoPreCarpentry: 'Pre-Job — Carpentry',
-    photoPreCarpentryDesc: 'Photo all carpentry areas BEFORE work — screens, damaged boards, trim to be removed.',
+    photoDamageDesc: 'Close-ups of any damage you find BEFORE starting — cracks, rot, stains, broken boards, scratches. Protects you and Nash.',
     photoDuring: 'During Job',
-    photoAfter: 'After Completion',
-    photoAfterDesc: 'Photo finished work — same angles as your pre-job photos for before/after comparison.',
+    photoDuringDesc: 'Progress shots as you go. Great for showing the crew at work.',
+    photoAfter: 'After Photos',
+    photoAfterDesc: 'Same angles as your before photos. Stand in the same spots — these are your before & after pairs.',
     sheenSatin: 'Satin',
     sheenSemiTrans: 'Semi-Transparent',
     sheenFlat: 'Flat',
@@ -827,18 +807,24 @@ const translations = {
     from: 'De',
     estimatorWarning: '⚠️ El color de canaletas y bajantes NO está finalizado aún. La cliente está eligiendo entre un tono más claro de Cityscape y un acento completamente diferente. <strong>NO rociar canaletas/bajantes hasta que yo confirme el color.</strong> Todo lo demás está listo. Llámame si hay preguntas: 615-829-6858.',
     estimatorTip: 'Empezar con fascia, molduras y trabajo de terraza. Dejar canaletas/bajantes para el final.',
+    photoBefore: 'Fotos del Antes',
+    photoBeforeHint: '— tomar Día 1',
+    photoBeforeDesc: 'Fotos amplias del "antes" desde cada lado. Estas se convierten en tus fotos de antes y después para marketing. Aléjate, captura la vista completa.',
+    beforeFront: 'Casa — Frente',
+    beforeBack: 'Casa — Atrás',
+    beforeLeft: 'Casa — Lado Izquierdo',
+    beforeRight: 'Casa — Lado Derecho',
+    beforeDeckMain: 'Terraza Principal — vista amplia',
+    beforeDeckBack: 'Terraza Trasera Derecha — vista amplia',
+    beforeDeckLower: 'Terraza Inferior — vista amplia',
+    beforeEntry: 'Entrada Principal / Puerta',
+    beforePorch: 'Porche con Malla — vista amplia',
     photoDamage: 'Daño Pre-Existente',
-    photoDamageHint: '— tomar estas PRIMERO',
-    photoDamageDesc: 'Fotografiar cualquier daño que veas ANTES de empezar — grietas, pudrición, manchas, tablas rotas, rasguños. Esto te protege a ti y a Nash.',
-    photoPreExterior: 'Pre-Trabajo — Pintura Exterior',
-    photoPreExteriorDesc: 'Fotografiar todas las superficies exteriores ANTES de pintar — fascia, canaletas, molduras, puertas, ventanas, aleros. Cada superficie del alcance.',
-    photoPreDeck: 'Pre-Trabajo — Teñido de Terraza',
-    photoPreDeckDesc: 'Fotografiar todas las superficies de la terraza ANTES de teñir — pisos, barandales, escaleras, postes, enrejado. Cada área.',
-    photoPreCarpentry: 'Pre-Trabajo — Carpintería',
-    photoPreCarpentryDesc: 'Fotografiar todas las áreas de carpintería ANTES del trabajo — mallas, tablas dañadas, molduras a remover.',
+    photoDamageDesc: 'Fotos de cerca de cualquier daño que encuentres ANTES de empezar — grietas, pudrición, manchas, tablas rotas, rasguños. Te protege a ti y a Nash.',
     photoDuring: 'Durante el Trabajo',
-    photoAfter: 'Después de Completar',
-    photoAfterDesc: 'Fotografiar trabajo terminado — mismos ángulos que tus fotos pre-trabajo para comparación antes/después.',
+    photoDuringDesc: 'Fotos de progreso. Excelente para mostrar al equipo trabajando.',
+    photoAfter: 'Fotos del Después',
+    photoAfterDesc: 'Mismos ángulos que tus fotos del antes. Párate en los mismos lugares — estos son tus pares de antes y después.',
     sheenSatin: 'Satinado',
     sheenSemiTrans: 'Semi-Transparente',
     sheenFlat: 'Mate',
@@ -1000,7 +986,7 @@ function toggleScope(el) {
 // Photo sections
 const photoColors = ['#3b82f6','#22c55e','#a855f7','#eab308','#f97316','#ef4444','#06b6d4','#ec4899'];
 let photoIdx = 0;
-let photoCounts = { damage:0, 'pre-ext':0, 'pre-deck':0, 'pre-carp':0, during:3, after:0 };
+let photoCounts = { before:0, damage:0, during:3, after:0 };
 
 function togglePhotoSection(header) {
   const body = header.nextElementSibling;
