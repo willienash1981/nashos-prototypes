@@ -141,6 +141,10 @@ textarea { resize: vertical; min-height: 70px; }
 .surf-warning { font-size: 12px; color: var(--orange); margin-top: 4px; }
 .surf-note { font-size: 11px; color: var(--text-light); margin-top: 2px; }
 
+/* Stain toggle inline */
+.stain-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--purple); cursor: pointer; margin-left: 8px; }
+.stain-toggle input { accent-color: var(--purple); }
+
 /* Calc result */
 .calc-result { font-size: 11px; color: var(--green); margin-top: 2px; }
 
@@ -171,6 +175,10 @@ textarea { resize: vertical; min-height: 70px; }
 .grid-popup { background: #f9f8f5; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-top: 6px; }
 .grid-popup label { font-size: 13px; font-weight: 500; }
 
+/* Difficult location toggle */
+.diff-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--orange); margin-top: 4px; }
+.diff-toggle input { accent-color: var(--orange); }
+
 /* Scroll padding for sticky bars */
 .form-content { padding-bottom: 90px; }
 </style>
@@ -180,28 +188,115 @@ textarea { resize: vertical; min-height: 70px; }
 
 <script>
 // ============ DATA MODEL ============
+// All 38 PRD surface bundles with correct units
 const PRICING = {
-  siding: { base: 1.85, unit: 'SF' },
-  soffit: { base: 1.50, unit: 'SF' },
-  foundation: { base: 1.40, unit: 'SF' },
-  trimFascia: { base: 2.50, unit: 'LF' },
-  gutters: { base: 2.00, unit: 'LF' },
-  singleTrim: { base: 2.25, unit: 'LF' },
-  woodRailing: { base: 3.50, unit: 'LF' },
-  metalRailing: { base: 3.00, unit: 'LF' },
-  windows: { base: 35, unit: 'EA' },
-  windowGrids: { base: 8, unit: 'EA' },
-  doors: { base: 65, unit: 'EA' },
-  shutters: { base: 40, unit: 'EA' },
-  garageDoor: { base: 120, unit: 'EA' },
-  downspouts: { base: 15, unit: 'EA' },
-  porchColumns: { base: 55, unit: 'EA' },
-  soffitBoxes: { base: 30, unit: 'EA' },
-  sidelights: { base: 25, unit: 'EA' },
-  atticVents: { base: 20, unit: 'EA' },
-  pressureWash: { base: 0.25, unit: 'SF' },
-  masking: { base: 0.45, unit: 'SF' }
+  // Primary Surfaces
+  siding:           { base: 1.85, unit: 'SF' },
+  soffit:           { base: 2.50, unit: 'LF' },  // Eaves/Soffits = LINEAR FEET per PRD
+  foundation:       { base: 1.40, unit: 'SF' },
+  porchCeiling:     { base: 1.50, unit: 'SF' },
+  porchConcrete:    { base: 1.25, unit: 'SF' },
+  woodPorchFloor:   { base: 1.75, unit: 'SF' },
+  // Trim & Detail
+  trimFascia:       { base: 2.50, unit: 'LF' },
+  fasciaOnly:       { base: 2.75, unit: 'LF' },
+  gutters:          { base: 2.00, unit: 'LF' },
+  singleTrim:       { base: 2.25, unit: 'LF' },
+  woodRailing:      { base: 3.50, unit: 'LF' },
+  woodRailingMetal: { base: 4.50, unit: 'LF' },
+  metalRailing:     { base: 3.00, unit: 'LF' },
+  // Windows
+  windows:          { base: 35,   unit: 'EA' },
+  windowGrids:      { base: 8,    unit: 'EA' },
+  windowTrimOnly:   { base: 25,   unit: 'EA' },
+  stormWindowRR:    { base: 20,   unit: 'EA' },
+  stormWindowPaint: { base: 35,   unit: 'EA' },
+  windowGlazing:    { base: 15,   unit: 'EA' },
+  // Doors
+  doors:            { base: 65,   unit: 'EA' },
+  doorFrameOnly:    { base: 35,   unit: 'EA' },
+  sidelights:       { base: 25,   unit: 'EA' },
+  crawlspaceDoor:   { base: 45,   unit: 'EA' },
+  // Shutters & Garage
+  woodShutters:     { base: 40,   unit: 'EA' },
+  vinylShutters:    { base: 30,   unit: 'EA' },
+  shutterHardware:  { base: 15,   unit: 'EA' },
+  garageDoor:       { base: 120,  unit: 'EA' },
+  garageFrameOnly:  { base: 55,   unit: 'EA' },
+  garageHardware:   { base: 20,   unit: 'EA' },
+  // Accessories
+  downspouts:       { base: 15,   unit: 'EA' },
+  downspoutRR:      { base: 20,   unit: 'EA' },
+  porchColumns:     { base: 55,   unit: 'EA' },
+  soffitBoxes:      { base: 30,   unit: 'EA' },
+  atticVents:       { base: 20,   unit: 'EA' },
+  steelLintels:     { base: 35,   unit: 'EA' },
+  // Full-House
+  caulkingFull:     { base: 0.50, unit: 'SF' },
+  exteriorPrimer:   { base: 0.75, unit: 'SF' },
+  // Misc
+  pressureWash:     { base: 0.25, unit: 'SF' },
+  masking:          { base: 0.45, unit: 'SF' }
 };
+
+// Surface metadata for display and grouping
+const SURFACE_META = {
+  // Primary Surfaces
+  siding:           { name: 'Siding', group: 'primary', dropdown: 'type', options: ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'], stainable: true },
+  soffit:           { name: 'Soffit / Eaves', group: 'primary', stainable: true },
+  foundation:       { name: 'Foundation (Brick/Block)', group: 'primary', warning: '⚠️ Explicit opt-in only' },
+  porchCeiling:     { name: 'Porch Ceiling', group: 'primary' },
+  porchConcrete:    { name: 'Porch Concrete', group: 'primary' },
+  woodPorchFloor:   { name: 'Wood Porch Floor', group: 'primary' },
+  // Trim & Detail
+  trimFascia:       { name: 'Trim / Fascia', group: 'trim' },
+  fasciaOnly:       { name: 'Fascia Only', group: 'trim', note: 'Has difficult location toggle (+25%)', hasDifficult: true },
+  gutters:          { name: 'Gutters', group: 'trim' },
+  singleTrim:       { name: 'Single Trim', group: 'trim', note: 'Corners, bands, rake boards' },
+  woodRailing:      { name: 'Wood Railing (Painted)', group: 'trim' },
+  woodRailingMetal: { name: 'Wood Railing (Metal Spindles)', group: 'trim', note: 'Unpainted metal spindles — slower' },
+  metalRailing:     { name: 'Metal Railing', group: 'trim' },
+  // Windows
+  windows:          { name: 'Windows Standard', group: 'windows', grids: true },
+  windowTrimOnly:   { name: 'Window Trim Only', group: 'windows', note: 'Paint trim only, not sash' },
+  stormWindowRR:    { name: 'Storm Window R&R', group: 'windows', note: 'Remove & reinstall' },
+  stormWindowPaint: { name: 'Storm Window Painting', group: 'windows' },
+  windowGlazing:    { name: 'Window Glazing Repair', group: 'windows', note: 'Squares count' },
+  // Doors
+  doors:            { name: 'Doors & Frames', group: 'doors' },
+  doorFrameOnly:    { name: 'Door Frame Only', group: 'doors' },
+  sidelights:       { name: 'Front Door Sidelight', group: 'doors' },
+  crawlspaceDoor:   { name: 'Crawlspace Door', group: 'doors' },
+  // Shutters & Garage
+  woodShutters:     { name: 'Wood Shutters', group: 'shuttersGarage' },
+  vinylShutters:    { name: 'Vinyl Shutters', group: 'shuttersGarage', note: 'Less labor than wood' },
+  shutterHardware:  { name: 'Shutter Hardware & Accents', group: 'shuttersGarage' },
+  garageDoor:       { name: 'Garage Door & Frame', group: 'shuttersGarage' },
+  garageFrameOnly:  { name: 'Garage Door Frame Only', group: 'shuttersGarage' },
+  garageHardware:   { name: 'Garage Door Hardware Accents', group: 'shuttersGarage' },
+  // Accessories
+  downspouts:       { name: 'Downspouts', group: 'accessories' },
+  downspoutRR:      { name: 'Downspout R&R', group: 'accessories', note: 'Separate from painting' },
+  porchColumns:     { name: 'Porch Columns', group: 'accessories', stainable: true },
+  soffitBoxes:      { name: 'Open Soffit Boxes', group: 'accessories' },
+  atticVents:       { name: 'Attic Vents', group: 'accessories' },
+  steelLintels:     { name: 'Steel Lintels', group: 'accessories', stainable: true },
+  // Full-House
+  caulkingFull:     { name: 'Caulking (New/Remodel)', group: 'fullHouse', note: 'Full-house scope only' },
+  exteriorPrimer:   { name: 'Exterior Primer (Full Coat)', group: 'fullHouse' },
+};
+
+const SURFACE_GROUPS = [
+  { key: 'primary',        title: 'Primary Surfaces',  collapsed: false },
+  { key: 'trim',           title: 'Trim & Detail',     collapsed: false },
+  { key: 'windows',        title: 'Windows',           collapsed: false },
+  { key: 'doors',          title: 'Doors',             collapsed: false },
+  { key: 'shuttersGarage', title: 'Shutters & Garage', collapsed: true },
+  { key: 'accessories',    title: 'Accessories',       collapsed: true },
+  { key: 'fullHouse',      title: 'Full-House (Rare)', collapsed: true },
+];
+
+const ALL_SURFACE_KEYS = Object.keys(SURFACE_META);
 
 const HEIGHT_MULT = { '1': 1.0, '2': 1.35, '3': 1.50 };
 const PKG_MULT = { value: 0.85, standard: 1.0, premium: 1.20 };
@@ -210,35 +305,48 @@ const CONDITION_MULT = { good: 1.0, moderate: 1.15, heavy: 1.35 };
 const SECTION_SUGGESTIONS = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
 
 const SIDING_TYPES = ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'];
-const SHUTTER_TYPES = ['Wood','Vinyl'];
 const COATING_TYPES = ['Latex','Oil','Unknown','None'];
+
+// Build blank surfaces object with all keys
+function blankSurfaces() {
+  const s = {};
+  ALL_SURFACE_KEYS.forEach(k => {
+    s[k] = { on: false, qty: 0 };
+    if (k === 'siding') s[k].type = 'Wood Lap';
+    if (k === 'windows') { s[k].grids = false; s[k].gridCount = 0; }
+    if (SURFACE_META[k].stainable) s[k].stain = false;
+    if (SURFACE_META[k].hasDifficult) s[k].difficult = false;
+  });
+  return s;
+}
+
+// Merge old surfaces into full model (for pre-populated data)
+function fullSurfaces(partial) {
+  const s = blankSurfaces();
+  Object.keys(partial).forEach(k => {
+    if (s[k]) Object.assign(s[k], partial[k]);
+  });
+  // Migrate old 'shutters' to 'woodShutters'
+  if (partial.shutters && !partial.woodShutters) {
+    s.woodShutters = { on: partial.shutters.on, qty: partial.shutters.qty };
+  }
+  return s;
+}
 
 // Default sections for Johnson Residence
 const DEFAULT_SECTIONS = [
-  { id:1, name:'Front Elevation', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
-    surfaces: { siding:{on:true,qty:800,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
-      trimFascia:{on:true,qty:120}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
-      windows:{on:true,qty:6,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:true,qty:2,type:'Wood'}, garageDoor:{on:false,qty:0},
-      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
-    }, savedAt:'2:15 PM', price:2180 },
-  { id:2, name:'Left Side', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
-    surfaces: { siding:{on:true,qty:400,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
-      trimFascia:{on:true,qty:60}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
-      windows:{on:true,qty:3,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
-      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
-    }, savedAt:'2:22 PM', price:980 },
-  { id:3, name:'Right Side', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
-    surfaces: { siding:{on:true,qty:600,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
-      trimFascia:{on:true,qty:80}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
-      windows:{on:true,qty:4,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
-      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
-    }, savedAt:'2:28 PM', price:1640 },
-  { id:4, name:'Rear', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
-    surfaces: { siding:{on:true,qty:500,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
-      trimFascia:{on:true,qty:90}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
-      windows:{on:true,qty:5,grids:false,gridCount:0}, doors:{on:true,qty:1}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
-      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
-    }, savedAt:'2:35 PM', price:1200 }
+  { id:1, name:'Front Elevation', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
+    surfaces: fullSurfaces({ siding:{on:true,qty:800,type:'Wood Lap'}, trimFascia:{on:true,qty:120}, windows:{on:true,qty:6,grids:false,gridCount:0}, woodShutters:{on:true,qty:2} }),
+    savedAt:'2:15 PM', price:0 },
+  { id:2, name:'Left Side', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
+    surfaces: fullSurfaces({ siding:{on:true,qty:400,type:'Wood Lap'}, trimFascia:{on:true,qty:60}, windows:{on:true,qty:3,grids:false,gridCount:0} }),
+    savedAt:'2:22 PM', price:0 },
+  { id:3, name:'Right Side', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
+    surfaces: fullSurfaces({ siding:{on:true,qty:600,type:'Wood Lap'}, trimFascia:{on:true,qty:80}, windows:{on:true,qty:4,grids:false,gridCount:0} }),
+    savedAt:'2:28 PM', price:0 },
+  { id:4, name:'Rear', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
+    surfaces: fullSurfaces({ siding:{on:true,qty:500,type:'Wood Lap'}, trimFascia:{on:true,qty:90}, windows:{on:true,qty:5,grids:false,gridCount:0}, doors:{on:true,qty:1} }),
+    savedAt:'2:35 PM', price:0 }
 ];
 
 let sections = JSON.parse(JSON.stringify(DEFAULT_SECTIONS));
@@ -255,28 +363,23 @@ function calcSectionPrice(sec) {
   const cm = CONDITION_MULT[sec.condition] || 1;
   let total = 0;
 
-  if (s.siding.on) total += s.siding.qty * PRICING.siding.base;
-  if (s.soffit.on) total += s.soffit.qty * PRICING.soffit.base;
-  if (s.foundation.on) total += s.foundation.qty * PRICING.foundation.base;
-  if (s.trimFascia.on) total += s.trimFascia.qty * PRICING.trimFascia.base;
-  if (s.gutters.on) total += s.gutters.qty * PRICING.gutters.base;
-  if (s.singleTrim.on) total += s.singleTrim.qty * PRICING.singleTrim.base;
-  if (s.woodRailing.on) total += s.woodRailing.qty * PRICING.woodRailing.base;
-  if (s.metalRailing.on) total += s.metalRailing.qty * PRICING.metalRailing.base;
-  if (s.windows.on) {
-    total += s.windows.qty * PRICING.windows.base;
-    if (s.windows.grids) total += s.windows.qty * (s.windows.gridCount || 1) * PRICING.windowGrids.base;
-  }
-  if (s.doors.on) total += s.doors.qty * PRICING.doors.base;
-  if (s.shutters.on) total += s.shutters.qty * PRICING.shutters.base;
-  if (s.garageDoor.on) total += s.garageDoor.qty * PRICING.garageDoor.base;
-  if (s.downspouts.on) total += s.downspouts.qty * PRICING.downspouts.base;
-  if (s.porchColumns.on) total += s.porchColumns.qty * PRICING.porchColumns.base;
-  if (s.soffitBoxes.on) total += s.soffitBoxes.qty * PRICING.soffitBoxes.base;
-  if (s.sidelights.on) total += s.sidelights.qty * PRICING.sidelights.base;
-  if (s.atticVents.on) total += s.atticVents.qty * PRICING.atticVents.base;
+  ALL_SURFACE_KEYS.forEach(key => {
+    if (!s[key] || !s[key].on || !s[key].qty) return;
+    const p = PRICING[key];
+    if (!p) return;
+    let amt = s[key].qty * p.base;
+    // Window grids add-on
+    if (key === 'windows' && s[key].grids) {
+      amt += s[key].qty * (s[key].gridCount || 1) * PRICING.windowGrids.base;
+    }
+    // Fascia difficult location +25%
+    if (key === 'fasciaOnly' && s[key].difficult) {
+      amt *= 1.25;
+    }
+    total += amt;
+  });
 
-  if (sec.pressureWash && s.siding.on) total += s.siding.qty * PRICING.pressureWash.base;
+  if (sec.pressureWash && s.siding && s.siding.on) total += s.siding.qty * PRICING.pressureWash.base;
 
   total *= hm * pm * cm;
   return Math.round(total);
@@ -293,11 +396,12 @@ function getHeightMult(sec) {
 
 function getSurfacePrice(sec, key) {
   const s = sec.surfaces[key];
-  if (!s || !s.on) return 0;
+  if (!s || !s.on || !s.qty) return 0;
   const p = PRICING[key];
   if (!p) return 0;
   let base = s.qty * p.base;
   if (key === 'windows' && s.grids) base += s.qty * (s.gridCount || 1) * PRICING.windowGrids.base;
+  if (key === 'fasciaOnly' && s.difficult) base *= 1.25;
   return Math.round(base * getHeightMult(sec) * (PKG_MULT[sec.pkg]||1) * (CONDITION_MULT[sec.condition]||1));
 }
 
@@ -315,15 +419,22 @@ function isCalcExpression(str) {
 
 // ============ TOTALS ============
 function getTotals() {
-  let totalPrice = 0, totalSiding = 0, totalWindows = 0, totalTrim = 0;
-  sections.forEach(s => {
-    s.price = calcSectionPrice(s);
-    totalPrice += s.price;
-    if (s.surfaces.siding.on) totalSiding += s.surfaces.siding.qty;
-    if (s.surfaces.windows.on) totalWindows += s.surfaces.windows.qty;
-    if (s.surfaces.trimFascia.on) totalTrim += s.surfaces.trimFascia.qty;
+  let totalPrice = 0, totalSiding = 0, totalWindows = 0, totalTrimLF = 0;
+  sections.forEach(sec => {
+    sec.price = calcSectionPrice(sec);
+    totalPrice += sec.price;
+    const s = sec.surfaces;
+    if (s.siding && s.siding.on) totalSiding += s.siding.qty;
+    // Count all window types
+    ['windows','windowTrimOnly','stormWindowRR','stormWindowPaint','windowGlazing'].forEach(k => {
+      if (s[k] && s[k].on) totalWindows += s[k].qty;
+    });
+    // Count all LF trim: trimFascia, fasciaOnly, gutters, singleTrim, soffit (LF!), woodRailing, woodRailingMetal, metalRailing
+    ['trimFascia','fasciaOnly','gutters','singleTrim','soffit','woodRailing','woodRailingMetal','metalRailing'].forEach(k => {
+      if (s[k] && s[k].on) totalTrimLF += s[k].qty;
+    });
   });
-  return { totalPrice, totalSiding, totalWindows, totalTrim, count: sections.length };
+  return { totalPrice, totalSiding, totalWindows, totalTrimLF, count: sections.length };
 }
 
 // ============ RENDER ============
@@ -341,7 +452,7 @@ function renderList(app) {
     <div class="topbar"><span class="back">← Estimate</span><span class="title">Exterior Painting — Johnson Residence</span></div>
     <div class="running-total">
       <div class="rt-top"><span class="rt-price">${fmt$(t.totalPrice)}</span><span class="rt-count">${t.count} section${t.count!==1?'s':''} saved</span></div>
-      <div class="rt-details">Siding: ${t.totalSiding.toLocaleString()} SF · Windows: ${t.totalWindows} · Trim: ${t.totalTrim.toLocaleString()} LF</div>
+      <div class="rt-details">Siding: ${t.totalSiding.toLocaleString()} SF · Windows: ${t.totalWindows} · Trim: ${t.totalTrimLF.toLocaleString()} LF</div>
     </div>
     <div class="content">
       <div class="card" style="padding:0">
@@ -375,24 +486,20 @@ function renderList(app) {
 function renderSectionSummary(sec) {
   const lines = [];
   const s = sec.surfaces;
-  if (s.siding.on) lines.push(['Siding ('+s.siding.type+')', s.siding.qty+' SF', fmt$(getSurfacePrice(sec,'siding'))]);
-  if (s.soffit.on) lines.push(['Soffit/Eaves', s.soffit.qty+' SF', fmt$(getSurfacePrice(sec,'soffit'))]);
-  if (s.foundation.on) lines.push(['Foundation', s.foundation.qty+' SF', fmt$(getSurfacePrice(sec,'foundation'))]);
-  if (s.trimFascia.on) lines.push(['Trim/Fascia', s.trimFascia.qty+' LF', fmt$(getSurfacePrice(sec,'trimFascia'))]);
-  if (s.gutters.on) lines.push(['Gutters', s.gutters.qty+' LF', fmt$(getSurfacePrice(sec,'gutters'))]);
-  if (s.singleTrim.on) lines.push(['Single Trim', s.singleTrim.qty+' LF', fmt$(getSurfacePrice(sec,'singleTrim'))]);
-  if (s.woodRailing.on) lines.push(['Wood Railing', s.woodRailing.qty+' LF', fmt$(getSurfacePrice(sec,'woodRailing'))]);
-  if (s.metalRailing.on) lines.push(['Metal Railing', s.metalRailing.qty+' LF', fmt$(getSurfacePrice(sec,'metalRailing'))]);
-  if (s.windows.on) lines.push(['Windows'+(s.windows.grids?' (w/ grids)':''), s.windows.qty+' EA', fmt$(getSurfacePrice(sec,'windows'))]);
-  if (s.doors.on) lines.push(['Doors & Frames', s.doors.qty+' EA', fmt$(getSurfacePrice(sec,'doors'))]);
-  if (s.shutters.on) lines.push(['Shutters ('+s.shutters.type+')', s.shutters.qty+' EA', fmt$(getSurfacePrice(sec,'shutters'))]);
-  if (s.garageDoor.on) lines.push(['Garage Door', s.garageDoor.qty+' EA', fmt$(getSurfacePrice(sec,'garageDoor'))]);
-  if (s.downspouts.on) lines.push(['Downspouts', s.downspouts.qty+' EA', fmt$(getSurfacePrice(sec,'downspouts'))]);
-  if (s.porchColumns.on) lines.push(['Porch Columns', s.porchColumns.qty+' EA', fmt$(getSurfacePrice(sec,'porchColumns'))]);
-  if (s.soffitBoxes.on) lines.push(['Soffit Boxes', s.soffitBoxes.qty+' EA', fmt$(getSurfacePrice(sec,'soffitBoxes'))]);
-  if (s.sidelights.on) lines.push(['Sidelights', s.sidelights.qty+' EA', fmt$(getSurfacePrice(sec,'sidelights'))]);
-  if (s.atticVents.on) lines.push(['Attic Vents', s.atticVents.qty+' EA', fmt$(getSurfacePrice(sec,'atticVents'))]);
-  if (sec.pressureWash && s.siding.on) lines.push(['Pressure Wash', s.siding.qty+' SF', fmt$(Math.round(s.siding.qty*PRICING.pressureWash.base*getHeightMult(sec)))]);
+  ALL_SURFACE_KEYS.forEach(key => {
+    if (!s[key] || !s[key].on || !s[key].qty) return;
+    const meta = SURFACE_META[key];
+    const p = PRICING[key];
+    if (!meta || !p) return;
+    let label = meta.name;
+    if (key === 'siding') label = 'Siding (' + (s.siding.type||'Wood Lap') + ')';
+    if (key === 'windows' && s.windows.grids) label += ' (w/ grids)';
+    if (s[key].stain) label += ' 🪵';
+    lines.push([label, s[key].qty + ' ' + p.unit, fmt$(getSurfacePrice(sec, key))]);
+  });
+  if (sec.pressureWash && s.siding && s.siding.on) {
+    lines.push(['Pressure Wash', s.siding.qty+' SF', fmt$(Math.round(s.siding.qty*PRICING.pressureWash.base*getHeightMult(sec)))]);
+  }
   return lines.map(l => `<div class="sd-line"><span>${l[0]} · ${l[1]}</span><span>${l[2]}</span></div>`).join('');
 }
 
@@ -400,20 +507,17 @@ function esc(s) { return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ============ FORM RENDER ============
 function blankSection() {
-  return { id: nextId++, name:'', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
-    surfaces: {
-      siding:{on:false,qty:0,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
-      trimFascia:{on:false,qty:0}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
-      windows:{on:false,qty:0,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
-      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
-    }, savedAt:'', price:0 };
+  return { id: nextId++, name:'', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
+    surfaces: blankSurfaces(), savedAt:'', price:0 };
 }
 
 function addSection() { editingSection = blankSection(); currentView = 'form'; render(); }
 function editSection(id) { editingSection = JSON.parse(JSON.stringify(sections.find(s=>s.id===id))); currentView = 'form'; render(); }
 function toggleExpand(id) { expandedSectionId = expandedSectionId===id ? null : id; render(); }
 
-let collapsedGroups = { accessories: true };
+let collapsedGroups = {};
+// Init collapsed state from SURFACE_GROUPS defaults
+SURFACE_GROUPS.forEach(g => { collapsedGroups[g.key] = g.collapsed; });
 
 function renderForm(app) {
   const sec = editingSection;
@@ -423,7 +527,7 @@ function renderForm(app) {
 
   // Warnings
   let warnings = '';
-  const hasSurfaces = Object.keys(s).some(k => k!=='siding' && s[k].on);
+  const hasSurfaces = ALL_SURFACE_KEYS.some(k => k!=='siding' && s[k] && s[k].on);
   if (!s.siding.on && hasSurfaces) warnings += `<div class="warning-box warning-gold">⚠️ Exterior Masking & Protection will auto-apply (~$0.45/SF of siding area)</div>`;
   if (s.siding.on && s.siding.qty > 0 && !sec.pressureWash) warnings += `<div class="warning-box warning-gold">⚠️ Pressure wash is OFF but coated siding is present</div>`;
   if (sec.prevCoating === 'Oil') warnings += `<div class="warning-box warning-red">⚠️ Latex over oil = extra prep required</div>`;
@@ -433,6 +537,14 @@ function renderForm(app) {
     : sec.heightTier==='3' ? '<span style="color:var(--red)">Height adjustment: <strong>+50% labor</strong></span>'
     : sec.heightTier==='mix' ? '<span style="color:var(--purple)">Height adjustment: <strong>+' + Math.round((getHeightMult(sec)-1)*100) + '% labor</strong> (blended)</span>'
     : '<span style="color:var(--green)">Baseline height — no adjustment</span>';
+
+  // Build surface group HTML
+  let surfGroupsHTML = '';
+  SURFACE_GROUPS.forEach(g => {
+    const keys = ALL_SURFACE_KEYS.filter(k => SURFACE_META[k].group === g.key);
+    const cards = keys.map(k => surfCard(sec, k)).join('');
+    surfGroupsHTML += renderSurfGroup(g.title, cards, g.key);
+  });
 
   app.innerHTML = `
     <div class="topbar"><span class="back" onclick="cancelForm()">← Back</span><span class="title">${sec.name||'New Section'}</span></div>
@@ -469,34 +581,7 @@ function renderForm(app) {
       </div></div>
 
       <!-- Surfaces -->
-      ${renderSurfGroup('Primary Surfaces', [
-        surfCard(sec,'siding','Siding','SF',{dropdown:'type',options:SIDING_TYPES}),
-        surfCard(sec,'soffit','Soffit / Eaves','SF'),
-        surfCard(sec,'foundation','Foundation (Brick/Block)','SF',{warning:'⚠️ Explicit opt-in only'}),
-      ], 'primary')}
-
-      ${renderSurfGroup('Trim & Detail', [
-        surfCard(sec,'trimFascia','Trim / Fascia','LF'),
-        surfCard(sec,'gutters','Gutters','LF'),
-        surfCard(sec,'singleTrim','Single Trim','LF',{note:'Corners, bands, rake boards'}),
-        surfCard(sec,'woodRailing','Wood Railing','LF'),
-        surfCard(sec,'metalRailing','Metal Railing','LF'),
-      ], 'trim')}
-
-      ${renderSurfGroup('Openings', [
-        surfCard(sec,'windows','Windows','EA',{grids:true}),
-        surfCard(sec,'doors','Doors & Frames','EA'),
-        surfCard(sec,'shutters','Shutters','EA',{dropdown:'type',options:SHUTTER_TYPES}),
-        surfCard(sec,'garageDoor','Garage Door & Frame','EA'),
-      ], 'openings')}
-
-      ${renderSurfGroup('Accessories', [
-        surfCard(sec,'downspouts','Downspouts','EA'),
-        surfCard(sec,'porchColumns','Porch Columns','EA'),
-        surfCard(sec,'soffitBoxes','Open Soffit Boxes','EA'),
-        surfCard(sec,'sidelights','Front Door Sidelight','EA'),
-        surfCard(sec,'atticVents','Attic Vents','EA'),
-      ], 'accessories')}
+      ${surfGroupsHTML}
 
       <!-- Conditional Options -->
       <div class="card"><div class="card-body" style="padding-top:14px">
@@ -522,8 +607,8 @@ function renderForm(app) {
           <div class="surf-toggle ${sec.woodRot?'on':''}" onclick="sec().woodRot=!sec().woodRot;render()"></div>
         </div>
         <div class="opt-row">
-          <div><div class="opt-label">Stain (vs Paint)</div></div>
-          <div class="surf-toggle ${sec.stainMode?'on':''}" onclick="sec().stainMode=!sec().stainMode;render()"></div>
+          <div><div class="opt-label">🪵 Stain All (vs Paint)</div><div class="opt-sub">Applies to siding, eaves, columns, lintels</div></div>
+          <div class="surf-toggle ${sec.stainAll?'on':''}" onclick="toggleStainAll()"></div>
         </div>
         ${warnings}
       </div></div>
@@ -557,7 +642,7 @@ function renderForm(app) {
   `;
 }
 
-function renderSurfGroup(title, cards, key) {
+function renderSurfGroup(title, cardsHtml, key) {
   const collapsed = collapsedGroups[key];
   return `<div class="card"><div class="card-body" style="padding-top:0">
     <div class="surf-group">
@@ -565,36 +650,51 @@ function renderSurfGroup(title, cards, key) {
         <span class="sgh-title">${title}</span>
         <span class="sgh-arrow ${collapsed?'collapsed':''}">▼</span>
       </div>
-      <div class="surf-group-body ${collapsed?'collapsed':''}" style="max-height:2000px">
-        ${cards.join('')}
+      <div class="surf-group-body ${collapsed?'collapsed':''}" style="max-height:5000px">
+        ${cardsHtml}
       </div>
     </div>
   </div></div>`;
 }
 
-function surfCard(sec, key, name, unit, opts={}) {
+function surfCard(sec, key) {
+  const meta = SURFACE_META[key];
+  const p = PRICING[key];
   const s = sec.surfaces[key];
+  if (!meta || !p || !s) return '';
   const on = s.on;
   const price = getSurfacePrice(sec, key);
+  const unit = p.unit;
   const qtyId = 'qty_'+key;
 
   let fields = '';
-  if (opts.dropdown) {
-    fields += `<div class="sf-row"><select onchange="sec().surfaces.${key}.${opts.dropdown}=this.value;render()">${opts.options.map(o=>`<option ${s[opts.dropdown]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  // Dropdown (e.g. siding type)
+  if (meta.dropdown) {
+    fields += `<div class="sf-row"><select onchange="sec().surfaces.${key}.${meta.dropdown}=this.value;render()">${meta.options.map(o=>`<option ${s[meta.dropdown]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
   }
+  // Qty input
   fields += `<div class="sf-row"><input type="text" id="${qtyId}" value="${s.qty||''}" placeholder="0" inputmode="numeric" oninput="handleQty('${key}',this)"><span style="font-size:13px;color:var(--text-light);white-space:nowrap">${unit}</span></div>`;
-  if (opts.grids && on) {
+  // Window grids
+  if (meta.grids && on) {
     fields += `<div class="grid-popup"><label><input type="checkbox" ${s.grids?'checked':''} onchange="sec().surfaces.windows.grids=this.checked;render()"> Grids?</label>`;
     if (s.grids) fields += ` <input type="number" value="${s.gridCount||0}" min="0" style="width:60px;display:inline" placeholder="count" oninput="sec().surfaces.windows.gridCount=+this.value;render()"> per window`;
     fields += `</div>`;
   }
-  if (opts.warning) fields += `<div class="surf-warning">${opts.warning}</div>`;
-  if (opts.note) fields += `<div class="surf-note">${opts.note}</div>`;
+  // Difficult location toggle (fascia)
+  if (meta.hasDifficult && on) {
+    fields += `<div class="diff-toggle"><label><input type="checkbox" ${s.difficult?'checked':''} onchange="sec().surfaces.${key}.difficult=this.checked;render()"> Difficult Location (+25%)</label></div>`;
+  }
+  // Stain toggle per surface
+  if (meta.stainable && on) {
+    fields += `<div class="stain-toggle"><label><input type="checkbox" ${s.stain?'checked':''} onchange="sec().surfaces.${key}.stain=this.checked;render()"> 🪵 Stain</label></div>`;
+  }
+  if (meta.warning) fields += `<div class="surf-warning">${meta.warning}</div>`;
+  if (meta.note) fields += `<div class="surf-note">${meta.note}</div>`;
 
   return `<div class="surf-card ${on?'active':''}">
     <div class="surf-toggle ${on?'on':''}" onclick="toggleSurf('${key}')"></div>
     <div class="surf-info">
-      <div class="surf-name">${name}</div>
+      <div class="surf-name">${meta.name}</div>
       <div class="surf-unit">${unit}</div>
       <div class="surf-fields">${fields}</div>
     </div>
@@ -611,6 +711,17 @@ function updTitle() { document.querySelector('.topbar .title').textContent = edi
 function setTier(t) { editingSection.heightTier = t; render(); }
 function toggleGroup(k) { collapsedGroups[k] = !collapsedGroups[k]; render(); }
 function toggleSurf(k) { editingSection.surfaces[k].on = !editingSection.surfaces[k].on; render(); }
+
+function toggleStainAll() {
+  editingSection.stainAll = !editingSection.stainAll;
+  // Apply to all stainable surfaces
+  ALL_SURFACE_KEYS.forEach(k => {
+    if (SURFACE_META[k].stainable && editingSection.surfaces[k]) {
+      editingSection.surfaces[k].stain = editingSection.stainAll;
+    }
+  });
+  render();
+}
 
 function handleQty(key, el) {
   const raw = el.value;
@@ -637,7 +748,7 @@ function handleQty(key, el) {
 
 function saveSection() {
   const sec = editingSection;
-  if (!sec.name) { sec.name = 'Section ' + sections.length + 1; }
+  if (!sec.name) { sec.name = 'Section ' + (sections.length + 1); }
   const now = new Date();
   sec.savedAt = now.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
   sec.price = calcSectionPrice(sec);
