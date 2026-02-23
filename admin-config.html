@@ -477,8 +477,7 @@ function renderDefinitionTab(el) {
       <div class="form-group"><label class="form-label">Work Category</label><select class="form-select">${wcats.map(w=>`<option>${w}</option>`).join('')}</select></div>
     </div>
     <div class="form-row" style="margin-top:8px">
-      <div class="form-toggle"><div class="toggle ${b.category==='Exterior'?'on':''}" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Exterior</span></div>
-      <div class="form-toggle"><div class="toggle" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Excluded from Value</span></div>
+      <div class="form-toggle"><div class="toggle" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Value Package: Not Available</span></div>
     </div>`;
 }
 
