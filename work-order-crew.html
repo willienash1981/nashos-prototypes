@@ -541,8 +541,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     </div>
   </div>
 
-  <!-- During Job -->
-  <div class="photo-section">
+  <!-- During Job — Work in Progress + Proof of Work -->
+  <div class="photo-section" style="border-left:3px solid var(--purple);">
     <div class="photo-section-header" onclick="togglePhotoSection(this)">
       <div>
         <span class="photo-section-icon">🔨</span>
@@ -551,7 +551,18 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
       <span class="photo-section-count" id="during-count">3</span>
     </div>
     <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoDuringDesc">Progress shots as you go. Great for showing the crew at work.</div>
+      <div class="photo-section-desc" data-i18n="photoDuringDesc">These photos prove the work was done right. Timestamps are your best friend.</div>
+      <div style="font-size:12px;color:var(--text-dim);margin:6px 0 4px;line-height:1.6;">
+        <div style="font-weight:600;color:var(--text);margin-bottom:4px;" data-i18n="duringProof">🛡️ Proof of Work</div>
+        <div data-i18n="duringCoat1">🎨 1st coat dried — photo BEFORE 2nd coat goes on</div>
+        <div data-i18n="duringCoat2">🎨 2nd coat being applied — wet over dry = proof of 2 coats</div>
+        <div data-i18n="duringPrime">🪣 Spot priming / caulking — photo the prep before it's covered</div>
+        <div data-i18n="duringRepair">🔧 Repairs in progress — wood replacement, patching, sanding</div>
+        <div style="font-weight:600;color:var(--text);margin:8px 0 4px;" data-i18n="duringProfessionalism">✨ Professionalism</div>
+        <div data-i18n="duringMask">🪜 Masking & setup — tape, plastic, ladders, drop cloths</div>
+        <div data-i18n="duringScrape">🧹 Scraping & sanding — show the prep work</div>
+        <div data-i18n="duringSite">📐 Clean organized work site — gear neat, area protected</div>
+      </div>
       <div class="photo-btns">
         <div class="photo-btn" onclick="addPhoto('during')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
         <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
@@ -701,7 +712,16 @@ const translations = {
     photoDamage: 'Pre-Existing Damage',
     photoDamageDesc: 'Close-ups of any damage you find BEFORE starting — cracks, rot, stains, broken boards, scratches. Protects you and Nash.',
     photoDuring: 'During Job',
-    photoDuringDesc: 'Progress shots as you go. Great for showing the crew at work.',
+    photoDuringDesc: 'These photos prove the work was done right. Timestamps are your best friend.',
+    duringProof: '🛡️ Proof of Work',
+    duringCoat1: '🎨 1st coat dried — photo BEFORE 2nd coat goes on',
+    duringCoat2: '🎨 2nd coat being applied — wet over dry = proof of 2 coats',
+    duringPrime: '🪣 Spot priming / caulking — photo the prep before it\'s covered',
+    duringRepair: '🔧 Repairs in progress — wood replacement, patching, sanding',
+    duringProfessionalism: '✨ Professionalism',
+    duringMask: '🪜 Masking & setup — tape, plastic, ladders, drop cloths',
+    duringScrape: '🧹 Scraping & sanding — show the prep work',
+    duringSite: '📐 Clean organized work site — gear neat, area protected',
     photoAfter: 'After Photos',
     photoAfterDesc: 'Same angles as your before photos. Stand in the same spots — these are your before & after pairs.',
     sheenSatin: 'Satin',
@@ -822,7 +842,16 @@ const translations = {
     photoDamage: 'Daño Pre-Existente',
     photoDamageDesc: 'Fotos de cerca de cualquier daño que encuentres ANTES de empezar — grietas, pudrición, manchas, tablas rotas, rasguños. Te protege a ti y a Nash.',
     photoDuring: 'Durante el Trabajo',
-    photoDuringDesc: 'Fotos de progreso. Excelente para mostrar al equipo trabajando.',
+    photoDuringDesc: 'Estas fotos prueban que el trabajo se hizo bien. Las marcas de tiempo son tu mejor amigo.',
+    duringProof: '🛡️ Prueba del Trabajo',
+    duringCoat1: '🎨 1ra capa seca — foto ANTES de aplicar 2da capa',
+    duringCoat2: '🎨 2da capa aplicándose — pintura húmeda sobre seca = prueba de 2 capas',
+    duringPrime: '🪣 Imprimado / calafateo — foto de la preparación antes de cubrirla',
+    duringRepair: '🔧 Reparaciones en progreso — reemplazo de madera, parchado, lijado',
+    duringProfessionalism: '✨ Profesionalismo',
+    duringMask: '🪜 Enmascarado y preparación — cinta, plástico, escaleras, lonas',
+    duringScrape: '🧹 Raspado y lijado — mostrar el trabajo de preparación',
+    duringSite: '📐 Sitio de trabajo limpio y organizado — equipo ordenado, área protegida',
     photoAfter: 'Fotos del Después',
     photoAfterDesc: 'Mismos ángulos que tus fotos del antes. Párate en los mismos lugares — estos son tus pares de antes y después.',
     sheenSatin: 'Satinado',
