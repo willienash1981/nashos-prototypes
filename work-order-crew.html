@@ -66,17 +66,21 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .yesterday-summary { font-size:12px; color:var(--text-dim); margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
 
 /* Daily Update — Todo Style */
-.todo-item { display:flex; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px solid var(--border); }
-.todo-item:last-child { border-bottom:none; }
-.todo-check { width:24px; height:24px; border-radius:6px; border:2px solid var(--border); background:var(--navy-mid); flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:2px; cursor:pointer; transition:all 0.15s; }
-.todo-check.done { border-color:var(--green); background:rgba(34,197,94,0.15); }
-.todo-check.done::after { content:'✓'; color:var(--green); font-size:14px; font-weight:700; }
+.todo-item { display:flex; align-items:flex-start; gap:12px; padding:14px 12px; margin:0 -12px; border-radius:10px; background:var(--navy-mid); margin-bottom:8px; }
+.todo-item:last-child { margin-bottom:0; }
+.todo-check { width:28px; height:28px; border-radius:8px; border:2.5px solid rgba(148,163,184,0.5); background:transparent; flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; cursor:pointer; transition:all 0.2s; }
+.todo-check:active { transform:scale(0.9); }
+.todo-check.done { border-color:var(--green); background:var(--green); }
+.todo-check.done::after { content:'✓'; color:#fff; font-size:16px; font-weight:800; }
 .todo-body { flex:1; min-width:0; }
-.todo-label { font-size:14px; font-weight:600; color:var(--text-bright); margin-bottom:4px; }
+.todo-label { font-size:14px; font-weight:600; color:var(--text-bright); margin-bottom:6px; }
 .todo-sublabel { font-size:12px; color:var(--text-dim); margin-bottom:6px; }
 .todo-item .headcount-btns { margin:4px 0 0; }
 .todo-item input[type="date"] { margin-top:4px; }
 .todo-item textarea { margin-top:4px; min-height:48px; }
+.todo-progress { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--text-dim); }
+.todo-progress-bar { flex:1; height:6px; background:rgba(51,65,85,0.5); border-radius:3px; overflow:hidden; }
+.todo-progress-fill { height:100%; background:var(--green); border-radius:3px; transition:width 0.3s; }
 
 .submitted-state { text-align:center; padding:20px 0; }
 .submitted-state .check { font-size:40px; margin-bottom:8px; }
@@ -279,38 +283,45 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 <div class="card" id="daily-update-card">
   <div id="daily-form">
     <div class="card-title">📋 <span data-i18n="dailyUpdate">Daily Update</span> — Wed Feb 25</div>
-    <div class="yesterday-summary" data-i18n="yesterdaySummary" style="margin-top:0;margin-bottom:8px;padding-top:0;border-top:none;">Yesterday: 3 men, est. finish Thu Feb 26 ✓</div>
+    <div class="yesterday-summary" data-i18n="yesterdaySummary" style="margin-top:0;margin-bottom:10px;padding-top:0;border-top:none;">Yesterday: 3 men, est. finish Thu Feb 26 ✓</div>
 
-    <div class="todo-item" id="todo-headcount">
-      <div class="todo-check" id="check-headcount" onclick="toggleTodo('headcount')"></div>
-      <div class="todo-body">
-        <div class="todo-label" data-i18n="howMany">How many on site today?</div>
-        <div class="headcount-btns">
-          <button class="hc-btn" data-val="1">1</button>
-          <button class="hc-btn" data-val="2">2</button>
-          <button class="hc-btn active" data-val="3">3</button>
-          <button class="hc-btn" data-val="4">4</button>
-          <button class="hc-btn" data-val="5">5</button>
-          <button class="hc-btn" data-val="6">6</button>
-          <button class="hc-btn" data-val="7">7</button>
-          <button class="hc-btn hc-custom" data-val="custom">✏️</button>
+    <div class="todo-progress" id="todo-progress">
+      <div class="todo-progress-bar"><div class="todo-progress-fill" id="todo-progress-fill" style="width:0%"></div></div>
+      <span id="todo-progress-text">0 of 2 done</span>
+    </div>
+
+    <div style="margin-top:10px">
+      <div class="todo-item" id="todo-headcount">
+        <div class="todo-check" id="check-headcount" onclick="toggleTodo('headcount')"></div>
+        <div class="todo-body">
+          <div class="todo-label" data-i18n="howMany">How many on site today?</div>
+          <div class="headcount-btns">
+            <button class="hc-btn" data-val="1">1</button>
+            <button class="hc-btn" data-val="2">2</button>
+            <button class="hc-btn active" data-val="3">3</button>
+            <button class="hc-btn" data-val="4">4</button>
+            <button class="hc-btn" data-val="5">5</button>
+            <button class="hc-btn" data-val="6">6</button>
+            <button class="hc-btn" data-val="7">7</button>
+            <button class="hc-btn hc-custom" data-val="custom">✏️</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="todo-item" id="todo-finish">
-      <div class="todo-check" id="check-finish" onclick="toggleTodo('finish')"></div>
-      <div class="todo-body">
-        <div class="todo-label" data-i18n="whenFinish">When do you think you'll finish?</div>
-        <input type="date" id="est-date" value="2026-02-26">
+      <div class="todo-item" id="todo-finish">
+        <div class="todo-check" id="check-finish" onclick="toggleTodo('finish')"></div>
+        <div class="todo-body">
+          <div class="todo-label" data-i18n="whenFinish">When do you think you'll finish?</div>
+          <input type="date" id="est-date" value="2026-02-26">
+        </div>
       </div>
-    </div>
 
-    <div class="todo-item" id="todo-notes">
-      <div class="todo-check" id="check-notes" onclick="toggleTodo('notes')"></div>
-      <div class="todo-body">
-        <div class="todo-label" data-i18n="notesOptional">Notes <span style="font-weight:400;color:var(--text-dim)">(optional)</span></div>
-        <textarea id="crew-notes" data-i18n-placeholder="notesPlaceholder" placeholder="Any issues, progress notes..."></textarea>
+      <div class="todo-item" id="todo-notes">
+        <div class="todo-check" id="check-notes" onclick="toggleTodo('notes')"></div>
+        <div class="todo-body">
+          <div class="todo-label" data-i18n="notesOptional">Notes <span style="font-weight:400;color:var(--text-dim)">(optional)</span></div>
+          <textarea id="crew-notes" data-i18n-placeholder="notesPlaceholder" placeholder="Any issues, progress notes..."></textarea>
+        </div>
       </div>
     </div>
 
@@ -926,6 +937,21 @@ function editUpdate() {
 function toggleTodo(id) {
   const el = document.getElementById('check-' + id);
   el.classList.toggle('done');
+  updateTodoProgress();
+}
+
+function updateTodoProgress() {
+  // Count required items (headcount + finish). Notes is optional.
+  const required = ['headcount', 'finish'];
+  let done = 0;
+  required.forEach(id => {
+    if (document.getElementById('check-' + id).classList.contains('done')) done++;
+  });
+  const pct = Math.round((done / required.length) * 100);
+  const fill = document.getElementById('todo-progress-fill');
+  const text = document.getElementById('todo-progress-text');
+  if (fill) fill.style.width = pct + '%';
+  if (text) text.textContent = done + ' of ' + required.length + ' done';
 }
 
 // Auto-check todo items when user interacts
@@ -934,14 +960,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('#todo-headcount .hc-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.getElementById('check-headcount').classList.add('done');
+      updateTodoProgress();
     });
   });
   // Auto-check finish date when changed
   const estDate = document.getElementById('est-date');
   if (estDate) estDate.addEventListener('change', () => {
     document.getElementById('check-finish').classList.add('done');
+    updateTodoProgress();
   });
-  // Auto-check notes when user types
+  // Auto-check notes when user types (optional, doesn't affect progress bar)
   const crewNotes = document.getElementById('crew-notes');
   if (crewNotes) crewNotes.addEventListener('input', () => {
     if (crewNotes.value.trim()) {
