@@ -155,206 +155,38 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--navy-light); border:1px solid var(--border); color:var(--text); padding:10px 20px; border-radius:10px; font-size:13px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:100; }
 .toast.show { opacity:1; }
 
-/* Day 1 Modal */
-.d1-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; padding:16px; }
-.d1-overlay.hidden { display:none; }
-.d1-modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:100%; max-width:400px; max-height:90vh; overflow-y:auto; padding:20px; }
-.d1-title { font-size:18px; font-weight:700; color:var(--text-bright); text-align:center; margin-bottom:4px; }
-.d1-subtitle { font-size:13px; color:var(--text-dim); text-align:center; margin-bottom:16px; }
-.d1-section { margin-bottom:16px; }
-.d1-section-title { font-size:14px; font-weight:600; color:var(--text-bright); margin-bottom:4px; }
-.d1-hint { font-size:12px; color:var(--text-dim); margin-bottom:10px; line-height:1.5; }
-.d1-progress-wrap { margin-bottom:16px; }
-.d1-progress-bar { height:8px; background:var(--navy-mid); border-radius:4px; overflow:hidden; }
-.d1-progress-fill { height:100%; background:var(--green); border-radius:4px; transition:width 0.4s ease; }
-.d1-progress-text { font-size:12px; color:var(--text-dim); text-align:right; margin-top:4px; }
-.d1-item { display:flex; align-items:center; gap:6px; padding:8px 10px; background:var(--navy-mid); border-radius:8px; transition:all 0.2s; margin-bottom:3px; }
-.d1-item.done { background:rgba(34,197,94,0.08); }
-.d1-item.done-none { background:rgba(148,163,184,0.08); }
-.d1-item-info { flex:1; min-width:0; }
-.d1-item-label { font-size:13px; font-weight:600; color:var(--text); }
-.d1-item-hint { font-size:11px; color:var(--text-dim); font-style:italic; line-height:1.3; }
-.d1-item.done .d1-item-label { color:var(--text-dim); }
-.d1-item.done-none .d1-item-label { color:var(--text-dim); text-decoration:line-through; }
-.d1-type-badge { font-size:9px; font-weight:700; padding:2px 5px; border-radius:4px; flex-shrink:0; letter-spacing:0.5px; }
-.d1-type-badge.dmg { background:rgba(249,115,22,0.15); color:var(--orange); }
-.d1-type-badge.bef { background:rgba(59,130,246,0.15); color:var(--accent-light); }
-.d1-none-btn { background:transparent; border:1.5px solid var(--border); border-radius:6px; height:32px; padding:0 8px; font-size:12px; cursor:pointer; flex-shrink:0; color:var(--text-dim); transition:all 0.15s; display:flex; align-items:center; justify-content:center; gap:2px; }
-.d1-none-btn:hover { border-color:var(--text-dim); }
-.d1-cam-btn { background:var(--accent); border:none; border-radius:6px; width:32px; height:32px; font-size:14px; cursor:pointer; flex-shrink:0; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
-.d1-cam-btn:hover { background:var(--accent-light); }
-.d1-item.done .d1-cam-btn { background:var(--green); }
-.d1-photo-badge { background:var(--green); color:#fff; border-radius:6px; width:32px; height:32px; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; gap:1px; }
-.d1-area-divider { font-size:12px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin:12px 0 6px 2px; padding-top:8px; border-top:1px solid var(--border); }
-.d1-area-divider:first-child { border-top:none; margin-top:0; padding-top:0; }
-.d1-est-row { margin-bottom:12px; }
-.d1-est-label { font-size:13px; color:var(--text-dim); margin-bottom:6px; }
-.d1-est-btns { display:flex; gap:6px; flex-wrap:wrap; }
-.d1-est-btn { width:40px; height:40px; border-radius:8px; border:2px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:15px; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
-.d1-est-btn.active { border-color:var(--accent); background:rgba(59,130,246,0.2); color:var(--accent-light); }
-.d1-est-btn.custom { font-size:12px; }
-.d1-date-input { width:100%; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-size:14px; font-family:inherit; }
-.d1-date-input::-webkit-calendar-picker-indicator { filter:invert(0.7); }
-.d1-submit { width:100%; padding:14px; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit; }
-.d1-submit.ready { background:var(--green); color:#fff; }
-.d1-submit.not-ready { background:var(--navy-mid); color:var(--text-dim); cursor:not-allowed; }
-.d1-skip { text-align:center; margin-top:10px; }
-.d1-skip a { font-size:12px; color:var(--text-dim); cursor:pointer; text-decoration:underline; }
+/* Job Start Banner */
+.start-banner { background:var(--orange-bg); border:2px solid var(--orange); border-radius:12px; margin:10px; padding:14px; }
+.start-banner.complete { border-color:var(--green); background:var(--green-bg); }
+.start-title { font-size:15px; font-weight:700; color:var(--orange); display:flex; align-items:center; gap:6px; margin-bottom:2px; }
+.start-banner.complete .start-title { color:var(--green); }
+.start-score { font-size:11px; color:var(--text-dim); margin-bottom:10px; font-style:italic; }
+.start-btns { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+.start-cam-btn { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:10px; border:none; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; transition:all 0.15s; width:100%; text-align:left; }
+.start-cam-btn.dmg { background:var(--orange); color:#fff; }
+.start-cam-btn.dmg:hover { background:#ea580c; }
+.start-cam-btn.bef { background:var(--accent); color:#fff; }
+.start-cam-btn.bef:hover { background:var(--accent-light); }
+.start-cam-btn .cam-icon { font-size:22px; flex-shrink:0; }
+.start-cam-btn .cam-label { flex:1; }
+.start-cam-btn .cam-count { font-size:12px; opacity:0.85; }
+.start-cam-btn.has-photos { opacity:0.7; }
+.start-cam-btn.has-photos .cam-label { text-decoration:line-through; }
+.start-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+.start-row-label { font-size:13px; color:var(--text-dim); width:85px; flex-shrink:0; }
+.start-crew-btns { display:flex; gap:5px; flex-wrap:wrap; flex:1; }
+.start-crew-btn { width:36px; height:36px; border-radius:8px; border:2px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.start-crew-btn.active { border-color:var(--accent); background:rgba(59,130,246,0.2); color:var(--accent-light); }
+.start-crew-btn.custom { font-size:11px; }
+.start-date-input { flex:1; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--text); font-size:14px; font-family:inherit; }
+.start-date-input::-webkit-calendar-picker-indicator { filter:invert(0.7); }
+.start-done { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--green); font-weight:600; }
+.start-last { font-size:11px; color:var(--text-dim); margin-left:auto; }
 
 .footer { text-align:center; padding:24px; font-size:11px; color:var(--text-dim); }
 </style>
 </head>
 <body>
-
-<!-- Day 1 Modal -->
-<div class="d1-overlay" id="d1-overlay">
-  <div class="d1-modal">
-    <div class="d1-title" data-i18n="d1Title">📋 New Job Start Checklist</div>
-    <div class="d1-subtitle" data-i18n="d1Subtitle">Complete before starting work</div>
-
-    <!-- Progress -->
-    <div class="d1-progress-wrap">
-      <div class="d1-progress-bar"><div class="d1-progress-fill" id="d1-progress-fill" style="width:0%"></div></div>
-      <div class="d1-progress-text" id="d1-progress-text">0 / 0</div>
-    </div>
-
-    <!-- Section 1: Pre-Existing Conditions -->
-    <div class="d1-section">
-      <div class="d1-section-title" data-i18n="d1Sec1Title">Section 1: Document Pre-Existing Conditions</div>
-      <div class="d1-hint" data-i18n="d1Sec1Hint">Walk the property and photograph any existing damage. This protects you from being blamed.</div>
-
-      <!-- ★ UNIVERSAL — appears on EVERY job -->
-      <div class="d1-area-divider" data-i18n="d1EveryJob">⭐ Every Job</div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgPaint">🚨 Paint on Unpainted Surfaces</div><div class="d1-item-hint" data-i18n="d1HintPaint">THE BIG ONE — aluminum window sills, brick window sills, horizontal surfaces, hose bibs, porch floors, brick, concrete, glass. Any paint where it's not supposed to be.</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgWindows">Windows &amp; Glass</div><div class="d1-item-hint" data-i18n="d1HintWindows">Look for: broken/chipped glass, paint on glass, cracked screens</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgFurniture">Furniture &amp; Items to Move</div><div class="d1-item-hint" data-i18n="d1HintFurniture">Look for: existing damage on anything you'll need to move or cover</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-
-      <!-- EXTERIOR-SPECIFIC (this is an exterior + deck job) -->
-      <div class="d1-area-divider" data-i18n="d1ExtItems">🏠 Exterior</div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgGutters">Gutters &amp; Downspouts</div><div class="d1-item-hint" data-i18n="d1HintGutters">Look for: dents, dings, missing pieces, sagging sections</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgSiding">Siding</div><div class="d1-item-hint" data-i18n="d1HintSiding">Look for: missing pieces, cracks, holes, warped boards</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgTrim">Trim &amp; Aluminum</div><div class="d1-item-hint" data-i18n="d1HintTrim">Look for: dents in aluminum, bent pieces, rotted wood</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgHVAC">HVAC Equipment</div><div class="d1-item-hint" data-i18n="d1HintHVAC">Look for: dents, scratches, bent condenser fins</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgGarage">Garage Door</div><div class="d1-item-hint" data-i18n="d1HintGarage">Look for: dents, scratches, panel damage</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgShutters">Shutters</div><div class="d1-item-hint" data-i18n="d1HintShutters">Look for: broken louvers, cracked vinyl, faded/peeling</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="damage">
-        <span class="d1-type-badge dmg" data-i18n="d1BadgeDmg">DMG</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1DmgDeck">Deck</div><div class="d1-item-hint" data-i18n="d1HintDeck">Look for: loose/rotted boards, existing stain damage, railing condition</div></div>
-        <button class="d1-none-btn" onclick="d1MarkNone(this)"><span data-i18n="d1None">None ✓</span></button>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-    </div>
-
-    <!-- Section 2: Before Photos -->
-    <div class="d1-section">
-      <div class="d1-section-title" data-i18n="d1Sec2Title">Section 2: Before Photos — Work Surfaces</div>
-      <div class="d1-hint" data-i18n="d1Sec2Hint">Photo your work surfaces before starting. This is the "before" in before &amp; after.</div>
-
-      <div class="d1-item" data-tag="before">
-        <span class="d1-type-badge bef" data-i18n="d1BadgeBef">BEF</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1BefExtFront">Exterior siding — front</div></div>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="before">
-        <span class="d1-type-badge bef" data-i18n="d1BadgeBef">BEF</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1BefExtSides">Exterior siding — sides &amp; back</div></div>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="before">
-        <span class="d1-type-badge bef" data-i18n="d1BadgeBef">BEF</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1BefTrim">Trim, fascia &amp; eaves</div></div>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="before">
-        <span class="d1-type-badge bef" data-i18n="d1BadgeBef">BEF</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1BefDeckBoards">Deck — boards &amp; surface</div></div>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="before">
-        <span class="d1-type-badge bef" data-i18n="d1BadgeBef">BEF</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1BefDeckRail">Deck — railing &amp; stairs</div></div>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-      <div class="d1-item" data-tag="before">
-        <span class="d1-type-badge bef" data-i18n="d1BadgeBef">BEF</span>
-        <div class="d1-item-info"><div class="d1-item-label" data-i18n="d1BefGutters">Gutters &amp; downspouts</div></div>
-        <button class="d1-cam-btn" onclick="d1TakePhoto(this)">📸</button>
-      </div>
-    </div>
-
-    <!-- Section 3: Team & Schedule -->
-    <div class="d1-section">
-      <div class="d1-section-title" data-i18n="d1Sec3Title">Section 3: Your Team &amp; Schedule</div>
-
-      <div class="d1-est-row">
-        <div class="d1-est-label">👷 <span data-i18n="d1MenLabel">Men on site</span> <span style="color:var(--text-dim);font-size:11px" data-i18n="d1MenLastJob">(last job: 3)</span></div>
-        <div class="d1-est-btns" id="d1-men-btns">
-          <button class="d1-est-btn" data-val="1">1</button>
-          <button class="d1-est-btn" data-val="2">2</button>
-          <button class="d1-est-btn active" data-val="3">3</button>
-          <button class="d1-est-btn" data-val="4">4</button>
-          <button class="d1-est-btn" data-val="5">5</button>
-          <button class="d1-est-btn" data-val="6">6</button>
-          <button class="d1-est-btn" data-val="7">7</button>
-          <button class="d1-est-btn custom" data-val="custom">✏️</button>
-        </div>
-      </div>
-
-      <div class="d1-est-row">
-        <div class="d1-est-label">📅 <span data-i18n="d1FinishLabel">What day will you finish?</span></div>
-        <input type="date" class="d1-date-input" id="d1-finish-date">
-      </div>
-    </div>
-
-    <button class="d1-submit not-ready" id="d1-submit" onclick="d1Submit()">Complete all items above</button>
-    <div class="d1-skip"><a onclick="d1Dismiss()" data-i18n="d1Skip">I'll do this later</a></div>
-  </div>
-</div>
 
 <div class="smart-link-badge" data-i18n="smartLink">🔗 Live Work Order — Smart Link</div>
 
@@ -372,6 +204,45 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     <span class="value">Gail Greil</span>
     <span class="label" data-i18n="jobCrew">Job # / Crew</span>
     <span class="value">WO-40618331 · Carlos Villanueva</span>
+  </div>
+</div>
+
+<!-- Job Start Banner — persistent, non-blocking -->
+<div class="start-banner" id="start-banner">
+  <div class="start-title">⚠️ <span data-i18n="startTitle">New Job — Complete Before Starting</span></div>
+  <div class="start-score" data-i18n="startScore">📊 Completing this earns cooperation score points. Good photos = Nash gear rewards!</div>
+
+  <div class="start-btns">
+    <button class="start-cam-btn dmg" id="btn-dmg-photos" onclick="startCamera('damage')">
+      <span class="cam-icon">📸</span>
+      <span class="cam-label" data-i18n="startDmgLabel">Pre-Existing Damage Photos</span>
+      <span class="cam-count" id="dmg-count"></span>
+    </button>
+    <button class="start-cam-btn bef" id="btn-bef-photos" onclick="startCamera('before')">
+      <span class="cam-icon">📸</span>
+      <span class="cam-label" data-i18n="startBefLabel">Before Photos — Work Surfaces</span>
+      <span class="cam-count" id="bef-count"></span>
+    </button>
+  </div>
+
+  <div class="start-row">
+    <div class="start-row-label">👷 <span data-i18n="startMenLabel">Men</span></div>
+    <div class="start-crew-btns" id="start-men-btns">
+      <button class="start-crew-btn" data-val="1">1</button>
+      <button class="start-crew-btn" data-val="2">2</button>
+      <button class="start-crew-btn active" data-val="3">3</button>
+      <button class="start-crew-btn" data-val="4">4</button>
+      <button class="start-crew-btn" data-val="5">5</button>
+      <button class="start-crew-btn" data-val="6">6</button>
+      <button class="start-crew-btn" data-val="7">7</button>
+      <button class="start-crew-btn custom" data-val="custom">✏️</button>
+    </div>
+    <span class="start-last" data-i18n="startLastJob">last: 3</span>
+  </div>
+
+  <div class="start-row">
+    <div class="start-row-label">📅 <span data-i18n="startFinishLabel">Finish</span></div>
+    <input type="date" class="start-date-input" id="start-finish-date">
   </div>
 </div>
 
@@ -708,58 +579,17 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 // ============================================================
 const translations = {
   en: {
-    d1Title: '📋 New Job Start Checklist',
-    d1Subtitle: 'Complete before starting work',
-    d1Sec1Title: 'Section 1: Document Pre-Existing Conditions',
-    d1Sec1Hint: 'Walk the property and photograph any existing damage. This protects you from being blamed.',
-    d1BadgeDmg: 'DMG',
-    d1BadgeBef: 'BEF',
-    d1None: 'None ✓',
-    d1EveryJob: '⭐ Every Job',
-    d1ExtItems: '🏠 Exterior',
-    d1IntItems: '🏠 Interior',
-    d1DmgPaint: '🚨 Paint on Unpainted Surfaces',
-    d1HintPaint: 'THE BIG ONE — aluminum window sills, brick window sills, horizontal surfaces, hose bibs, porch floors, brick, concrete, glass. Any paint where it\'s not supposed to be.',
-    d1DmgWindows: 'Windows & Glass',
-    d1HintWindows: 'Look for: broken/chipped glass, paint on glass, cracked screens',
-    d1DmgFurniture: 'Furniture & Items to Move',
-    d1HintFurniture: 'Look for: existing damage on anything you\'ll need to move or cover',
-    d1DmgGutters: 'Gutters & Downspouts',
-    d1HintGutters: 'Look for: dents, dings, missing pieces, sagging sections',
-    d1DmgSiding: 'Siding',
-    d1HintSiding: 'Look for: missing pieces, cracks, holes, warped boards',
-    d1DmgTrim: 'Trim & Aluminum',
-    d1HintTrim: 'Look for: dents in aluminum, bent pieces, rotted wood',
-    d1DmgHVAC: 'HVAC Equipment',
-    d1HintHVAC: 'Look for: dents, scratches, bent condenser fins',
-    d1DmgGarage: 'Garage Door',
-    d1HintGarage: 'Look for: dents, scratches, panel damage',
-    d1DmgShutters: 'Shutters',
-    d1HintShutters: 'Look for: broken louvers, cracked vinyl, faded/peeling',
-    d1DmgDeck: 'Deck',
-    d1HintDeck: 'Look for: loose/rotted boards, existing stain damage, railing condition',
-    d1DmgDeck: 'Deck',
-    d1HintDeck: 'Look for: loose/rotted boards, existing stain damage, railing condition',
-    d1Sec2Title: 'Section 2: Before Photos — Work Surfaces',
-    d1Sec2Hint: 'Photo your work surfaces before starting. This is the "before" in before & after.',
-    d1BefExtFront: 'Exterior siding — front',
-    d1BefExtSides: 'Exterior siding — sides & back',
-    d1BefTrim: 'Trim, fascia & eaves',
-    d1BefDeckBoards: 'Deck — boards & surface',
-    d1BefDeckRail: 'Deck — railing & stairs',
-    d1BefGutters: 'Gutters & downspouts',
-    d1Sec3Title: 'Section 3: Your Team & Schedule',
-    d1MenLabel: 'Men on site',
-    d1MenLastJob: '(last job: 3)',
-    d1FinishLabel: 'What day will you finish?',
-    d1SubmitReady: "Let's go! ✅",
-    d1Skip: "I'll do this later",
-    d1CustomMen: 'How many men?',
-    d1NeedDamage: 'damage check',
-    d1NeedBefore: 'before photos',
-    d1NeedFinish: 'finish date',
-    d1NeedMen: 'crew size',
-    d1ToastDone: 'Start checklist complete ✅',
+    startTitle: 'New Job — Complete Before Starting',
+    startScore: '📊 Completing this earns cooperation score points. Good photos = Nash gear rewards!',
+    startDmgLabel: 'Pre-Existing Damage Photos',
+    startBefLabel: 'Before Photos — Work Surfaces',
+    startMenLabel: 'Men',
+    startFinishLabel: 'Finish',
+    startLastJob: 'last: 3',
+    startDone: '✅ Start checklist complete!',
+    startCustomMen: 'How many men?',
+    startDmgCount: '{n} damage photos',
+    startBefCount: '{n} before photos',
     smartLink: '🔗 Live Work Order — Smart Link',
     jobAddress: 'Job Address',
     customer: 'Customer',
@@ -864,56 +694,17 @@ const translations = {
     estFinishLabel: 'Est. finish'
   },
   es: {
-    d1Title: '📋 Lista de Inicio de Trabajo Nuevo',
-    d1Subtitle: 'Completar antes de iniciar el trabajo',
-    d1Sec1Title: 'Sección 1: Documentar Condiciones Preexistentes',
-    d1Sec1Hint: 'Recorra la propiedad y fotografíe cualquier daño existente. Esto lo protege de que lo culpen.',
-    d1BadgeDmg: 'DAÑO',
-    d1BadgeBef: 'ANTES',
-    d1None: 'Nada ✓',
-    d1DmgGutters: 'Canaletas y Bajantes',
-    d1HintGutters: 'Buscar: abolladuras, golpes, piezas faltantes',
-    d1DmgSiding: 'Revestimiento',
-    d1HintSiding: 'Buscar: piezas faltantes, grietas, huecos',
-    d1DmgTrim: 'Molduras y Aluminio',
-    d1HintTrim: 'Buscar: abolladuras, piezas dobladas, daño existente',
-    d1DmgWindows: 'Ventanas y Vidrio',
-    d1HintWindows: 'Buscar: vidrio roto/astillado, pintura en vidrio, mallas',
-    d1DmgHVAC: 'Equipo HVAC',
-    d1HintHVAC: 'Buscar: abolladuras, rasguños, aletas de condensador dobladas',
-    d1EveryJob: '⭐ Cada Trabajo',
-    d1ExtItems: '🏠 Exterior',
-    d1IntItems: '🏠 Interior',
-    d1DmgPaint: '🚨 Pintura en Superficies Sin Pintar',
-    d1HintPaint: 'EL MÁS IMPORTANTE — marcos de ventana de aluminio, marcos de ladrillo, superficies horizontales, grifos, pisos de porche, ladrillo, concreto, vidrio. Cualquier pintura donde no debe estar.',
-    d1DmgGarage: 'Puerta del Garaje',
-    d1HintGarage: 'Buscar: abolladuras, rasguños, daño existente',
-    d1DmgShutters: 'Persianas',
-    d1HintShutters: 'Buscar: láminas rotas, vinilo agrietado',
-    d1DmgFurniture: 'Muebles y Cosas para Mover',
-    d1HintFurniture: 'Buscar: daño existente en cualquier cosa que necesite mover',
-    d1DmgDeck: 'Terraza',
-    d1HintDeck: 'Buscar: tablas sueltas/podridas, daño de tinte existente, condición de barandas',
-    d1Sec2Title: 'Sección 2: Fotos de Antes — Superficies de Trabajo',
-    d1Sec2Hint: 'Fotografíe sus superficies de trabajo antes de empezar. Este es el "antes" en antes y después.',
-    d1BefExtFront: 'Revestimiento exterior — frente',
-    d1BefExtSides: 'Revestimiento exterior — lados y atrás',
-    d1BefTrim: 'Molduras, fascia y aleros',
-    d1BefDeckBoards: 'Terraza — tablas y superficie',
-    d1BefDeckRail: 'Terraza — barandas y escaleras',
-    d1BefGutters: 'Canaletas y bajantes',
-    d1Sec3Title: 'Sección 3: Su Equipo y Calendario',
-    d1MenLabel: 'Hombres en sitio',
-    d1MenLastJob: '(último trabajo: 3)',
-    d1FinishLabel: '¿Qué día terminará?',
-    d1SubmitReady: '¡Vamos! ✅',
-    d1Skip: 'Lo haré después',
-    d1CustomMen: '¿Cuántos hombres?',
-    d1NeedDamage: 'revisión de daños',
-    d1NeedBefore: 'fotos de antes',
-    d1NeedFinish: 'fecha de terminación',
-    d1NeedMen: 'tamaño del equipo',
-    d1ToastDone: 'Lista de inicio completa ✅',
+    startTitle: 'Trabajo Nuevo — Completar Antes de Empezar',
+    startScore: '📊 Completar esto suma puntos a su calificación. ¡Buenas fotos = ropa Nash de regalo!',
+    startDmgLabel: 'Fotos de Daños Preexistentes',
+    startBefLabel: 'Fotos de Antes — Superficies de Trabajo',
+    startMenLabel: 'Hombres',
+    startFinishLabel: 'Terminar',
+    startLastJob: 'último: 3',
+    startDone: '✅ ¡Lista de inicio completa!',
+    startCustomMen: '¿Cuántos hombres?',
+    startDmgCount: '{n} fotos de daños',
+    startBefCount: '{n} fotos de antes',
     smartLink: '🔗 Orden de Trabajo en Vivo — Enlace Directo',
     jobAddress: 'Dirección del Trabajo',
     customer: 'Cliente',
@@ -1163,128 +954,84 @@ function showToast(msg) {
 }
 
 // ============================================================
-// Day 1 Modal — New Job Start Checklist
+// Job Start Banner — non-blocking, persistent at top
 // ============================================================
-const D1_KEY = 'wo-40618331-start';
-let d1Men = 3; // default from last job
+const START_KEY = 'wo-40618331-start';
+let startDmgCount = 0;
+let startBefCount = 0;
 
-function d1Init() {
-  if (localStorage.getItem(D1_KEY) === 'done') {
-    document.getElementById('d1-overlay').classList.add('hidden');
+function startInit() {
+  const banner = document.getElementById('start-banner');
+  if (localStorage.getItem(START_KEY) === 'done') {
+    banner.classList.add('complete');
+    banner.innerHTML = '<div class="start-done">' + t('startDone') + '</div>';
     return;
   }
-  document.getElementById('d1-overlay').classList.remove('hidden');
 
   // Set default finish date (7 days from today)
-  const finishInput = document.getElementById('d1-finish-date');
+  const finishInput = document.getElementById('start-finish-date');
   const def = new Date();
   def.setDate(def.getDate() + 7);
   finishInput.value = def.toISOString().slice(0, 10);
-  finishInput.addEventListener('change', d1UpdateProgress);
+  finishInput.addEventListener('change', startCheckComplete);
 
   // Men buttons
-  document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(btn => {
+  document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.val === 'custom') {
-        const val = prompt(t('d1CustomMen'));
+        const val = prompt(t('startCustomMen'));
         const num = parseInt(val, 10);
         if (!num || num < 1) return;
-        document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(b => b.classList.remove('active'));
         btn.textContent = num;
         btn.dataset.val = String(num);
         btn.classList.add('active');
-        d1Men = num;
       } else {
-        document.querySelectorAll('#d1-men-btns .d1-est-btn').forEach(b => {
+        document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(b => {
           b.classList.remove('active');
           if (b.classList.contains('custom') && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; }
         });
         btn.classList.add('active');
-        d1Men = parseInt(btn.dataset.val, 10);
       }
-      d1UpdateProgress();
+      startCheckComplete();
     });
   });
-
-  d1UpdateProgress();
 }
 
-function d1TakePhoto(camBtn) {
-  const item = camBtn.closest('.d1-item');
-  if (item.classList.contains('done')) {
-    let count = parseInt(item.dataset.photos || '1', 10) + 1;
-    item.dataset.photos = count;
-    const badge = item.querySelector('.d1-photo-badge');
-    if (badge) badge.innerHTML = count + '📷';
-    return;
-  }
-  item.classList.remove('done-none');
-  item.classList.add('done');
-  item.dataset.photos = '1';
-  const noneBtn = item.querySelector('.d1-none-btn');
-  if (noneBtn) noneBtn.style.display = 'none';
-  camBtn.outerHTML = '<div class="d1-photo-badge">1📷</div>';
-  d1UpdateProgress();
-  showToast(t('cameraToast'));
-}
-
-function d1MarkNone(noneBtn) {
-  const item = noneBtn.closest('.d1-item');
-  if (item.classList.contains('done') || item.classList.contains('done-none')) return;
-  item.classList.add('done-none');
-  noneBtn.style.display = 'none';
-  const camBtn = item.querySelector('.d1-cam-btn');
-  if (camBtn) camBtn.style.display = 'none';
-  d1UpdateProgress();
-}
-
-function d1UpdateProgress() {
-  const allItems = document.querySelectorAll('#d1-overlay .d1-item');
-  const doneItems = document.querySelectorAll('#d1-overlay .d1-item.done, #d1-overlay .d1-item.done-none');
-  const totalDmg = document.querySelectorAll('#d1-overlay .d1-item[data-tag="damage"]').length;
-  const doneDmg = document.querySelectorAll('#d1-overlay .d1-item[data-tag="damage"].done, #d1-overlay .d1-item[data-tag="damage"].done-none').length;
-  const totalBef = document.querySelectorAll('#d1-overlay .d1-item[data-tag="before"]').length;
-  const doneBef = document.querySelectorAll('#d1-overlay .d1-item[data-tag="before"].done').length;
-  const hasMen = d1Men !== null;
-  const hasDate = !!document.getElementById('d1-finish-date').value;
-
-  // +2 for men and date
-  const total = allItems.length + 2;
-  const done = doneItems.length + (hasMen ? 1 : 0) + (hasDate ? 1 : 0);
-  const pct = Math.round((done / total) * 100);
-
-  document.getElementById('d1-progress-fill').style.width = pct + '%';
-  document.getElementById('d1-progress-text').textContent = done + ' / ' + total;
-
-  const btn = document.getElementById('d1-submit');
-  const ready = doneDmg >= totalDmg && doneBef >= totalBef && hasMen && hasDate;
-  if (ready) {
-    btn.className = 'd1-submit ready';
-    btn.textContent = t('d1SubmitReady');
-    btn.onclick = d1Submit;
+// Simulate camera opening — in production this opens native camera in burst mode
+function startCamera(type) {
+  // Simulate taking 2-5 photos in a burst
+  const count = Math.floor(Math.random() * 4) + 2;
+  if (type === 'damage') {
+    startDmgCount += count;
+    const btn = document.getElementById('btn-dmg-photos');
+    btn.classList.add('has-photos');
+    document.getElementById('dmg-count').textContent = t('startDmgCount').replace('{n}', startDmgCount);
   } else {
-    btn.className = 'd1-submit not-ready';
-    const missing = [];
-    if (doneDmg < totalDmg) missing.push(t('d1NeedDamage'));
-    if (doneBef < totalBef) missing.push(t('d1NeedBefore'));
-    if (!hasMen) missing.push(t('d1NeedMen'));
-    if (!hasDate) missing.push(t('d1NeedFinish'));
-    btn.textContent = (lang === 'es' ? 'Falta: ' : 'Need: ') + missing.join(', ');
-    btn.onclick = null;
+    startBefCount += count;
+    const btn = document.getElementById('btn-bef-photos');
+    btn.classList.add('has-photos');
+    document.getElementById('bef-count').textContent = t('startBefCount').replace('{n}', startBefCount);
+  }
+  showToast((type === 'damage' ? '⚠️ ' : '📸 ') + count + (lang === 'es' ? ' fotos guardadas' : ' photos saved'));
+  startCheckComplete();
+}
+
+function startCheckComplete() {
+  const hasDmg = startDmgCount > 0;
+  const hasBef = startBefCount > 0;
+  const hasMen = !!document.querySelector('#start-men-btns .start-crew-btn.active');
+  const hasDate = !!document.getElementById('start-finish-date').value;
+
+  if (hasDmg && hasBef && hasMen && hasDate) {
+    localStorage.setItem(START_KEY, 'done');
+    const banner = document.getElementById('start-banner');
+    banner.classList.add('complete');
+    banner.innerHTML = '<div class="start-done">' + t('startDone') + ' — ' + startDmgCount + ' DMG, ' + startBefCount + ' BEF, ' + document.querySelector('#start-men-btns .start-crew-btn.active').dataset.val + ' 👷, ' + document.getElementById('start-finish-date').value + '</div>';
   }
 }
 
-function d1Submit() {
-  localStorage.setItem(D1_KEY, 'done');
-  document.getElementById('d1-overlay').classList.add('hidden');
-  showToast(t('d1ToastDone'));
-}
-
-function d1Dismiss() {
-  document.getElementById('d1-overlay').classList.add('hidden');
-}
-
-d1Init();
+startInit();
 </script>
 </body>
 </html>
