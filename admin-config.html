@@ -465,7 +465,11 @@ function renderDefinitionTab(el) {
   const pkgs = ['Value','Standard','Premium+','—'];
   const units = ['SF','LF','EA','HOUR'];
   const wcats = ['INTERIOR','EXTERIOR','CABINET','DECK_FENCE'];
+  const isActive = b.status === 'Active';
   el.innerHTML = `
+    <div class="form-row" style="margin-bottom:12px">
+      <div class="form-toggle"><div class="toggle ${isActive?'on':''}" onclick="this.classList.toggle('on');editingBundle.status=this.classList.contains('on')?'Active':'Inactive';renderBundleList()"></div><span class="toggle-label">Status: <strong>${b.status}</strong></span></div>
+    </div>
     <div class="form-group"><label class="form-label">Internal Name</label><input class="form-input" value="${b.name}" onchange="editingBundle.name=this.value"/></div>
     <div class="form-group"><label class="form-label">Customer-Facing Name</label><input class="form-input" value="${b.customerName}" onchange="editingBundle.customerName=this.value"/></div>
     <div class="form-row">
