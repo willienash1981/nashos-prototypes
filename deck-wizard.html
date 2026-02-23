@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Deck Staining Wizard</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --red-bg: #FEF2F2;
+  --blue: #3B82F6;
+  --orange: #F59E0B;
+  --purple: #8B5CF6;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+.shell { max-width:430px; margin:0 auto; padding-bottom:100px; }
+.topbar { background: var(--navy); color:#fff; padding:16px 20px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:18px; font-weight:700; }
+.topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.running-total { position:sticky; top:56px; z-index:99; background:var(--navy-light); color:#fff; padding:10px 20px; font-size:13px; line-height:1.5; }
+.running-total .big { font-size:20px; font-weight:700; color:var(--gold); }
+.running-total .detail { opacity:.8; }
+.step-header { padding:20px 16px 8px; }
+.step-header h2 { font-size:15px; font-weight:700; color:var(--navy); display:flex; align-items:center; gap:8px; }
+.step-header h2 .num { background:var(--navy); color:#fff; width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px; }
+.card { background:var(--card); border-radius:var(--radius); margin:8px 16px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.card-title { font-size:14px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.q-label { font-size:13px; font-weight:600; margin-bottom:8px; color:var(--text); }
+.radios { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+.radios.horizontal { flex-direction:row; flex-wrap:wrap; }
+.radio-btn { display:flex; align-items:center; gap:10px; padding:10px 14px; border:2px solid var(--border); border-radius:10px; cursor:pointer; font-size:13px; transition:all .15s; }
+.radio-btn:hover { border-color:var(--gold-light); }
+.radio-btn.selected { border-color:var(--gold); background:rgba(196,169,98,.08); }
+.radio-btn .dot { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.radio-btn.selected .dot { border-color:var(--gold); }
+.radio-btn.selected .dot::after { content:''; width:10px; height:10px; border-radius:50%; background:var(--gold); }
+.result-card { border:2px solid var(--green); background:var(--green-bg); border-radius:var(--radius); margin:8px 16px; padding:16px; }
+.result-card.warn { border-color:var(--orange); background:#FFFBEB; }
+.result-card.error { border-color:var(--red); background:var(--red-bg); }
+.result-card h3 { font-size:15px; font-weight:700; margin-bottom:6px; }
+.result-card p { font-size:13px; line-height:1.5; color:var(--text-light); }
+.disclaimer { font-size:12px; padding:8px 12px; border-radius:8px; margin-top:8px; display:flex; align-items:flex-start; gap:6px; line-height:1.4; }
+.disclaimer.warning { background:#FFFBEB; color:#92400E; }
+.disclaimer.danger { background:var(--red-bg); color:#991B1B; }
+.disclaimer.info { background:#EFF6FF; color:#1E40AF; }
+.measure-card { background:var(--card); border-radius:var(--radius); margin:8px 16px; padding:0; box-shadow:0 1px 3px rgba(0,0,0,.06); overflow:hidden; }
+.measure-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer; }
+.measure-header .left { display:flex; align-items:center; gap:10px; }
+.measure-header .name { font-size:14px; font-weight:600; }
+.measure-header .price { font-size:16px; font-weight:700; color:var(--navy); }
+.measure-header .price.zero { color:var(--text-light); }
+.toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.toggle.on { background:var(--green); }
+.toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.toggle.on .knob { left:22px; }
+.measure-body { padding:0 16px 16px; }
+.measure-body.hidden { display:none; }
+.input-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.input-row label { font-size:12px; color:var(--text-light); min-width:60px; }
+.input-row input, .input-row select { flex:1; padding:8px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; }
+.input-row input:focus, .input-row select:focus { outline:none; border-color:var(--gold); }
+.input-row .unit { font-size:12px; color:var(--text-light); min-width:24px; }
+.calc-note { font-size:11px; color:var(--text-light); margin-top:4px; }
+.coat-toggle { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--text-light); }
+.addon-card { background:var(--card); border-radius:var(--radius); margin:8px 16px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; }
+.addon-card .left { flex:1; }
+.addon-card .aname { font-size:13px; font-weight:600; }
+.addon-card .adesc { font-size:11px; color:var(--text-light); }
+.addon-card .aprice { font-size:14px; font-weight:700; color:var(--navy); margin-right:12px; }
+.counter { display:flex; align-items:center; gap:8px; }
+.counter button { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.counter button:hover { border-color:var(--gold); }
+.counter span { font-size:14px; font-weight:600; min-width:20px; text-align:center; }
+.color-input { margin:8px 16px; }
+.color-input .card { margin:0; }
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.bottom-bar .label { font-size:13px; opacity:.8; }
+.bottom-bar .total { font-size:22px; font-weight:700; color:var(--gold); }
+.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.bottom-bar .save-btn:hover { background:var(--gold-light); }
+.hidden { display:none !important; }
+.app-note { font-size:11px; color:var(--text-light); padding:4px 16px; line-height:1.4; }
+.sf-inline { font-size:12px; color:var(--gold); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <h1>🪵 Deck Staining Wizard</h1>
+    <span class="badge">BETA</span>
+  </div>
+
+  <div class="running-total" id="runningTotal">
+    <div><span class="big" id="rtTotal">$1,621</span> <span class="detail" id="rtProduct">Semi-Transparent Stain</span></div>
+    <div class="detail" id="rtDetail">Flooring: 400 SF · Railing: 60 LF · 1 Coat</div>
+  </div>
+
+  <!-- STEP 1: CONDITION ASSESSMENT -->
+  <div class="step-header"><h2><span class="num">1</span> Condition Assessment</h2></div>
+
+  <div class="card">
+    <div class="q-label">Is there active water beading on the deck?</div>
+    <div class="radios horizontal" data-q="q1">
+      <div class="radio-btn" data-v="yes" onclick="pick(this)"><div class="dot"></div>Yes</div>
+      <div class="radio-btn selected" data-v="no" onclick="pick(this)"><div class="dot"></div>No</div>
+    </div>
+
+    <div id="q1a" class="hidden">
+      <div class="q-label">When was it last coated?</div>
+      <div class="radios" data-q="q1a">
+        <div class="radio-btn" data-v="lt2" onclick="pick(this)"><div class="dot"></div>Less than 2 years ago</div>
+        <div class="radio-btn" data-v="gt2" onclick="pick(this)"><div class="dot"></div>2+ years ago</div>
+        <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
+      </div>
+    </div>
+
+    <div class="q-label">Previous coating type?</div>
+    <div class="radios" data-q="q2">
+      <div class="radio-btn" data-v="deckover" onclick="pick(this)"><div class="dot"></div>Behr DeckOver / Rustoleum Restore / thick-film</div>
+      <div class="radio-btn" data-v="stained-good" onclick="pick(this)"><div class="dot"></div>Previously stained (good condition)</div>
+      <div class="radio-btn" data-v="stained-weathered" onclick="pick(this)"><div class="dot"></div>Previously stained (weathered/patchy)</div>
+      <div class="radio-btn selected" data-v="bare" onclick="pick(this)"><div class="dot"></div>None (bare/new wood)</div>
+      <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
+    </div>
+
+    <div class="q-label">Mixed materials or wood species?</div>
+    <div class="radios horizontal" data-q="q3">
+      <div class="radio-btn" data-v="yes" onclick="pick(this)"><div class="dot"></div>Yes</div>
+      <div class="radio-btn selected" data-v="no" onclick="pick(this)"><div class="dot"></div>No</div>
+    </div>
+
+    <div class="q-label">Wood type?</div>
+    <div class="radios horizontal" data-q="q4">
+      <div class="radio-btn selected" data-v="standard" onclick="pick(this)"><div class="dot"></div>Standard (pressure-treated, cedar, etc.)</div>
+      <div class="radio-btn" data-v="ipe" onclick="pick(this)"><div class="dot"></div>IPE ⚠️</div>
+    </div>
+
+    <div class="q-label">Overall condition?</div>
+    <div class="radios" data-q="q5">
+      <div class="radio-btn selected" data-v="minimal" onclick="pick(this)"><div class="dot"></div>Minimal (cosmetic only)</div>
+      <div class="radio-btn" data-v="moderate" onclick="pick(this)"><div class="dot"></div>Moderate (some greying, board damage)</div>
+      <div class="radio-btn" data-v="severe" onclick="pick(this)"><div class="dot"></div>Severe (structural concerns, heavy decay)</div>
+    </div>
+  </div>
+
+  <div id="resultCard" class="result-card">
+    <h3 id="recProduct">✅ Recommended: Semi-Transparent Stain</h3>
+    <p id="recReason">Bare/new wood in good condition. Semi-transparent preserves natural grain.</p>
+    <div id="disclaimers"></div>
+  </div>
+
+  <!-- STEP 2: MEASUREMENTS -->
+  <div class="step-header"><h2><span class="num">2</span> Measurements</h2></div>
+
+  <!-- Flooring -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('flooring')">
+      <div class="left">
+        <div class="toggle on" id="flooring-toggle"><div class="knob"></div></div>
+        <div class="name">Deck Flooring <span class="sf-inline" id="flooring-sf">400 SF</span></div>
+      </div>
+      <div class="price" id="flooring-price">$812</div>
+    </div>
+    <div class="measure-body" id="flooring-body">
+      <div class="input-row">
+        <label>Sq Ft</label>
+        <input type="number" id="flooring-sqft" value="400" oninput="calc()">
+        <div class="unit">SF</div>
+      </div>
+      <div class="input-row">
+        <label>OR dims</label>
+        <input type="number" id="flooring-l" placeholder="L" style="max-width:70px" oninput="calcFloorDims()">
+        <span style="font-size:12px">×</span>
+        <input type="number" id="flooring-w" placeholder="W" style="max-width:70px" oninput="calcFloorDims()">
+      </div>
+      <div class="calc-note">Rate: $2.03/SF</div>
+      <div class="coat-toggle">
+        <div class="toggle" id="flooring-2coat" onclick="toggle2coat('flooring')"><div class="knob"></div></div>
+        <span>2nd coat (×0.85 labor)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staircase -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('stairs')">
+      <div class="left">
+        <div class="toggle" id="stairs-toggle"><div class="knob"></div></div>
+        <div class="name">Staircase <span class="sf-inline" id="stairs-sf"></span></div>
+      </div>
+      <div class="price zero" id="stairs-price">$0</div>
+    </div>
+    <div class="measure-body hidden" id="stairs-body">
+      <div class="input-row">
+        <label>Steps</label>
+        <input type="number" id="stairs-steps" value="0" oninput="calcStairs()">
+      </div>
+      <div class="input-row">
+        <label>Width</label>
+        <input type="number" id="stairs-width" value="36" oninput="calcStairs()">
+        <div class="unit">in</div>
+      </div>
+      <div class="input-row">
+        <label>SF override</label>
+        <input type="number" id="stairs-sqft" value="0" oninput="calc()">
+      </div>
+      <div class="calc-note">steps × 2 × (width/12) = SF · Rate: $3.35/SF</div>
+    </div>
+  </div>
+
+  <!-- Skirting/Lattice/Posts -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('skirting')">
+      <div class="left">
+        <div class="toggle" id="skirting-toggle"><div class="knob"></div></div>
+        <div class="name">Skirting / Lattice / Posts <span class="sf-inline" id="skirting-sf"></span></div>
+      </div>
+      <div class="price zero" id="skirting-price">$0</div>
+    </div>
+    <div class="measure-body hidden" id="skirting-body">
+      <div class="input-row">
+        <label>Sq Ft</label>
+        <input type="number" id="skirting-sqft" value="0" oninput="calc()">
+        <div class="unit">SF</div>
+      </div>
+      <div class="input-row">
+        <label>OR posts</label>
+        <input type="number" id="post-h" placeholder="H" style="max-width:55px" oninput="calcPosts()">
+        <span style="font-size:12px">×4×</span>
+        <input type="number" id="post-count" placeholder="Qty" style="max-width:55px" oninput="calcPosts()">
+      </div>
+      <div class="calc-note">Rate: $1.39/SF</div>
+    </div>
+  </div>
+
+  <!-- Deck Underside -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('underside')">
+      <div class="left">
+        <div class="toggle" id="underside-toggle"><div class="knob"></div></div>
+        <div class="name">Deck Underside <span class="sf-inline" id="underside-sf"></span></div>
+      </div>
+      <div class="price zero" id="underside-price">$0</div>
+    </div>
+    <div class="measure-body hidden" id="underside-body">
+      <div class="input-row">
+        <label>Sq Ft</label>
+        <input type="number" id="underside-sqft" value="0" oninput="calc()">
+        <div class="unit">SF</div>
+      </div>
+      <div class="calc-note">Auto-fills from Flooring + Staircase SF · Rate: $1.39/SF</div>
+    </div>
+  </div>
+
+  <!-- Railing -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('railing')">
+      <div class="left">
+        <div class="toggle on" id="railing-toggle"><div class="knob"></div></div>
+        <div class="name">Railing <span class="sf-inline" id="railing-lf">60 LF</span></div>
+      </div>
+      <div class="price" id="railing-price">$809</div>
+    </div>
+    <div class="measure-body" id="railing-body">
+      <div class="input-row">
+        <label>Lin Ft</label>
+        <input type="number" id="railing-linft" value="60" oninput="calc()">
+        <div class="unit">LF</div>
+      </div>
+      <div class="input-row">
+        <label>Type</label>
+        <select id="railing-type" onchange="calc()">
+          <option value="wood" selected>Wood ($13.49/LF)</option>
+          <option value="wood-metal">Wood + Metal Spindles ($18.39/LF)</option>
+          <option value="metal">Metal (quote separately)</option>
+        </select>
+      </div>
+      <div class="disclaimer info">ℹ️ Railings stained BEFORE deck flooring</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: ADD-ONS -->
+  <div class="step-header"><h2><span class="num">3</span> Add-Ons</h2></div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Additional Colors</div>
+      <div class="adesc">1 included, +$75 each additional</div>
+    </div>
+    <div class="counter">
+      <span class="aprice" id="colors-price">$0</span>
+      <button onclick="adjColors(-1)">−</button>
+      <span id="colors-count">1</span>
+      <button onclick="adjColors(1)">+</button>
+    </div>
+  </div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">New Replacement Boards</div>
+      <div class="adesc">Auto-applies 2 coats</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice" id="newboards-price">$0</span>
+      <input type="number" id="newboards-sf" value="0" style="width:60px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" oninput="calc()">
+      <span style="font-size:11px;color:var(--text-light)">SF</span>
+    </div>
+  </div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Brush-Only Application</div>
+      <div class="adesc">No spray — 15% upcharge</div>
+    </div>
+    <div class="toggle" id="brush-toggle" onclick="toggleAddon('brush')"><div class="knob"></div></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Heavy Masking</div>
+      <div class="adesc">Adjacent structures need protection</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice" id="masking-price">$0</span>
+      <div class="toggle" id="masking-toggle" onclick="toggleAddon('masking')"><div class="knob"></div></div>
+    </div>
+  </div>
+
+  <!-- STEP 4: COLORS -->
+  <div class="step-header"><h2><span class="num">4</span> Colors</h2></div>
+
+  <div class="card">
+    <div class="card-title">🎨 Color Selection <span style="font-size:12px;font-weight:400;color:var(--text-light)" id="productLabel">Semi-Transparent Stain</span></div>
+    <div class="input-row">
+      <label>Floor</label>
+      <input type="text" id="color-floor" placeholder="Color name or code" value="" oninput="checkColors()">
+    </div>
+    <div class="input-row">
+      <label>Railing</label>
+      <input type="text" id="color-railing" placeholder="Same as floor (leave blank)" oninput="checkColors()">
+    </div>
+    <div id="colorWaiver" class="disclaimer warning">⚠️ Semi-transparent requires color waiver — natural wood variation will show through.</div>
+    <div id="colorMismatch" class="disclaimer info hidden">ℹ️ Railing ≠ floor color detected — masking upcharge applied.</div>
+  </div>
+
+  <!-- Business Rules -->
+  <div class="card" style="margin-top:16px;background:var(--bg);border:1px dashed var(--border)">
+    <div class="card-title" style="font-size:12px;color:var(--text-light)">📋 Business Rules (always enforced)</div>
+    <div style="font-size:11px;color:var(--text-light);line-height:1.6">
+      • NO paint products on decks (stain/seal only)<br>
+      • NO sanding — Nash doesn't sand decks<br>
+      • NO stripping — Nash doesn't strip decks<br>
+      • Railings stained BEFORE flooring<br>
+      • New replacement boards → auto 2 coats<br>
+      • Semi-transparent → color waiver required<br>
+      • SuperDeck → one-way door (lock-in)<br>
+      • Behr DeckOver → NO WARRANTY
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div>
+    <div class="label">Deck Staining</div>
+    <div class="total" id="bottomTotal">$1,621</div>
+  </div>
+  <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
+</div>
+
+<script>
+const state = {
+  q1:'no', q1a:null, q2:'bare', q3:'no', q4:'standard', q5:'minimal',
+  toggles: { flooring:true, stairs:false, skirting:false, underside:false, railing:true },
+  coat2: { flooring:false },
+  addons: { brush:false, masking:false },
+  colors: 1
+};
+
+function pick(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const q = group.dataset.q;
+  const v = el.dataset.v;
+  state[q] = v;
+  if (q === 'q1') {
+    document.getElementById('q1a').classList.toggle('hidden', v !== 'yes');
+    if (v !== 'yes') state.q1a = null;
+  }
+  if (q === 'q1a') state.q1a = v;
+  assess();
+  calc();
+}
+
+function assess() {
+  let product = 'semi-transparent';
+  let reason = '';
+  let disclaimers = [];
+  let cardClass = '';
+
+  const {q1, q1a, q2, q3, q4, q5} = state;
+
+  // Decision logic
+  if (q1 === 'yes' && q1a === 'lt2') {
+    product = 'superdeck-locked';
+    reason = 'Active water beading with recent coating (<2 years). SuperDeck is the ONLY option.';
+    disclaimers.push({t:'danger', m:'🔒 SuperDeck LOCK-IN: Once applied, only SuperDeck can be recoated. This is a one-way door.'});
+    cardClass = 'warn';
+  } else if (q1 === 'yes' && (q1a === 'gt2' || q1a === 'unknown')) {
+    product = 'solid';
+    reason = 'Active water beading with older coating. Solid stain or SuperDeck recommended.';
+    disclaimers.push({t:'warning', m:'⚠️ SuperDeck also available but is a one-way door (lock-in).'});
+  } else if (q2 === 'deckover') {
+    product = 'solid-nowarranty';
+    reason = 'Previous Behr DeckOver/thick-film detected. Solid stain only — NO WARRANTY.';
+    disclaimers.push({t:'danger', m:'🚫 NO WARRANTY — Behr DeckOver/Rustoleum Restore substrates void all product warranties.'});
+    cardClass = 'error';
+  } else if (q2 === 'stained-good') {
+    product = 'semi-transparent';
+    reason = 'Previously stained in good condition. Semi-transparent maintains look; can upgrade to solid.';
+  } else if (q2 === 'stained-weathered') {
+    product = 'solid';
+    reason = 'Weathered/patchy previous stain. Solid stain recommended for full coverage.';
+  } else if (q2 === 'bare') {
+    product = 'semi-transparent';
+    reason = 'Bare/new wood in good condition. Semi-transparent preserves natural grain.';
+  } else {
+    product = 'solid';
+    reason = 'Unknown previous coating — solid stain is the safe choice.';
+  }
+
+  if (q3 === 'yes' && product.startsWith('semi')) {
+    product = 'solid';
+    reason += ' Mixed materials/species require solid minimum.';
+  }
+
+  if (q4 === 'ipe') {
+    disclaimers.push({t:'danger', m:'⚠️ IPE detected — requires special product & MANAGER REVIEW before proceeding.'});
+    cardClass = 'warn';
+  }
+
+  if (q5 === 'severe') {
+    disclaimers.push({t:'warning', m:'⚠️ Severe condition — SuperDeck recommended. Structural concerns should be addressed first.'});
+  }
+
+  if (product.startsWith('semi')) {
+    disclaimers.push({t:'warning', m:'⚠️ Color waiver required — natural wood variation will show through.'});
+  }
+
+  const productNames = {
+    'semi-transparent': 'Semi-Transparent Stain',
+    'solid': 'Solid Stain',
+    'solid-nowarranty': 'Solid Stain (NO WARRANTY)',
+    'superdeck-locked': 'SuperDeck (LOCKED)'
+  };
+  const pName = productNames[product] || product;
+  const icon = cardClass === 'error' ? '🚫' : cardClass === 'warn' ? '⚠️' : '✅';
+
+  document.getElementById('recProduct').textContent = `${icon} Recommended: ${pName}`;
+  document.getElementById('recReason').textContent = reason;
+  const rc = document.getElementById('resultCard');
+  rc.className = 'result-card ' + cardClass;
+
+  let dhtml = '';
+  disclaimers.forEach(d => { dhtml += `<div class="disclaimer ${d.t}">${d.m}</div>`; });
+  document.getElementById('disclaimers').innerHTML = dhtml;
+
+  document.getElementById('productLabel').textContent = pName;
+  document.getElementById('colorWaiver').classList.toggle('hidden', !product.startsWith('semi'));
+
+  state.product = product;
+  state.productName = pName;
+}
+
+function toggleMeasure(key) {
+  state.toggles[key] = !state.toggles[key];
+  const tog = document.getElementById(key+'-toggle');
+  tog.classList.toggle('on', state.toggles[key]);
+  document.getElementById(key+'-body').classList.toggle('hidden', !state.toggles[key]);
+  if (key === 'underside' && state.toggles[key]) {
+    const fs = parseFloat(document.getElementById('flooring-sqft').value)||0;
+    const ss = parseFloat(document.getElementById('stairs-sqft').value)||0;
+    document.getElementById('underside-sqft').value = fs + ss;
+  }
+  calc();
+}
+
+function toggle2coat(key) {
+  state.coat2[key] = !state.coat2[key];
+  document.getElementById(key+'-2coat').classList.toggle('on', state.coat2[key]);
+  calc();
+}
+
+function toggleAddon(key) {
+  state.addons[key] = !state.addons[key];
+  document.getElementById(key+'-toggle').classList.toggle('on', state.addons[key]);
+  calc();
+}
+
+function calcFloorDims() {
+  const l = parseFloat(document.getElementById('flooring-l').value)||0;
+  const w = parseFloat(document.getElementById('flooring-w').value)||0;
+  if (l && w) document.getElementById('flooring-sqft').value = Math.round(l*w);
+  calc();
+}
+
+function calcStairs() {
+  const s = parseFloat(document.getElementById('stairs-steps').value)||0;
+  const w = parseFloat(document.getElementById('stairs-width').value)||0;
+  const sf = Math.round(s * 2 * (w/12));
+  document.getElementById('stairs-sqft').value = sf;
+  calc();
+}
+
+function calcPosts() {
+  const h = parseFloat(document.getElementById('post-h').value)||0;
+  const c = parseFloat(document.getElementById('post-count').value)||0;
+  document.getElementById('skirting-sqft').value = Math.round(h * 4 * c);
+  calc();
+}
+
+function adjColors(d) {
+  state.colors = Math.max(1, state.colors + d);
+  document.getElementById('colors-count').textContent = state.colors;
+  calc();
+}
+
+function checkColors() {
+  const f = document.getElementById('color-floor').value.trim();
+  const r = document.getElementById('color-railing').value.trim();
+  const mismatch = r && f && r.toLowerCase() !== f.toLowerCase();
+  document.getElementById('colorMismatch').classList.toggle('hidden', !mismatch);
+  calc();
+}
+
+function calc() {
+  let total = 0;
+  const rates = { flooring:2.03, stairs:3.35, skirting:1.39, underside:1.39 };
+  const railRates = { wood:13.49, 'wood-metal':18.39, metal:0 };
+
+  // Flooring
+  if (state.toggles.flooring) {
+    const sf = parseFloat(document.getElementById('flooring-sqft').value)||0;
+    let cost = sf * rates.flooring;
+    if (state.coat2.flooring) cost += sf * rates.flooring * 0.85;
+    total += cost;
+    document.getElementById('flooring-price').textContent = '$'+Math.round(cost).toLocaleString();
+    document.getElementById('flooring-price').classList.remove('zero');
+    document.getElementById('flooring-sf').textContent = sf+' SF'+(state.coat2.flooring?' ×2':'');
+  } else {
+    document.getElementById('flooring-price').textContent = '$0';
+    document.getElementById('flooring-price').classList.add('zero');
+    document.getElementById('flooring-sf').textContent = '';
+  }
+
+  // Stairs
+  if (state.toggles.stairs) {
+    const sf = parseFloat(document.getElementById('stairs-sqft').value)||0;
+    const cost = sf * rates.stairs;
+    total += cost;
+    document.getElementById('stairs-price').textContent = '$'+Math.round(cost).toLocaleString();
+    document.getElementById('stairs-price').classList.toggle('zero', cost===0);
+    document.getElementById('stairs-sf').textContent = sf ? sf+' SF' : '';
+  } else {
+    document.getElementById('stairs-price').textContent = '$0';
+    document.getElementById('stairs-price').classList.add('zero');
+    document.getElementById('stairs-sf').textContent = '';
+  }
+
+  // Skirting
+  if (state.toggles.skirting) {
+    const sf = parseFloat(document.getElementById('skirting-sqft').value)||0;
+    const cost = sf * rates.skirting;
+    total += cost;
+    document.getElementById('skirting-price').textContent = '$'+Math.round(cost).toLocaleString();
+    document.getElementById('skirting-price').classList.toggle('zero', cost===0);
+    document.getElementById('skirting-sf').textContent = sf ? sf+' SF' : '';
+  } else {
+    document.getElementById('skirting-price').textContent = '$0';
+    document.getElementById('skirting-price').classList.add('zero');
+    document.getElementById('skirting-sf').textContent = '';
+  }
+
+  // Underside
+  if (state.toggles.underside) {
+    const sf = parseFloat(document.getElementById('underside-sqft').value)||0;
+    const cost = sf * rates.underside;
+    total += cost;
+    document.getElementById('underside-price').textContent = '$'+Math.round(cost).toLocaleString();
+    document.getElementById('underside-price').classList.toggle('zero', cost===0);
+    document.getElementById('underside-sf').textContent = sf ? sf+' SF' : '';
+  } else {
+    document.getElementById('underside-price').textContent = '$0';
+    document.getElementById('underside-price').classList.add('zero');
+    document.getElementById('underside-sf').textContent = '';
+  }
+
+  // Railing
+  if (state.toggles.railing) {
+    const lf = parseFloat(document.getElementById('railing-linft').value)||0;
+    const type = document.getElementById('railing-type').value;
+    const cost = lf * (railRates[type]||0);
+    total += cost;
+    document.getElementById('railing-price').textContent = '$'+Math.round(cost).toLocaleString();
+    document.getElementById('railing-price').classList.toggle('zero', cost===0);
+    document.getElementById('railing-lf').textContent = lf ? lf+' LF' : '';
+  } else {
+    document.getElementById('railing-price').textContent = '$0';
+    document.getElementById('railing-price').classList.add('zero');
+    document.getElementById('railing-lf').textContent = '';
+  }
+
+  // Add-ons
+  const extraColors = Math.max(0, state.colors - 1) * 75;
+  total += extraColors;
+  document.getElementById('colors-price').textContent = extraColors ? '$'+extraColors : '$0';
+
+  const nbSf = parseFloat(document.getElementById('newboards-sf').value)||0;
+  const nbCost = nbSf * rates.flooring * 2; // 2 coats
+  total += nbCost;
+  document.getElementById('newboards-price').textContent = nbCost ? '$'+Math.round(nbCost) : '$0';
+
+  // Brush-only: 15% upcharge on base
+  if (state.addons.brush) total *= 1.15;
+
+  // Heavy masking flat fee
+  const maskingFee = state.addons.masking ? 150 : 0;
+  total += maskingFee;
+  document.getElementById('masking-price').textContent = maskingFee ? '$'+maskingFee : '$0';
+
+  // Color mismatch masking
+  const f = document.getElementById('color-floor').value.trim();
+  const r = document.getElementById('color-railing').value.trim();
+  if (r && f && r.toLowerCase() !== f.toLowerCase()) total += 75;
+
+  const totalRound = Math.round(total);
+  document.getElementById('rtTotal').textContent = '$'+totalRound.toLocaleString();
+  document.getElementById('bottomTotal').textContent = '$'+totalRound.toLocaleString();
+  document.getElementById('rtProduct').textContent = state.productName || 'Semi-Transparent Stain';
+
+  // Detail line
+  const fSf = state.toggles.flooring ? (parseFloat(document.getElementById('flooring-sqft').value)||0) : 0;
+  const rLf = state.toggles.railing ? (parseFloat(document.getElementById('railing-linft').value)||0) : 0;
+  const coats = state.coat2.flooring ? '2 Coats' : '1 Coat';
+  document.getElementById('rtDetail').textContent = `Flooring: ${fSf} SF · Railing: ${rLf} LF · ${coats}`;
+}
+
+// Init
+assess();
+calc();
+</script>
+</body>
+</html>

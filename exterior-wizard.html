@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Exterior Painting Wizard</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --red-bg: #FEF2F2;
+  --blue: #3B82F6;
+  --orange: #F59E0B;
+  --purple: #8B5CF6;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+.app { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; }
+
+/* Topbar */
+.topbar { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--navy); color: #fff; padding: 14px 16px; z-index: 100; display: flex; align-items: center; gap: 12px; }
+.topbar .back { color: var(--gold); font-size: 15px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.topbar .title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Running Total */
+.running-total { position: fixed; top: 48px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--navy-light); color: #fff; padding: 10px 16px; z-index: 99; }
+.running-total .rt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.running-total .rt-price { font-size: 20px; font-weight: 700; color: var(--gold); }
+.running-total .rt-count { font-size: 13px; color: rgba(255,255,255,0.7); }
+.running-total .rt-details { font-size: 12px; color: rgba(255,255,255,0.6); }
+
+.content { padding-top: 110px; padding-bottom: 20px; }
+
+/* Cards */
+.card { background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin: 12px 16px; overflow: hidden; }
+.card-header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.card-body { padding: 0 16px 14px; }
+
+/* Section List */
+.section-item { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; gap: 10px; transition: background 0.15s; }
+.section-item:last-child { border-bottom: none; }
+.section-item:active { background: #f9f9f7; }
+.section-item .si-check { color: var(--green); font-size: 18px; flex-shrink: 0; }
+.section-item .si-info { flex: 1; min-width: 0; }
+.section-item .si-name { font-weight: 600; font-size: 15px; }
+.section-item .si-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.section-item .si-price { font-weight: 700; font-size: 15px; color: var(--navy); text-align: right; white-space: nowrap; }
+
+.section-detail { padding: 0 16px 14px 44px; font-size: 13px; color: var(--text-light); display: none; }
+.section-detail.open { display: block; }
+.section-detail .sd-line { padding: 3px 0; display: flex; justify-content: space-between; }
+
+/* Height badges */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-1 { background: var(--green-bg); color: var(--green); }
+.badge-2 { background: #FFFBEB; color: var(--orange); }
+.badge-3 { background: var(--red-bg); color: var(--red); }
+.badge-mix { background: #F3F0FF; color: var(--purple); }
+
+/* Buttons */
+.btn { padding: 12px 20px; border-radius: var(--radius); font-size: 15px; font-weight: 600; border: none; cursor: pointer; text-align: center; transition: all 0.15s; }
+.btn-gold { background: var(--gold); color: #fff; }
+.btn-gold:active { background: var(--gold-light); }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:active { background: var(--navy-light); }
+.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+.btn-full { width: 100%; display: block; }
+
+.add-section-btn { margin: 16px; }
+
+/* Form elements */
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+input[type="text"], input[type="number"], select, textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: 15px; font-family: inherit; background: #fff; color: var(--text); outline: none; transition: border 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+textarea { resize: vertical; min-height: 70px; }
+
+/* Suggestions */
+.suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.sug-chip { padding: 6px 12px; border-radius: 20px; background: #f0ede7; font-size: 13px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; }
+.sug-chip:active, .sug-chip.active { border-color: var(--gold); background: #faf6ec; }
+
+/* Height Tier */
+.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
+.tier-btn { padding: 12px 4px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid var(--border); background: #fff; transition: all 0.15s; }
+.tier-btn .tier-label { font-size: 13px; font-weight: 700; }
+.tier-btn .tier-mult { font-size: 11px; margin-top: 2px; }
+.tier-btn.sel-1 { border-color: var(--green); background: var(--green-bg); }
+.tier-btn.sel-2 { border-color: var(--orange); background: #FFFBEB; }
+.tier-btn.sel-3 { border-color: var(--red); background: var(--red-bg); }
+.tier-btn.sel-mix { border-color: var(--purple); background: #F3F0FF; }
+.tier-impact { font-size: 13px; color: var(--text-light); padding: 6px 0; }
+.tier-impact strong { color: var(--text); }
+
+/* Mixed slider */
+.mix-slider-wrap { padding: 8px 0; display: none; }
+.mix-slider-wrap.show { display: block; }
+.mix-slider-wrap input[type=range] { width: 100%; accent-color: var(--purple); }
+.mix-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+/* Surface Groups */
+.surf-group { margin-bottom: 12px; }
+.surf-group-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; cursor: pointer; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+.surf-group-header .sgh-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+.surf-group-header .sgh-arrow { font-size: 12px; color: var(--text-light); transition: transform 0.2s; }
+.surf-group-header .sgh-arrow.collapsed { transform: rotate(-90deg); }
+.surf-group-body { overflow: hidden; transition: max-height 0.3s; }
+.surf-group-body.collapsed { max-height: 0 !important; overflow: hidden; }
+
+/* Surface Card */
+.surf-card { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f3f3f3; }
+.surf-card:last-child { border-bottom: none; }
+.surf-toggle { width: 40px; height: 24px; border-radius: 12px; background: var(--border); cursor: pointer; position: relative; flex-shrink: 0; margin-top: 2px; transition: background 0.2s; }
+.surf-toggle.on { background: var(--gold); }
+.surf-toggle::after { content:''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+.surf-toggle.on::after { transform: translateX(16px); }
+.surf-info { flex: 1; min-width: 0; }
+.surf-name { font-size: 14px; font-weight: 600; }
+.surf-unit { font-size: 11px; color: var(--text-light); }
+.surf-fields { margin-top: 6px; display: none; }
+.surf-card.active .surf-fields { display: block; }
+.surf-fields input, .surf-fields select { padding: 8px 10px; font-size: 14px; margin-bottom: 4px; }
+.surf-fields .sf-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+.surf-fields .sf-row input { flex: 1; }
+.surf-fields .sf-row select { flex: 1; }
+.surf-price { font-size: 14px; font-weight: 700; color: var(--navy); white-space: nowrap; margin-top: 2px; }
+.surf-warning { font-size: 12px; color: var(--orange); margin-top: 4px; }
+.surf-note { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+/* Calc result */
+.calc-result { font-size: 11px; color: var(--green); margin-top: 2px; }
+
+/* Conditional Options */
+.opt-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f3f3f3; }
+.opt-row:last-child { border-bottom: none; }
+.opt-label { font-size: 14px; font-weight: 500; }
+.opt-sub { font-size: 12px; color: var(--text-light); }
+
+/* Package chips */
+.pkg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pkg-chip { padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid var(--border); background: #fff; transition: all 0.15s; }
+.pkg-chip.active { border-color: var(--gold); background: #faf6ec; }
+.pkg-chip .pkg-name { font-size: 14px; font-weight: 700; }
+.pkg-chip .pkg-mult { font-size: 11px; color: var(--text-light); }
+
+/* Warnings */
+.warning-box { margin: 12px 0; padding: 10px 14px; border-radius: 8px; font-size: 13px; display: flex; align-items: flex-start; gap: 8px; }
+.warning-gold { background: #faf6ec; color: #92700e; border: 1px solid var(--gold-light); }
+.warning-red { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
+
+/* Sticky bottom */
+.sticky-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: #fff; border-top: 1px solid var(--border); padding: 12px 16px; z-index: 100; display: flex; justify-content: space-between; align-items: center; display: none; }
+.sticky-bottom .sb-info .sb-name { font-size: 13px; color: var(--text-light); }
+.sticky-bottom .sb-info .sb-price { font-size: 22px; font-weight: 700; color: var(--navy); }
+
+/* Grid popup */
+.grid-popup { background: #f9f8f5; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-top: 6px; }
+.grid-popup label { font-size: 13px; font-weight: 500; }
+
+/* Scroll padding for sticky bars */
+.form-content { padding-bottom: 90px; }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+// ============ DATA MODEL ============
+const PRICING = {
+  siding: { base: 1.85, unit: 'SF' },
+  soffit: { base: 1.50, unit: 'SF' },
+  foundation: { base: 1.40, unit: 'SF' },
+  trimFascia: { base: 2.50, unit: 'LF' },
+  gutters: { base: 2.00, unit: 'LF' },
+  singleTrim: { base: 2.25, unit: 'LF' },
+  woodRailing: { base: 3.50, unit: 'LF' },
+  metalRailing: { base: 3.00, unit: 'LF' },
+  windows: { base: 35, unit: 'EA' },
+  windowGrids: { base: 8, unit: 'EA' },
+  doors: { base: 65, unit: 'EA' },
+  shutters: { base: 40, unit: 'EA' },
+  garageDoor: { base: 120, unit: 'EA' },
+  downspouts: { base: 15, unit: 'EA' },
+  porchColumns: { base: 55, unit: 'EA' },
+  soffitBoxes: { base: 30, unit: 'EA' },
+  sidelights: { base: 25, unit: 'EA' },
+  atticVents: { base: 20, unit: 'EA' },
+  pressureWash: { base: 0.25, unit: 'SF' },
+  masking: { base: 0.45, unit: 'SF' }
+};
+
+const HEIGHT_MULT = { '1': 1.0, '2': 1.35, '3': 1.50 };
+const PKG_MULT = { value: 0.85, standard: 1.0, premium: 1.20 };
+const CONDITION_MULT = { good: 1.0, moderate: 1.15, heavy: 1.35 };
+
+const SECTION_SUGGESTIONS = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
+
+const SIDING_TYPES = ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'];
+const SHUTTER_TYPES = ['Wood','Vinyl'];
+const COATING_TYPES = ['Latex','Oil','Unknown','None'];
+
+// Default sections for Johnson Residence
+const DEFAULT_SECTIONS = [
+  { id:1, name:'Front Elevation', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
+    surfaces: { siding:{on:true,qty:800,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
+      trimFascia:{on:true,qty:120}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
+      windows:{on:true,qty:6,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:true,qty:2,type:'Wood'}, garageDoor:{on:false,qty:0},
+      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
+    }, savedAt:'2:15 PM', price:2180 },
+  { id:2, name:'Left Side', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
+    surfaces: { siding:{on:true,qty:400,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
+      trimFascia:{on:true,qty:60}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
+      windows:{on:true,qty:3,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
+      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
+    }, savedAt:'2:22 PM', price:980 },
+  { id:3, name:'Right Side', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
+    surfaces: { siding:{on:true,qty:600,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
+      trimFascia:{on:true,qty:80}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
+      windows:{on:true,qty:4,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
+      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
+    }, savedAt:'2:28 PM', price:1640 },
+  { id:4, name:'Rear', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
+    surfaces: { siding:{on:true,qty:500,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
+      trimFascia:{on:true,qty:90}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
+      windows:{on:true,qty:5,grids:false,gridCount:0}, doors:{on:true,qty:1}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
+      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
+    }, savedAt:'2:35 PM', price:1200 }
+];
+
+let sections = JSON.parse(JSON.stringify(DEFAULT_SECTIONS));
+let nextId = 5;
+let currentView = 'list'; // 'list' or 'form'
+let editingSection = null;
+let expandedSectionId = null;
+
+// ============ PRICING ENGINE ============
+function calcSectionPrice(sec) {
+  const s = sec.surfaces;
+  const hm = getHeightMult(sec);
+  const pm = PKG_MULT[sec.pkg] || 1;
+  const cm = CONDITION_MULT[sec.condition] || 1;
+  let total = 0;
+
+  if (s.siding.on) total += s.siding.qty * PRICING.siding.base;
+  if (s.soffit.on) total += s.soffit.qty * PRICING.soffit.base;
+  if (s.foundation.on) total += s.foundation.qty * PRICING.foundation.base;
+  if (s.trimFascia.on) total += s.trimFascia.qty * PRICING.trimFascia.base;
+  if (s.gutters.on) total += s.gutters.qty * PRICING.gutters.base;
+  if (s.singleTrim.on) total += s.singleTrim.qty * PRICING.singleTrim.base;
+  if (s.woodRailing.on) total += s.woodRailing.qty * PRICING.woodRailing.base;
+  if (s.metalRailing.on) total += s.metalRailing.qty * PRICING.metalRailing.base;
+  if (s.windows.on) {
+    total += s.windows.qty * PRICING.windows.base;
+    if (s.windows.grids) total += s.windows.qty * (s.windows.gridCount || 1) * PRICING.windowGrids.base;
+  }
+  if (s.doors.on) total += s.doors.qty * PRICING.doors.base;
+  if (s.shutters.on) total += s.shutters.qty * PRICING.shutters.base;
+  if (s.garageDoor.on) total += s.garageDoor.qty * PRICING.garageDoor.base;
+  if (s.downspouts.on) total += s.downspouts.qty * PRICING.downspouts.base;
+  if (s.porchColumns.on) total += s.porchColumns.qty * PRICING.porchColumns.base;
+  if (s.soffitBoxes.on) total += s.soffitBoxes.qty * PRICING.soffitBoxes.base;
+  if (s.sidelights.on) total += s.sidelights.qty * PRICING.sidelights.base;
+  if (s.atticVents.on) total += s.atticVents.qty * PRICING.atticVents.base;
+
+  if (sec.pressureWash && s.siding.on) total += s.siding.qty * PRICING.pressureWash.base;
+
+  total *= hm * pm * cm;
+  return Math.round(total);
+}
+
+function getHeightMult(sec) {
+  if (sec.heightTier === 'mix') {
+    const pct1 = sec.mixPct / 100;
+    const pct2 = 1 - pct1;
+    return pct1 * HEIGHT_MULT['1'] + pct2 * HEIGHT_MULT['2'];
+  }
+  return HEIGHT_MULT[sec.heightTier] || 1;
+}
+
+function getSurfacePrice(sec, key) {
+  const s = sec.surfaces[key];
+  if (!s || !s.on) return 0;
+  const p = PRICING[key];
+  if (!p) return 0;
+  let base = s.qty * p.base;
+  if (key === 'windows' && s.grids) base += s.qty * (s.gridCount || 1) * PRICING.windowGrids.base;
+  return Math.round(base * getHeightMult(sec) * (PKG_MULT[sec.pkg]||1) * (CONDITION_MULT[sec.condition]||1));
+}
+
+// ============ INLINE CALCULATOR ============
+function evalCalc(str) {
+  if (!str || typeof str !== 'string') return 0;
+  str = str.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/[^0-9+\-*/. ]/g,'');
+  if (!str.trim()) return 0;
+  try { const v = Function('"use strict"; return (' + str + ')')(); return isNaN(v) ? 0 : Math.round(v * 100)/100; } catch(e) { return 0; }
+}
+
+function isCalcExpression(str) {
+  return /[+\-*/×÷−]/.test(str);
+}
+
+// ============ TOTALS ============
+function getTotals() {
+  let totalPrice = 0, totalSiding = 0, totalWindows = 0, totalTrim = 0;
+  sections.forEach(s => {
+    s.price = calcSectionPrice(s);
+    totalPrice += s.price;
+    if (s.surfaces.siding.on) totalSiding += s.surfaces.siding.qty;
+    if (s.surfaces.windows.on) totalWindows += s.surfaces.windows.qty;
+    if (s.surfaces.trimFascia.on) totalTrim += s.surfaces.trimFascia.qty;
+  });
+  return { totalPrice, totalSiding, totalWindows, totalTrim, count: sections.length };
+}
+
+// ============ RENDER ============
+function render() {
+  const app = document.getElementById('app');
+  if (currentView === 'list') renderList(app);
+  else renderForm(app);
+}
+
+function fmt$(n) { return '$' + n.toLocaleString(); }
+
+function renderList(app) {
+  const t = getTotals();
+  app.innerHTML = `
+    <div class="topbar"><span class="back">← Estimate</span><span class="title">Exterior Painting — Johnson Residence</span></div>
+    <div class="running-total">
+      <div class="rt-top"><span class="rt-price">${fmt$(t.totalPrice)}</span><span class="rt-count">${t.count} section${t.count!==1?'s':''} saved</span></div>
+      <div class="rt-details">Siding: ${t.totalSiding.toLocaleString()} SF · Windows: ${t.totalWindows} · Trim: ${t.totalTrim.toLocaleString()} LF</div>
+    </div>
+    <div class="content">
+      <div class="card" style="padding:0">
+        ${sections.map(s => {
+          const bc = s.heightTier==='1'?'badge-1':s.heightTier==='2'?'badge-2':s.heightTier==='3'?'badge-3':'badge-mix';
+          const ht = s.heightTier==='1'?'1-Story':s.heightTier==='2'?'2-Story':s.heightTier==='3'?'3-Story+':'Mixed';
+          const expanded = expandedSectionId === s.id;
+          return `
+          <div>
+            <div class="section-item" onclick="toggleExpand(${s.id})">
+              <span class="si-check">✅</span>
+              <div class="si-info">
+                <div class="si-name">${esc(s.name)}</div>
+                <div class="si-meta"><span class="badge ${bc}">${ht}</span> · saved ${s.savedAt}</div>
+              </div>
+              <div>
+                <div class="si-price">${fmt$(s.price)}</div>
+                <div style="text-align:right;margin-top:4px"><button onclick="event.stopPropagation();editSection(${s.id})" style="font-size:12px;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600">Edit</button></div>
+              </div>
+            </div>
+            <div class="section-detail ${expanded?'open':''}">
+              ${renderSectionSummary(s)}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="add-section-btn"><button class="btn btn-gold btn-full" onclick="addSection()">+ Add Section</button></div>
+    </div>`;
+}
+
+function renderSectionSummary(sec) {
+  const lines = [];
+  const s = sec.surfaces;
+  if (s.siding.on) lines.push(['Siding ('+s.siding.type+')', s.siding.qty+' SF', fmt$(getSurfacePrice(sec,'siding'))]);
+  if (s.soffit.on) lines.push(['Soffit/Eaves', s.soffit.qty+' SF', fmt$(getSurfacePrice(sec,'soffit'))]);
+  if (s.foundation.on) lines.push(['Foundation', s.foundation.qty+' SF', fmt$(getSurfacePrice(sec,'foundation'))]);
+  if (s.trimFascia.on) lines.push(['Trim/Fascia', s.trimFascia.qty+' LF', fmt$(getSurfacePrice(sec,'trimFascia'))]);
+  if (s.gutters.on) lines.push(['Gutters', s.gutters.qty+' LF', fmt$(getSurfacePrice(sec,'gutters'))]);
+  if (s.singleTrim.on) lines.push(['Single Trim', s.singleTrim.qty+' LF', fmt$(getSurfacePrice(sec,'singleTrim'))]);
+  if (s.woodRailing.on) lines.push(['Wood Railing', s.woodRailing.qty+' LF', fmt$(getSurfacePrice(sec,'woodRailing'))]);
+  if (s.metalRailing.on) lines.push(['Metal Railing', s.metalRailing.qty+' LF', fmt$(getSurfacePrice(sec,'metalRailing'))]);
+  if (s.windows.on) lines.push(['Windows'+(s.windows.grids?' (w/ grids)':''), s.windows.qty+' EA', fmt$(getSurfacePrice(sec,'windows'))]);
+  if (s.doors.on) lines.push(['Doors & Frames', s.doors.qty+' EA', fmt$(getSurfacePrice(sec,'doors'))]);
+  if (s.shutters.on) lines.push(['Shutters ('+s.shutters.type+')', s.shutters.qty+' EA', fmt$(getSurfacePrice(sec,'shutters'))]);
+  if (s.garageDoor.on) lines.push(['Garage Door', s.garageDoor.qty+' EA', fmt$(getSurfacePrice(sec,'garageDoor'))]);
+  if (s.downspouts.on) lines.push(['Downspouts', s.downspouts.qty+' EA', fmt$(getSurfacePrice(sec,'downspouts'))]);
+  if (s.porchColumns.on) lines.push(['Porch Columns', s.porchColumns.qty+' EA', fmt$(getSurfacePrice(sec,'porchColumns'))]);
+  if (s.soffitBoxes.on) lines.push(['Soffit Boxes', s.soffitBoxes.qty+' EA', fmt$(getSurfacePrice(sec,'soffitBoxes'))]);
+  if (s.sidelights.on) lines.push(['Sidelights', s.sidelights.qty+' EA', fmt$(getSurfacePrice(sec,'sidelights'))]);
+  if (s.atticVents.on) lines.push(['Attic Vents', s.atticVents.qty+' EA', fmt$(getSurfacePrice(sec,'atticVents'))]);
+  if (sec.pressureWash && s.siding.on) lines.push(['Pressure Wash', s.siding.qty+' SF', fmt$(Math.round(s.siding.qty*PRICING.pressureWash.base*getHeightMult(sec)))]);
+  return lines.map(l => `<div class="sd-line"><span>${l[0]} · ${l[1]}</span><span>${l[2]}</span></div>`).join('');
+}
+
+function esc(s) { return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ============ FORM RENDER ============
+function blankSection() {
+  return { id: nextId++, name:'', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainMode:false, notes:'',
+    surfaces: {
+      siding:{on:false,qty:0,type:'Wood Lap'}, soffit:{on:false,qty:0}, foundation:{on:false,qty:0},
+      trimFascia:{on:false,qty:0}, gutters:{on:false,qty:0}, singleTrim:{on:false,qty:0}, woodRailing:{on:false,qty:0}, metalRailing:{on:false,qty:0},
+      windows:{on:false,qty:0,grids:false,gridCount:0}, doors:{on:false,qty:0}, shutters:{on:false,qty:0,type:'Wood'}, garageDoor:{on:false,qty:0},
+      downspouts:{on:false,qty:0}, porchColumns:{on:false,qty:0}, soffitBoxes:{on:false,qty:0}, sidelights:{on:false,qty:0}, atticVents:{on:false,qty:0}
+    }, savedAt:'', price:0 };
+}
+
+function addSection() { editingSection = blankSection(); currentView = 'form'; render(); }
+function editSection(id) { editingSection = JSON.parse(JSON.stringify(sections.find(s=>s.id===id))); currentView = 'form'; render(); }
+function toggleExpand(id) { expandedSectionId = expandedSectionId===id ? null : id; render(); }
+
+let collapsedGroups = { accessories: true };
+
+function renderForm(app) {
+  const sec = editingSection;
+  sec.price = calcSectionPrice(sec);
+  const t = getTotals();
+  const s = sec.surfaces;
+
+  // Warnings
+  let warnings = '';
+  const hasSurfaces = Object.keys(s).some(k => k!=='siding' && s[k].on);
+  if (!s.siding.on && hasSurfaces) warnings += `<div class="warning-box warning-gold">⚠️ Exterior Masking & Protection will auto-apply (~$0.45/SF of siding area)</div>`;
+  if (s.siding.on && s.siding.qty > 0 && !sec.pressureWash) warnings += `<div class="warning-box warning-gold">⚠️ Pressure wash is OFF but coated siding is present</div>`;
+  if (sec.prevCoating === 'Oil') warnings += `<div class="warning-box warning-red">⚠️ Latex over oil = extra prep required</div>`;
+  if (sec.woodRot) warnings += `<div class="warning-box warning-red">⚠️ Wood rot detected — carpentry quote needed</div>`;
+
+  const tierImpact = sec.heightTier==='2' ? '<span style="color:var(--orange)">Height adjustment: <strong>+35% labor</strong></span>'
+    : sec.heightTier==='3' ? '<span style="color:var(--red)">Height adjustment: <strong>+50% labor</strong></span>'
+    : sec.heightTier==='mix' ? '<span style="color:var(--purple)">Height adjustment: <strong>+' + Math.round((getHeightMult(sec)-1)*100) + '% labor</strong> (blended)</span>'
+    : '<span style="color:var(--green)">Baseline height — no adjustment</span>';
+
+  app.innerHTML = `
+    <div class="topbar"><span class="back" onclick="cancelForm()">← Back</span><span class="title">${sec.name||'New Section'}</span></div>
+    <div class="running-total">
+      <div class="rt-top"><span class="rt-price">${fmt$(t.totalPrice + (sections.find(x=>x.id===sec.id) ? 0 : sec.price))}</span><span class="rt-count">${t.count} section${t.count!==1?'s':''}</span></div>
+      <div class="rt-details">Editing: ${sec.name||'New Section'}</div>
+    </div>
+    <div class="content form-content">
+
+      <!-- Section Name -->
+      <div class="card"><div class="card-body" style="padding-top:14px">
+        <div class="form-group">
+          <label class="form-label">Section Name</label>
+          <input type="text" id="secName" value="${esc(sec.name)}" placeholder="e.g. Front Elevation" oninput="sec().name=this.value;updTitle()">
+          <div class="suggestions">${SECTION_SUGGESTIONS.map(s=>`<span class="sug-chip" onclick="pickName('${s}')">${s}</span>`).join('')}</div>
+        </div>
+      </div></div>
+
+      <!-- Height Tier -->
+      <div class="card"><div class="card-body" style="padding-top:14px">
+        <label class="form-label">Height Tier</label>
+        <div class="tier-grid">
+          <div class="tier-btn ${sec.heightTier==='1'?'sel-1':''}" onclick="setTier('1')"><div class="tier-label">1-Story</div><div class="tier-mult">1.0×</div></div>
+          <div class="tier-btn ${sec.heightTier==='2'?'sel-2':''}" onclick="setTier('2')"><div class="tier-label">2-Story</div><div class="tier-mult">1.35×</div></div>
+          <div class="tier-btn ${sec.heightTier==='3'?'sel-3':''}" onclick="setTier('3')"><div class="tier-label">3-Story+</div><div class="tier-mult">1.50×</div></div>
+          <div class="tier-btn ${sec.heightTier==='mix'?'sel-mix':''}" onclick="setTier('mix')"><div class="tier-label">Mixed</div><div class="tier-mult">Blend</div></div>
+        </div>
+        <div class="tier-impact">${tierImpact}</div>
+        <div class="mix-slider-wrap ${sec.heightTier==='mix'?'show':''}">
+          <label style="font-size:13px">1-Story / 2-Story split</label>
+          <input type="range" min="0" max="100" value="${sec.mixPct}" oninput="sec().mixPct=+this.value;render()">
+          <div class="mix-label"><span>${sec.mixPct}% 1-Story</span><span>${100-sec.mixPct}% 2-Story</span></div>
+        </div>
+      </div></div>
+
+      <!-- Surfaces -->
+      ${renderSurfGroup('Primary Surfaces', [
+        surfCard(sec,'siding','Siding','SF',{dropdown:'type',options:SIDING_TYPES}),
+        surfCard(sec,'soffit','Soffit / Eaves','SF'),
+        surfCard(sec,'foundation','Foundation (Brick/Block)','SF',{warning:'⚠️ Explicit opt-in only'}),
+      ], 'primary')}
+
+      ${renderSurfGroup('Trim & Detail', [
+        surfCard(sec,'trimFascia','Trim / Fascia','LF'),
+        surfCard(sec,'gutters','Gutters','LF'),
+        surfCard(sec,'singleTrim','Single Trim','LF',{note:'Corners, bands, rake boards'}),
+        surfCard(sec,'woodRailing','Wood Railing','LF'),
+        surfCard(sec,'metalRailing','Metal Railing','LF'),
+      ], 'trim')}
+
+      ${renderSurfGroup('Openings', [
+        surfCard(sec,'windows','Windows','EA',{grids:true}),
+        surfCard(sec,'doors','Doors & Frames','EA'),
+        surfCard(sec,'shutters','Shutters','EA',{dropdown:'type',options:SHUTTER_TYPES}),
+        surfCard(sec,'garageDoor','Garage Door & Frame','EA'),
+      ], 'openings')}
+
+      ${renderSurfGroup('Accessories', [
+        surfCard(sec,'downspouts','Downspouts','EA'),
+        surfCard(sec,'porchColumns','Porch Columns','EA'),
+        surfCard(sec,'soffitBoxes','Open Soffit Boxes','EA'),
+        surfCard(sec,'sidelights','Front Door Sidelight','EA'),
+        surfCard(sec,'atticVents','Attic Vents','EA'),
+      ], 'accessories')}
+
+      <!-- Conditional Options -->
+      <div class="card"><div class="card-body" style="padding-top:14px">
+        <label class="form-label">Options</label>
+        <div class="opt-row">
+          <div><div class="opt-label">Pressure Wash</div><div class="opt-sub">${s.siding.on ? s.siding.qty+' SF' : 'N/A'}</div></div>
+          <div class="surf-toggle ${sec.pressureWash?'on':''}" onclick="sec().pressureWash=!sec().pressureWash;render()"></div>
+        </div>
+        <div class="opt-row">
+          <div class="opt-label">Previous Coating</div>
+          <select style="width:auto;max-width:140px" onchange="sec().prevCoating=this.value;render()">${COATING_TYPES.map(c=>`<option ${sec.prevCoating===c?'selected':''}>${c}</option>`).join('')}</select>
+        </div>
+        <div class="opt-row">
+          <div class="opt-label">Siding Condition</div>
+          <select style="width:auto;max-width:140px" onchange="sec().condition=this.value;render()">
+            <option value="good" ${sec.condition==='good'?'selected':''}>Good</option>
+            <option value="moderate" ${sec.condition==='moderate'?'selected':''}>Moderate</option>
+            <option value="heavy" ${sec.condition==='heavy'?'selected':''}>Heavy Prep</option>
+          </select>
+        </div>
+        <div class="opt-row">
+          <div><div class="opt-label">Wood Rot</div></div>
+          <div class="surf-toggle ${sec.woodRot?'on':''}" onclick="sec().woodRot=!sec().woodRot;render()"></div>
+        </div>
+        <div class="opt-row">
+          <div><div class="opt-label">Stain (vs Paint)</div></div>
+          <div class="surf-toggle ${sec.stainMode?'on':''}" onclick="sec().stainMode=!sec().stainMode;render()"></div>
+        </div>
+        ${warnings}
+      </div></div>
+
+      <!-- Package -->
+      <div class="card"><div class="card-body" style="padding-top:14px">
+        <label class="form-label">Package</label>
+        <div class="pkg-grid">
+          <div class="pkg-chip ${sec.pkg==='value'?'active':''}" onclick="sec().pkg='value';render()"><div class="pkg-name">Value</div><div class="pkg-mult">0.85×</div></div>
+          <div class="pkg-chip ${sec.pkg==='standard'?'active':''}" onclick="sec().pkg='standard';render()"><div class="pkg-name">Standard</div><div class="pkg-mult">1.0×</div></div>
+          <div class="pkg-chip ${sec.pkg==='premium'?'active':''}" onclick="sec().pkg='premium';render()"><div class="pkg-name">Premium+</div><div class="pkg-mult">1.2×</div></div>
+        </div>
+      </div></div>
+
+      <!-- Notes -->
+      <div class="card"><div class="card-body" style="padding-top:14px">
+        <label class="form-label">Section Notes</label>
+        <textarea placeholder="Any notes about this section..." oninput="sec().notes=this.value">${esc(sec.notes)}</textarea>
+      </div></div>
+
+    </div>
+
+    <!-- Sticky Bottom -->
+    <div class="sticky-bottom" style="display:flex">
+      <div class="sb-info">
+        <div class="sb-name">${sec.name||'New Section'}</div>
+        <div class="sb-price">${fmt$(sec.price)}</div>
+      </div>
+      <button class="btn btn-navy" onclick="saveSection()">Save Section</button>
+    </div>
+  `;
+}
+
+function renderSurfGroup(title, cards, key) {
+  const collapsed = collapsedGroups[key];
+  return `<div class="card"><div class="card-body" style="padding-top:0">
+    <div class="surf-group">
+      <div class="surf-group-header" onclick="toggleGroup('${key}')">
+        <span class="sgh-title">${title}</span>
+        <span class="sgh-arrow ${collapsed?'collapsed':''}">▼</span>
+      </div>
+      <div class="surf-group-body ${collapsed?'collapsed':''}" style="max-height:2000px">
+        ${cards.join('')}
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function surfCard(sec, key, name, unit, opts={}) {
+  const s = sec.surfaces[key];
+  const on = s.on;
+  const price = getSurfacePrice(sec, key);
+  const qtyId = 'qty_'+key;
+
+  let fields = '';
+  if (opts.dropdown) {
+    fields += `<div class="sf-row"><select onchange="sec().surfaces.${key}.${opts.dropdown}=this.value;render()">${opts.options.map(o=>`<option ${s[opts.dropdown]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  }
+  fields += `<div class="sf-row"><input type="text" id="${qtyId}" value="${s.qty||''}" placeholder="0" inputmode="numeric" oninput="handleQty('${key}',this)"><span style="font-size:13px;color:var(--text-light);white-space:nowrap">${unit}</span></div>`;
+  if (opts.grids && on) {
+    fields += `<div class="grid-popup"><label><input type="checkbox" ${s.grids?'checked':''} onchange="sec().surfaces.windows.grids=this.checked;render()"> Grids?</label>`;
+    if (s.grids) fields += ` <input type="number" value="${s.gridCount||0}" min="0" style="width:60px;display:inline" placeholder="count" oninput="sec().surfaces.windows.gridCount=+this.value;render()"> per window`;
+    fields += `</div>`;
+  }
+  if (opts.warning) fields += `<div class="surf-warning">${opts.warning}</div>`;
+  if (opts.note) fields += `<div class="surf-note">${opts.note}</div>`;
+
+  return `<div class="surf-card ${on?'active':''}">
+    <div class="surf-toggle ${on?'on':''}" onclick="toggleSurf('${key}')"></div>
+    <div class="surf-info">
+      <div class="surf-name">${name}</div>
+      <div class="surf-unit">${unit}</div>
+      <div class="surf-fields">${fields}</div>
+    </div>
+    <div class="surf-price">${on && s.qty > 0 ? fmt$(price) : ''}</div>
+  </div>`;
+}
+
+// ============ ACTIONS ============
+function sec() { return editingSection; }
+
+function pickName(n) { editingSection.name = n; document.getElementById('secName').value = n; updTitle(); }
+function updTitle() { document.querySelector('.topbar .title').textContent = editingSection.name || 'New Section'; const sb = document.querySelector('.sb-name'); if(sb) sb.textContent = editingSection.name || 'New Section'; }
+
+function setTier(t) { editingSection.heightTier = t; render(); }
+function toggleGroup(k) { collapsedGroups[k] = !collapsedGroups[k]; render(); }
+function toggleSurf(k) { editingSection.surfaces[k].on = !editingSection.surfaces[k].on; render(); }
+
+function handleQty(key, el) {
+  const raw = el.value;
+  const val = evalCalc(raw);
+  editingSection.surfaces[key].qty = val;
+  // Show calc result if expression
+  let existing = el.parentElement.querySelector('.calc-result');
+  if (isCalcExpression(raw)) {
+    if (!existing) { existing = document.createElement('div'); existing.className='calc-result'; el.parentElement.appendChild(existing); }
+    existing.textContent = '= ' + val;
+  } else if (existing) { existing.remove(); }
+  // Update price display
+  const card = el.closest('.surf-card');
+  if (card) {
+    const priceEl = card.querySelector('.surf-price');
+    const p = getSurfacePrice(editingSection, key);
+    priceEl.textContent = editingSection.surfaces[key].on && val > 0 ? fmt$(p) : '';
+  }
+  // Update sticky bottom
+  editingSection.price = calcSectionPrice(editingSection);
+  const sb = document.querySelector('.sb-price');
+  if (sb) sb.textContent = fmt$(editingSection.price);
+}
+
+function saveSection() {
+  const sec = editingSection;
+  if (!sec.name) { sec.name = 'Section ' + sections.length + 1; }
+  const now = new Date();
+  sec.savedAt = now.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
+  sec.price = calcSectionPrice(sec);
+  const idx = sections.findIndex(s => s.id === sec.id);
+  if (idx >= 0) sections[idx] = sec;
+  else sections.push(sec);
+  editingSection = null;
+  currentView = 'list';
+  render();
+}
+
+function cancelForm() { editingSection = null; currentView = 'list'; render(); }
+
+// Recalc all prices on load
+sections.forEach(s => s.price = calcSectionPrice(s));
+render();
+</script>
+</body>
+</html>
