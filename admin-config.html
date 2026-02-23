@@ -459,6 +459,11 @@ function renderDetail() {
   else renderHistoryTab(body);
 }
 
+function categoryToWorkCat(cat) {
+  const map = { 'Interior':'INTERIOR', 'Exterior':'EXTERIOR', 'Cabinets':'CABINET', 'Deck':'DECK_FENCE', 'Fence':'DECK_FENCE', 'Carpentry':'INTERIOR', 'Doors':'INTERIOR', 'Drywall':'INTERIOR', 'Floor':'INTERIOR', 'Popcorn':'INTERIOR', 'T&M':'INTERIOR' };
+  return map[cat] || 'INTERIOR';
+}
+
 function renderDefinitionTab(el) {
   const b = editingBundle;
   const cats = ['Interior','Exterior','Cabinets','Deck','Fence','Carpentry','Doors','Drywall','Floor','Popcorn','T&M'];
@@ -466,6 +471,9 @@ function renderDefinitionTab(el) {
   const units = ['SF','LF','EA','HOUR'];
   const wcats = ['INTERIOR','EXTERIOR','CABINET','DECK_FENCE'];
   const isActive = b.status === 'Active';
+  if (!b.workCategory) b.workCategory = categoryToWorkCat(b.category);
+  const defaultWcat = categoryToWorkCat(b.category);
+  const isOverride = b.workCategory !== defaultWcat;
   el.innerHTML = `
     <div class="form-row" style="margin-bottom:12px">
       <div class="form-toggle"><div class="toggle ${isActive?'on':''}" onclick="this.classList.toggle('on');editingBundle.status=this.classList.contains('on')?'Active':'Inactive';renderBundleList()"></div><span class="toggle-label">Status: <strong>${b.status}</strong></span></div>
@@ -473,12 +481,17 @@ function renderDefinitionTab(el) {
     <div class="form-group"><label class="form-label">Internal Name</label><input class="form-input" value="${b.name}" onchange="editingBundle.name=this.value"/></div>
     <div class="form-group"><label class="form-label">Customer-Facing Name</label><input class="form-input" value="${b.customerName}" onchange="editingBundle.customerName=this.value"/></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Category</label><select class="form-select" onchange="editingBundle.category=this.value">${cats.map(c=>`<option ${c===b.category?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">Category</label><select class="form-select" onchange="editingBundle.category=this.value;editingBundle.workCategory=categoryToWorkCat(this.value);renderDetail()">${cats.map(c=>`<option ${c===b.category?'selected':''}>${c}</option>`).join('')}</select></div>
       <div class="form-group"><label class="form-label">Package</label><select class="form-select" onchange="editingBundle.package=this.value">${pkgs.map(p=>`<option ${p===b.package?'selected':''}>${p}</option>`).join('')}</select></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Primary Unit</label><select class="form-select" onchange="editingBundle.unit=this.value">${units.map(u=>`<option ${u===b.unit?'selected':''}>${u}</option>`).join('')}</select></div>
-      <div class="form-group"><label class="form-label">Work Category</label><select class="form-select">${wcats.map(w=>`<option>${w}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">Work Category ${isOverride?'<span style="color:var(--yellow);font-size:10px">⚠ OVERRIDE</span>':''}</label><select class="form-select" onchange="editingBundle.workCategory=this.value;renderDetail()">${wcats.map(w=>`<option ${w===b.workCategory?'selected':''}>${w}</option>`).join('')}</select></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:4px;line-height:1.4;padding:6px 8px;background:rgba(51,65,85,0.3);border-radius:6px;">
+      <strong>Category</strong> = how this bundle is organized in the estimating UI.<br>
+      <strong>Work Category</strong> = which production rules apply (height tiers, crew capabilities, pricing modifiers).<br>
+      Auto-defaults from Category. Override when needed — e.g., exterior carpentry uses EXTERIOR production rates, not INTERIOR.
     </div>
     <div class="form-row" style="margin-top:8px">
       <div class="form-toggle"><div class="toggle" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Value Package: Not Available</span></div>
