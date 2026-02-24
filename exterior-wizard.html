@@ -185,8 +185,7 @@ const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
 const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
 
 function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false){return{type,sf,height,stain,romaBio}}
-function mkEaves(lf=0,height='1-Story',stain=false,difficult=false){return{lf,height,stain,difficult}}
-function mkFascia(lf=0,difficult=false){return{lf,difficult}}
+function mkEaves(lf=0,height='1-Story',stain=false,difficult=false,fascia=false,fasciaLF=0){return{lf,height,stain,difficult,fascia,fasciaLF}}
 function mkLintel(material='Steel',ea=0,stain=false){return{material,ea,stain}}
 function mkWindow(count=0,grids=0){return{count,grids}} // grids: 0,4,8,12,16 or custom number
 
@@ -195,7 +194,6 @@ function mkSection(name=''){
     id:Date.now()+Math.random(),name,savedTime:'',
     siding:[mkSiding()],
     eaves:[mkEaves()],
-    fascia:[],fasciaOn:false,
     gutters:0,guttersOn:false,
     singleTrim:0,singleTrimOn:false,
     railWoodPainted:0,railWoodPaintedOn:false,
@@ -239,8 +237,7 @@ function demoData(){
   const s1=mkSection('Front Elevation');
   s1.savedTime='2:15 PM';
   s1.siding=[mkSiding('Hardiplank',1200,'1-Story'),mkSiding('Brick',400,'1-Story')];
-  s1.eaves=[mkEaves(80,'1-Story'),mkEaves(60,'2-Story')];
-  s1.fascia=[mkFascia(40)];s1.fasciaOn=true;
+  s1.eaves=[mkEaves(80,'1-Story',false,false,true,40),mkEaves(60,'2-Story')];
   s1.singleTrim=60;s1.singleTrimOn=true;
   s1.windowEntries=[mkWindow(6,0),mkWindow(2,8)];s1.windowsOn=true;
   s1.sidelight=2;s1.sidelightOn=true;
@@ -264,8 +261,7 @@ function demoData(){
   const s4=mkSection('Rear');
   s4.savedTime='2:35 PM';
   s4.siding=[mkSiding('Hardiplank',500,'1-Story')];
-  s4.eaves=[mkEaves(60,'1-Story')];
-  s4.fascia=[mkFascia(30),mkFascia(20,true)];s4.fasciaOn=true;
+  s4.eaves=[mkEaves(60,'1-Story',false,false,true,30),mkEaves(0,'1-Story',false,true,true,20)];
   s4.doors=2;s4.doorsOn=true;
   s4.woodShutters=4;s4.woodShuttersOn=true;s4.woodShuttersBoth=true;
   s4.ds1=3;s4.ds1On=true;
@@ -282,14 +278,17 @@ function calcSidingEntry(e,pkg,prep){
   const rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85;
   return e.sf*rate*HEIGHT_MULTS[e.height]*PKG_MULTS[pkg]*PREP_MULTS[prep];
 }
-function calcEavesEntry(e,pkg,prep){return e.lf*2.50*HEIGHT_MULTS[e.height]*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep]}
+function calcEavesEntry(e,pkg,prep){
+  let t=e.lf*2.50*HEIGHT_MULTS[e.height]*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep];
+  if(e.fascia&&e.fasciaLF)t+=e.fasciaLF*2.75*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep];
+  return t;
+}
 function calcWindowEntry(w,pkg,prep){return w.count*(35+w.grids*1)*PKG_MULTS[pkg]*PREP_MULTS[prep]}
 function calcSection(s){
   const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
   let t=0;
   s.siding.forEach(e=>t+=calcSidingEntry(e,s.pkg,s.prep));
   s.eaves.forEach(e=>t+=calcEavesEntry(e,s.pkg,s.prep));
-  if(s.fasciaOn)s.fascia.forEach(f=>t+=f.lf*2.75*(f.difficult?1.5:1)*pm*pp);
   if(s.guttersOn)t+=s.gutters*2.00*pm*pp;
   if(s.singleTrimOn)t+=s.singleTrim*2.25*pm*pp;
   if(s.railWoodPaintedOn)t+=s.railWoodPainted*3.50*pm*pp;
@@ -361,7 +360,7 @@ function renderList(){
     s.siding.forEach(e=>sidingSF+=e.sf);
     if(s.windowsOn)s.windowEntries.forEach(w=>winCount+=w.count);
     if(s.singleTrimOn)trimLF+=s.singleTrim;
-    if(s.fasciaOn)s.fascia.forEach(f=>trimLF+=f.lf);
+    s.eaves.forEach(e=>{if(e.fascia)trimLF+=e.fasciaLF});
     if(s.guttersOn)trimLF+=s.gutters;
   });
   document.getElementById('totalBar').innerHTML=`
@@ -391,8 +390,7 @@ function renderList(){
 function sectionSummaryText(s){
   const parts=[];
   s.siding.forEach(e=>{if(e.sf)parts.push(`${e.type}: ${e.sf.toLocaleString()} SF (${e.height})${e.stain?' 🪵':''}`)});
-  s.eaves.forEach(e=>{if(e.lf)parts.push(`Eaves ${e.height}: ${e.lf} LF${e.difficult?' ⚠️':''}${e.stain?' 🪵':''}`)});
-  if(s.fasciaOn&&s.fascia.length)parts.push(`Fascia: ${s.fascia.map(f=>f.lf+(f.difficult?' ⚠️':'')).join(' + ')} LF`);
+  s.eaves.forEach(e=>{if(e.lf||e.fasciaLF)parts.push(`Eaves ${e.height}: ${e.lf} LF${e.fascia?' + Fascia '+e.fasciaLF+' LF':''}${e.difficult?' ⚠️':''}${e.stain?' 🪵':''}`)});
   if(s.guttersOn&&s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
   if(s.singleTrimOn&&s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
   if(s.windowsOn){const wt=s.windowEntries.reduce((a,w)=>a+w.count,0);if(wt)parts.push(`Windows: ${wt}`)}
@@ -426,7 +424,7 @@ function renderForm(){
   h+=`</div><button class="btn-add" onclick="s().siding.push(mkSiding());renderForm()">+ Add Siding Type</button></div>`;
 
   // 3. Eaves
-  h+=`<div class="card fade-in"><div class="card-title">Eaves</div><div id="eavesEntries">`;
+  h+=`<div class="card fade-in"><div class="card-title">Eaves & Fascia</div><div id="eavesEntries">`;
   s.eaves.forEach((e,i)=>{h+=eavesEntryHTML(e,i,s);});
   h+=`</div><button class="btn-add" onclick="s().eaves.push(mkEaves());renderForm()">+ Add Eaves</button></div>`;
 
@@ -485,10 +483,15 @@ function eavesEntryHTML(e,i,sec){
     <div class="field-row" style="gap:6px"><div class="field" style="flex:0 0 80px"><input type="text" value="${e.lf||''}" placeholder="LF" oninput="eavesLFInput(${i},this)"></div>
     <div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().eaves[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
     <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
-    <div style="display:flex;gap:12px;margin-top:4px;align-items:center">
+    <div style="display:flex;gap:12px;margin-top:4px;align-items:center;flex-wrap:wrap">
       <label class="check-opt"><input type="checkbox" ${e.difficult?'checked':''} onchange="s().eaves[${i}].difficult=this.checked;renderForm()"> Difficult (+50%)</label>
       <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().eaves[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
-    </div></div>`;
+      <label class="check-opt"><input type="checkbox" ${e.fascia?'checked':''} onchange="s().eaves[${i}].fascia=this.checked;renderForm()"> Fascia</label>
+    </div>${e.fascia?`<div class="field-row" style="margin-top:6px;gap:6px;align-items:center;padding-left:4px">
+      <span style="font-size:12px;color:var(--text-light);white-space:nowrap">↳ Fascia</span>
+      <div class="field" style="flex:0 0 70px"><input type="text" value="${e.fasciaLF||''}" placeholder="LF" oninput="const c=tryCalc(this.value);s().eaves[${i}].fasciaLF=c!==null?c:(parseFloat(this.value)||0);updFormPrices()"></div>
+      <span style="font-size:11px;color:var(--text-light)">$2.75/LF</span>
+    </div>`:''}</div>`;
 }
 function eavesLFInput(i,el){
   const v=el.value;const c=tryCalc(v);
@@ -503,7 +506,6 @@ function surfaceGroupsHTML(sec){
   const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
   let h='<div class="card fade-in"><div class="card-title">📋 Surfaces</div>';
   h+=groupHTML('Trim & Detail',true,[
-    fasciaHTML(sec),
     toggleSurface(sec,'guttersOn','gutters','Gutters','$2.00/LF','LF',sec.gutters,'Trim & Detail'),
     toggleSurface(sec,'singleTrimOn','singleTrim','Single Trim','$2.25/LF','LF',sec.singleTrim,'Trim & Detail'),
   ]);
@@ -584,23 +586,6 @@ function genericInput(key,el){
   if(c!==null){hint.textContent='= '+c;s()[key]=c;}
   else{hint.textContent='';s()[key]=parseFloat(v)||0;}
   updFormPrices();
-}
-
-function fasciaHTML(sec){
-  const on=sec.fasciaOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Fascia Only</span><br><span class="rate">$2.75/LF</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().fasciaOn=this.checked;if(this.checked&&!s().fascia.length)s().fascia.push(mkFascia());renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+='<div class="surface-fields open">';
-    sec.fascia.forEach((f,i)=>{
-      h+=`<div class="entry-card" style="margin-bottom:6px"><div class="field-row">
-        <div class="field"><input type="text" placeholder="LF" value="${f.lf||''}" oninput="const c=tryCalc(this.value);s().fascia[${i}].lf=c!==null?c:(parseFloat(this.value)||0);updFormPrices()"></div>
-        ${sec.fascia.length>1?`<button style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer" onclick="s().fascia.splice(${i},1);renderForm()">✕</button>`:''}
-      </div><label class="check-opt"><input type="checkbox" ${f.difficult?'checked':''} onchange="s().fascia[${i}].difficult=this.checked;updFormPrices()"> Difficult Location (+50%)</label></div>`;
-    });
-    h+=`<button class="btn-add" onclick="s().fascia.push(mkFascia());renderForm()">+ Add Fascia</button></div>`;
-  }
-  return h;
 }
 
 function windowsHTML(sec){
@@ -777,7 +762,7 @@ function autoCalcHTML(sec){
   }
   // Masking warning
   const hasSiding=sec.siding.some(e=>e.sf>0);
-  const hasNonSiding=sec.fasciaOn||sec.guttersOn||sec.singleTrimOn||sec.windowsOn||sec.doorsOn;
+  const hasNonSiding=sec.guttersOn||sec.singleTrimOn||sec.windowsOn||sec.doorsOn;
   if(!hasSiding&&hasNonSiding){
     h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Masking Warning</div>
       <div class="auto-detail">Non-siding surfaces present without siding. Masking charge may apply (~$0.45/SF).</div></div>`;
