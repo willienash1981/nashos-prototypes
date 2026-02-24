@@ -589,12 +589,12 @@ function windowsHTML(sec){
   sec.windowEntries.forEach((w,i)=>{
     const price=calcWindowEntry(w,sec.pkg,sec.prep);
     const isCustom=w.customGrids;
-    h+=`<div class="srow" style="flex-wrap:wrap;gap:4px">
-      <span class="srow-lbl" style="flex:0 0 auto">${i===0?'Windows':''}${i>0?'':'<span class="srow-rate"> $35/EA+$1/grid</span>'}</span>
-      <input class="srow-input${w.count?' has-val':''}" type="text" value="${w.count||''}" placeholder="EA" style="width:45px" oninput="const c=tryCalc(this.value);s().windowEntries[${i}].count=c!==null?c:(parseInt(this.value)||0);updFormPrices()">
-      <select style="flex:1;min-width:90px;padding:5px 20px 5px 4px;font-size:11px;border:1px solid var(--border);border-radius:6px" onchange="const v=this.value;if(v==='custom'){s().windowEntries[${i}].customGrids=true;s().windowEntries[${i}].grids=0;}else{s().windowEntries[${i}].customGrids=false;s().windowEntries[${i}].grids=parseInt(v);}renderForm()">
-        ${GRID_OPTS.map(g=>{const lbl=g===0?'No Grids':g==='custom'?'Custom ✏️':g+' Grids +$'+g;const val=g==='custom'?'custom':g;const sel=isCustom&&g==='custom'?true:!isCustom&&w.grids===g;return`<option value="${val}"${sel?' selected':''}>${lbl}</option>`;}).join('')}</select>
-      ${isCustom?`<input type="text" value="${w.grids||''}" placeholder="# grids" style="width:50px;padding:5px;font-size:12px;text-align:center;border:1px solid var(--border);border-radius:6px" oninput="s().windowEntries[${i}].grids=parseInt(this.value)||0;updFormPrices()">`:``}
+    h+=`<div class="srow">
+      <select style="flex:0 0 auto;width:${isCustom?'62px':'90px'};padding:5px 18px 5px 4px;font-size:11px;border:1px solid var(--border);border-radius:6px" onchange="const v=this.value;if(v==='custom'){s().windowEntries[${i}].customGrids=true;s().windowEntries[${i}].grids=0;}else{s().windowEntries[${i}].customGrids=false;s().windowEntries[${i}].grids=parseInt(v);}renderForm()">
+        ${GRID_OPTS.map(g=>{const lbl=g===0?'No Grids':g==='custom'?'Custom':g+' Grids';const val=g==='custom'?'custom':g;const sel=isCustom&&g==='custom'?true:!isCustom&&w.grids===g;return`<option value="${val}"${sel?' selected':''}>${lbl}</option>`;}).join('')}</select>
+      ${isCustom?`<input type="text" value="${w.grids||''}" placeholder="#" style="width:32px;padding:5px;font-size:12px;text-align:center;border:1px solid var(--border);border-radius:6px" oninput="s().windowEntries[${i}].grids=parseInt(this.value)||0;updFormPrices()">`:``}
+      <div class="srow-lbl">${i===0?'Windows <span class="srow-rate">$35+$1/grid</span>':''}</div>
+      <input class="srow-input${w.count?' has-val':''}" type="text" value="${w.count||''}" placeholder="EA" oninput="const c=tryCalc(this.value);s().windowEntries[${i}].count=c!==null?c:(parseInt(this.value)||0);updFormPrices()">
       ${sec.windowEntries.length>1?`<button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px" onclick="s().windowEntries.splice(${i},1);renderForm()">✕</button>`:''}
     </div>`;
   });
