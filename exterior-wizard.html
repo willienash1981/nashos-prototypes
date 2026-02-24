@@ -119,6 +119,7 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 /* Calculator Dropdown — ER Style */
 .qty-field { position:relative; display:flex; align-items:stretch; }
 .qty-field input { flex:1; border-radius:0 8px 8px 0 !important; border-left:none !important; min-width:0; }
+.srow .qty-field { flex:0 0 auto; width:80px; }
 .calc-chevron {
   width:30px; background:var(--bg); border:1px solid var(--border);
   border-right:none; border-radius:8px 0 0 8px;
@@ -568,8 +569,7 @@ function srow(label,rate,key,unit){
   const v=s()?.[key]||0;
   return `<div class="srow">
     <div class="srow-lbl">${label} <span class="srow-rate">${rate}</span></div>
-    <input class="srow-input${v?' has-val':''}" type="text" value="${v||''}" placeholder="${unit}" oninput="srowInput('${key}',this)">
-    <span class="srow-unit">${unit}</span></div>`;
+    <input class="srow-input${v?' has-val':''}" type="text" value="${v||''}" placeholder="${unit}" oninput="srowInput('${key}',this)"></div>`;
 }
 function srowInput(key,el){
   const c=tryCalc(el.value); const v=c!==null?c:(parseFloat(el.value)||0);
