@@ -257,6 +257,18 @@ function setLF(id,raw){
   try{val=Function('"use strict";return('+raw.replace(/[^0-9+\-*/.() ]/g,'')+')')();}catch(e){val=parseFloat(raw)||0;}
   if(!isFinite(val)||val<0)val=0;
   s.lf=Math.round(val*100)/100;
+  // Update this segment's computed display without full re-render (preserves focus)
+  const card=document.querySelector(`.seg-card[data-id="${id}"]`);
+  if(card){
+    const comp=card.querySelector('.computed');
+    if(comp){
+      const r=RATES[s.type];
+      const rate=s.sides===2?r.r2:r.r1;
+      const sf=r.h*s.lf*s.sides;
+      const price=s.lf*rate;
+      comp.innerHTML=`<span>${sf.toLocaleString()} SF (${r.h}ft × ${s.lf} LF × ${s.sides} side${s.sides>1?'s':''})</span><span class="val">$${price.toFixed(2)}</span>`;
+    }
+  }
   recalc();
 }
 function setProduct(p,el){
