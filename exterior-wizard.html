@@ -860,7 +860,8 @@ function openCalc(inputEl) {
     closeCalc(); return;
   }
   calcTarget = inputEl;
-  calcFormula = '';
+  // Pre-populate with current value
+  calcFormula = inputEl.value || '';
   // Highlight the chevron
   if (calcChevronEl) calcChevronEl.classList.remove('open');
   const wrap = inputEl.closest('.qty-field');
@@ -871,7 +872,7 @@ function openCalc(inputEl) {
   if (fieldParent) { const lbl = fieldParent.querySelector('label'); if(lbl) label = lbl.textContent; }
   document.getElementById('calcTargetLabel').textContent = label || 'Quantity';
   const display = document.getElementById('calcFormulaInput');
-  display.value = '';
+  display.value = calcFormula;
   display.classList.remove('error');
   document.getElementById('calcOverlay').classList.add('open');
   document.getElementById('calcPanel').classList.add('open');
