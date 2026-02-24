@@ -184,27 +184,28 @@ const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
 const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
 
 function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false){return{type,sf,height,stain,romaBio}}
-function mkEaves(label='1st Story Eaves',lf=0,height='1-Story',locked=true,stain=false){return{label,lf,height,locked,stain}}
+function mkEaves(lf=0,height='1-Story',stain=false,difficult=false){return{lf,height,stain,difficult}}
 function mkFascia(lf=0,difficult=false){return{lf,difficult}}
 function mkLintel(material='Steel',ea=0,stain=false){return{material,ea,stain}}
+function mkWindow(count=0,gridType='none'){return{count,gridType}} // gridType: 'none','decorative','realPanes'
 
 function mkSection(name=''){
   return {
     id:Date.now()+Math.random(),name,savedTime:'',
     siding:[mkSiding()],
-    eaves:[mkEaves('1st Story Eaves',0,'1-Story',true),mkEaves('2nd Story Eaves',0,'2-Story',true)],
+    eaves:[mkEaves()],
     fascia:[],fasciaOn:false,
     gutters:0,guttersOn:false,
     singleTrim:0,singleTrimOn:false,
     railWoodPainted:0,railWoodPaintedOn:false,
     railWoodMetal:0,railWoodMetalOn:false,
     railMetal:0,railMetalOn:false,
-    windows:0,windowsOn:false,windowGridDeco:0,windowGridReal:0,windowGridsOn:false,
+    windowEntries:[mkWindow()],windowsOn:false,
     windowTrimOnly:0,windowTrimOnlyOn:false,
     stormRR:0,stormRROn:false,
     stormPaint:0,stormPaintOn:false,
     windowGlaze:0,windowGlazeOn:false,
-    doors:0,doorsOn:false,
+    doors:0,doorsOn:false,doorsFrontDoor:false,
     doorFrame:0,doorFrameOn:false,doorFrameNotes:'',
     sidelight:0,sidelightOn:false,
     crawlDoor:0,crawlDoorOn:false,
@@ -237,32 +238,32 @@ function demoData(){
   const s1=mkSection('Front Elevation');
   s1.savedTime='2:15 PM';
   s1.siding=[mkSiding('Hardiplank',1200,'1-Story'),mkSiding('Brick',400,'1-Story')];
-  s1.eaves=[mkEaves('1st Story Eaves',80,'1-Story',true),mkEaves('2nd Story Eaves',60,'2-Story',true)];
+  s1.eaves=[mkEaves(80,'1-Story'),mkEaves(60,'2-Story')];
   s1.fascia=[mkFascia(40)];s1.fasciaOn=true;
   s1.singleTrim=60;s1.singleTrimOn=true;
-  s1.windows=8;s1.windowsOn=true;s1.windowGridDeco=2;s1.windowGridsOn=true;
+  s1.windowEntries=[mkWindow(6,'none'),mkWindow(2,'decorative')];s1.windowsOn=true;
   s1.sidelight=2;s1.sidelightOn=true;
-  s1.doors=1;s1.doorsOn=true;
+  s1.doors=1;s1.doorsOn=true;s1.doorsFrontDoor=true;
   s1.porchColumns=4;s1.porchColumnsOn=true;
 
   const s2=mkSection('Left Side');
   s2.savedTime='2:22 PM';
   s2.siding=[mkSiding('Hardiplank',800,'2-Story')];
-  s2.eaves=[mkEaves('1st Story Eaves',50,'1-Story',true),mkEaves('2nd Story Eaves',50,'2-Story',true)];
+  s2.eaves=[mkEaves(50,'1-Story'),mkEaves(50,'2-Story')];
   s2.singleTrim=40;s2.singleTrimOn=true;
-  s2.windows=4;s2.windowsOn=true;
+  s2.windowEntries=[mkWindow(4,'none')];s2.windowsOn=true;
 
   const s3=mkSection('Right Side');
   s3.savedTime='2:28 PM';
   s3.siding=[mkSiding('Hardiplank',600,'2-Story'),mkSiding('Hardiplank',400,'1-Story')];
-  s3.eaves=[mkEaves('1st Story Eaves',40,'1-Story',true),mkEaves('2nd Story Eaves',40,'2-Story',true)];
+  s3.eaves=[mkEaves(40,'1-Story'),mkEaves(40,'2-Story')];
   s3.gutters=60;s3.guttersOn=true;
-  s3.windows=5;s3.windowsOn=true;s3.windowGridReal=3;s3.windowGridsOn=true;
+  s3.windowEntries=[mkWindow(2,'none'),mkWindow(3,'realPanes')];s3.windowsOn=true;
 
   const s4=mkSection('Rear');
   s4.savedTime='2:35 PM';
   s4.siding=[mkSiding('Hardiplank',500,'1-Story')];
-  s4.eaves=[mkEaves('1st Story Eaves',60,'1-Story',true)];
+  s4.eaves=[mkEaves(60,'1-Story')];
   s4.fascia=[mkFascia(30),mkFascia(20,true)];s4.fasciaOn=true;
   s4.doors=2;s4.doorsOn=true;
   s4.woodShutters=4;s4.woodShuttersOn=true;s4.woodShuttersBoth=true;
@@ -280,7 +281,8 @@ function calcSidingEntry(e,pkg,prep){
   const rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85;
   return e.sf*rate*HEIGHT_MULTS[e.height]*PKG_MULTS[pkg]*PREP_MULTS[prep];
 }
-function calcEavesEntry(e,pkg,prep){return e.lf*2.50*HEIGHT_MULTS[e.height]*PKG_MULTS[pkg]*PREP_MULTS[prep]}
+function calcEavesEntry(e,pkg,prep){return e.lf*2.50*HEIGHT_MULTS[e.height]*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep]}
+function calcWindowEntry(w,pkg,prep){const base=35;const up=w.gridType==='decorative'?10:w.gridType==='realPanes'?20:0;return w.count*(base+up)*PKG_MULTS[pkg]*PREP_MULTS[prep]}
 function calcSection(s){
   const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
   let t=0;
@@ -292,7 +294,7 @@ function calcSection(s){
   if(s.railWoodPaintedOn)t+=s.railWoodPainted*3.50*pm*pp;
   if(s.railWoodMetalOn)t+=s.railWoodMetal*4.50*pm*pp;
   if(s.railMetalOn)t+=s.railMetal*3.00*pm*pp;
-  if(s.windowsOn){t+=s.windows*35*pm*pp;if(s.windowGridsOn){t+=s.windowGridDeco*10*pm*pp;t+=s.windowGridReal*20*pm*pp;}}
+  if(s.windowsOn)s.windowEntries.forEach(w=>t+=calcWindowEntry(w,s.pkg,s.prep));
   if(s.windowTrimOnlyOn)t+=s.windowTrimOnly*25*pm*pp;
   if(s.stormRROn)t+=s.stormRR*20*pm*pp;
   if(s.stormPaintOn)t+=s.stormPaint*35*pm*pp;
@@ -356,7 +358,7 @@ function renderList(){
   sections.forEach(s=>{
     total+=calcSection(s);
     s.siding.forEach(e=>sidingSF+=e.sf);
-    if(s.windowsOn)winCount+=s.windows;
+    if(s.windowsOn)s.windowEntries.forEach(w=>winCount+=w.count);
     if(s.singleTrimOn)trimLF+=s.singleTrim;
     if(s.fasciaOn)s.fascia.forEach(f=>trimLF+=f.lf);
     if(s.guttersOn)trimLF+=s.gutters;
@@ -388,12 +390,12 @@ function renderList(){
 function sectionSummaryText(s){
   const parts=[];
   s.siding.forEach(e=>{if(e.sf)parts.push(`${e.type}: ${e.sf.toLocaleString()} SF (${e.height})${e.stain?' 🪵':''}`)});
-  s.eaves.forEach(e=>{if(e.lf)parts.push(`${e.label}: ${e.lf} LF`)});
+  s.eaves.forEach(e=>{if(e.lf)parts.push(`Eaves ${e.height}: ${e.lf} LF${e.difficult?' ⚠️':''}${e.stain?' 🪵':''}`)});
   if(s.fasciaOn&&s.fascia.length)parts.push(`Fascia: ${s.fascia.map(f=>f.lf+(f.difficult?' ⚠️':'')).join(' + ')} LF`);
   if(s.guttersOn&&s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
   if(s.singleTrimOn&&s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
-  if(s.windowsOn&&s.windows)parts.push(`Windows: ${s.windows}`);
-  if(s.doorsOn&&s.doors)parts.push(`Doors: ${s.doors}`);
+  if(s.windowsOn){const wt=s.windowEntries.reduce((a,w)=>a+w.count,0);if(wt)parts.push(`Windows: ${wt}`)}
+  if(s.doorsOn&&s.doors)parts.push(`Doors: ${s.doors}${s.doorsFrontDoor?' (incl. front door)':''}`);
   return parts.join('<br>')||'No surfaces';
 }
 function toggleSummary(id){document.getElementById(id).classList.toggle('open')}
@@ -425,7 +427,7 @@ function renderForm(){
   // 3. Eaves
   h+=`<div class="card fade-in"><div class="card-title">Eaves</div><div id="eavesEntries">`;
   s.eaves.forEach((e,i)=>{h+=eavesEntryHTML(e,i,s);});
-  h+=`</div><button class="btn-add" onclick="s().eaves.push(mkEaves('3rd Story+ Eaves',0,'3-Story+',false));renderForm()">+ Add Eaves</button></div>`;
+  h+=`</div><button class="btn-add" onclick="s().eaves.push(mkEaves());renderForm()">+ Add Eaves</button></div>`;
 
   // 4. Surface Groups
   h+=surfaceGroupsHTML(s);
@@ -454,20 +456,18 @@ function renderForm(){
 
 function sidingEntryHTML(e,i,len,s){
   const price=calcSidingEntry(e,s.pkg,s.prep);
-  return `<div class="entry-card">
-    ${len>1?`<button class="del-btn" onclick="s().siding.splice(${i},1);renderForm()">✕</button>`:''}
-    <div class="field-row"><div class="field" style="flex:1.2">
-      <label>Type</label><select onchange="s().siding[${i}].type=this.value;renderForm()">
+  return `<div class="entry-card" style="padding:10px">
+    ${len>1?`<button class="del-btn" style="top:6px;right:6px" onclick="s().siding.splice(${i},1);renderForm()">✕</button>`:''}
+    <div class="field-row" style="gap:6px"><div class="field" style="flex:1"><select style="padding:8px 28px 8px 8px;font-size:13px" onchange="s().siding[${i}].type=this.value;renderForm()">
         ${SIDING_TYPES.map(t=>`<option${e.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
-    <div class="field"><label>SF</label><input type="text" class="calc-input" data-target="siding-${i}-sf" value="${e.sf||''}" oninput="sidingSFInput(${i},this)"></div></div>
+    <div class="field" style="flex:0 0 80px"><input type="text" value="${e.sf||''}" placeholder="SF" style="font-size:13px;padding:8px" oninput="sidingSFInput(${i},this)"></div></div>
     <div class="calc-hint" id="hint-siding-${i}-sf"></div>
-    <div class="field" style="margin-top:8px"><label>Height</label><div class="height-btns">
-      ${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().siding[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div></div>
-    <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
-      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().siding[${i}].stain=this.checked;renderForm()"> Stain ${e.stain?'<span class="badge badge-stain">🪵 Stain</span>':''}</label>
-      ${e.type==='Brick'?`<label class="check-opt"><input type="checkbox" ${e.romaBio?'checked':''} onchange="s().siding[${i}].romaBio=this.checked;renderForm()"> Roma Bio ${e.romaBio?'<span class="badge badge-roma">Roma</span>':''}</label>`:''}
-    </div>
-    <div class="entry-price">${fmt(price)}</div></div>`;
+    <div style="display:flex;gap:6px;margin-top:6px;align-items:center"><div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().siding[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
+    <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
+    <div style="display:flex;gap:12px;margin-top:4px;align-items:center">
+      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().siding[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
+      ${e.type==='Brick'?`<label class="check-opt"><input type="checkbox" ${e.romaBio?'checked':''} onchange="s().siding[${i}].romaBio=this.checked;renderForm()"> Roma Bio</label>`:''}
+    </div></div>`;
 }
 function sidingSFInput(i,el){
   const v=el.value;const c=tryCalc(v);
@@ -479,16 +479,15 @@ function sidingSFInput(i,el){
 
 function eavesEntryHTML(e,i,sec){
   const price=calcEavesEntry(e,sec.pkg,sec.prep);
-  return `<div class="entry-card">
-    ${!e.locked?`<button class="del-btn" onclick="s().eaves.splice(${i},1);renderForm()">✕</button>`:''}
-    <div class="field-row"><div class="field" style="flex:1.3"><label>${e.label}</label></div>
-    <div class="field"><label>LF</label><input type="text" class="calc-input" value="${e.lf||''}" oninput="eavesLFInput(${i},this)"></div></div>
-    <div class="calc-hint" id="hint-eaves-${i}"></div>
-    <div style="display:flex;gap:12px;margin-top:6px;align-items:center">
-      <span style="font-size:11px;color:var(--text-light)">${e.height}${e.locked?' 🔒':''}</span>
-      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().eaves[${i}].stain=this.checked;renderForm()"> Stain</label>
-    </div>
-    <div class="entry-price">${fmt(price)}</div></div>`;
+  return `<div class="entry-card" style="padding:10px">
+    ${sec.eaves.length>1?`<button class="del-btn" onclick="s().eaves.splice(${i},1);renderForm()">✕</button>`:''}
+    <div class="field-row" style="gap:6px"><div class="field" style="flex:0 0 80px"><input type="text" value="${e.lf||''}" placeholder="LF" oninput="eavesLFInput(${i},this)"></div>
+    <div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().eaves[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
+    <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
+    <div style="display:flex;gap:12px;margin-top:4px;align-items:center">
+      <label class="check-opt"><input type="checkbox" ${e.difficult?'checked':''} onchange="s().eaves[${i}].difficult=this.checked;renderForm()"> Difficult (+50%)</label>
+      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().eaves[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
+    </div></div>`;
 }
 function eavesLFInput(i,el){
   const v=el.value;const c=tryCalc(v);
@@ -520,7 +519,7 @@ function surfaceGroupsHTML(sec){
     toggleSurface(sec,'windowGlazeOn','windowGlaze','Window Glazing Repair','$15/EA','EA',sec.windowGlaze),
   ]);
   h+=groupHTML('Doors',true,[
-    toggleSurface(sec,'doorsOn','doors','Doors & Frames','$65/EA','EA',sec.doors),
+    doorsHTML(sec),
     doorFrameHTML(sec),
     toggleSurface(sec,'sidelightOn','sidelight','Front Door Sidelight','$25/EA','EA',sec.sidelight),
     toggleSurface(sec,'crawlDoorOn','crawlDoor','Crawlspace Door','$45/EA','EA',sec.crawlDoor),
@@ -594,22 +593,36 @@ function fasciaHTML(sec){
 }
 
 function windowsHTML(sec){
+  const GRID_LABELS={'none':'No Grids · $35','decorative':'Decorative Grids · $45','realPanes':'Real Panes · $55'};
+  const GRID_OPTS=['none','decorative','realPanes'];
   const on=sec.windowsOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Windows (base)</span><br><span class="rate">$35/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().windowsOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  let h=`<div class="toggle-row"><div><span class="lbl">Windows</span><br><span class="rate">$35/EA + grid upcharge</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().windowsOn=this.checked;if(this.checked&&!s().windowEntries.length)s().windowEntries.push(mkWindow());renderForm()"><span class="slider"></span></label></div></div>`;
   if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="text" class="calc-input" placeholder="EA" value="${sec.windows||''}" oninput="genericInput('windows',this)"><div class="calc-hint" id="hint-windows"></div></div>`;
-    if(sec.windows>0){
-      if(!sec.windowGridsOn){
-        h+=`<button class="btn-add" onclick="s().windowGridsOn=true;renderForm()">+ Add Grid Type</button>`;
-      } else {
-        h+=`<div class="entry-card" style="margin-top:8px"><div style="font-size:12px;font-weight:600;margin-bottom:6px">Window Grids <button style="float:right;background:none;border:none;color:var(--red);cursor:pointer;font-size:12px" onclick="s().windowGridsOn=false;s().windowGridDeco=0;s().windowGridReal=0;renderForm()">Remove</button></div>
-          <div class="field-row"><div class="field"><label>Decorative (+$10)</label><input type="number" min="0" max="${sec.windows}" value="${sec.windowGridDeco||''}" placeholder="0" oninput="s().windowGridDeco=Math.min(parseInt(this.value)||0,s().windows);updFormPrices()"></div>
-          <div class="field"><label>Real Panes (+$20)</label><input type="number" min="0" max="${sec.windows}" value="${sec.windowGridReal||''}" placeholder="0" oninput="s().windowGridReal=Math.min(parseInt(this.value)||0,s().windows);updFormPrices()"></div></div>
-          <div style="font-size:10px;color:var(--text-light);margin-top:4px">Total grid windows ≤ ${sec.windows}</div></div>`;
-      }
-    }
-    h+='</div>';
+    h+='<div class="surface-fields open">';
+    sec.windowEntries.forEach((w,i)=>{
+      const price=calcWindowEntry(w,sec.pkg,sec.prep);
+      h+=`<div class="entry-card" style="padding:10px;margin-bottom:6px">
+        ${sec.windowEntries.length>1?`<button class="del-btn" style="top:6px;right:6px" onclick="s().windowEntries.splice(${i},1);renderForm()">✕</button>`:''}
+        <div class="field-row" style="gap:6px">
+          <div class="field" style="flex:0 0 60px"><input type="text" value="${w.count||''}" placeholder="EA" style="font-size:13px;padding:8px;text-align:center" oninput="const c=tryCalc(this.value);s().windowEntries[${i}].count=c!==null?c:(parseInt(this.value)||0);updFormPrices()"></div>
+          <div class="field" style="flex:1"><select style="padding:8px 28px 8px 8px;font-size:12px" onchange="s().windowEntries[${i}].gridType=this.value;renderForm()">
+            ${GRID_OPTS.map(g=>`<option value="${g}"${w.gridType===g?' selected':''}>${GRID_LABELS[g]}</option>`).join('')}</select></div>
+          <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${price?fmt(price):''}</span>
+        </div></div>`;
+    });
+    h+=`<button class="btn-add" onclick="s().windowEntries.push(mkWindow());renderForm()">+ Add Windows</button></div>`;
+  }
+  return h;
+}
+
+function doorsHTML(sec){
+  const on=sec.doorsOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Doors & Frames</span><br><span class="rate">$65/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().doorsOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="text" class="calc-input" placeholder="EA" value="${sec.doors||''}" oninput="genericInput('doors',this)"><div class="calc-hint" id="hint-doors"></div></div>
+      <label class="check-opt" style="margin-top:4px"><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Incl. front door</label></div>`;
   }
   return h;
 }
