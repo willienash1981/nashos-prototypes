@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Exterior Painting — Johnson Residence</title>
+<style>
+:root {
+  --navy:#1B2A4A; --navy-light:#2A3F6A; --gold:#C4A962; --gold-light:#D4C182;
+  --bg:#F5F3EF; --card:#FFFFFF; --text:#2C2C2C; --text-light:#6B7280;
+  --green:#10B981; --green-bg:#ECFDF5; --red:#EF4444; --red-bg:#FEF2F2;
+  --blue:#3B82F6; --orange:#F59E0B; --purple:#8B5CF6; --border:#E5E7EB;
+  --radius:12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); max-width:430px; margin:0 auto; min-height:100vh; padding-bottom:100px; }
+.topbar { position:sticky; top:0; z-index:100; background:var(--navy); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.topbar .back { color:var(--gold); text-decoration:none; font-size:15px; white-space:nowrap; }
+.topbar .title { font-size:14px; font-weight:600; opacity:.95; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.total-bar { position:sticky; top:50px; z-index:99; background:var(--navy-light); color:#fff; padding:10px 16px; font-size:12px; display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; }
+.total-bar .price { color:var(--gold); font-size:18px; font-weight:700; margin-right:8px; }
+.total-bar .meta { opacity:.8; }
+.card { background:var(--card); border-radius:var(--radius); margin:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.card-title { font-size:15px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.section-item { display:flex; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); gap:10px; cursor:pointer; }
+.section-item:last-child { border-bottom:none; }
+.section-item .check { color:var(--green); font-size:18px; flex-shrink:0; }
+.section-item .info { flex:1; min-width:0; }
+.section-item .name { font-weight:600; font-size:14px; }
+.section-item .sub { font-size:12px; color:var(--text-light); margin-top:2px; }
+.section-item .price { font-weight:700; font-size:14px; color:var(--navy); margin-right:8px; white-space:nowrap; }
+.section-item .edit-btn { background:var(--navy); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; }
+.section-summary { background:var(--bg); border-radius:8px; padding:10px 12px; margin-top:8px; font-size:12px; color:var(--text-light); line-height:1.6; display:none; }
+.section-summary.open { display:block; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.chip { background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:6px 12px; font-size:12px; cursor:pointer; transition:.15s; }
+.chip:hover, .chip.active { background:var(--gold); color:#fff; border-color:var(--gold); }
+.chip-sm { padding:4px 10px; font-size:11px; }
+.btn-gold { background:var(--gold); color:#fff; border:none; border-radius:var(--radius); padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-gold:active { background:var(--gold-light); }
+.btn-add { background:none; border:1px dashed var(--gold); color:var(--gold); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin-top:8px; }
+.btn-add:hover { background:rgba(196,169,98,.08); }
+input[type=text], input[type=number], textarea, select {
+  width:100%; border:1px solid var(--border); border-radius:8px; padding:10px 12px;
+  font-size:14px; font-family:inherit; background:#fff; color:var(--text);
+}
+textarea { resize:vertical; min-height:60px; }
+select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:30px; }
+label { font-size:13px; font-weight:600; color:var(--text); display:block; margin-bottom:4px; }
+.field { margin-bottom:12px; }
+.field-row { display:flex; gap:8px; align-items:flex-end; }
+.field-row .field { flex:1; margin-bottom:0; }
+.calc-hint { font-size:11px; color:var(--green); margin-top:2px; font-weight:600; }
+.entry-card { background:var(--bg); border-radius:8px; padding:12px; margin-bottom:8px; position:relative; }
+.entry-card .del-btn { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--red); font-size:16px; cursor:pointer; padding:4px; }
+.entry-price { text-align:right; font-size:13px; font-weight:700; color:var(--navy); margin-top:6px; }
+.height-btns { display:flex; gap:4px; }
+.height-btns button { flex:1; padding:6px 4px; border:1px solid var(--border); border-radius:6px; font-size:11px; font-weight:600; background:#fff; cursor:pointer; color:var(--text); transition:.15s; }
+.height-btns button.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+.height-btns button.locked { opacity:.7; cursor:default; }
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+.toggle-row:last-child { border-bottom:none; }
+.toggle-row .lbl { font-size:13px; font-weight:500; }
+.toggle-row .rate { font-size:11px; color:var(--text-light); }
+.toggle-row .right { display:flex; align-items:center; gap:8px; }
+.switch { position:relative; width:40px; height:22px; flex-shrink:0; }
+.switch input { opacity:0; width:0; height:0; }
+.switch .slider { position:absolute; inset:0; background:var(--border); border-radius:11px; cursor:pointer; transition:.2s; }
+.switch .slider::before { content:''; position:absolute; width:18px; height:18px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:.2s; }
+.switch input:checked+.slider { background:var(--green); }
+.switch input:checked+.slider::before { transform:translateX(18px); }
+.surface-fields { padding:8px 0 4px; display:none; }
+.surface-fields.open { display:block; }
+.surface-price { font-size:12px; font-weight:700; color:var(--navy); margin-top:4px; text-align:right; }
+.group-header { display:flex; align-items:center; justify-content:space-between; padding:12px 0; cursor:pointer; user-select:none; }
+.group-header h3 { font-size:14px; font-weight:700; }
+.group-header .arrow { transition:.2s; font-size:12px; color:var(--text-light); }
+.group-header .arrow.open { transform:rotate(180deg); }
+.group-body { display:none; }
+.group-body.open { display:block; }
+.srow { display:flex; align-items:center; gap:6px; padding:7px 0; border-bottom:1px solid #f0f0f0; flex-wrap:nowrap; }
+.srow:last-child { border-bottom:none; }
+.srow-lbl { font-size:12px; font-weight:600; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.srow-rate { font-size:10px; color:var(--text-light); }
+.srow-input { width:50px; padding:5px 4px; font-size:13px; text-align:center; border:1px solid var(--border); border-radius:6px; background:#fff; }
+.srow-input:focus { border-color:var(--navy); outline:none; }
+.srow-input.has-val { border-color:var(--green); background:rgba(16,185,129,.05); }
+.srow-unit { font-size:10px; color:var(--text-light); width:16px; flex-shrink:0; }
+.srow-checks { display:flex; gap:8px; flex-shrink:0; }
+.srow-checks label { font-size:10px; display:flex; align-items:center; gap:3px; white-space:nowrap; }
+.srow-checks input[type=checkbox] { width:14px; height:14px; accent-color:var(--navy); }
+.sgrp-title { font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px; padding:10px 0 4px; margin-top:4px; border-top:2px solid #eee; }
+.badge { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; }
+.badge-stain { background:rgba(139,92,246,.12); color:var(--purple); }
+.badge-roma { background:rgba(59,130,246,.1); color:var(--blue); }
+.check-opt { display:flex; align-items:center; gap:6px; font-size:12px; margin-top:4px; }
+.check-opt input[type=checkbox] { width:16px; height:16px; accent-color:var(--navy); }
+.auto-card { background:var(--green-bg); border:1px solid rgba(16,185,129,.2); border-radius:var(--radius); padding:14px; margin-bottom:12px; }
+.auto-card.warn { background:var(--red-bg); border-color:rgba(239,68,68,.2); }
+.auto-card .auto-title { font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px; }
+.auto-card .auto-detail { font-size:12px; color:var(--text-light); margin-top:6px; line-height:1.5; }
+.auto-card .auto-price { font-size:15px; font-weight:700; color:var(--navy); margin-top:6px; }
+.skip-btn { background:none; border:1px solid var(--red); color:var(--red); border-radius:6px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer; margin-top:6px; }
+.sticky-bottom { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-top:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; gap:12px; z-index:100; box-shadow:0 -2px 10px rgba(0,0,0,.08); }
+.sticky-bottom .info { flex:1; }
+.sticky-bottom .sec-name { font-size:12px; color:var(--text-light); }
+.sticky-bottom .sec-price { font-size:18px; font-weight:700; color:var(--navy); }
+.sticky-bottom .save-btn { background:var(--navy); color:#fff; border:none; border-radius:var(--radius); padding:12px 24px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.sticky-bottom .save-btn:active { background:var(--navy-light); }
+.inline-qty { width:70px !important; text-align:center; }
+.notes-field { width:100%; }
+.hidden { display:none !important; }
+.fade-in { animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.pkg-chips, .prep-chips { display:flex; gap:6px; }
+.pkg-chips .chip, .prep-chips .chip { flex:1; text-align:center; }
+.impact-text { font-size:12px; color:var(--text-light); margin-top:8px; font-style:italic; }
+
+/* Calculator Dropdown — ER Style */
+.qty-field { position:relative; display:flex; align-items:stretch; }
+.qty-field input { flex:1; border-radius:0 8px 8px 0 !important; border-left:none !important; min-width:0; }
+.srow .qty-field { flex:0 0 auto; width:80px; }
+.calc-chevron {
+  width:30px; background:var(--bg); border:1px solid var(--border);
+  border-right:none; border-radius:8px 0 0 8px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--text); font-size:11px; font-weight:700;
+  flex-shrink:0; transition:background 0.15s; padding:0;
+}
+.calc-chevron:active { background:#ddd; }
+.calc-chevron.open { background:var(--navy-light); color:#fff; border-color:var(--navy-light); }
+.calc-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:199; display:none; }
+.calc-overlay.open { display:block; }
+.calc-panel {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:calc(100% - 32px); max-width:400px; background:var(--card);
+  border:3px solid var(--navy); border-radius:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25);
+  z-index:200; padding:12px 16px 16px; display:none;
+}
+.calc-panel.open { display:block; animation:calcFadeIn .15s ease; }
+@keyframes calcFadeIn { from{opacity:0;transform:translate(-50%,-50%) scale(0.95)} to{opacity:1;transform:translate(-50%,-50%) scale(1)} }
+.calc-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border);
+}
+.calc-header-title { font-weight:700; font-size:15px; color:var(--navy); display:flex; align-items:center; gap:6px; }
+.calc-header-target { font-size:11px; color:var(--text-light); font-weight:400; }
+.calc-close { background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-light); padding:4px 8px; line-height:1; }
+.calc-formula-input {
+  width:100%; padding:14px 12px; font-size:20px; font-family:'SF Mono',ui-monospace,monospace;
+  border:2px solid var(--green); border-radius:10px; background:#fff;
+  text-align:right; margin-bottom:10px; color:var(--text);
+}
+.calc-formula-input.error { border-color:var(--red); }
+.calc-numpad { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.calc-numpad button {
+  padding:14px 6px; border:1px solid var(--border); border-radius:10px;
+  background:#fff; font-size:17px; font-weight:700; cursor:pointer;
+  font-family:system-ui; transition:background 0.1s; color:var(--text);
+  -webkit-user-select:none; user-select:none;
+  touch-action:manipulation;
+}
+.calc-numpad button:active { background:var(--bg); transform:scale(0.96); }
+.calc-numpad .calc-op { background:var(--navy-light); color:#fff; border-color:var(--navy-light); }
+.calc-numpad .calc-op:active { background:var(--navy); }
+.calc-numpad .calc-eq { background:var(--gold); color:#fff; border-color:var(--gold); font-size:20px; }
+.calc-numpad .calc-eq:active { background:var(--gold-light); }
+.calc-numpad .calc-clr { color:var(--red); font-weight:800; }
+.calc-numpad .calc-del { color:var(--text-light); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="#" class="back">← Estimate</a>
+  <div class="title">Exterior Painting — Johnson Residence</div>
+</div>
+
+<div id="listView">
+  <div class="total-bar" id="totalBar"></div>
+  <div class="card" id="sectionList"></div>
+  <div style="padding:0 12px 12px">
+    <div class="chips" id="nameChips" style="margin-bottom:10px"></div>
+    <button class="btn-gold" onclick="addSection()">+ Add Section</button>
+  </div>
+</div>
+
+<div id="formView" class="hidden"></div>
+
+<script>
+// ---- DATA MODEL ----
+const SIDING_TYPES = ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'];
+const SIDING_RATES = {'Wood Lap':1.85,'Hardiplank':1.85,'Vinyl':1.85,'Brick':2.00,'Stucco':1.80,'Metal':1.50};
+// Per-story labor multipliers (raw — used for eaves which are at a single height)
+const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.54,'3-Story+':2.0};
+// Per-story rates for siding blended calc
+const STORY_LABOR = [1.0, 1.54, 2.0]; // 1st, 2nd, 3rd
+const SECTION_NAMES = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
+const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
+const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
+
+function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false,incl1st=true,incl2nd=true){return{type,sf,height,stain,romaBio,incl1st,incl2nd}}
+function mkEaves(lf=0,height='1-Story',stain=false,difficult=false,fascia=false,fasciaLF=0){return{lf,height,stain,difficult,fascia,fasciaLF}}
+function mkLintel(material='Steel',ea=0,stain=false){return{material,ea,stain}}
+function mkWindow(count=0,grids=0,customGrids=false){return{count,grids,customGrids}}
+
+function mkSection(name=''){
+  return {
+    id:Date.now()+Math.random(),name,savedTime:'',
+    siding:[mkSiding()],
+    eaves:[mkEaves()],
+    gutters:0,singleTrim:0,
+    railWoodPainted:0,railWoodMetal:0,railMetal:0,
+    windowEntries:[mkWindow()],
+    windowTrimOnly:0,stormRR:0,stormPaint:0,windowGlaze:0,
+    doors:0,doorsFrontDoor:false,
+    doorFrame:0,doorFrameNotes:'',
+    sidelight:0,crawlDoor:0,
+    woodShutters:0,woodShuttersBoth:false,woodShuttersRR:false,
+    vinylShutters:0,vinylShuttersRR:false,
+    shutterHardware:0,garageDoor:0,garageFrame:0,garageHardware:0,
+    ds1:0,ds1RR:false,ds2:0,ds2RR:false,
+    porchColumns:0,porchColumnsStain:false,
+    soffitBoxes:0,atticVents:0,
+    lintels:[],
+    foundation:0,porchCeiling:0,porchConcrete:0,woodPorchFloor:0,
+    caulkingOn:false,caulkingOverride:null,
+    primerOn:false,primerOverride:null,
+    pwSkip:false,pwSkipNote:'',
+    pkg:'Standard',prep:'Standard',
+    notes:''
+  };
+}
+
+// Demo data
+function demoData(){
+  const s1=mkSection('Front Elevation');
+  s1.savedTime='2:15 PM';
+  s1.siding=[mkSiding('Hardiplank',1200,'1-Story'),mkSiding('Brick',400,'1-Story')];
+  s1.eaves=[mkEaves(80,'1-Story',false,false,true,40),mkEaves(60,'2-Story')];
+  s1.singleTrim=60;
+  s1.windowEntries=[mkWindow(6,0),mkWindow(2,8)];
+  s1.sidelight=2;
+  s1.doors=1;s1.doorsFrontDoor=true;
+  s1.porchColumns=4;
+
+  const s2=mkSection('Left Side');
+  s2.savedTime='2:22 PM';
+  s2.siding=[mkSiding('Hardiplank',800,'2-Story')];
+  s2.eaves=[mkEaves(50,'1-Story'),mkEaves(50,'2-Story')];
+  s2.singleTrim=40;
+  s2.windowEntries=[mkWindow(4,0)];
+
+  const s3=mkSection('Right Side');
+  s3.savedTime='2:28 PM';
+  s3.siding=[mkSiding('Hardiplank',600,'2-Story'),mkSiding('Hardiplank',400,'1-Story')];
+  s3.eaves=[mkEaves(40,'1-Story'),mkEaves(40,'2-Story')];
+  s3.gutters=60;
+  s3.windowEntries=[mkWindow(2,0),mkWindow(3,16)];
+
+  const s4=mkSection('Rear');
+  s4.savedTime='2:35 PM';
+  s4.siding=[mkSiding('Hardiplank',500,'1-Story')];
+  s4.eaves=[mkEaves(60,'1-Story',false,false,true,30),mkEaves(0,'1-Story',false,true,true,20)];
+  s4.doors=2;
+  s4.woodShutters=4;s4.woodShuttersBoth=true;
+  s4.ds1=3;
+  s4.ds2=2;s4.ds2RR=true;
+
+  return [s1,s2,s3,s4];
+}
+
+let sections=demoData();
+let editingIdx=-1;
+
+// ---- PRICING ----
+function calcSidingEntry(e,pkg,prep){
+  const rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85;
+  const pm=PKG_MULTS[pkg],pp=PREP_MULTS[prep];
+  if(e.height==='1-Story') return e.sf*rate*1.0*pm*pp;
+  if(e.height==='2-Story'){
+    const per=e.sf/2; let t=per*STORY_LABOR[1]; // 2nd always included
+    if(e.incl1st) t+=per*STORY_LABOR[0];
+    return t*rate*pm*pp;
+  }
+  // 3-Story+
+  const per=e.sf/3; let t=per*STORY_LABOR[2]; // 3rd always included
+  if(e.incl2nd) t+=per*STORY_LABOR[1];
+  if(e.incl1st) t+=per*STORY_LABOR[0];
+  return t*rate*pm*pp;
+}
+function calcEavesEntry(e,pkg,prep){
+  let t=e.lf*2.50*HEIGHT_MULTS[e.height]*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep];
+  if(e.fascia&&e.fasciaLF)t+=e.fasciaLF*2.75*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep];
+  return t;
+}
+function calcWindowEntry(w,pkg,prep){return w.count*(35+w.grids*1)*PKG_MULTS[pkg]*PREP_MULTS[prep]}
+function calcSection(s){
+  const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
+  let t=0;
+  s.siding.forEach(e=>t+=calcSidingEntry(e,s.pkg,s.prep));
+  s.eaves.forEach(e=>t+=calcEavesEntry(e,s.pkg,s.prep));
+  // simple surfaces — value > 0 means it's on
+  t+=s.gutters*2.00*pm*pp;
+  t+=s.singleTrim*2.25*pm*pp;
+  t+=s.railWoodPainted*3.50*pm*pp;
+  t+=s.railWoodMetal*4.50*pm*pp;
+  t+=s.railMetal*3.00*pm*pp;
+  s.windowEntries.forEach(w=>t+=calcWindowEntry(w,s.pkg,s.prep));
+  t+=s.windowTrimOnly*25*pm*pp;
+  t+=s.stormRR*20*pm*pp;
+  t+=s.stormPaint*35*pm*pp;
+  t+=s.windowGlaze*15*pm*pp;
+  t+=s.doors*65*pm*pp;
+  t+=s.doorFrame*35*pm*pp;
+  t+=s.sidelight*25*pm*pp;
+  t+=s.crawlDoor*45*pm*pp;
+  t+=s.woodShutters*40*(s.woodShuttersBoth?2:1)*pm*pp+(s.woodShuttersRR?s.woodShutters*20:0);
+  t+=s.vinylShutters*30*pm*pp+(s.vinylShuttersRR?s.vinylShutters*15:0);
+  t+=s.shutterHardware*15*pm*pp;
+  t+=s.garageDoor*120*pm*pp;
+  t+=s.garageFrame*55*pm*pp;
+  t+=s.garageHardware*20*pm*pp;
+  t+=s.ds1*15*pm*pp+(s.ds1RR?s.ds1*10:0);
+  t+=s.ds2*30*pm*pp+(s.ds2RR?s.ds2*15:0);
+  t+=s.porchColumns*55*pm*pp;
+  t+=s.soffitBoxes*30*pm*pp;
+  t+=s.atticVents*20*pm*pp;
+  s.lintels.forEach(l=>t+=l.ea*35*pm*pp);
+  t+=s.foundation*1.40*pm*pp;
+  t+=s.porchCeiling*1.50*pm*pp;
+  t+=s.porchConcrete*1.25*pm*pp;
+  t+=s.woodPorchFloor*1.75*pm*pp;
+  const autoSF=getAutoCalcSF(s);
+  if(s.caulkingOn){const sf=s.caulkingOverride!=null?s.caulkingOverride:autoSF;t+=sf*0.50*pm*pp;}
+  if(s.primerOn){const sf=s.primerOverride!=null?s.primerOverride:autoSF;t+=sf*0.75*pm*pp;}
+  if(!s.pwSkip){const pw=getPWCost(s,pm,pp);t+=pw;}
+  return t;
+}
+function effectiveSF(e){
+  if(e.height==='1-Story') return e.sf;
+  if(e.height==='2-Story'){
+    const per=e.sf/2; let t=per; // 2nd always
+    if(e.incl1st) t+=per;
+    return t;
+  }
+  const per=e.sf/3; let t=per; // 3rd always
+  if(e.incl2nd) t+=per;
+  if(e.incl1st) t+=per;
+  return t;
+}
+function getAutoCalcSF(s){
+  let sf=0;s.siding.forEach(e=>sf+=effectiveSF(e));
+  sf+=s.foundation;
+  s.eaves.forEach(e=>sf+=e.lf*3);
+  return sf;
+}
+function getPWCost(s,pm,pp){
+  let sf=0;s.siding.forEach(e=>sf+=effectiveSF(e));
+  sf+=s.foundation;
+  s.eaves.forEach(e=>sf+=e.lf*3);
+  return Math.max(sf*0.15,150);
+}
+function fmt(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+
+// ---- CALC HELPER ----
+function tryCalc(v){
+  if(!v||typeof v!=='string')return null;
+  if(/^[\d\s\.\+\-\*\/\(\)]+$/.test(v)&&/[\+\-\*\/]/.test(v)){
+    try{const r=Function('"use strict";return('+v+')')();if(isFinite(r))return Math.round(r*100)/100;}catch(e){}
+  }
+  return null;
+}
+
+// ---- RENDER LIST VIEW ----
+function renderList(){
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('formView').innerHTML='';
+  // Total bar
+  let total=0,sidingSF=0,winCount=0,trimLF=0;
+  sections.forEach(s=>{
+    total+=calcSection(s);
+    s.siding.forEach(e=>sidingSF+=effectiveSF(e));
+    s.windowEntries.forEach(w=>winCount+=w.count);
+    trimLF+=s.singleTrim;
+    s.eaves.forEach(e=>{if(e.fascia)trimLF+=e.fasciaLF});
+    trimLF+=s.gutters;
+  });
+  document.getElementById('totalBar').innerHTML=`
+    <span class="price">${fmt(total)}</span>
+    <span class="meta">${sections.length} section${sections.length!==1?'s':''}</span>
+    <span class="meta">Siding: ${sidingSF.toLocaleString()} SF · Windows: ${winCount} · Trim: ${trimLF} LF</span>`;
+  // Section items
+  let html='';
+  sections.forEach((s,i)=>{
+    const p=calcSection(s);
+    const sumId='sum_'+i;
+    html+=`<div>
+      <div class="section-item" onclick="toggleSummary('${sumId}')">
+        <span class="check">✅</span>
+        <div class="info"><div class="name">${s.name||'Untitled'}</div><div class="sub">Saved ${s.savedTime||'—'}</div></div>
+        <span class="price">${fmt(p)}</span>
+        <button class="edit-btn" onclick="event.stopPropagation();editSection(${i})">Edit</button>
+      </div>
+      <div class="section-summary" id="${sumId}">${sectionSummaryText(s)}</div>
+    </div>`;
+  });
+  document.getElementById('sectionList').innerHTML=`<div class="card-title">Sections</div>`+html;
+  // Name chips
+  const used=new Set(sections.map(s=>s.name));
+  document.getElementById('nameChips').innerHTML=SECTION_NAMES.filter(n=>!used.has(n)).map(n=>`<span class="chip chip-sm" onclick="quickAdd('${n}')">${n}</span>`).join('');
+}
+function sectionSummaryText(s){
+  const parts=[];
+  s.siding.forEach(e=>{if(e.sf)parts.push(`${e.type}: ${e.sf.toLocaleString()} SF (${e.height})${e.stain?' 🪵':''}`)});
+  s.eaves.forEach(e=>{if(e.lf||e.fasciaLF)parts.push(`Eaves ${e.height}: ${e.lf} LF${e.fascia?' + Fascia '+e.fasciaLF+' LF':''}${e.difficult?' ⚠️':''}${e.stain?' 🪵':''}`)});
+  if(s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
+  if(s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
+  {const wt=s.windowEntries.reduce((a,w)=>a+w.count,0);if(wt)parts.push(`Windows: ${wt}`)}
+  if(s.doors)parts.push(`Doors: ${s.doors}${s.doorsFrontDoor?' (incl. front door)':''}`);
+  return parts.join('<br>')||'No surfaces';
+}
+function toggleSummary(id){document.getElementById(id).classList.toggle('open')}
+function quickAdd(name){const s=mkSection(name);s.savedTime=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});sections.push(s);editingIdx=sections.length-1;renderForm();}
+function addSection(){const s=mkSection();sections.push(s);editingIdx=sections.length-1;renderForm();}
+function editSection(i){editingIdx=i;renderForm();}
+
+// ---- RENDER FORM ----
+function renderForm(){
+  closeCalc();
+  document.getElementById('listView').classList.add('hidden');
+  const fv=document.getElementById('formView');
+  fv.classList.remove('hidden');
+  const s=sections[editingIdx];
+  const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
+
+  let h=`<div class="topbar"><a href="#" class="back" onclick="event.preventDefault();saveAndBack()">← Back</a><div class="title">${s.name||'New Section'}</div></div>`;
+
+  // 1. Section Name
+  h+=`<div class="card fade-in"><div class="card-title">Section Name</div>
+    <input type="text" id="secName" value="${esc(s.name)}" placeholder="e.g. Front Elevation" oninput="s().name=this.value;updForm()">
+    <div class="chips" style="margin-top:8px">${SECTION_NAMES.map(n=>`<span class="chip chip-sm" onclick="document.getElementById('secName').value='${n}';s().name='${n}';updForm()">${n}</span>`).join('')}</div></div>`;
+
+  // 2. Siding
+  h+=`<div class="card fade-in"><div class="card-title">🏠 Siding</div><div id="sidingEntries">`;
+  s.siding.forEach((e,i)=>{h+=sidingEntryHTML(e,i,s.siding.length,s);});
+  h+=`</div><button class="btn-add" onclick="s().siding.push(mkSiding());renderForm()">+ Add Siding Type</button></div>`;
+
+  // 3. Eaves
+  h+=`<div class="card fade-in"><div class="card-title">Eaves & Fascia</div><div id="eavesEntries">`;
+  s.eaves.forEach((e,i)=>{h+=eavesEntryHTML(e,i,s);});
+  h+=`</div><button class="btn-add" onclick="s().eaves.push(mkEaves());renderForm()">+ Add Eaves</button></div>`;
+
+  // 4. Surface Groups
+  h+=surfaceGroupsHTML(s);
+
+  // 5. Auto-calc
+  h+=autoCalcHTML(s);
+
+  // 6. Package
+  h+=`<div class="card fade-in"><div class="card-title">📦 Package</div><div class="pkg-chips">
+    ${['Value','Standard','Premium+'].map(p=>`<span class="chip${s.pkg===p?' active':''}" onclick="s().pkg='${p}';renderForm()">${p}<br><small>${PKG_MULTS[p]}×</small></span>`).join('')}</div></div>`;
+
+  // 7. Prep
+  h+=`<div class="card fade-in"><div class="card-title">🔧 Prep Level</div><div class="prep-chips">
+    ${['Standard','Heavy','Restoration'].map(p=>`<span class="chip${s.prep===p?' active':''}" onclick="s().prep='${p}';renderForm()">${p}<br><small>${PREP_MULTS[p]}×</small></span>`).join('')}</div>
+    <div class="impact-text">${s.prep==='Standard'?'Normal prep — scrape, sand, spot-prime.':s.prep==='Heavy'?'Heavy prep adds 35% — extensive scraping, priming.':'Full restoration +150% — strip to bare, heavy repair.'}</div></div>`;
+
+  // 8. Notes
+  h+=`<div class="card fade-in"><div class="card-title">📝 Section Notes</div><textarea id="secNotes" oninput="s().notes=this.value">${esc(s.notes)}</textarea></div>`;
+
+  // 9. Sticky bar
+  h+=`<div class="sticky-bottom"><div class="info"><div class="sec-name">${s.name||'New Section'}</div><div class="sec-price">${fmt(calcSection(s))}</div></div><button class="save-btn" onclick="saveAndBack()">Save Section</button></div>`;
+
+  fv.innerHTML=h;
+  bindCalcInputs();
+}
+
+function sidingEntryHTML(e,i,len,s){
+  const price=calcSidingEntry(e,s.pkg,s.prep);
+  return `<div class="entry-card" style="padding:10px">
+    ${len>1?`<button class="del-btn" style="top:6px;right:6px" onclick="s().siding.splice(${i},1);renderForm()">✕</button>`:''}
+    <div class="field-row" style="gap:6px"><div class="field" style="flex:1"><select style="padding:8px 28px 8px 8px;font-size:13px" onchange="s().siding[${i}].type=this.value;renderForm()">
+        ${SIDING_TYPES.map(t=>`<option${e.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="field" style="flex:0 0 80px"><input type="text" value="${e.sf||''}" placeholder="SF" style="font-size:13px;padding:8px" oninput="sidingSFInput(${i},this)"></div></div>
+    <div class="calc-hint" id="hint-siding-${i}-sf"></div>
+    <div style="display:flex;gap:6px;margin-top:6px;align-items:center"><div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().siding[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
+    <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
+    <div style="display:flex;gap:10px;margin-top:4px;align-items:center;flex-wrap:wrap">
+      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().siding[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
+      ${e.type==='Brick'?`<label class="check-opt"><input type="checkbox" ${e.romaBio?'checked':''} onchange="s().siding[${i}].romaBio=this.checked;renderForm()"> Roma Bio</label>`:''}
+      ${e.height==='2-Story'?`<label class="check-opt" style="color:var(--navy)"><input type="checkbox" ${e.incl1st?'checked':''} onchange="s().siding[${i}].incl1st=this.checked;renderForm()"> Incl. 1st</label>`:''}
+      ${e.height==='3-Story+'?`<label class="check-opt" style="color:var(--navy)"><input type="checkbox" ${e.incl1st?'checked':''} onchange="s().siding[${i}].incl1st=this.checked;renderForm()"> Incl. 1st</label>
+      <label class="check-opt" style="color:var(--navy)"><input type="checkbox" ${e.incl2nd?'checked':''} onchange="s().siding[${i}].incl2nd=this.checked;renderForm()"> Incl. 2nd</label>`:''}
+    </div>${sidingSFNote(e)}</div>`;
+}
+function sidingSFNote(e){
+  if(!e.sf||e.height==='1-Story') return '';
+  if(e.height==='2-Story'){
+    if(e.incl1st) return ''; // all included, no note needed
+    return `<div style="font-size:10px;color:var(--text-light);margin-top:2px">↳ ${Math.round(e.sf/2)} SF priced (2nd only)</div>`;
+  }
+  // 3-Story
+  const per=Math.round(e.sf/3);
+  const stories=[];
+  if(e.incl1st) stories.push('1st');
+  if(e.incl2nd) stories.push('2nd');
+  stories.push('3rd');
+  if(stories.length===3) return ''; // all included
+  return `<div style="font-size:10px;color:var(--text-light);margin-top:2px">↳ ${per*stories.length} SF priced (${stories.join('+')})</div>`;
+}
+function sidingSFInput(i,el){
+  const v=el.value;const c=tryCalc(v);
+  const hint=document.getElementById('hint-siding-'+i+'-sf');
+  if(c!==null){hint.textContent='= '+c;s().siding[i].sf=c;}
+  else{hint.textContent='';s().siding[i].sf=parseFloat(v)||0;}
+  updFormPrices();
+}
+
+function eavesEntryHTML(e,i,sec){
+  const price=calcEavesEntry(e,sec.pkg,sec.prep);
+  return `<div class="entry-card" style="padding:10px">
+    ${sec.eaves.length>1?`<button class="del-btn" onclick="s().eaves.splice(${i},1);renderForm()">✕</button>`:''}
+    <div class="field-row" style="gap:6px"><div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().eaves[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
+    <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span>
+    <div class="field" style="flex:0 0 80px"><input type="text" value="${e.lf||''}" placeholder="LF" oninput="eavesLFInput(${i},this)"></div></div>
+    <div style="display:flex;gap:12px;margin-top:4px;align-items:center;flex-wrap:wrap">
+      <label class="check-opt"><input type="checkbox" ${e.difficult?'checked':''} onchange="s().eaves[${i}].difficult=this.checked;renderForm()"> Difficult (+50%)</label>
+      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().eaves[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
+      <label class="check-opt"><input type="checkbox" ${e.fascia?'checked':''} onchange="s().eaves[${i}].fascia=this.checked;renderForm()"> Fascia Only</label>
+    </div>${e.fascia?`<div class="field-row" style="margin-top:6px;gap:6px;align-items:center;padding-left:4px">
+      <span style="font-size:12px;color:var(--text-light);white-space:nowrap">↳ Fascia</span>
+      <div class="field" style="flex:0 0 70px"><input type="text" value="${e.fasciaLF||''}" placeholder="LF" oninput="const c=tryCalc(this.value);s().eaves[${i}].fasciaLF=c!==null?c:(parseFloat(this.value)||0);updFormPrices()"></div>
+      <span style="font-size:11px;color:var(--text-light)">$2.75/LF</span>
+    </div>`:''}</div>`;
+}
+function eavesLFInput(i,el){
+  const v=el.value;const c=tryCalc(v);
+  const hint=document.getElementById('hint-eaves-'+i);
+  if(c!==null){hint.textContent='= '+c;s().eaves[i].lf=c;}
+  else{hint.textContent='';s().eaves[i].lf=parseFloat(v)||0;}
+  updFormPrices();
+}
+
+// ---- SURFACE GROUPS ----
+function surfaceGroupsHTML(sec){
+  let h='<div class="card fade-in"><div class="card-title">📋 Surfaces</div>';
+
+  // — Trim & Detail —
+  h+=`<div class="sgrp-title">Trim & Detail</div>`;
+  h+=srow('Gutters','$2.00/LF','gutters','LF');
+  h+=ds1HTML(sec);
+  h+=ds2HTML(sec);
+  h+=srow('Single Trim','$2.25/LF','singleTrim','LF');
+
+  // — Windows (multi-entry) —
+  h+=`<div class="sgrp-title">Windows</div>`;
+  h+=windowsHTML(sec);
+  h+=srow('Window Trim Only','$25/EA','windowTrimOnly','EA');
+  h+=srow('Storm Window R&R','$20/EA','stormRR','EA');
+  h+=srow('Storm Window Paint','$35/EA','stormPaint','EA');
+  h+=srow('Window Glazing Repair','$15/EA','windowGlaze','EA');
+
+  // — Doors —
+  h+=`<div class="sgrp-title">Doors</div>`;
+  h+=doorsHTML(sec);
+  h+=doorFrameHTML(sec);
+  h+=srow('Front Door Sidelight','$25/EA','sidelight','EA');
+  h+=srow('Crawlspace Door','$45/EA','crawlDoor','EA');
+
+  // — Garage —
+  h+=`<div class="sgrp-title">Garage</div>`;
+  h+=srow('Garage Door & Frame','$120/EA','garageDoor','EA');
+  h+=srow('Garage Frame Only','$55/EA','garageFrame','EA');
+  h+=srow('Garage Hardware','$20/EA','garageHardware','EA');
+
+  // — Porch & Foundation —
+  h+=`<div class="sgrp-title">Porch & Foundation</div>`;
+  h+=srow('Foundation ⚠️','$1.40/SF','foundation','SF');
+  h+=srow('Porch Ceiling','$1.50/SF','porchCeiling','SF');
+  h+=srow('Porch Concrete','$1.25/SF','porchConcrete','SF');
+  h+=srow('Wood Porch Floor','$1.75/SF','woodPorchFloor','SF');
+  h+=porchColHTML(sec);
+  h+=srow('Wood Railing (Painted)','$3.50/LF','railWoodPainted','LF');
+  h+=srow('Wood Railing (Metal Spindles)','$4.50/LF','railWoodMetal','LF');
+  h+=srow('Metal Railing','$3.00/LF','railMetal','LF');
+
+  // — Accessories —
+  h+=`<div class="sgrp-title">Accessories</div>`;
+  h+=woodShuttersHTML(sec);
+  h+=vinylShuttersHTML(sec);
+  h+=srow('Shutter Hardware','$15/EA','shutterHardware','EA');
+  h+=srow('Open Soffit Boxes','$30/EA','soffitBoxes','EA');
+  h+=srow('Attic Vents','$20/EA','atticVents','EA');
+  h+=lintelsHTML(sec);
+
+  h+='</div>';
+  return h;
+}
+
+// flat row: label + input — empty=off, value=on
+function srow(label,rate,key,unit){
+  const v=s()?.[key]||0;
+  return `<div class="srow">
+    <div class="srow-lbl">${label} <span class="srow-rate">${rate}</span></div>
+    <input class="srow-input${v?' has-val':''}" type="text" value="${v||''}" placeholder="${unit}" oninput="srowInput('${key}',this)"></div>`;
+}
+function srowInput(key,el){
+  const c=tryCalc(el.value); const v=c!==null?c:(parseFloat(el.value)||0);
+  s()[key]=v; el.classList.toggle('has-val',!!v); updFormPrices();
+}
+
+let _groupId=0;
+const groupOpen={}; // persistent group state by title
+function groupHTML(title,defaultOpen,items){
+  if(!(title in groupOpen))groupOpen[title]=defaultOpen;
+  const isOpen=groupOpen[title];
+  const gid='grp_'+(++_groupId);
+  return `<div><div class="group-header" onclick="groupOpen['${title}']=!groupOpen['${title}'];renderForm()">
+    <h3>${title}</h3><span class="arrow${isOpen?' open':''}">▼</span></div>
+    <div class="group-body${isOpen?' open':''}" id="${gid}">${items.join('')}</div></div>`;
+}
+// toggleSurface and collapseGroup removed — all surfaces are flat rows now
+
+function windowsHTML(sec){
+  const GRID_OPTS=[0,4,8,12,16,'custom'];
+  let h='';
+  sec.windowEntries.forEach((w,i)=>{
+    const price=calcWindowEntry(w,sec.pkg,sec.prep);
+    const isCustom=w.customGrids;
+    h+=`<div class="srow">
+      <select style="flex:0 0 auto;width:${isCustom?'62px':'90px'};padding:5px 18px 5px 4px;font-size:11px;border:1px solid var(--border);border-radius:6px" onchange="const v=this.value;if(v==='custom'){s().windowEntries[${i}].customGrids=true;s().windowEntries[${i}].grids=0;}else{s().windowEntries[${i}].customGrids=false;s().windowEntries[${i}].grids=parseInt(v);}renderForm()">
+        ${GRID_OPTS.map(g=>{const lbl=g===0?'No Grids':g==='custom'?'Custom':g+' Grids';const val=g==='custom'?'custom':g;const sel=isCustom&&g==='custom'?true:!isCustom&&w.grids===g;return`<option value="${val}"${sel?' selected':''}>${lbl}</option>`;}).join('')}</select>
+      ${isCustom?`<input type="text" value="${w.grids||''}" placeholder="#" style="width:32px;padding:5px;font-size:12px;text-align:center;border:1px solid var(--border);border-radius:6px" oninput="s().windowEntries[${i}].grids=parseInt(this.value)||0;updFormPrices()">`:``}
+      <div class="srow-lbl">${i===0?'Windows <span class="srow-rate">$35+$1/grid</span>':''}</div>
+      <input class="srow-input${w.count?' has-val':''}" type="text" value="${w.count||''}" placeholder="EA" oninput="const c=tryCalc(this.value);s().windowEntries[${i}].count=c!==null?c:(parseInt(this.value)||0);updFormPrices()">
+      ${sec.windowEntries.length>1?`<button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px" onclick="s().windowEntries.splice(${i},1);renderForm()">✕</button>`:''}
+    </div>`;
+  });
+  h+=`<div style="padding:4px 0"><button class="btn-add" style="font-size:11px;padding:4px 10px" onclick="s().windowEntries.push(mkWindow());renderForm()">+ Add Windows</button></div>`;
+  return h;
+}
+
+function doorsHTML(sec){
+  return `<div class="srow">
+    <div class="srow-lbl">Doors & Frames <span class="srow-rate">$65/EA</span></div>
+    <div class="srow-checks"><label><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front 📝</label></div>
+    <input class="srow-input${sec.doors?' has-val':''}" type="text" value="${sec.doors||''}" placeholder="EA" oninput="s().doors=parseInt(this.value)||0;updFormPrices()"></div>`;
+}
+
+function doorFrameHTML(sec){
+  return `<div class="srow" style="flex-wrap:wrap">
+    <div class="srow-lbl">Door Frame Only <span class="srow-rate">$35/EA</span></div>
+    <input class="srow-input${sec.doorFrame?' has-val':''}" type="text" value="${sec.doorFrame||''}" placeholder="EA" style="width:45px" oninput="s().doorFrame=parseInt(this.value)||0;updFormPrices()">
+    ${sec.doorFrame?`<input type="text" style="flex:1;min-width:70px;padding:5px;font-size:11px;border:1px solid var(--border);border-radius:6px" placeholder="Location note" value="${esc(sec.doorFrameNotes)}" oninput="s().doorFrameNotes=this.value">`:''}</div>`;
+}
+
+function woodShuttersHTML(sec){
+  return `<div class="srow">
+    <div class="srow-lbl">Wood Shutters <span class="srow-rate">$40/EA</span></div>
+    <div class="srow-checks"><label><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> 2-Side</label>
+    <label><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label></div>
+    <input class="srow-input${sec.woodShutters?' has-val':''}" type="text" value="${sec.woodShutters||''}" placeholder="EA" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()"></div>`;
+}
+
+function vinylShuttersHTML(sec){
+  return `<div class="srow">
+    <div class="srow-lbl">Vinyl Shutters <span class="srow-rate">$30/EA</span></div>
+    <div class="srow-checks"><label><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label></div>
+    <input class="srow-input${sec.vinylShutters?' has-val':''}" type="text" value="${sec.vinylShutters||''}" placeholder="EA" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()"></div>`;
+}
+
+function ds1HTML(sec){
+  return `<div class="srow">
+    <div class="srow-lbl">Downspout 1-Story <span class="srow-rate">$15/EA</span></div>
+    <div class="srow-checks"><label><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label></div>
+    <input class="srow-input${sec.ds1?' has-val':''}" type="text" value="${sec.ds1||''}" placeholder="EA" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()"></div>`;
+}
+
+function ds2HTML(sec){
+  return `<div class="srow">
+    <div class="srow-lbl">Downspout 2-Story <span class="srow-rate">$30/EA</span></div>
+    <div class="srow-checks"><label><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label></div>
+    <input class="srow-input${sec.ds2?' has-val':''}" type="text" value="${sec.ds2||''}" placeholder="EA" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()"></div>`;
+}
+
+function porchColHTML(sec){
+  return `<div class="srow">
+    <div class="srow-lbl">Porch Columns <span class="srow-rate">$55/EA</span></div>
+    <div class="srow-checks"><label><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> 🪵 Stain</label></div>
+    <input class="srow-input${sec.porchColumns?' has-val':''}" type="text" value="${sec.porchColumns||''}" placeholder="EA" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()"></div>`;
+}
+
+function lintelsHTML(sec){
+  let h='';
+  sec.lintels.forEach((l,i)=>{
+    h+=`<div class="srow" style="gap:4px">
+      <div class="srow-lbl" style="flex:0 0 auto">${i===0?'Lintels <span class="srow-rate">$35/EA</span>':''}</div>
+      <select style="padding:4px;font-size:11px;border:1px solid var(--border);border-radius:6px;width:60px" onchange="s().lintels[${i}].material=this.value">
+        <option${l.material==='Steel'?' selected':''}>Steel</option><option${l.material==='Wood'?' selected':''}>Wood</option></select>
+      <input class="srow-input${l.ea?' has-val':''}" type="text" value="${l.ea||''}" placeholder="EA" style="width:40px" oninput="s().lintels[${i}].ea=parseInt(this.value)||0;updFormPrices()">
+      <div class="srow-checks"><label><input type="checkbox" ${l.stain?'checked':''} onchange="s().lintels[${i}].stain=this.checked;updFormPrices()"> Stain</label></div>
+      ${sec.lintels.length>1?`<button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px" onclick="s().lintels.splice(${i},1);renderForm()">✕</button>`:''}</div>`;
+  });
+  h+=`<div style="padding:2px 0"><button class="btn-add" style="font-size:11px;padding:4px 10px" onclick="s().lintels.push(mkLintel());renderForm()">+ Add Lintels</button></div>`;
+  return h;
+}
+
+// Foundation removed as standalone toggle — now just a flat srow
+
+// caulkHTML and primerHTML removed — now in autoCalcHTML
+
+// ---- AUTO-CALC CARDS ----
+function autoCalcHTML(sec){
+  const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
+  let h='<div class="card fade-in"><div class="card-title">⚡ Auto-Calculated</div>';
+  // Pressure wash
+  let pwSF=0;sec.siding.forEach(e=>pwSF+=effectiveSF(e));
+  pwSF+=sec.foundation;
+  sec.eaves.forEach(e=>pwSF+=e.lf*3);
+  const pwCost=Math.max(pwSF*0.15,150);
+  if(!sec.pwSkip){
+    h+=`<div class="auto-card"><div class="auto-title">🚿 Pressure Wash</div>
+      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+effectiveSF(e),0).toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''}
+       + Eaves: ${sec.eaves.reduce((a,e)=>a+e.lf,0)} LF × 3 ft = ${sec.eaves.reduce((a,e)=>a+e.lf*3,0)} SF<br>
+       Total: ${pwSF.toLocaleString()} SF × $0.15 = ${fmt(pwSF*0.15)}${pwSF*0.15<150?' → $150 minimum':''}</div>
+      <div class="auto-price">${fmt(pwCost)}</div>
+      <button class="skip-btn" onclick="s().pwSkip=true;renderForm()">Skip ⚠️</button></div>`;
+  } else {
+    h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Pressure Wash — SKIPPED</div>
+      <div class="field" style="margin-top:6px"><input type="text" placeholder="Reason for skipping..." value="${esc(sec.pwSkipNote)}" oninput="s().pwSkipNote=this.value"></div>
+      <button class="btn-add" style="border-color:var(--green);color:var(--green);margin-top:6px" onclick="s().pwSkip=false;s().pwSkipNote='';renderForm()">Re-enable</button></div>`;
+  }
+  // Caulking
+  const autoSF=getAutoCalcSF(sec);
+  const caulkSF=sec.caulkingOverride!=null?sec.caulkingOverride:autoSF;
+  const caulkCost=caulkSF*0.50*pm*pp;
+  h+=`<div class="auto-card" style="${sec.caulkingOn?'':'opacity:0.5'}">
+    <div class="auto-title" style="justify-content:space-between">
+      <span>🔧 Caulking (New/Remodel)</span>
+      <label style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)" ${sec.caulkingOn?'checked':''} onchange="s().caulkingOn=this.checked;renderForm()"> ${sec.caulkingOn?'On':'Off'}</label>
+    </div>
+    <div class="auto-detail">Auto SF: ${autoSF.toLocaleString()}${sec.caulkingOverride!=null?' → Override: '+sec.caulkingOverride:''} × $0.50/SF</div>
+    ${sec.caulkingOn?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div class="auto-price" style="margin:0">${fmt(caulkCost)}</div>
+      <input class="srow-input" type="text" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" placeholder="Override SF" style="width:80px;font-size:11px" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()">
+    </div>`:''}</div>`;
+
+  // Exterior Primer
+  const primerSF=sec.primerOverride!=null?sec.primerOverride:autoSF;
+  const primerCost=primerSF*0.75*pm*pp;
+  h+=`<div class="auto-card" style="${sec.primerOn?'':'opacity:0.5'}">
+    <div class="auto-title" style="justify-content:space-between">
+      <span>🎨 Exterior Primer (Full Coat)</span>
+      <label style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)" ${sec.primerOn?'checked':''} onchange="s().primerOn=this.checked;renderForm()"> ${sec.primerOn?'On':'Off'}</label>
+    </div>
+    <div class="auto-detail">Auto SF: ${autoSF.toLocaleString()}${sec.primerOverride!=null?' → Override: '+sec.primerOverride:''} × $0.75/SF</div>
+    ${sec.primerOn?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div class="auto-price" style="margin:0">${fmt(primerCost)}</div>
+      <input class="srow-input" type="text" value="${sec.primerOverride!=null?sec.primerOverride:''}" placeholder="Override SF" style="width:80px;font-size:11px" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()">
+    </div>`:''}</div>`;
+
+  // Masking warning
+  const hasSiding=sec.siding.some(e=>e.sf>0);
+  const hasNonSiding=sec.gutters||sec.singleTrim||sec.windowEntries.some(w=>w.count)||sec.doors;
+  if(!hasSiding&&hasNonSiding){
+    h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Masking Warning</div>
+      <div class="auto-detail">Non-siding surfaces present without siding. Masking charge may apply (~$0.45/SF).</div></div>`;
+  }
+  h+='</div>';
+  return h;
+}
+
+// ---- HELPERS ----
+function s(){return sections[editingIdx]}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function updFormPrices(){
+  // Update sticky bar price
+  const sec=s();
+  const bar=document.querySelector('.sticky-bottom .sec-price');
+  if(bar)bar.textContent=fmt(calcSection(sec));
+  // Update entry prices
+  document.querySelectorAll('.entry-price').forEach(el=>{/* re-render handles this */});
+}
+function updForm(){renderForm();}
+
+// ---- CALCULATOR DROPDOWN (ER-Style) ----
+let calcTarget = null;
+let calcFormula = '';
+let calcChevronEl = null;
+
+function initCalcPanel() {
+  if (document.getElementById('calcPanel')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'calcOverlay';
+  overlay.className = 'calc-overlay';
+  overlay.onclick = closeCalc;
+  document.body.appendChild(overlay);
+
+  const panel = document.createElement('div');
+  panel.id = 'calcPanel';
+  panel.className = 'calc-panel';
+  panel.innerHTML = `
+    <div class="calc-header">
+      <div><span class="calc-header-title">Calculator</span><br><span class="calc-header-target" id="calcTargetLabel"></span></div>
+      <button class="calc-close" onclick="closeCalc()">✕</button>
+    </div>
+    <input type="text" class="calc-formula-input" id="calcFormulaInput" readonly placeholder="Formula">
+    <div class="calc-numpad">
+      <button class="calc-clr" onclick="calcPress('CLR')">CLR</button>
+      <button class="calc-op" onclick="calcPress('(')">(</button>
+      <button class="calc-op" onclick="calcPress(')')">)</button>
+      <button class="calc-op" onclick="calcPress('÷')">÷</button>
+      <button onclick="calcPress('7')">7</button>
+      <button onclick="calcPress('8')">8</button>
+      <button onclick="calcPress('9')">9</button>
+      <button class="calc-op" onclick="calcPress('×')">×</button>
+      <button onclick="calcPress('4')">4</button>
+      <button onclick="calcPress('5')">5</button>
+      <button onclick="calcPress('6')">6</button>
+      <button class="calc-op" onclick="calcPress('−')">−</button>
+      <button onclick="calcPress('1')">1</button>
+      <button onclick="calcPress('2')">2</button>
+      <button onclick="calcPress('3')">3</button>
+      <button class="calc-op" onclick="calcPress('+')">+</button>
+      <button class="calc-del" onclick="calcPress('DEL')">DEL</button>
+      <button onclick="calcPress('0')">0</button>
+      <button onclick="calcPress('.')">.</button>
+      <button class="calc-eq" onclick="calcPress('=')">=</button>
+    </div>`;
+  document.body.appendChild(panel);
+}
+
+function openCalc(inputEl) {
+  initCalcPanel();
+  // Close if same input clicked again
+  if (calcTarget === inputEl && document.getElementById('calcPanel').classList.contains('open')) {
+    closeCalc(); return;
+  }
+  calcTarget = inputEl;
+  // Pre-populate with current value
+  calcFormula = inputEl.value || '';
+  // Highlight the chevron
+  if (calcChevronEl) calcChevronEl.classList.remove('open');
+  const wrap = inputEl.closest('.qty-field');
+  if (wrap) { calcChevronEl = wrap.querySelector('.calc-chevron'); if(calcChevronEl) calcChevronEl.classList.add('open'); }
+  // Show target label (find nearest label text)
+  let label = '';
+  const fieldParent = inputEl.closest('.field') || inputEl.closest('.entry-card');
+  if (fieldParent) { const lbl = fieldParent.querySelector('label'); if(lbl) label = lbl.textContent; }
+  document.getElementById('calcTargetLabel').textContent = label || 'Quantity';
+  const display = document.getElementById('calcFormulaInput');
+  display.value = calcFormula;
+  display.classList.remove('error');
+  document.getElementById('calcOverlay').classList.add('open');
+  document.getElementById('calcPanel').classList.add('open');
+}
+
+function closeCalc() {
+  const panel = document.getElementById('calcPanel');
+  if (panel) panel.classList.remove('open');
+  const overlay = document.getElementById('calcOverlay');
+  if (overlay) overlay.classList.remove('open');
+  if (calcChevronEl) { calcChevronEl.classList.remove('open'); calcChevronEl = null; }
+  calcTarget = null;
+  calcFormula = '';
+}
+
+function calcPress(key) {
+  const display = document.getElementById('calcFormulaInput');
+  display.classList.remove('error');
+  if (key === 'CLR') {
+    calcFormula = '';
+  } else if (key === 'DEL') {
+    calcFormula = calcFormula.slice(0, -1);
+  } else if (key === '=') {
+    if (!calcFormula.trim()) return;
+    try {
+      const expr = calcFormula.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+      const result = Function('"use strict"; return (' + expr + ')')();
+      if (isFinite(result)) {
+        const rounded = Math.round(result * 100) / 100;
+        if (calcTarget) {
+          calcTarget.value = rounded;
+          calcTarget.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        calcFormula = String(rounded);
+        display.value = calcFormula;
+        return;
+      }
+    } catch(e) {}
+    display.classList.add('error');
+    setTimeout(() => display.classList.remove('error'), 600);
+    return;
+  } else {
+    calcFormula += key;
+  }
+  display.value = calcFormula;
+}
+
+function bindCalcInputs() {
+  const formView = document.getElementById('formView');
+  if (!formView || formView.classList.contains('hidden')) return;
+  const inputs = formView.querySelectorAll('input[type=text], input[type=number]');
+  inputs.forEach(inp => {
+    // Skip non-quantity inputs
+    if (inp.id === 'secName' || inp.id === 'secNotes' || inp.id === 'calcFormulaInput') return;
+    const ph = (inp.placeholder || '').toLowerCase();
+    if (ph.includes('note') || ph.includes('reason') || ph.includes('location') || ph.includes('e.g.')) return;
+    // Skip if already wrapped
+    if (inp.parentElement && inp.parentElement.classList.contains('qty-field')) return;
+    // Wrap in qty-field
+    const wrap = document.createElement('div');
+    wrap.className = 'qty-field';
+    inp.parentNode.insertBefore(wrap, inp);
+    wrap.appendChild(inp);
+    // Add chevron
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'calc-chevron';
+    btn.textContent = '▼';
+    btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openCalc(inp); });
+    wrap.insertBefore(btn, inp);
+  });
+}
+
+function saveAndBack(){
+  const sec=s();
+  if(!sec.savedTime)sec.savedTime=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  editingIdx=-1;
+  _groupId=0;
+  renderList();
+  window.scrollTo(0,0);
+}
+
+// Init
+_groupId=0;
+renderList();
+</script>
+</body>
+</html>
