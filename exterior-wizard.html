@@ -3,768 +3,744 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NashOS — Exterior Painting Wizard</title>
+<title>Exterior Painting — Johnson Residence</title>
 <style>
 :root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3F6A;
-  --gold: #C4A962;
-  --gold-light: #D4C182;
-  --bg: #F5F3EF;
-  --card: #FFFFFF;
-  --text: #2C2C2C;
-  --text-light: #6B7280;
-  --green: #10B981;
-  --green-bg: #ECFDF5;
-  --red: #EF4444;
-  --red-bg: #FEF2F2;
-  --blue: #3B82F6;
-  --orange: #F59E0B;
-  --purple: #8B5CF6;
-  --border: #E5E7EB;
-  --radius: 12px;
+  --navy:#1B2A4A; --navy-light:#2A3F6A; --gold:#C4A962; --gold-light:#D4C182;
+  --bg:#F5F3EF; --card:#FFFFFF; --text:#2C2C2C; --text-light:#6B7280;
+  --green:#10B981; --green-bg:#ECFDF5; --red:#EF4444; --red-bg:#FEF2F2;
+  --blue:#3B82F6; --orange:#F59E0B; --purple:#8B5CF6; --border:#E5E7EB;
+  --radius:12px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
-.app { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; }
-
-/* Topbar */
-.topbar { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--navy); color: #fff; padding: 14px 16px; z-index: 100; display: flex; align-items: center; gap: 12px; }
-.topbar .back { color: var(--gold); font-size: 15px; cursor: pointer; text-decoration: none; white-space: nowrap; }
-.topbar .title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Running Total */
-.running-total { position: fixed; top: 48px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--navy-light); color: #fff; padding: 10px 16px; z-index: 99; }
-.running-total .rt-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.running-total .rt-price { font-size: 20px; font-weight: 700; color: var(--gold); }
-.running-total .rt-count { font-size: 13px; color: rgba(255,255,255,0.7); }
-.running-total .rt-details { font-size: 12px; color: rgba(255,255,255,0.6); }
-
-.content { padding-top: 110px; padding-bottom: 20px; }
-
-/* Cards */
-.card { background: var(--card); border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin: 12px 16px; overflow: hidden; }
-.card-header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.card-body { padding: 0 16px 14px; }
-
-/* Section List */
-.section-item { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; gap: 10px; transition: background 0.15s; }
-.section-item:last-child { border-bottom: none; }
-.section-item:active { background: #f9f9f7; }
-.section-item .si-check { color: var(--green); font-size: 18px; flex-shrink: 0; }
-.section-item .si-info { flex: 1; min-width: 0; }
-.section-item .si-name { font-weight: 600; font-size: 15px; }
-.section-item .si-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
-.section-item .si-price { font-weight: 700; font-size: 15px; color: var(--navy); text-align: right; white-space: nowrap; }
-
-.section-detail { padding: 0 16px 14px 44px; font-size: 13px; color: var(--text-light); display: none; }
-.section-detail.open { display: block; }
-.section-detail .sd-line { padding: 3px 0; display: flex; justify-content: space-between; }
-
-/* Height badges */
-.badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
-.badge-1 { background: var(--green-bg); color: var(--green); }
-.badge-2 { background: #FFFBEB; color: var(--orange); }
-.badge-3 { background: var(--red-bg); color: var(--red); }
-.badge-mix { background: #F3F0FF; color: var(--purple); }
-
-/* Buttons */
-.btn { padding: 12px 20px; border-radius: var(--radius); font-size: 15px; font-weight: 600; border: none; cursor: pointer; text-align: center; transition: all 0.15s; }
-.btn-gold { background: var(--gold); color: #fff; }
-.btn-gold:active { background: var(--gold-light); }
-.btn-navy { background: var(--navy); color: #fff; }
-.btn-navy:active { background: var(--navy-light); }
-.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
-.btn-full { width: 100%; display: block; }
-
-.add-section-btn { margin: 16px; }
-
-/* Form elements */
-.form-group { margin-bottom: 16px; }
-.form-label { font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-input[type="text"], input[type="number"], select, textarea {
-  width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px;
-  font-size: 15px; font-family: inherit; background: #fff; color: var(--text); outline: none; transition: border 0.15s;
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); max-width:430px; margin:0 auto; min-height:100vh; padding-bottom:100px; }
+.topbar { position:sticky; top:0; z-index:100; background:var(--navy); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.topbar .back { color:var(--gold); text-decoration:none; font-size:15px; white-space:nowrap; }
+.topbar .title { font-size:14px; font-weight:600; opacity:.95; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.total-bar { position:sticky; top:50px; z-index:99; background:var(--navy-light); color:#fff; padding:10px 16px; font-size:12px; display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; }
+.total-bar .price { color:var(--gold); font-size:18px; font-weight:700; margin-right:8px; }
+.total-bar .meta { opacity:.8; }
+.card { background:var(--card); border-radius:var(--radius); margin:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.card-title { font-size:15px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.section-item { display:flex; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); gap:10px; cursor:pointer; }
+.section-item:last-child { border-bottom:none; }
+.section-item .check { color:var(--green); font-size:18px; flex-shrink:0; }
+.section-item .info { flex:1; min-width:0; }
+.section-item .name { font-weight:600; font-size:14px; }
+.section-item .sub { font-size:12px; color:var(--text-light); margin-top:2px; }
+.section-item .price { font-weight:700; font-size:14px; color:var(--navy); margin-right:8px; white-space:nowrap; }
+.section-item .edit-btn { background:var(--navy); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; }
+.section-summary { background:var(--bg); border-radius:8px; padding:10px 12px; margin-top:8px; font-size:12px; color:var(--text-light); line-height:1.6; display:none; }
+.section-summary.open { display:block; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.chip { background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:6px 12px; font-size:12px; cursor:pointer; transition:.15s; }
+.chip:hover, .chip.active { background:var(--gold); color:#fff; border-color:var(--gold); }
+.chip-sm { padding:4px 10px; font-size:11px; }
+.btn-gold { background:var(--gold); color:#fff; border:none; border-radius:var(--radius); padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-gold:active { background:var(--gold-light); }
+.btn-add { background:none; border:1px dashed var(--gold); color:var(--gold); border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin-top:8px; }
+.btn-add:hover { background:rgba(196,169,98,.08); }
+input[type=text], input[type=number], textarea, select {
+  width:100%; border:1px solid var(--border); border-radius:8px; padding:10px 12px;
+  font-size:14px; font-family:inherit; background:#fff; color:var(--text);
 }
-input:focus, select:focus, textarea:focus { border-color: var(--gold); }
-textarea { resize: vertical; min-height: 70px; }
-
-/* Suggestions */
-.suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.sug-chip { padding: 6px 12px; border-radius: 20px; background: #f0ede7; font-size: 13px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; }
-.sug-chip:active, .sug-chip.active { border-color: var(--gold); background: #faf6ec; }
-
-/* Height Tier */
-.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
-.tier-btn { padding: 12px 4px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid var(--border); background: #fff; transition: all 0.15s; }
-.tier-btn .tier-label { font-size: 13px; font-weight: 700; }
-.tier-btn .tier-mult { font-size: 11px; margin-top: 2px; }
-.tier-btn.sel-1 { border-color: var(--green); background: var(--green-bg); }
-.tier-btn.sel-2 { border-color: var(--orange); background: #FFFBEB; }
-.tier-btn.sel-3 { border-color: var(--red); background: var(--red-bg); }
-.tier-btn.sel-mix { border-color: var(--purple); background: #F3F0FF; }
-.tier-impact { font-size: 13px; color: var(--text-light); padding: 6px 0; }
-.tier-impact strong { color: var(--text); }
-
-/* Mixed slider */
-.mix-slider-wrap { padding: 8px 0; display: none; }
-.mix-slider-wrap.show { display: block; }
-.mix-slider-wrap input[type=range] { width: 100%; accent-color: var(--purple); }
-.mix-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-top: 4px; }
-
-/* Surface Groups */
-.surf-group { margin-bottom: 12px; }
-.surf-group-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; cursor: pointer; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
-.surf-group-header .sgh-title { font-size: 14px; font-weight: 700; color: var(--navy); }
-.surf-group-header .sgh-arrow { font-size: 12px; color: var(--text-light); transition: transform 0.2s; }
-.surf-group-header .sgh-arrow.collapsed { transform: rotate(-90deg); }
-.surf-group-body { overflow: hidden; transition: max-height 0.3s; }
-.surf-group-body.collapsed { max-height: 0 !important; overflow: hidden; }
-
-/* Surface Card */
-.surf-card { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f3f3f3; }
-.surf-card:last-child { border-bottom: none; }
-.surf-toggle { width: 40px; height: 24px; border-radius: 12px; background: var(--border); cursor: pointer; position: relative; flex-shrink: 0; margin-top: 2px; transition: background 0.2s; }
-.surf-toggle.on { background: var(--gold); }
-.surf-toggle::after { content:''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
-.surf-toggle.on::after { transform: translateX(16px); }
-.surf-info { flex: 1; min-width: 0; }
-.surf-name { font-size: 14px; font-weight: 600; }
-.surf-unit { font-size: 11px; color: var(--text-light); }
-.surf-fields { margin-top: 6px; display: none; }
-.surf-card.active .surf-fields { display: block; }
-.surf-fields input, .surf-fields select { padding: 8px 10px; font-size: 14px; margin-bottom: 4px; }
-.surf-fields .sf-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
-.surf-fields .sf-row input { flex: 1; }
-.surf-fields .sf-row select { flex: 1; }
-.surf-price { font-size: 14px; font-weight: 700; color: var(--navy); white-space: nowrap; margin-top: 2px; }
-.surf-warning { font-size: 12px; color: var(--orange); margin-top: 4px; }
-.surf-note { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-
-/* Stain toggle inline */
-.stain-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--purple); cursor: pointer; margin-left: 8px; }
-.stain-toggle input { accent-color: var(--purple); }
-
-/* Calc result */
-.calc-result { font-size: 11px; color: var(--green); margin-top: 2px; }
-
-/* Conditional Options */
-.opt-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f3f3f3; }
-.opt-row:last-child { border-bottom: none; }
-.opt-label { font-size: 14px; font-weight: 500; }
-.opt-sub { font-size: 12px; color: var(--text-light); }
-
-/* Package chips */
-.pkg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.pkg-chip { padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid var(--border); background: #fff; transition: all 0.15s; }
-.pkg-chip.active { border-color: var(--gold); background: #faf6ec; }
-.pkg-chip .pkg-name { font-size: 14px; font-weight: 700; }
-.pkg-chip .pkg-mult { font-size: 11px; color: var(--text-light); }
-
-/* Warnings */
-.warning-box { margin: 12px 0; padding: 10px 14px; border-radius: 8px; font-size: 13px; display: flex; align-items: flex-start; gap: 8px; }
-.warning-gold { background: #faf6ec; color: #92700e; border: 1px solid var(--gold-light); }
-.warning-red { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
-
-/* Sticky bottom */
-.sticky-bottom { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: #fff; border-top: 1px solid var(--border); padding: 12px 16px; z-index: 100; display: flex; justify-content: space-between; align-items: center; display: none; }
-.sticky-bottom .sb-info .sb-name { font-size: 13px; color: var(--text-light); }
-.sticky-bottom .sb-info .sb-price { font-size: 22px; font-weight: 700; color: var(--navy); }
-
-/* Grid popup */
-.grid-popup { background: #f9f8f5; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-top: 6px; }
-.grid-popup label { font-size: 13px; font-weight: 500; }
-
-/* Difficult location toggle */
-.diff-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--orange); margin-top: 4px; }
-.diff-toggle input { accent-color: var(--orange); }
-
-/* Scroll padding for sticky bars */
-.form-content { padding-bottom: 90px; }
+textarea { resize:vertical; min-height:60px; }
+select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:30px; }
+label { font-size:13px; font-weight:600; color:var(--text); display:block; margin-bottom:4px; }
+.field { margin-bottom:12px; }
+.field-row { display:flex; gap:8px; align-items:flex-end; }
+.field-row .field { flex:1; margin-bottom:0; }
+.calc-hint { font-size:11px; color:var(--green); margin-top:2px; font-weight:600; }
+.entry-card { background:var(--bg); border-radius:8px; padding:12px; margin-bottom:8px; position:relative; }
+.entry-card .del-btn { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--red); font-size:16px; cursor:pointer; padding:4px; }
+.entry-price { text-align:right; font-size:13px; font-weight:700; color:var(--navy); margin-top:6px; }
+.height-btns { display:flex; gap:4px; }
+.height-btns button { flex:1; padding:6px 4px; border:1px solid var(--border); border-radius:6px; font-size:11px; font-weight:600; background:#fff; cursor:pointer; color:var(--text); transition:.15s; }
+.height-btns button.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+.height-btns button.locked { opacity:.7; cursor:default; }
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+.toggle-row:last-child { border-bottom:none; }
+.toggle-row .lbl { font-size:13px; font-weight:500; }
+.toggle-row .rate { font-size:11px; color:var(--text-light); }
+.toggle-row .right { display:flex; align-items:center; gap:8px; }
+.switch { position:relative; width:40px; height:22px; flex-shrink:0; }
+.switch input { opacity:0; width:0; height:0; }
+.switch .slider { position:absolute; inset:0; background:var(--border); border-radius:11px; cursor:pointer; transition:.2s; }
+.switch .slider::before { content:''; position:absolute; width:18px; height:18px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:.2s; }
+.switch input:checked+.slider { background:var(--green); }
+.switch input:checked+.slider::before { transform:translateX(18px); }
+.surface-fields { padding:8px 0 4px; display:none; }
+.surface-fields.open { display:block; }
+.surface-price { font-size:12px; font-weight:700; color:var(--navy); margin-top:4px; text-align:right; }
+.group-header { display:flex; align-items:center; justify-content:space-between; padding:12px 0; cursor:pointer; user-select:none; }
+.group-header h3 { font-size:14px; font-weight:700; }
+.group-header .arrow { transition:.2s; font-size:12px; color:var(--text-light); }
+.group-header .arrow.open { transform:rotate(180deg); }
+.group-body { display:none; }
+.group-body.open { display:block; }
+.badge { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; }
+.badge-stain { background:rgba(139,92,246,.12); color:var(--purple); }
+.badge-roma { background:rgba(59,130,246,.1); color:var(--blue); }
+.check-opt { display:flex; align-items:center; gap:6px; font-size:12px; margin-top:4px; }
+.check-opt input[type=checkbox] { width:16px; height:16px; accent-color:var(--navy); }
+.auto-card { background:var(--green-bg); border:1px solid rgba(16,185,129,.2); border-radius:var(--radius); padding:14px; margin-bottom:12px; }
+.auto-card.warn { background:var(--red-bg); border-color:rgba(239,68,68,.2); }
+.auto-card .auto-title { font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px; }
+.auto-card .auto-detail { font-size:12px; color:var(--text-light); margin-top:6px; line-height:1.5; }
+.auto-card .auto-price { font-size:15px; font-weight:700; color:var(--navy); margin-top:6px; }
+.skip-btn { background:none; border:1px solid var(--red); color:var(--red); border-radius:6px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer; margin-top:6px; }
+.sticky-bottom { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-top:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; gap:12px; z-index:100; box-shadow:0 -2px 10px rgba(0,0,0,.08); }
+.sticky-bottom .info { flex:1; }
+.sticky-bottom .sec-name { font-size:12px; color:var(--text-light); }
+.sticky-bottom .sec-price { font-size:18px; font-weight:700; color:var(--navy); }
+.sticky-bottom .save-btn { background:var(--navy); color:#fff; border:none; border-radius:var(--radius); padding:12px 24px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.sticky-bottom .save-btn:active { background:var(--navy-light); }
+.inline-qty { width:70px !important; text-align:center; }
+.notes-field { width:100%; }
+.hidden { display:none !important; }
+.fade-in { animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.pkg-chips, .prep-chips { display:flex; gap:6px; }
+.pkg-chips .chip, .prep-chips .chip { flex:1; text-align:center; }
+.impact-text { font-size:12px; color:var(--text-light); margin-top:8px; font-style:italic; }
 </style>
 </head>
 <body>
-<div class="app" id="app"></div>
+
+<div class="topbar">
+  <a href="#" class="back">← Estimate</a>
+  <div class="title">Exterior Painting — Johnson Residence</div>
+</div>
+
+<div id="listView">
+  <div class="total-bar" id="totalBar"></div>
+  <div class="card" id="sectionList"></div>
+  <div style="padding:0 12px 12px">
+    <div class="chips" id="nameChips" style="margin-bottom:10px"></div>
+    <button class="btn-gold" onclick="addSection()">+ Add Section</button>
+  </div>
+</div>
+
+<div id="formView" class="hidden"></div>
 
 <script>
-// ============ DATA MODEL ============
-// All 38 PRD surface bundles with correct units
-const PRICING = {
-  // Primary Surfaces
-  siding:           { base: 1.85, unit: 'SF' },
-  soffit:           { base: 2.50, unit: 'LF' },  // Eaves/Soffits = LINEAR FEET per PRD
-  foundation:       { base: 1.40, unit: 'SF' },
-  porchCeiling:     { base: 1.50, unit: 'SF' },
-  porchConcrete:    { base: 1.25, unit: 'SF' },
-  woodPorchFloor:   { base: 1.75, unit: 'SF' },
-  // Trim & Detail
-  trimFascia:       { base: 2.50, unit: 'LF' },
-  fasciaOnly:       { base: 2.75, unit: 'LF' },
-  gutters:          { base: 2.00, unit: 'LF' },
-  singleTrim:       { base: 2.25, unit: 'LF' },
-  woodRailing:      { base: 3.50, unit: 'LF' },
-  woodRailingMetal: { base: 4.50, unit: 'LF' },
-  metalRailing:     { base: 3.00, unit: 'LF' },
-  // Windows
-  windows:          { base: 35,   unit: 'EA' },
-  windowGrids:      { base: 8,    unit: 'EA' },
-  windowTrimOnly:   { base: 25,   unit: 'EA' },
-  stormWindowRR:    { base: 20,   unit: 'EA' },
-  stormWindowPaint: { base: 35,   unit: 'EA' },
-  windowGlazing:    { base: 15,   unit: 'EA' },
-  // Doors
-  doors:            { base: 65,   unit: 'EA' },
-  doorFrameOnly:    { base: 35,   unit: 'EA' },
-  sidelights:       { base: 25,   unit: 'EA' },
-  crawlspaceDoor:   { base: 45,   unit: 'EA' },
-  // Shutters & Garage
-  woodShutters:     { base: 40,   unit: 'EA' },
-  vinylShutters:    { base: 30,   unit: 'EA' },
-  shutterHardware:  { base: 15,   unit: 'EA' },
-  garageDoor:       { base: 120,  unit: 'EA' },
-  garageFrameOnly:  { base: 55,   unit: 'EA' },
-  garageHardware:   { base: 20,   unit: 'EA' },
-  // Accessories
-  downspouts:       { base: 15,   unit: 'EA' },
-  downspoutRR:      { base: 20,   unit: 'EA' },
-  porchColumns:     { base: 55,   unit: 'EA' },
-  soffitBoxes:      { base: 30,   unit: 'EA' },
-  atticVents:       { base: 20,   unit: 'EA' },
-  steelLintels:     { base: 35,   unit: 'EA' },
-  // Full-House
-  caulkingFull:     { base: 0.50, unit: 'SF' },
-  exteriorPrimer:   { base: 0.75, unit: 'SF' },
-  // Misc
-  pressureWash:     { base: 0.25, unit: 'SF' },
-  masking:          { base: 0.45, unit: 'SF' }
-};
-
-// Surface metadata for display and grouping
-const SURFACE_META = {
-  // Primary Surfaces
-  siding:           { name: 'Siding', group: 'primary', dropdown: 'type', options: ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'], stainable: true },
-  soffit:           { name: 'Soffit / Eaves', group: 'primary', stainable: true },
-  foundation:       { name: 'Foundation (Brick/Block)', group: 'primary', warning: '⚠️ Explicit opt-in only' },
-  porchCeiling:     { name: 'Porch Ceiling', group: 'primary' },
-  porchConcrete:    { name: 'Porch Concrete', group: 'primary' },
-  woodPorchFloor:   { name: 'Wood Porch Floor', group: 'primary' },
-  // Trim & Detail
-  trimFascia:       { name: 'Trim / Fascia', group: 'trim' },
-  fasciaOnly:       { name: 'Fascia Only', group: 'trim', note: 'Has difficult location toggle (+25%)', hasDifficult: true },
-  gutters:          { name: 'Gutters', group: 'trim' },
-  singleTrim:       { name: 'Single Trim', group: 'trim', note: 'Corners, bands, rake boards' },
-  woodRailing:      { name: 'Wood Railing (Painted)', group: 'trim' },
-  woodRailingMetal: { name: 'Wood Railing (Metal Spindles)', group: 'trim', note: 'Unpainted metal spindles — slower' },
-  metalRailing:     { name: 'Metal Railing', group: 'trim' },
-  // Windows
-  windows:          { name: 'Windows Standard', group: 'windows', grids: true },
-  windowTrimOnly:   { name: 'Window Trim Only', group: 'windows', note: 'Paint trim only, not sash' },
-  stormWindowRR:    { name: 'Storm Window R&R', group: 'windows', note: 'Remove & reinstall' },
-  stormWindowPaint: { name: 'Storm Window Painting', group: 'windows' },
-  windowGlazing:    { name: 'Window Glazing Repair', group: 'windows', note: 'Squares count' },
-  // Doors
-  doors:            { name: 'Doors & Frames', group: 'doors' },
-  doorFrameOnly:    { name: 'Door Frame Only', group: 'doors' },
-  sidelights:       { name: 'Front Door Sidelight', group: 'doors' },
-  crawlspaceDoor:   { name: 'Crawlspace Door', group: 'doors' },
-  // Shutters & Garage
-  woodShutters:     { name: 'Wood Shutters', group: 'shuttersGarage' },
-  vinylShutters:    { name: 'Vinyl Shutters', group: 'shuttersGarage', note: 'Less labor than wood' },
-  shutterHardware:  { name: 'Shutter Hardware & Accents', group: 'shuttersGarage' },
-  garageDoor:       { name: 'Garage Door & Frame', group: 'shuttersGarage' },
-  garageFrameOnly:  { name: 'Garage Door Frame Only', group: 'shuttersGarage' },
-  garageHardware:   { name: 'Garage Door Hardware Accents', group: 'shuttersGarage' },
-  // Accessories
-  downspouts:       { name: 'Downspouts', group: 'accessories' },
-  downspoutRR:      { name: 'Downspout R&R', group: 'accessories', note: 'Separate from painting' },
-  porchColumns:     { name: 'Porch Columns', group: 'accessories', stainable: true },
-  soffitBoxes:      { name: 'Open Soffit Boxes', group: 'accessories' },
-  atticVents:       { name: 'Attic Vents', group: 'accessories' },
-  steelLintels:     { name: 'Steel Lintels', group: 'accessories', stainable: true },
-  // Full-House
-  caulkingFull:     { name: 'Caulking (New/Remodel)', group: 'fullHouse', note: 'Full-house scope only' },
-  exteriorPrimer:   { name: 'Exterior Primer (Full Coat)', group: 'fullHouse' },
-};
-
-const SURFACE_GROUPS = [
-  { key: 'primary',        title: 'Primary Surfaces',  collapsed: false },
-  { key: 'trim',           title: 'Trim & Detail',     collapsed: false },
-  { key: 'windows',        title: 'Windows',           collapsed: false },
-  { key: 'doors',          title: 'Doors',             collapsed: false },
-  { key: 'shuttersGarage', title: 'Shutters & Garage', collapsed: true },
-  { key: 'accessories',    title: 'Accessories',       collapsed: true },
-  { key: 'fullHouse',      title: 'Full-House (Rare)', collapsed: true },
-];
-
-const ALL_SURFACE_KEYS = Object.keys(SURFACE_META);
-
-const HEIGHT_MULT = { '1': 1.0, '2': 1.35, '3': 1.50 };
-const PKG_MULT = { value: 0.85, standard: 1.0, premium: 1.20 };
-const CONDITION_MULT = { good: 1.0, moderate: 1.15, heavy: 1.35 };
-
-const SECTION_SUGGESTIONS = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
-
+// ---- DATA MODEL ----
 const SIDING_TYPES = ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'];
-const COATING_TYPES = ['Latex','Oil','Unknown','None'];
+const SIDING_RATES = {'Wood Lap':1.85,'Hardiplank':1.85,'Vinyl':1.85,'Brick':2.00,'Stucco':1.80,'Metal':1.50};
+const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.54,'3-Story+':2.0};
+const SECTION_NAMES = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
+const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
+const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
 
-// Build blank surfaces object with all keys
-function blankSurfaces() {
-  const s = {};
-  ALL_SURFACE_KEYS.forEach(k => {
-    s[k] = { on: false, qty: 0 };
-    if (k === 'siding') s[k].type = 'Wood Lap';
-    if (k === 'windows') { s[k].grids = false; s[k].gridCount = 0; }
-    if (SURFACE_META[k].stainable) s[k].stain = false;
-    if (SURFACE_META[k].hasDifficult) s[k].difficult = false;
-  });
-  return s;
+function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false){return{type,sf,height,stain,romaBio}}
+function mkEaves(label='1st Story Eaves',lf=0,height='1-Story',locked=true,stain=false){return{label,lf,height,locked,stain}}
+function mkFascia(lf=0,difficult=false){return{lf,difficult}}
+function mkLintel(material='Steel',ea=0,stain=false){return{material,ea,stain}}
+
+function mkSection(name=''){
+  return {
+    id:Date.now()+Math.random(),name,savedTime:'',
+    siding:[mkSiding()],
+    eaves:[mkEaves('1st Story Eaves',0,'1-Story',true),mkEaves('2nd Story Eaves',0,'2-Story',true)],
+    fascia:[],fasciaOn:false,
+    gutters:0,guttersOn:false,
+    singleTrim:0,singleTrimOn:false,
+    railWoodPainted:0,railWoodPaintedOn:false,
+    railWoodMetal:0,railWoodMetalOn:false,
+    railMetal:0,railMetalOn:false,
+    windows:0,windowsOn:false,windowGridDeco:0,windowGridReal:0,windowGridsOn:false,
+    windowTrimOnly:0,windowTrimOnlyOn:false,
+    stormRR:0,stormRROn:false,
+    stormPaint:0,stormPaintOn:false,
+    windowGlaze:0,windowGlazeOn:false,
+    doors:0,doorsOn:false,
+    doorFrame:0,doorFrameOn:false,doorFrameNotes:'',
+    sidelight:0,sidelightOn:false,
+    crawlDoor:0,crawlDoorOn:false,
+    woodShutters:0,woodShuttersOn:false,woodShuttersBoth:false,woodShuttersRR:false,
+    vinylShutters:0,vinylShuttersOn:false,vinylShuttersRR:false,
+    shutterHardware:0,shutterHardwareOn:false,
+    garageDoor:0,garageDoorOn:false,
+    garageFrame:0,garageFrameOn:false,
+    garageHardware:0,garageHardwareOn:false,
+    ds1:0,ds1On:false,ds1RR:false,
+    ds2:0,ds2On:false,ds2RR:false,
+    porchColumns:0,porchColumnsOn:false,porchColumnsStain:false,
+    soffitBoxes:0,soffitBoxesOn:false,
+    atticVents:0,atticVentsOn:false,
+    lintels:[],lintelsOn:false,
+    foundation:0,foundationOn:false,
+    porchCeiling:0,porchCeilingOn:false,
+    porchConcrete:0,porchConcreteOn:false,
+    woodPorchFloor:0,woodPorchFloorOn:false,
+    caulkingOn:false,caulkingOverride:null,
+    primerOn:false,primerOverride:null,
+    pwSkip:false,pwSkipNote:'',
+    pkg:'Standard',prep:'Standard',
+    notes:''
+  };
 }
 
-// Merge old surfaces into full model (for pre-populated data)
-function fullSurfaces(partial) {
-  const s = blankSurfaces();
-  Object.keys(partial).forEach(k => {
-    if (s[k]) Object.assign(s[k], partial[k]);
-  });
-  // Migrate old 'shutters' to 'woodShutters'
-  if (partial.shutters && !partial.woodShutters) {
-    s.woodShutters = { on: partial.shutters.on, qty: partial.shutters.qty };
+// Demo data
+function demoData(){
+  const s1=mkSection('Front Elevation');
+  s1.savedTime='2:15 PM';
+  s1.siding=[mkSiding('Hardiplank',1200,'1-Story'),mkSiding('Brick',400,'1-Story')];
+  s1.eaves=[mkEaves('1st Story Eaves',80,'1-Story',true),mkEaves('2nd Story Eaves',60,'2-Story',true)];
+  s1.fascia=[mkFascia(40)];s1.fasciaOn=true;
+  s1.singleTrim=60;s1.singleTrimOn=true;
+  s1.windows=8;s1.windowsOn=true;s1.windowGridDeco=2;s1.windowGridsOn=true;
+  s1.sidelight=2;s1.sidelightOn=true;
+  s1.doors=1;s1.doorsOn=true;
+  s1.porchColumns=4;s1.porchColumnsOn=true;
+
+  const s2=mkSection('Left Side');
+  s2.savedTime='2:22 PM';
+  s2.siding=[mkSiding('Hardiplank',800,'2-Story')];
+  s2.eaves=[mkEaves('1st Story Eaves',50,'1-Story',true),mkEaves('2nd Story Eaves',50,'2-Story',true)];
+  s2.singleTrim=40;s2.singleTrimOn=true;
+  s2.windows=4;s2.windowsOn=true;
+
+  const s3=mkSection('Right Side');
+  s3.savedTime='2:28 PM';
+  s3.siding=[mkSiding('Hardiplank',600,'2-Story'),mkSiding('Hardiplank',400,'1-Story')];
+  s3.eaves=[mkEaves('1st Story Eaves',40,'1-Story',true),mkEaves('2nd Story Eaves',40,'2-Story',true)];
+  s3.gutters=60;s3.guttersOn=true;
+  s3.windows=5;s3.windowsOn=true;s3.windowGridReal=3;s3.windowGridsOn=true;
+
+  const s4=mkSection('Rear');
+  s4.savedTime='2:35 PM';
+  s4.siding=[mkSiding('Hardiplank',500,'1-Story')];
+  s4.eaves=[mkEaves('1st Story Eaves',60,'1-Story',true)];
+  s4.fascia=[mkFascia(30),mkFascia(20,true)];s4.fasciaOn=true;
+  s4.doors=2;s4.doorsOn=true;
+  s4.woodShutters=4;s4.woodShuttersOn=true;s4.woodShuttersBoth=true;
+  s4.ds1=3;s4.ds1On=true;
+  s4.ds2=2;s4.ds2On=true;s4.ds2RR=true;
+
+  return [s1,s2,s3,s4];
+}
+
+let sections=demoData();
+let editingIdx=-1;
+
+// ---- PRICING ----
+function calcSidingEntry(e,pkg,prep){
+  const rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85;
+  return e.sf*rate*HEIGHT_MULTS[e.height]*PKG_MULTS[pkg]*PREP_MULTS[prep];
+}
+function calcEavesEntry(e,pkg,prep){return e.lf*2.50*HEIGHT_MULTS[e.height]*PKG_MULTS[pkg]*PREP_MULTS[prep]}
+function calcSection(s){
+  const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
+  let t=0;
+  s.siding.forEach(e=>t+=calcSidingEntry(e,s.pkg,s.prep));
+  s.eaves.forEach(e=>t+=calcEavesEntry(e,s.pkg,s.prep));
+  if(s.fasciaOn)s.fascia.forEach(f=>t+=f.lf*2.75*(f.difficult?1.5:1)*pm*pp);
+  if(s.guttersOn)t+=s.gutters*2.00*pm*pp;
+  if(s.singleTrimOn)t+=s.singleTrim*2.25*pm*pp;
+  if(s.railWoodPaintedOn)t+=s.railWoodPainted*3.50*pm*pp;
+  if(s.railWoodMetalOn)t+=s.railWoodMetal*4.50*pm*pp;
+  if(s.railMetalOn)t+=s.railMetal*3.00*pm*pp;
+  if(s.windowsOn){t+=s.windows*35*pm*pp;if(s.windowGridsOn){t+=s.windowGridDeco*10*pm*pp;t+=s.windowGridReal*20*pm*pp;}}
+  if(s.windowTrimOnlyOn)t+=s.windowTrimOnly*25*pm*pp;
+  if(s.stormRROn)t+=s.stormRR*20*pm*pp;
+  if(s.stormPaintOn)t+=s.stormPaint*35*pm*pp;
+  if(s.windowGlazeOn)t+=s.windowGlaze*15*pm*pp;
+  if(s.doorsOn)t+=s.doors*65*pm*pp;
+  if(s.doorFrameOn)t+=s.doorFrame*35*pm*pp;
+  if(s.sidelightOn)t+=s.sidelight*25*pm*pp;
+  if(s.crawlDoorOn)t+=s.crawlDoor*45*pm*pp;
+  if(s.woodShuttersOn)t+=s.woodShutters*40*(s.woodShuttersBoth?2:1)*pm*pp+(s.woodShuttersRR?s.woodShutters*20:0);
+  if(s.vinylShuttersOn)t+=s.vinylShutters*30*pm*pp+(s.vinylShuttersRR?s.vinylShutters*15:0);
+  if(s.shutterHardwareOn)t+=s.shutterHardware*15*pm*pp;
+  if(s.garageDoorOn)t+=s.garageDoor*120*pm*pp;
+  if(s.garageFrameOn)t+=s.garageFrame*55*pm*pp;
+  if(s.garageHardwareOn)t+=s.garageHardware*20*pm*pp;
+  if(s.ds1On)t+=s.ds1*15*pm*pp+(s.ds1RR?s.ds1*10:0);
+  if(s.ds2On)t+=s.ds2*30*pm*pp+(s.ds2RR?s.ds2*15:0);
+  if(s.porchColumnsOn)t+=s.porchColumns*55*pm*pp;
+  if(s.soffitBoxesOn)t+=s.soffitBoxes*30*pm*pp;
+  if(s.atticVentsOn)t+=s.atticVents*20*pm*pp;
+  if(s.lintelsOn)s.lintels.forEach(l=>t+=l.ea*35*pm*pp);
+  if(s.foundationOn)t+=s.foundation*1.40*pm*pp;
+  if(s.porchCeilingOn)t+=s.porchCeiling*1.50*pm*pp;
+  if(s.porchConcreteOn)t+=s.porchConcrete*1.25*pm*pp;
+  if(s.woodPorchFloorOn)t+=s.woodPorchFloor*1.75*pm*pp;
+  const autoSF=getAutoCalcSF(s);
+  if(s.caulkingOn){const sf=s.caulkingOverride!=null?s.caulkingOverride:autoSF;t+=sf*0.50*pm*pp;}
+  if(s.primerOn){const sf=s.primerOverride!=null?s.primerOverride:autoSF;t+=sf*0.75*pm*pp;}
+  if(!s.pwSkip){const pw=getPWCost(s,pm,pp);t+=pw;}
+  return t;
+}
+function getAutoCalcSF(s){
+  let sf=0;s.siding.forEach(e=>sf+=e.sf);
+  if(s.foundationOn)sf+=s.foundation;
+  s.eaves.forEach(e=>sf+=e.lf*3);
+  return sf;
+}
+function getPWCost(s,pm,pp){
+  let sf=0;s.siding.forEach(e=>sf+=e.sf);
+  if(s.foundationOn)sf+=s.foundation;
+  s.eaves.forEach(e=>sf+=e.lf*3);
+  return Math.max(sf*0.15,150);
+}
+function fmt(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}
+
+// ---- CALC HELPER ----
+function tryCalc(v){
+  if(!v||typeof v!=='string')return null;
+  if(/^[\d\s\.\+\-\*\/\(\)]+$/.test(v)&&/[\+\-\*\/]/.test(v)){
+    try{const r=Function('"use strict";return('+v+')')();if(isFinite(r))return Math.round(r*100)/100;}catch(e){}
   }
-  return s;
+  return null;
 }
 
-// Default sections for Johnson Residence
-const DEFAULT_SECTIONS = [
-  { id:1, name:'Front Elevation', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
-    surfaces: fullSurfaces({ siding:{on:true,qty:800,type:'Wood Lap'}, trimFascia:{on:true,qty:120}, windows:{on:true,qty:6,grids:false,gridCount:0}, woodShutters:{on:true,qty:2} }),
-    savedAt:'2:15 PM', price:0 },
-  { id:2, name:'Left Side', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
-    surfaces: fullSurfaces({ siding:{on:true,qty:400,type:'Wood Lap'}, trimFascia:{on:true,qty:60}, windows:{on:true,qty:3,grids:false,gridCount:0} }),
-    savedAt:'2:22 PM', price:0 },
-  { id:3, name:'Right Side', heightTier:'2', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
-    surfaces: fullSurfaces({ siding:{on:true,qty:600,type:'Wood Lap'}, trimFascia:{on:true,qty:80}, windows:{on:true,qty:4,grids:false,gridCount:0} }),
-    savedAt:'2:28 PM', price:0 },
-  { id:4, name:'Rear', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
-    surfaces: fullSurfaces({ siding:{on:true,qty:500,type:'Wood Lap'}, trimFascia:{on:true,qty:90}, windows:{on:true,qty:5,grids:false,gridCount:0}, doors:{on:true,qty:1} }),
-    savedAt:'2:35 PM', price:0 }
-];
-
-let sections = JSON.parse(JSON.stringify(DEFAULT_SECTIONS));
-let nextId = 5;
-let currentView = 'list'; // 'list' or 'form'
-let editingSection = null;
-let expandedSectionId = null;
-
-// ============ PRICING ENGINE ============
-function calcSectionPrice(sec) {
-  const s = sec.surfaces;
-  const hm = getHeightMult(sec);
-  const pm = PKG_MULT[sec.pkg] || 1;
-  const cm = CONDITION_MULT[sec.condition] || 1;
-  let total = 0;
-
-  ALL_SURFACE_KEYS.forEach(key => {
-    if (!s[key] || !s[key].on || !s[key].qty) return;
-    const p = PRICING[key];
-    if (!p) return;
-    let amt = s[key].qty * p.base;
-    // Window grids add-on
-    if (key === 'windows' && s[key].grids) {
-      amt += s[key].qty * (s[key].gridCount || 1) * PRICING.windowGrids.base;
-    }
-    // Fascia difficult location +25%
-    if (key === 'fasciaOnly' && s[key].difficult) {
-      amt *= 1.25;
-    }
-    total += amt;
+// ---- RENDER LIST VIEW ----
+function renderList(){
+  document.getElementById('listView').classList.remove('hidden');
+  document.getElementById('formView').classList.add('hidden');
+  document.getElementById('formView').innerHTML='';
+  // Total bar
+  let total=0,sidingSF=0,winCount=0,trimLF=0;
+  sections.forEach(s=>{
+    total+=calcSection(s);
+    s.siding.forEach(e=>sidingSF+=e.sf);
+    if(s.windowsOn)winCount+=s.windows;
+    if(s.singleTrimOn)trimLF+=s.singleTrim;
+    if(s.fasciaOn)s.fascia.forEach(f=>trimLF+=f.lf);
+    if(s.guttersOn)trimLF+=s.gutters;
   });
-
-  if (sec.pressureWash && s.siding && s.siding.on) total += s.siding.qty * PRICING.pressureWash.base;
-
-  total *= hm * pm * cm;
-  return Math.round(total);
-}
-
-function getHeightMult(sec) {
-  if (sec.heightTier === 'mix') {
-    const pct1 = sec.mixPct / 100;
-    const pct2 = 1 - pct1;
-    return pct1 * HEIGHT_MULT['1'] + pct2 * HEIGHT_MULT['2'];
-  }
-  return HEIGHT_MULT[sec.heightTier] || 1;
-}
-
-function getSurfacePrice(sec, key) {
-  const s = sec.surfaces[key];
-  if (!s || !s.on || !s.qty) return 0;
-  const p = PRICING[key];
-  if (!p) return 0;
-  let base = s.qty * p.base;
-  if (key === 'windows' && s.grids) base += s.qty * (s.gridCount || 1) * PRICING.windowGrids.base;
-  if (key === 'fasciaOnly' && s.difficult) base *= 1.25;
-  return Math.round(base * getHeightMult(sec) * (PKG_MULT[sec.pkg]||1) * (CONDITION_MULT[sec.condition]||1));
-}
-
-// ============ INLINE CALCULATOR ============
-function evalCalc(str) {
-  if (!str || typeof str !== 'string') return 0;
-  str = str.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/[^0-9+\-*/. ]/g,'');
-  if (!str.trim()) return 0;
-  try { const v = Function('"use strict"; return (' + str + ')')(); return isNaN(v) ? 0 : Math.round(v * 100)/100; } catch(e) { return 0; }
-}
-
-function isCalcExpression(str) {
-  return /[+\-*/×÷−]/.test(str);
-}
-
-// ============ TOTALS ============
-function getTotals() {
-  let totalPrice = 0, totalSiding = 0, totalWindows = 0, totalTrimLF = 0;
-  sections.forEach(sec => {
-    sec.price = calcSectionPrice(sec);
-    totalPrice += sec.price;
-    const s = sec.surfaces;
-    if (s.siding && s.siding.on) totalSiding += s.siding.qty;
-    // Count all window types
-    ['windows','windowTrimOnly','stormWindowRR','stormWindowPaint','windowGlazing'].forEach(k => {
-      if (s[k] && s[k].on) totalWindows += s[k].qty;
-    });
-    // Count all LF trim: trimFascia, fasciaOnly, gutters, singleTrim, soffit (LF!), woodRailing, woodRailingMetal, metalRailing
-    ['trimFascia','fasciaOnly','gutters','singleTrim','soffit','woodRailing','woodRailingMetal','metalRailing'].forEach(k => {
-      if (s[k] && s[k].on) totalTrimLF += s[k].qty;
-    });
-  });
-  return { totalPrice, totalSiding, totalWindows, totalTrimLF, count: sections.length };
-}
-
-// ============ RENDER ============
-function render() {
-  const app = document.getElementById('app');
-  if (currentView === 'list') renderList(app);
-  else renderForm(app);
-}
-
-function fmt$(n) { return '$' + n.toLocaleString(); }
-
-function renderList(app) {
-  const t = getTotals();
-  app.innerHTML = `
-    <div class="topbar"><span class="back">← Estimate</span><span class="title">Exterior Painting — Johnson Residence</span></div>
-    <div class="running-total">
-      <div class="rt-top"><span class="rt-price">${fmt$(t.totalPrice)}</span><span class="rt-count">${t.count} section${t.count!==1?'s':''} saved</span></div>
-      <div class="rt-details">Siding: ${t.totalSiding.toLocaleString()} SF · Windows: ${t.totalWindows} · Trim: ${t.totalTrimLF.toLocaleString()} LF</div>
-    </div>
-    <div class="content">
-      <div class="card" style="padding:0">
-        ${sections.map(s => {
-          const bc = s.heightTier==='1'?'badge-1':s.heightTier==='2'?'badge-2':s.heightTier==='3'?'badge-3':'badge-mix';
-          const ht = s.heightTier==='1'?'1-Story':s.heightTier==='2'?'2-Story':s.heightTier==='3'?'3-Story+':'Mixed';
-          const expanded = expandedSectionId === s.id;
-          return `
-          <div>
-            <div class="section-item" onclick="toggleExpand(${s.id})">
-              <span class="si-check">✅</span>
-              <div class="si-info">
-                <div class="si-name">${esc(s.name)}</div>
-                <div class="si-meta"><span class="badge ${bc}">${ht}</span> · saved ${s.savedAt}</div>
-              </div>
-              <div>
-                <div class="si-price">${fmt$(s.price)}</div>
-                <div style="text-align:right;margin-top:4px"><button onclick="event.stopPropagation();editSection(${s.id})" style="font-size:12px;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600">Edit</button></div>
-              </div>
-            </div>
-            <div class="section-detail ${expanded?'open':''}">
-              ${renderSectionSummary(s)}
-            </div>
-          </div>`;
-        }).join('')}
+  document.getElementById('totalBar').innerHTML=`
+    <span class="price">${fmt(total)}</span>
+    <span class="meta">${sections.length} section${sections.length!==1?'s':''}</span>
+    <span class="meta">Siding: ${sidingSF.toLocaleString()} SF · Windows: ${winCount} · Trim: ${trimLF} LF</span>`;
+  // Section items
+  let html='';
+  sections.forEach((s,i)=>{
+    const p=calcSection(s);
+    const sumId='sum_'+i;
+    html+=`<div>
+      <div class="section-item" onclick="toggleSummary('${sumId}')">
+        <span class="check">✅</span>
+        <div class="info"><div class="name">${s.name||'Untitled'}</div><div class="sub">Saved ${s.savedTime||'—'}</div></div>
+        <span class="price">${fmt(p)}</span>
+        <button class="edit-btn" onclick="event.stopPropagation();editSection(${i})">Edit</button>
       </div>
-      <div class="add-section-btn"><button class="btn btn-gold btn-full" onclick="addSection()">+ Add Section</button></div>
+      <div class="section-summary" id="${sumId}">${sectionSummaryText(s)}</div>
     </div>`;
-}
-
-function renderSectionSummary(sec) {
-  const lines = [];
-  const s = sec.surfaces;
-  ALL_SURFACE_KEYS.forEach(key => {
-    if (!s[key] || !s[key].on || !s[key].qty) return;
-    const meta = SURFACE_META[key];
-    const p = PRICING[key];
-    if (!meta || !p) return;
-    let label = meta.name;
-    if (key === 'siding') label = 'Siding (' + (s.siding.type||'Wood Lap') + ')';
-    if (key === 'windows' && s.windows.grids) label += ' (w/ grids)';
-    if (s[key].stain) label += ' 🪵';
-    lines.push([label, s[key].qty + ' ' + p.unit, fmt$(getSurfacePrice(sec, key))]);
   });
-  if (sec.pressureWash && s.siding && s.siding.on) {
-    lines.push(['Pressure Wash', s.siding.qty+' SF', fmt$(Math.round(s.siding.qty*PRICING.pressureWash.base*getHeightMult(sec)))]);
-  }
-  return lines.map(l => `<div class="sd-line"><span>${l[0]} · ${l[1]}</span><span>${l[2]}</span></div>`).join('');
+  document.getElementById('sectionList').innerHTML=`<div class="card-title">Sections</div>`+html;
+  // Name chips
+  const used=new Set(sections.map(s=>s.name));
+  document.getElementById('nameChips').innerHTML=SECTION_NAMES.filter(n=>!used.has(n)).map(n=>`<span class="chip chip-sm" onclick="quickAdd('${n}')">${n}</span>`).join('');
+}
+function sectionSummaryText(s){
+  const parts=[];
+  s.siding.forEach(e=>{if(e.sf)parts.push(`${e.type}: ${e.sf.toLocaleString()} SF (${e.height})${e.stain?' 🪵':''}`)});
+  s.eaves.forEach(e=>{if(e.lf)parts.push(`${e.label}: ${e.lf} LF`)});
+  if(s.fasciaOn&&s.fascia.length)parts.push(`Fascia: ${s.fascia.map(f=>f.lf+(f.difficult?' ⚠️':'')).join(' + ')} LF`);
+  if(s.guttersOn&&s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
+  if(s.singleTrimOn&&s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
+  if(s.windowsOn&&s.windows)parts.push(`Windows: ${s.windows}`);
+  if(s.doorsOn&&s.doors)parts.push(`Doors: ${s.doors}`);
+  return parts.join('<br>')||'No surfaces';
+}
+function toggleSummary(id){document.getElementById(id).classList.toggle('open')}
+function quickAdd(name){const s=mkSection(name);s.savedTime=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});sections.push(s);editingIdx=sections.length-1;renderForm();}
+function addSection(){const s=mkSection();sections.push(s);editingIdx=sections.length-1;renderForm();}
+function editSection(i){editingIdx=i;renderForm();}
+
+// ---- RENDER FORM ----
+function renderForm(){
+  document.getElementById('listView').classList.add('hidden');
+  const fv=document.getElementById('formView');
+  fv.classList.remove('hidden');
+  const s=sections[editingIdx];
+  const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
+
+  let h=`<div class="topbar"><a href="#" class="back" onclick="event.preventDefault();saveAndBack()">← Back</a><div class="title">${s.name||'New Section'}</div></div>`;
+
+  // 1. Section Name
+  h+=`<div class="card fade-in"><div class="card-title">Section Name</div>
+    <input type="text" id="secName" value="${esc(s.name)}" placeholder="e.g. Front Elevation" oninput="s().name=this.value;updForm()">
+    <div class="chips" style="margin-top:8px">${SECTION_NAMES.map(n=>`<span class="chip chip-sm" onclick="document.getElementById('secName').value='${n}';s().name='${n}';updForm()">${n}</span>`).join('')}</div></div>`;
+
+  // 2. Siding
+  h+=`<div class="card fade-in"><div class="card-title">🏠 Siding</div><div id="sidingEntries">`;
+  s.siding.forEach((e,i)=>{h+=sidingEntryHTML(e,i,s.siding.length,s);});
+  h+=`</div><button class="btn-add" onclick="s().siding.push(mkSiding());renderForm()">+ Add Siding Type</button></div>`;
+
+  // 3. Eaves
+  h+=`<div class="card fade-in"><div class="card-title">Eaves</div><div id="eavesEntries">`;
+  s.eaves.forEach((e,i)=>{h+=eavesEntryHTML(e,i,s);});
+  h+=`</div><button class="btn-add" onclick="s().eaves.push(mkEaves('3rd Story+ Eaves',0,'3-Story+',false));renderForm()">+ Add Eaves</button></div>`;
+
+  // 4. Surface Groups
+  h+=surfaceGroupsHTML(s);
+
+  // 5. Auto-calc
+  h+=autoCalcHTML(s);
+
+  // 6. Package
+  h+=`<div class="card fade-in"><div class="card-title">📦 Package</div><div class="pkg-chips">
+    ${['Value','Standard','Premium+'].map(p=>`<span class="chip${s.pkg===p?' active':''}" onclick="s().pkg='${p}';renderForm()">${p}<br><small>${PKG_MULTS[p]}×</small></span>`).join('')}</div></div>`;
+
+  // 7. Prep
+  h+=`<div class="card fade-in"><div class="card-title">🔧 Prep Level</div><div class="prep-chips">
+    ${['Standard','Heavy','Restoration'].map(p=>`<span class="chip${s.prep===p?' active':''}" onclick="s().prep='${p}';renderForm()">${p}<br><small>${PREP_MULTS[p]}×</small></span>`).join('')}</div>
+    <div class="impact-text">${s.prep==='Standard'?'Normal prep — scrape, sand, spot-prime.':s.prep==='Heavy'?'Heavy prep adds 35% — extensive scraping, priming.':'Full restoration +150% — strip to bare, heavy repair.'}</div></div>`;
+
+  // 8. Notes
+  h+=`<div class="card fade-in"><div class="card-title">📝 Section Notes</div><textarea id="secNotes" oninput="s().notes=this.value">${esc(s.notes)}</textarea></div>`;
+
+  // 9. Sticky bar
+  h+=`<div class="sticky-bottom"><div class="info"><div class="sec-name">${s.name||'New Section'}</div><div class="sec-price">${fmt(calcSection(s))}</div></div><button class="save-btn" onclick="saveAndBack()">Save Section</button></div>`;
+
+  fv.innerHTML=h;
+  bindCalcInputs();
 }
 
-function esc(s) { return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// ============ FORM RENDER ============
-function blankSection() {
-  return { id: nextId++, name:'', heightTier:'1', mixPct:60, pkg:'standard', condition:'good', pressureWash:true, prevCoating:'Latex', woodRot:false, stainAll:false, notes:'',
-    surfaces: blankSurfaces(), savedAt:'', price:0 };
+function sidingEntryHTML(e,i,len,s){
+  const price=calcSidingEntry(e,s.pkg,s.prep);
+  return `<div class="entry-card">
+    ${len>1?`<button class="del-btn" onclick="s().siding.splice(${i},1);renderForm()">✕</button>`:''}
+    <div class="field-row"><div class="field" style="flex:1.2">
+      <label>Type</label><select onchange="s().siding[${i}].type=this.value;renderForm()">
+        ${SIDING_TYPES.map(t=>`<option${e.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="field"><label>SF</label><input type="text" class="calc-input" data-target="siding-${i}-sf" value="${e.sf||''}" oninput="sidingSFInput(${i},this)"></div></div>
+    <div class="calc-hint" id="hint-siding-${i}-sf"></div>
+    <div class="field" style="margin-top:8px"><label>Height</label><div class="height-btns">
+      ${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().siding[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div></div>
+    <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
+      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().siding[${i}].stain=this.checked;renderForm()"> Stain ${e.stain?'<span class="badge badge-stain">🪵 Stain</span>':''}</label>
+      ${e.type==='Brick'?`<label class="check-opt"><input type="checkbox" ${e.romaBio?'checked':''} onchange="s().siding[${i}].romaBio=this.checked;renderForm()"> Roma Bio ${e.romaBio?'<span class="badge badge-roma">Roma</span>':''}</label>`:''}
+    </div>
+    <div class="entry-price">${fmt(price)}</div></div>`;
+}
+function sidingSFInput(i,el){
+  const v=el.value;const c=tryCalc(v);
+  const hint=document.getElementById('hint-siding-'+i+'-sf');
+  if(c!==null){hint.textContent='= '+c;s().siding[i].sf=c;}
+  else{hint.textContent='';s().siding[i].sf=parseFloat(v)||0;}
+  updFormPrices();
 }
 
-function addSection() { editingSection = blankSection(); currentView = 'form'; render(); }
-function editSection(id) { editingSection = JSON.parse(JSON.stringify(sections.find(s=>s.id===id))); currentView = 'form'; render(); }
-function toggleExpand(id) { expandedSectionId = expandedSectionId===id ? null : id; render(); }
-
-let collapsedGroups = {};
-// Init collapsed state from SURFACE_GROUPS defaults
-SURFACE_GROUPS.forEach(g => { collapsedGroups[g.key] = g.collapsed; });
-
-function renderForm(app) {
-  const sec = editingSection;
-  sec.price = calcSectionPrice(sec);
-  const t = getTotals();
-  const s = sec.surfaces;
-
-  // Warnings
-  let warnings = '';
-  const hasSurfaces = ALL_SURFACE_KEYS.some(k => k!=='siding' && s[k] && s[k].on);
-  if (!s.siding.on && hasSurfaces) warnings += `<div class="warning-box warning-gold">⚠️ Exterior Masking & Protection will auto-apply (~$0.45/SF of siding area)</div>`;
-  if (s.siding.on && s.siding.qty > 0 && !sec.pressureWash) warnings += `<div class="warning-box warning-gold">⚠️ Pressure wash is OFF but coated siding is present</div>`;
-  if (sec.prevCoating === 'Oil') warnings += `<div class="warning-box warning-red">⚠️ Latex over oil = extra prep required</div>`;
-  if (sec.woodRot) warnings += `<div class="warning-box warning-red">⚠️ Wood rot detected — carpentry quote needed</div>`;
-
-  const tierImpact = sec.heightTier==='2' ? '<span style="color:var(--orange)">Height adjustment: <strong>+35% labor</strong></span>'
-    : sec.heightTier==='3' ? '<span style="color:var(--red)">Height adjustment: <strong>+50% labor</strong></span>'
-    : sec.heightTier==='mix' ? '<span style="color:var(--purple)">Height adjustment: <strong>+' + Math.round((getHeightMult(sec)-1)*100) + '% labor</strong> (blended)</span>'
-    : '<span style="color:var(--green)">Baseline height — no adjustment</span>';
-
-  // Build surface group HTML
-  let surfGroupsHTML = '';
-  SURFACE_GROUPS.forEach(g => {
-    const keys = ALL_SURFACE_KEYS.filter(k => SURFACE_META[k].group === g.key);
-    const cards = keys.map(k => surfCard(sec, k)).join('');
-    surfGroupsHTML += renderSurfGroup(g.title, cards, g.key);
-  });
-
-  app.innerHTML = `
-    <div class="topbar"><span class="back" onclick="cancelForm()">← Back</span><span class="title">${sec.name||'New Section'}</span></div>
-    <div class="running-total">
-      <div class="rt-top"><span class="rt-price">${fmt$(t.totalPrice + (sections.find(x=>x.id===sec.id) ? 0 : sec.price))}</span><span class="rt-count">${t.count} section${t.count!==1?'s':''}</span></div>
-      <div class="rt-details">Editing: ${sec.name||'New Section'}</div>
+function eavesEntryHTML(e,i,sec){
+  const price=calcEavesEntry(e,sec.pkg,sec.prep);
+  return `<div class="entry-card">
+    ${!e.locked?`<button class="del-btn" onclick="s().eaves.splice(${i},1);renderForm()">✕</button>`:''}
+    <div class="field-row"><div class="field" style="flex:1.3"><label>${e.label}</label></div>
+    <div class="field"><label>LF</label><input type="text" class="calc-input" value="${e.lf||''}" oninput="eavesLFInput(${i},this)"></div></div>
+    <div class="calc-hint" id="hint-eaves-${i}"></div>
+    <div style="display:flex;gap:12px;margin-top:6px;align-items:center">
+      <span style="font-size:11px;color:var(--text-light)">${e.height}${e.locked?' 🔒':''}</span>
+      <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().eaves[${i}].stain=this.checked;renderForm()"> Stain</label>
     </div>
-    <div class="content form-content">
-
-      <!-- Section Name -->
-      <div class="card"><div class="card-body" style="padding-top:14px">
-        <div class="form-group">
-          <label class="form-label">Section Name</label>
-          <input type="text" id="secName" value="${esc(sec.name)}" placeholder="e.g. Front Elevation" oninput="sec().name=this.value;updTitle()">
-          <div class="suggestions">${SECTION_SUGGESTIONS.map(s=>`<span class="sug-chip" onclick="pickName('${s}')">${s}</span>`).join('')}</div>
-        </div>
-      </div></div>
-
-      <!-- Height Tier -->
-      <div class="card"><div class="card-body" style="padding-top:14px">
-        <label class="form-label">Height Tier</label>
-        <div class="tier-grid">
-          <div class="tier-btn ${sec.heightTier==='1'?'sel-1':''}" onclick="setTier('1')"><div class="tier-label">1-Story</div><div class="tier-mult">1.0×</div></div>
-          <div class="tier-btn ${sec.heightTier==='2'?'sel-2':''}" onclick="setTier('2')"><div class="tier-label">2-Story</div><div class="tier-mult">1.35×</div></div>
-          <div class="tier-btn ${sec.heightTier==='3'?'sel-3':''}" onclick="setTier('3')"><div class="tier-label">3-Story+</div><div class="tier-mult">1.50×</div></div>
-          <div class="tier-btn ${sec.heightTier==='mix'?'sel-mix':''}" onclick="setTier('mix')"><div class="tier-label">Mixed</div><div class="tier-mult">Blend</div></div>
-        </div>
-        <div class="tier-impact">${tierImpact}</div>
-        <div class="mix-slider-wrap ${sec.heightTier==='mix'?'show':''}">
-          <label style="font-size:13px">1-Story / 2-Story split</label>
-          <input type="range" min="0" max="100" value="${sec.mixPct}" oninput="sec().mixPct=+this.value;render()">
-          <div class="mix-label"><span>${sec.mixPct}% 1-Story</span><span>${100-sec.mixPct}% 2-Story</span></div>
-        </div>
-      </div></div>
-
-      <!-- Surfaces -->
-      ${surfGroupsHTML}
-
-      <!-- Conditional Options -->
-      <div class="card"><div class="card-body" style="padding-top:14px">
-        <label class="form-label">Options</label>
-        <div class="opt-row">
-          <div><div class="opt-label">Pressure Wash</div><div class="opt-sub">${s.siding.on ? s.siding.qty+' SF' : 'N/A'}</div></div>
-          <div class="surf-toggle ${sec.pressureWash?'on':''}" onclick="sec().pressureWash=!sec().pressureWash;render()"></div>
-        </div>
-        <div class="opt-row">
-          <div class="opt-label">Previous Coating</div>
-          <select style="width:auto;max-width:140px" onchange="sec().prevCoating=this.value;render()">${COATING_TYPES.map(c=>`<option ${sec.prevCoating===c?'selected':''}>${c}</option>`).join('')}</select>
-        </div>
-        <div class="opt-row">
-          <div class="opt-label">Siding Condition</div>
-          <select style="width:auto;max-width:140px" onchange="sec().condition=this.value;render()">
-            <option value="good" ${sec.condition==='good'?'selected':''}>Good</option>
-            <option value="moderate" ${sec.condition==='moderate'?'selected':''}>Moderate</option>
-            <option value="heavy" ${sec.condition==='heavy'?'selected':''}>Heavy Prep</option>
-          </select>
-        </div>
-        <div class="opt-row">
-          <div><div class="opt-label">Wood Rot</div></div>
-          <div class="surf-toggle ${sec.woodRot?'on':''}" onclick="sec().woodRot=!sec().woodRot;render()"></div>
-        </div>
-        <div class="opt-row">
-          <div><div class="opt-label">🪵 Stain All (vs Paint)</div><div class="opt-sub">Applies to siding, eaves, columns, lintels</div></div>
-          <div class="surf-toggle ${sec.stainAll?'on':''}" onclick="toggleStainAll()"></div>
-        </div>
-        ${warnings}
-      </div></div>
-
-      <!-- Package -->
-      <div class="card"><div class="card-body" style="padding-top:14px">
-        <label class="form-label">Package</label>
-        <div class="pkg-grid">
-          <div class="pkg-chip ${sec.pkg==='value'?'active':''}" onclick="sec().pkg='value';render()"><div class="pkg-name">Value</div><div class="pkg-mult">0.85×</div></div>
-          <div class="pkg-chip ${sec.pkg==='standard'?'active':''}" onclick="sec().pkg='standard';render()"><div class="pkg-name">Standard</div><div class="pkg-mult">1.0×</div></div>
-          <div class="pkg-chip ${sec.pkg==='premium'?'active':''}" onclick="sec().pkg='premium';render()"><div class="pkg-name">Premium+</div><div class="pkg-mult">1.2×</div></div>
-        </div>
-      </div></div>
-
-      <!-- Notes -->
-      <div class="card"><div class="card-body" style="padding-top:14px">
-        <label class="form-label">Section Notes</label>
-        <textarea placeholder="Any notes about this section..." oninput="sec().notes=this.value">${esc(sec.notes)}</textarea>
-      </div></div>
-
-    </div>
-
-    <!-- Sticky Bottom -->
-    <div class="sticky-bottom" style="display:flex">
-      <div class="sb-info">
-        <div class="sb-name">${sec.name||'New Section'}</div>
-        <div class="sb-price">${fmt$(sec.price)}</div>
-      </div>
-      <button class="btn btn-navy" onclick="saveSection()">Save Section</button>
-    </div>
-  `;
+    <div class="entry-price">${fmt(price)}</div></div>`;
+}
+function eavesLFInput(i,el){
+  const v=el.value;const c=tryCalc(v);
+  const hint=document.getElementById('hint-eaves-'+i);
+  if(c!==null){hint.textContent='= '+c;s().eaves[i].lf=c;}
+  else{hint.textContent='';s().eaves[i].lf=parseFloat(v)||0;}
+  updFormPrices();
 }
 
-function renderSurfGroup(title, cardsHtml, key) {
-  const collapsed = collapsedGroups[key];
-  return `<div class="card"><div class="card-body" style="padding-top:0">
-    <div class="surf-group">
-      <div class="surf-group-header" onclick="toggleGroup('${key}')">
-        <span class="sgh-title">${title}</span>
-        <span class="sgh-arrow ${collapsed?'collapsed':''}">▼</span>
-      </div>
-      <div class="surf-group-body ${collapsed?'collapsed':''}" style="max-height:5000px">
-        ${cardsHtml}
-      </div>
-    </div>
-  </div></div>`;
+// ---- SURFACE GROUPS ----
+function surfaceGroupsHTML(sec){
+  const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
+  let h='<div class="card fade-in"><div class="card-title">📋 Surfaces</div>';
+  h+=groupHTML('Trim & Detail',true,[
+    fasciaHTML(sec),
+    toggleSurface(sec,'guttersOn','gutters','Gutters','$2.00/LF','LF',sec.gutters),
+    toggleSurface(sec,'singleTrimOn','singleTrim','Single Trim','$2.25/LF','LF',sec.singleTrim),
+  ]);
+  h+=groupHTML('Railings',false,[
+    toggleSurface(sec,'railWoodPaintedOn','railWoodPainted','Wood Railing (Painted)','$3.50/LF','LF',sec.railWoodPainted),
+    toggleSurface(sec,'railWoodMetalOn','railWoodMetal','Wood Railing (Metal Spindles)','$4.50/LF','LF',sec.railWoodMetal),
+    toggleSurface(sec,'railMetalOn','railMetal','Metal Railing','$3.00/LF','LF',sec.railMetal),
+  ]);
+  h+=groupHTML('Windows',true,[
+    windowsHTML(sec),
+    toggleSurface(sec,'windowTrimOnlyOn','windowTrimOnly','Window Trim Only','$25/EA','EA',sec.windowTrimOnly),
+    toggleSurface(sec,'stormRROn','stormRR','Storm Window R&R','$20/EA','EA',sec.stormRR),
+    toggleSurface(sec,'stormPaintOn','stormPaint','Storm Window Painting','$35/EA','EA',sec.stormPaint),
+    toggleSurface(sec,'windowGlazeOn','windowGlaze','Window Glazing Repair','$15/EA','EA',sec.windowGlaze),
+  ]);
+  h+=groupHTML('Doors',true,[
+    toggleSurface(sec,'doorsOn','doors','Doors & Frames','$65/EA','EA',sec.doors),
+    doorFrameHTML(sec),
+    toggleSurface(sec,'sidelightOn','sidelight','Front Door Sidelight','$25/EA','EA',sec.sidelight),
+    toggleSurface(sec,'crawlDoorOn','crawlDoor','Crawlspace Door','$45/EA','EA',sec.crawlDoor),
+  ]);
+  h+=groupHTML('Shutters & Garage',false,[
+    woodShuttersHTML(sec),
+    vinylShuttersHTML(sec),
+    toggleSurface(sec,'shutterHardwareOn','shutterHardware','Shutter Hardware & Accents','$15/EA','EA',sec.shutterHardware),
+    toggleSurface(sec,'garageDoorOn','garageDoor','Garage Door & Frame','$120/EA','EA',sec.garageDoor),
+    toggleSurface(sec,'garageFrameOn','garageFrame','Garage Door Frame Only','$55/EA','EA',sec.garageFrame),
+    toggleSurface(sec,'garageHardwareOn','garageHardware','Garage Door Hardware','$20/EA','EA',sec.garageHardware),
+  ]);
+  h+=groupHTML('Accessories',false,[
+    ds1HTML(sec),ds2HTML(sec),
+    porchColHTML(sec),
+    toggleSurface(sec,'soffitBoxesOn','soffitBoxes','Open Soffit Boxes','$30/EA','EA',sec.soffitBoxes),
+    toggleSurface(sec,'atticVentsOn','atticVents','Attic Vents','$20/EA','EA',sec.atticVents),
+    lintelsHTML(sec),
+  ]);
+  h+=groupHTML('Full-House (Rare)',false,[
+    foundationHTML(sec),
+    toggleSurface(sec,'porchCeilingOn','porchCeiling','Porch Ceiling','$1.50/SF','SF',sec.porchCeiling),
+    toggleSurface(sec,'porchConcreteOn','porchConcrete','Porch Concrete','$1.25/SF','SF',sec.porchConcrete),
+    toggleSurface(sec,'woodPorchFloorOn','woodPorchFloor','Wood Porch Floor','$1.75/SF','SF',sec.woodPorchFloor),
+    caulkHTML(sec),primerHTML(sec),
+  ]);
+  h+='</div>';
+  return h;
 }
 
-function surfCard(sec, key) {
-  const meta = SURFACE_META[key];
-  const p = PRICING[key];
-  const s = sec.surfaces[key];
-  if (!meta || !p || !s) return '';
-  const on = s.on;
-  const price = getSurfacePrice(sec, key);
-  const unit = p.unit;
-  const qtyId = 'qty_'+key;
-
-  let fields = '';
-  // Dropdown (e.g. siding type)
-  if (meta.dropdown) {
-    fields += `<div class="sf-row"><select onchange="sec().surfaces.${key}.${meta.dropdown}=this.value;render()">${meta.options.map(o=>`<option ${s[meta.dropdown]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
-  }
-  // Qty input
-  fields += `<div class="sf-row"><input type="text" id="${qtyId}" value="${s.qty||''}" placeholder="0" inputmode="numeric" oninput="handleQty('${key}',this)"><span style="font-size:13px;color:var(--text-light);white-space:nowrap">${unit}</span></div>`;
-  // Window grids
-  if (meta.grids && on) {
-    fields += `<div class="grid-popup"><label><input type="checkbox" ${s.grids?'checked':''} onchange="sec().surfaces.windows.grids=this.checked;render()"> Grids?</label>`;
-    if (s.grids) fields += ` <input type="number" value="${s.gridCount||0}" min="0" style="width:60px;display:inline" placeholder="count" oninput="sec().surfaces.windows.gridCount=+this.value;render()"> per window`;
-    fields += `</div>`;
-  }
-  // Difficult location toggle (fascia)
-  if (meta.hasDifficult && on) {
-    fields += `<div class="diff-toggle"><label><input type="checkbox" ${s.difficult?'checked':''} onchange="sec().surfaces.${key}.difficult=this.checked;render()"> Difficult Location (+25%)</label></div>`;
-  }
-  // Stain toggle per surface
-  if (meta.stainable && on) {
-    fields += `<div class="stain-toggle"><label><input type="checkbox" ${s.stain?'checked':''} onchange="sec().surfaces.${key}.stain=this.checked;render()"> 🪵 Stain</label></div>`;
-  }
-  if (meta.warning) fields += `<div class="surf-warning">${meta.warning}</div>`;
-  if (meta.note) fields += `<div class="surf-note">${meta.note}</div>`;
-
-  return `<div class="surf-card ${on?'active':''}">
-    <div class="surf-toggle ${on?'on':''}" onclick="toggleSurf('${key}')"></div>
-    <div class="surf-info">
-      <div class="surf-name">${meta.name}</div>
-      <div class="surf-unit">${unit}</div>
-      <div class="surf-fields">${fields}</div>
-    </div>
-    <div class="surf-price">${on && s.qty > 0 ? fmt$(price) : ''}</div>
-  </div>`;
+let _groupId=0;
+function groupHTML(title,defaultOpen,items){
+  const gid='grp_'+(++_groupId);
+  return `<div><div class="group-header" onclick="document.getElementById('${gid}').classList.toggle('open');this.querySelector('.arrow').classList.toggle('open')">
+    <h3>${title}</h3><span class="arrow${defaultOpen?' open':''}">▼</span></div>
+    <div class="group-body${defaultOpen?' open':''}" id="${gid}">${items.join('')}</div></div>`;
 }
 
-// ============ ACTIONS ============
-function sec() { return editingSection; }
+function toggleSurface(sec,onKey,qtyKey,label,rateLabel,unit,val){
+  const on=sec[onKey];
+  return `<div class="toggle-row"><div><span class="lbl">${label}</span><br><span class="rate">${rateLabel}</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s()['${onKey}']=this.checked;renderForm()"><span class="slider"></span></label></div></div>
+    <div class="surface-fields${on?' open':''}"><div class="field-row"><div class="field">
+      <input type="text" class="calc-input" placeholder="${unit}" value="${val||''}" oninput="genericInput('${qtyKey}',this)">
+      <div class="calc-hint" id="hint-${qtyKey}"></div></div></div></div>`;
+}
 
-function pickName(n) { editingSection.name = n; document.getElementById('secName').value = n; updTitle(); }
-function updTitle() { document.querySelector('.topbar .title').textContent = editingSection.name || 'New Section'; const sb = document.querySelector('.sb-name'); if(sb) sb.textContent = editingSection.name || 'New Section'; }
+function genericInput(key,el){
+  const v=el.value;const c=tryCalc(v);
+  const hint=document.getElementById('hint-'+key);
+  if(c!==null){hint.textContent='= '+c;s()[key]=c;}
+  else{hint.textContent='';s()[key]=parseFloat(v)||0;}
+  updFormPrices();
+}
 
-function setTier(t) { editingSection.heightTier = t; render(); }
-function toggleGroup(k) { collapsedGroups[k] = !collapsedGroups[k]; render(); }
-function toggleSurf(k) { editingSection.surfaces[k].on = !editingSection.surfaces[k].on; render(); }
+function fasciaHTML(sec){
+  const on=sec.fasciaOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Fascia Only</span><br><span class="rate">$2.75/LF</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().fasciaOn=this.checked;if(this.checked&&!s().fascia.length)s().fascia.push(mkFascia());renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+='<div class="surface-fields open">';
+    sec.fascia.forEach((f,i)=>{
+      h+=`<div class="entry-card" style="margin-bottom:6px"><div class="field-row">
+        <div class="field"><input type="text" placeholder="LF" value="${f.lf||''}" oninput="const c=tryCalc(this.value);s().fascia[${i}].lf=c!==null?c:(parseFloat(this.value)||0);updFormPrices()"></div>
+        ${sec.fascia.length>1?`<button style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer" onclick="s().fascia.splice(${i},1);renderForm()">✕</button>`:''}
+      </div><label class="check-opt"><input type="checkbox" ${f.difficult?'checked':''} onchange="s().fascia[${i}].difficult=this.checked;updFormPrices()"> Difficult Location (+50%)</label></div>`;
+    });
+    h+=`<button class="btn-add" onclick="s().fascia.push(mkFascia());renderForm()">+ Add Fascia</button></div>`;
+  }
+  return h;
+}
 
-function toggleStainAll() {
-  editingSection.stainAll = !editingSection.stainAll;
-  // Apply to all stainable surfaces
-  ALL_SURFACE_KEYS.forEach(k => {
-    if (SURFACE_META[k].stainable && editingSection.surfaces[k]) {
-      editingSection.surfaces[k].stain = editingSection.stainAll;
+function windowsHTML(sec){
+  const on=sec.windowsOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Windows (base)</span><br><span class="rate">$35/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().windowsOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="text" class="calc-input" placeholder="EA" value="${sec.windows||''}" oninput="genericInput('windows',this)"><div class="calc-hint" id="hint-windows"></div></div>`;
+    if(sec.windows>0){
+      if(!sec.windowGridsOn){
+        h+=`<button class="btn-add" onclick="s().windowGridsOn=true;renderForm()">+ Add Grid Type</button>`;
+      } else {
+        h+=`<div class="entry-card" style="margin-top:8px"><div style="font-size:12px;font-weight:600;margin-bottom:6px">Window Grids <button style="float:right;background:none;border:none;color:var(--red);cursor:pointer;font-size:12px" onclick="s().windowGridsOn=false;s().windowGridDeco=0;s().windowGridReal=0;renderForm()">Remove</button></div>
+          <div class="field-row"><div class="field"><label>Decorative (+$10)</label><input type="number" min="0" max="${sec.windows}" value="${sec.windowGridDeco||''}" placeholder="0" oninput="s().windowGridDeco=Math.min(parseInt(this.value)||0,s().windows);updFormPrices()"></div>
+          <div class="field"><label>Real Panes (+$20)</label><input type="number" min="0" max="${sec.windows}" value="${sec.windowGridReal||''}" placeholder="0" oninput="s().windowGridReal=Math.min(parseInt(this.value)||0,s().windows);updFormPrices()"></div></div>
+          <div style="font-size:10px;color:var(--text-light);margin-top:4px">Total grid windows ≤ ${sec.windows}</div></div>`;
+      }
     }
-  });
-  render();
-}
-
-function handleQty(key, el) {
-  const raw = el.value;
-  const val = evalCalc(raw);
-  editingSection.surfaces[key].qty = val;
-  // Show calc result if expression
-  let existing = el.parentElement.querySelector('.calc-result');
-  if (isCalcExpression(raw)) {
-    if (!existing) { existing = document.createElement('div'); existing.className='calc-result'; el.parentElement.appendChild(existing); }
-    existing.textContent = '= ' + val;
-  } else if (existing) { existing.remove(); }
-  // Update price display
-  const card = el.closest('.surf-card');
-  if (card) {
-    const priceEl = card.querySelector('.surf-price');
-    const p = getSurfacePrice(editingSection, key);
-    priceEl.textContent = editingSection.surfaces[key].on && val > 0 ? fmt$(p) : '';
+    h+='</div>';
   }
-  // Update sticky bottom
-  editingSection.price = calcSectionPrice(editingSection);
-  const sb = document.querySelector('.sb-price');
-  if (sb) sb.textContent = fmt$(editingSection.price);
+  return h;
 }
 
-function saveSection() {
-  const sec = editingSection;
-  if (!sec.name) { sec.name = 'Section ' + (sections.length + 1); }
-  const now = new Date();
-  sec.savedAt = now.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
-  sec.price = calcSectionPrice(sec);
-  const idx = sections.findIndex(s => s.id === sec.id);
-  if (idx >= 0) sections[idx] = sec;
-  else sections.push(sec);
-  editingSection = null;
-  currentView = 'list';
-  render();
+function doorFrameHTML(sec){
+  const on=sec.doorFrameOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Door Frame Only</span><br><span class="rate">$35/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().doorFrameOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.doorFrame||''}" oninput="s().doorFrame=parseInt(this.value)||0;updFormPrices()"></div>
+      <div class="field" style="margin-top:6px"><input type="text" placeholder="Notes (location)" value="${esc(sec.doorFrameNotes)}" oninput="s().doorFrameNotes=this.value"></div></div>`;
+  }
+  return h;
 }
 
-function cancelForm() { editingSection = null; currentView = 'list'; render(); }
+function woodShuttersHTML(sec){
+  const on=sec.woodShuttersOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Wood Shutters</span><br><span class="rate">$40/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().woodShuttersOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.woodShutters||''}" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()"></div>
+      <label class="check-opt"><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> Both Sides (2× labor)</label>
+      <label class="check-opt"><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label></div>`;
+  }
+  return h;
+}
 
-// Recalc all prices on load
-sections.forEach(s => s.price = calcSectionPrice(s));
-render();
+function vinylShuttersHTML(sec){
+  const on=sec.vinylShuttersOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Vinyl Shutters</span><br><span class="rate">$30/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().vinylShuttersOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.vinylShutters||''}" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()"></div>
+      <label class="check-opt"><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label></div>`;
+  }
+  return h;
+}
+
+function ds1HTML(sec){
+  const on=sec.ds1On;
+  let h=`<div class="toggle-row"><div><span class="lbl">Downspout — 1-Story</span><br><span class="rate">$15/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().ds1On=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.ds1||''}" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()"></div>
+      <label class="check-opt"><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label></div>`;
+  }
+  return h;
+}
+
+function ds2HTML(sec){
+  const on=sec.ds2On;
+  let h=`<div class="toggle-row"><div><span class="lbl">Downspout — 2-Story</span><br><span class="rate">$30/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().ds2On=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.ds2||''}" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()"></div>
+      <label class="check-opt"><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label></div>`;
+  }
+  return h;
+}
+
+function porchColHTML(sec){
+  const on=sec.porchColumnsOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Porch Columns</span><br><span class="rate">$55/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().porchColumnsOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.porchColumns||''}" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()"></div>
+      <label class="check-opt"><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> Stain</label></div>`;
+  }
+  return h;
+}
+
+function lintelsHTML(sec){
+  const on=sec.lintelsOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Lintels</span><br><span class="rate">$35/EA</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().lintelsOn=this.checked;if(this.checked&&!s().lintels.length)s().lintels.push(mkLintel());renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+='<div class="surface-fields open">';
+    sec.lintels.forEach((l,i)=>{
+      h+=`<div class="entry-card" style="margin-bottom:6px"><div class="field-row">
+        <div class="field"><label>Material</label><select onchange="s().lintels[${i}].material=this.value">
+          <option${l.material==='Steel'?' selected':''}>Steel</option><option${l.material==='Wood'?' selected':''}>Wood</option></select></div>
+        <div class="field"><label>EA</label><input type="number" min="0" value="${l.ea||''}" oninput="s().lintels[${i}].ea=parseInt(this.value)||0;updFormPrices()"></div>
+        ${sec.lintels.length>1?`<button style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;align-self:flex-end;padding-bottom:10px" onclick="s().lintels.splice(${i},1);renderForm()">✕</button>`:''}
+      </div><label class="check-opt"><input type="checkbox" ${l.stain?'checked':''} onchange="s().lintels[${i}].stain=this.checked"> Stain</label></div>`;
+    });
+    h+=`<button class="btn-add" onclick="s().lintels.push(mkLintel());renderForm()">+ Add Lintels</button></div>`;
+  }
+  return h;
+}
+
+function foundationHTML(sec){
+  const on=sec.foundationOn;
+  let h=`<div class="toggle-row"><div><span class="lbl">Foundation (Brick/Block)</span><br><span class="rate">$1.40/SF</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().foundationOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div style="background:var(--red-bg);padding:6px 10px;border-radius:6px;font-size:11px;color:var(--red);margin-bottom:6px">⚠️ Explicit opt-in only</div>
+      <div class="field"><input type="text" class="calc-input" placeholder="SF" value="${sec.foundation||''}" oninput="genericInput('foundation',this)"><div class="calc-hint" id="hint-foundation"></div></div></div>`;
+  }
+  return h;
+}
+
+function caulkHTML(sec){
+  const on=sec.caulkingOn;
+  const autoSF=getAutoCalcSF(sec);
+  const useSF=sec.caulkingOverride!=null?sec.caulkingOverride:autoSF;
+  let h=`<div class="toggle-row"><div><span class="lbl">Caulking (New/Remodel)</span><br><span class="rate">$0.50/SF · Auto-calc</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().caulkingOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div style="font-size:11px;color:var(--text-light);margin-bottom:4px">Auto: ${autoSF.toLocaleString()} SF</div>
+      <div class="field"><input type="number" min="0" placeholder="Override SF" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()"></div></div>`;
+  }
+  return h;
+}
+
+function primerHTML(sec){
+  const on=sec.primerOn;
+  const autoSF=getAutoCalcSF(sec);
+  let h=`<div class="toggle-row"><div><span class="lbl">Exterior Primer (Full Coat)</span><br><span class="rate">$0.75/SF · Auto-calc</span></div>
+    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().primerOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
+  if(on){
+    h+=`<div class="surface-fields open"><div style="font-size:11px;color:var(--text-light);margin-bottom:4px">Auto: ${autoSF.toLocaleString()} SF</div>
+      <div class="field"><input type="number" min="0" placeholder="Override SF" value="${sec.primerOverride!=null?sec.primerOverride:''}" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()"></div></div>`;
+  }
+  return h;
+}
+
+// ---- AUTO-CALC CARDS ----
+function autoCalcHTML(sec){
+  const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
+  let h='<div class="card fade-in"><div class="card-title">⚡ Auto-Calculated</div>';
+  // Pressure wash
+  let pwSF=0;sec.siding.forEach(e=>pwSF+=e.sf);
+  if(sec.foundationOn)pwSF+=sec.foundation;
+  sec.eaves.forEach(e=>pwSF+=e.lf*3);
+  const pwCost=Math.max(pwSF*0.15,150);
+  if(!sec.pwSkip){
+    h+=`<div class="auto-card"><div class="auto-title">🚿 Pressure Wash</div>
+      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+e.sf,0).toLocaleString()} SF${sec.foundationOn?' + Foundation: '+sec.foundation+' SF':''}
+       + Eaves: ${sec.eaves.reduce((a,e)=>a+e.lf,0)} LF × 3 ft = ${sec.eaves.reduce((a,e)=>a+e.lf*3,0)} SF<br>
+       Total: ${pwSF.toLocaleString()} SF × $0.15 = ${fmt(pwSF*0.15)}${pwSF*0.15<150?' → $150 minimum':''}</div>
+      <div class="auto-price">${fmt(pwCost)}</div>
+      <button class="skip-btn" onclick="s().pwSkip=true;renderForm()">Skip ⚠️</button></div>`;
+  } else {
+    h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Pressure Wash — SKIPPED</div>
+      <div class="field" style="margin-top:6px"><input type="text" placeholder="Reason for skipping..." value="${esc(sec.pwSkipNote)}" oninput="s().pwSkipNote=this.value"></div>
+      <button class="btn-add" style="border-color:var(--green);color:var(--green);margin-top:6px" onclick="s().pwSkip=false;s().pwSkipNote='';renderForm()">Re-enable</button></div>`;
+  }
+  // Masking warning
+  const hasSiding=sec.siding.some(e=>e.sf>0);
+  const hasNonSiding=sec.fasciaOn||sec.guttersOn||sec.singleTrimOn||sec.windowsOn||sec.doorsOn;
+  if(!hasSiding&&hasNonSiding){
+    h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Masking Warning</div>
+      <div class="auto-detail">Non-siding surfaces present without siding. Masking charge may apply (~$0.45/SF).</div></div>`;
+  }
+  h+='</div>';
+  return h;
+}
+
+// ---- HELPERS ----
+function s(){return sections[editingIdx]}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function updFormPrices(){
+  // Update sticky bar price
+  const sec=s();
+  const bar=document.querySelector('.sticky-bottom .sec-price');
+  if(bar)bar.textContent=fmt(calcSection(sec));
+  // Update entry prices
+  document.querySelectorAll('.entry-price').forEach(el=>{/* re-render handles this */});
+}
+function updForm(){renderForm();}
+function bindCalcInputs(){}
+function saveAndBack(){
+  const sec=s();
+  if(!sec.savedTime)sec.savedTime=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  editingIdx=-1;
+  _groupId=0;
+  renderList();
+  window.scrollTo(0,0);
+}
+
+// Init
+_groupId=0;
+renderList();
 </script>
 </body>
 </html>
