@@ -532,18 +532,20 @@ function surfaceGroupsHTML(sec){
     toggleSurface(sec,'garageFrameOn','garageFrame','Garage Frame Only','$55/EA','EA',sec.garageFrame,'Shutters & Garage'),
     toggleSurface(sec,'garageHardwareOn','garageHardware','Garage Hardware','$20/EA','EA',sec.garageHardware,'Shutters & Garage'),
   ]);
+  h+=groupHTML('Porch & Foundation',false,[
+    foundationHTML(sec),
+    toggleSurface(sec,'porchCeilingOn','porchCeiling','Porch Ceiling','$1.50/SF','SF',sec.porchCeiling,'Porch & Foundation'),
+    toggleSurface(sec,'porchConcreteOn','porchConcrete','Porch Concrete','$1.25/SF','SF',sec.porchConcrete,'Porch & Foundation'),
+    toggleSurface(sec,'woodPorchFloorOn','woodPorchFloor','Wood Porch Floor','$1.75/SF','SF',sec.woodPorchFloor,'Porch & Foundation'),
+    porchColHTML(sec),
+  ]);
   h+=groupHTML('Accessories',false,[
     ds1HTML(sec),ds2HTML(sec),
-    porchColHTML(sec),
     toggleSurface(sec,'soffitBoxesOn','soffitBoxes','Open Soffit Boxes','$30/EA','EA',sec.soffitBoxes,'Accessories'),
     toggleSurface(sec,'atticVentsOn','atticVents','Attic Vents','$20/EA','EA',sec.atticVents,'Accessories'),
     lintelsHTML(sec),
   ]);
   h+=groupHTML('Full-House (Rare)',false,[
-    foundationHTML(sec),
-    toggleSurface(sec,'porchCeilingOn','porchCeiling','Porch Ceiling','$1.50/SF','SF',sec.porchCeiling,'Full-House (Rare)'),
-    toggleSurface(sec,'porchConcreteOn','porchConcrete','Porch Concrete','$1.25/SF','SF',sec.porchConcrete,'Full-House (Rare)'),
-    toggleSurface(sec,'woodPorchFloorOn','woodPorchFloor','Wood Porch Floor','$1.75/SF','SF',sec.woodPorchFloor,'Full-House (Rare)'),
     caulkHTML(sec),primerHTML(sec),
   ]);
   h+='</div>';
