@@ -555,11 +555,6 @@ function surfaceGroupsHTML(sec){
   h+=srow('Attic Vents','$20/EA','atticVents','EA');
   h+=lintelsHTML(sec);
 
-  // — Full-House (Rare) —
-  h+=`<div class="sgrp-title">Full-House (Rare)</div>`;
-  h+=caulkHTML(sec);
-  h+=primerHTML(sec);
-
   h+='</div>';
   return h;
 }
@@ -674,21 +669,7 @@ function lintelsHTML(sec){
 
 // Foundation removed as standalone toggle — now just a flat srow
 
-function caulkHTML(sec){
-  const autoSF=getAutoCalcSF(sec);
-  return `<div class="srow" style="flex-wrap:wrap;gap:4px">
-    <div class="srow-lbl">Caulking <span class="srow-rate">$0.50/SF</span></div>
-    <label style="font-size:11px;display:flex;align-items:center;gap:4px"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--navy)" ${sec.caulkingOn?'checked':''} onchange="s().caulkingOn=this.checked;updFormPrices()"> On</label>
-    ${sec.caulkingOn?`<input class="srow-input" type="text" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" placeholder="${autoSF}" style="width:60px" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()"><span class="srow-unit">SF</span>`:''}</div>`;
-}
-
-function primerHTML(sec){
-  const autoSF=getAutoCalcSF(sec);
-  return `<div class="srow" style="flex-wrap:wrap;gap:4px">
-    <div class="srow-lbl">Ext. Primer <span class="srow-rate">$0.75/SF</span></div>
-    <label style="font-size:11px;display:flex;align-items:center;gap:4px"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--navy)" ${sec.primerOn?'checked':''} onchange="s().primerOn=this.checked;updFormPrices()"> On</label>
-    ${sec.primerOn?`<input class="srow-input" type="text" value="${sec.primerOverride!=null?sec.primerOverride:''}" placeholder="${autoSF}" style="width:60px" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()"><span class="srow-unit">SF</span>`:''}</div>`;
-}
+// caulkHTML and primerHTML removed — now in autoCalcHTML
 
 // ---- AUTO-CALC CARDS ----
 function autoCalcHTML(sec){
@@ -711,6 +692,35 @@ function autoCalcHTML(sec){
       <div class="field" style="margin-top:6px"><input type="text" placeholder="Reason for skipping..." value="${esc(sec.pwSkipNote)}" oninput="s().pwSkipNote=this.value"></div>
       <button class="btn-add" style="border-color:var(--green);color:var(--green);margin-top:6px" onclick="s().pwSkip=false;s().pwSkipNote='';renderForm()">Re-enable</button></div>`;
   }
+  // Caulking
+  const autoSF=getAutoCalcSF(sec);
+  const caulkSF=sec.caulkingOverride!=null?sec.caulkingOverride:autoSF;
+  const caulkCost=caulkSF*0.50*pm*pp;
+  h+=`<div class="auto-card" style="${sec.caulkingOn?'':'opacity:0.5'}">
+    <div class="auto-title" style="justify-content:space-between">
+      <span>🔧 Caulking (New/Remodel)</span>
+      <label style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)" ${sec.caulkingOn?'checked':''} onchange="s().caulkingOn=this.checked;renderForm()"> ${sec.caulkingOn?'On':'Off'}</label>
+    </div>
+    <div class="auto-detail">Auto SF: ${autoSF.toLocaleString()}${sec.caulkingOverride!=null?' → Override: '+sec.caulkingOverride:''} × $0.50/SF</div>
+    ${sec.caulkingOn?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div class="auto-price" style="margin:0">${fmt(caulkCost)}</div>
+      <input class="srow-input" type="text" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" placeholder="Override SF" style="width:80px;font-size:11px" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()">
+    </div>`:''}</div>`;
+
+  // Exterior Primer
+  const primerSF=sec.primerOverride!=null?sec.primerOverride:autoSF;
+  const primerCost=primerSF*0.75*pm*pp;
+  h+=`<div class="auto-card" style="${sec.primerOn?'':'opacity:0.5'}">
+    <div class="auto-title" style="justify-content:space-between">
+      <span>🎨 Exterior Primer (Full Coat)</span>
+      <label style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)" ${sec.primerOn?'checked':''} onchange="s().primerOn=this.checked;renderForm()"> ${sec.primerOn?'On':'Off'}</label>
+    </div>
+    <div class="auto-detail">Auto SF: ${autoSF.toLocaleString()}${sec.primerOverride!=null?' → Override: '+sec.primerOverride:''} × $0.75/SF</div>
+    ${sec.primerOn?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+      <div class="auto-price" style="margin:0">${fmt(primerCost)}</div>
+      <input class="srow-input" type="text" value="${sec.primerOverride!=null?sec.primerOverride:''}" placeholder="Override SF" style="width:80px;font-size:11px" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()">
+    </div>`:''}</div>`;
+
   // Masking warning
   const hasSiding=sec.siding.some(e=>e.sf>0);
   const hasNonSiding=sec.gutters||sec.singleTrim||sec.windowEntries.some(w=>w.count)||sec.doors;
