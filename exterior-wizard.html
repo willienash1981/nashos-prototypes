@@ -192,13 +192,15 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 // ---- DATA MODEL ----
 const SIDING_TYPES = ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'];
 const SIDING_RATES = {'Wood Lap':1.85,'Hardiplank':1.85,'Vinyl':1.85,'Brick':2.00,'Stucco':1.80,'Metal':1.50};
-// Blended height: 2-Story = avg(1.0, 1.54), 3-Story = avg(1.0, 1.54, 2.0)
-const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.27,'3-Story+':1.51};
+// Per-story labor multipliers (raw — used for eaves which are at a single height)
+const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.54,'3-Story+':2.0};
+// Per-story rates for siding blended calc
+const STORY_LABOR = [1.0, 1.54, 2.0]; // 1st, 2nd, 3rd
 const SECTION_NAMES = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
 const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
 const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
 
-function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false){return{type,sf,height,stain,romaBio}}
+function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false,incl1st=true,incl2nd=true){return{type,sf,height,stain,romaBio,incl1st,incl2nd}}
 function mkEaves(lf=0,height='1-Story',stain=false,difficult=false,fascia=false,fasciaLF=0){return{lf,height,stain,difficult,fascia,fasciaLF}}
 function mkLintel(material='Steel',ea=0,stain=false){return{material,ea,stain}}
 function mkWindow(count=0,grids=0,customGrids=false){return{count,grids,customGrids}}
@@ -275,7 +277,18 @@ let editingIdx=-1;
 // ---- PRICING ----
 function calcSidingEntry(e,pkg,prep){
   const rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85;
-  return e.sf*rate*HEIGHT_MULTS[e.height]*PKG_MULTS[pkg]*PREP_MULTS[prep];
+  const pm=PKG_MULTS[pkg],pp=PREP_MULTS[prep];
+  if(e.height==='1-Story') return e.sf*rate*1.0*pm*pp;
+  if(e.height==='2-Story'){
+    const per=e.sf/2; let t=per*STORY_LABOR[1]; // 2nd always included
+    if(e.incl1st) t+=per*STORY_LABOR[0];
+    return t*rate*pm*pp;
+  }
+  // 3-Story+
+  const per=e.sf/3; let t=per*STORY_LABOR[2]; // 3rd always included
+  if(e.incl2nd) t+=per*STORY_LABOR[1];
+  if(e.incl1st) t+=per*STORY_LABOR[0];
+  return t*rate*pm*pp;
 }
 function calcEavesEntry(e,pkg,prep){
   let t=e.lf*2.50*HEIGHT_MULTS[e.height]*(e.difficult?1.5:1)*PKG_MULTS[pkg]*PREP_MULTS[prep];
@@ -463,10 +476,28 @@ function sidingEntryHTML(e,i,len,s){
     <div class="calc-hint" id="hint-siding-${i}-sf"></div>
     <div style="display:flex;gap:6px;margin-top:6px;align-items:center"><div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().siding[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
     <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
-    <div style="display:flex;gap:12px;margin-top:4px;align-items:center">
+    <div style="display:flex;gap:10px;margin-top:4px;align-items:center;flex-wrap:wrap">
       <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().siding[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
       ${e.type==='Brick'?`<label class="check-opt"><input type="checkbox" ${e.romaBio?'checked':''} onchange="s().siding[${i}].romaBio=this.checked;renderForm()"> Roma Bio</label>`:''}
-    </div></div>`;
+      ${e.height==='2-Story'?`<label class="check-opt" style="color:var(--navy)"><input type="checkbox" ${e.incl1st?'checked':''} onchange="s().siding[${i}].incl1st=this.checked;renderForm()"> Incl. 1st</label>`:''}
+      ${e.height==='3-Story+'?`<label class="check-opt" style="color:var(--navy)"><input type="checkbox" ${e.incl1st?'checked':''} onchange="s().siding[${i}].incl1st=this.checked;renderForm()"> Incl. 1st</label>
+      <label class="check-opt" style="color:var(--navy)"><input type="checkbox" ${e.incl2nd?'checked':''} onchange="s().siding[${i}].incl2nd=this.checked;renderForm()"> Incl. 2nd</label>`:''}
+    </div>${sidingSFNote(e)}</div>`;
+}
+function sidingSFNote(e){
+  if(!e.sf||e.height==='1-Story') return '';
+  if(e.height==='2-Story'){
+    if(e.incl1st) return ''; // all included, no note needed
+    return `<div style="font-size:10px;color:var(--text-light);margin-top:2px">↳ ${Math.round(e.sf/2)} SF priced (2nd only)</div>`;
+  }
+  // 3-Story
+  const per=Math.round(e.sf/3);
+  const stories=[];
+  if(e.incl1st) stories.push('1st');
+  if(e.incl2nd) stories.push('2nd');
+  stories.push('3rd');
+  if(stories.length===3) return ''; // all included
+  return `<div style="font-size:10px;color:var(--text-light);margin-top:2px">↳ ${per*stories.length} SF priced (${stories.join('+')})</div>`;
 }
 function sidingSFInput(i,el){
   const v=el.value;const c=tryCalc(v);
