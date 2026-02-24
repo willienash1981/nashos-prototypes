@@ -192,7 +192,8 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 // ---- DATA MODEL ----
 const SIDING_TYPES = ['Wood Lap','Hardiplank','Vinyl','Brick','Stucco','Metal'];
 const SIDING_RATES = {'Wood Lap':1.85,'Hardiplank':1.85,'Vinyl':1.85,'Brick':2.00,'Stucco':1.80,'Metal':1.50};
-const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.54,'3-Story+':2.0};
+// Blended height: 2-Story = avg(1.0, 1.54), 3-Story = avg(1.0, 1.54, 2.0)
+const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.27,'3-Story+':1.51};
 const SECTION_NAMES = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
 const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
 const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
