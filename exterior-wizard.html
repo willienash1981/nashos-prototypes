@@ -78,6 +78,18 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 .group-header .arrow.open { transform:rotate(180deg); }
 .group-body { display:none; }
 .group-body.open { display:block; }
+.srow { display:flex; align-items:center; gap:6px; padding:7px 0; border-bottom:1px solid #f0f0f0; }
+.srow:last-child { border-bottom:none; }
+.srow-lbl { font-size:12px; font-weight:600; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.srow-rate { font-size:10px; color:var(--text-light); }
+.srow-input { width:50px; padding:5px 4px; font-size:13px; text-align:center; border:1px solid var(--border); border-radius:6px; background:#fff; }
+.srow-input:focus { border-color:var(--navy); outline:none; }
+.srow-input.has-val { border-color:var(--green); background:rgba(16,185,129,.05); }
+.srow-unit { font-size:10px; color:var(--text-light); width:16px; flex-shrink:0; }
+.srow-checks { display:flex; gap:8px; flex-shrink:0; }
+.srow-checks label { font-size:10px; display:flex; align-items:center; gap:3px; white-space:nowrap; }
+.srow-checks input[type=checkbox] { width:14px; height:14px; accent-color:var(--navy); }
+.sgrp-title { font-size:11px; font-weight:800; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px; padding:10px 0 4px; margin-top:4px; border-top:2px solid #eee; }
 .badge { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; }
 .badge-stain { background:rgba(139,92,246,.12); color:var(--purple); }
 .badge-roma { background:rgba(59,130,246,.1); color:var(--blue); }
@@ -194,36 +206,21 @@ function mkSection(name=''){
     id:Date.now()+Math.random(),name,savedTime:'',
     siding:[mkSiding()],
     eaves:[mkEaves()],
-    gutters:0,guttersOn:false,
-    singleTrim:0,singleTrimOn:false,
-    railWoodPainted:0,railWoodPaintedOn:false,
-    railWoodMetal:0,railWoodMetalOn:false,
-    railMetal:0,railMetalOn:false,
-    windowEntries:[mkWindow()],windowsOn:false,
-    windowTrimOnly:0,windowTrimOnlyOn:false,
-    stormRR:0,stormRROn:false,
-    stormPaint:0,stormPaintOn:false,
-    windowGlaze:0,windowGlazeOn:false,
-    doors:0,doorsOn:false,doorsFrontDoor:false,
-    doorFrame:0,doorFrameOn:false,doorFrameNotes:'',
-    sidelight:0,sidelightOn:false,
-    crawlDoor:0,crawlDoorOn:false,
-    woodShutters:0,woodShuttersOn:false,woodShuttersBoth:false,woodShuttersRR:false,
-    vinylShutters:0,vinylShuttersOn:false,vinylShuttersRR:false,
-    shutterHardware:0,shutterHardwareOn:false,
-    garageDoor:0,garageDoorOn:false,
-    garageFrame:0,garageFrameOn:false,
-    garageHardware:0,garageHardwareOn:false,
-    ds1:0,ds1On:false,ds1RR:false,
-    ds2:0,ds2On:false,ds2RR:false,
-    porchColumns:0,porchColumnsOn:false,porchColumnsStain:false,
-    soffitBoxes:0,soffitBoxesOn:false,
-    atticVents:0,atticVentsOn:false,
-    lintels:[],lintelsOn:false,
-    foundation:0,foundationOn:false,
-    porchCeiling:0,porchCeilingOn:false,
-    porchConcrete:0,porchConcreteOn:false,
-    woodPorchFloor:0,woodPorchFloorOn:false,
+    gutters:0,singleTrim:0,
+    railWoodPainted:0,railWoodMetal:0,railMetal:0,
+    windowEntries:[mkWindow()],
+    windowTrimOnly:0,stormRR:0,stormPaint:0,windowGlaze:0,
+    doors:0,doorsFrontDoor:false,
+    doorFrame:0,doorFrameNotes:'',
+    sidelight:0,crawlDoor:0,
+    woodShutters:0,woodShuttersBoth:false,woodShuttersRR:false,
+    vinylShutters:0,vinylShuttersRR:false,
+    shutterHardware:0,garageDoor:0,garageFrame:0,garageHardware:0,
+    ds1:0,ds1RR:false,ds2:0,ds2RR:false,
+    porchColumns:0,porchColumnsStain:false,
+    soffitBoxes:0,atticVents:0,
+    lintels:[],
+    foundation:0,porchCeiling:0,porchConcrete:0,woodPorchFloor:0,
     caulkingOn:false,caulkingOverride:null,
     primerOn:false,primerOverride:null,
     pwSkip:false,pwSkipNote:'',
@@ -238,34 +235,34 @@ function demoData(){
   s1.savedTime='2:15 PM';
   s1.siding=[mkSiding('Hardiplank',1200,'1-Story'),mkSiding('Brick',400,'1-Story')];
   s1.eaves=[mkEaves(80,'1-Story',false,false,true,40),mkEaves(60,'2-Story')];
-  s1.singleTrim=60;s1.singleTrimOn=true;
-  s1.windowEntries=[mkWindow(6,0),mkWindow(2,8)];s1.windowsOn=true;
-  s1.sidelight=2;s1.sidelightOn=true;
-  s1.doors=1;s1.doorsOn=true;s1.doorsFrontDoor=true;
-  s1.porchColumns=4;s1.porchColumnsOn=true;
+  s1.singleTrim=60;
+  s1.windowEntries=[mkWindow(6,0),mkWindow(2,8)];
+  s1.sidelight=2;
+  s1.doors=1;s1.doorsFrontDoor=true;
+  s1.porchColumns=4;
 
   const s2=mkSection('Left Side');
   s2.savedTime='2:22 PM';
   s2.siding=[mkSiding('Hardiplank',800,'2-Story')];
   s2.eaves=[mkEaves(50,'1-Story'),mkEaves(50,'2-Story')];
-  s2.singleTrim=40;s2.singleTrimOn=true;
-  s2.windowEntries=[mkWindow(4,0)];s2.windowsOn=true;
+  s2.singleTrim=40;
+  s2.windowEntries=[mkWindow(4,0)];
 
   const s3=mkSection('Right Side');
   s3.savedTime='2:28 PM';
   s3.siding=[mkSiding('Hardiplank',600,'2-Story'),mkSiding('Hardiplank',400,'1-Story')];
   s3.eaves=[mkEaves(40,'1-Story'),mkEaves(40,'2-Story')];
-  s3.gutters=60;s3.guttersOn=true;
-  s3.windowEntries=[mkWindow(2,0),mkWindow(3,16)];s3.windowsOn=true;
+  s3.gutters=60;
+  s3.windowEntries=[mkWindow(2,0),mkWindow(3,16)];
 
   const s4=mkSection('Rear');
   s4.savedTime='2:35 PM';
   s4.siding=[mkSiding('Hardiplank',500,'1-Story')];
   s4.eaves=[mkEaves(60,'1-Story',false,false,true,30),mkEaves(0,'1-Story',false,true,true,20)];
-  s4.doors=2;s4.doorsOn=true;
-  s4.woodShutters=4;s4.woodShuttersOn=true;s4.woodShuttersBoth=true;
-  s4.ds1=3;s4.ds1On=true;
-  s4.ds2=2;s4.ds2On=true;s4.ds2RR=true;
+  s4.doors=2;
+  s4.woodShutters=4;s4.woodShuttersBoth=true;
+  s4.ds1=3;
+  s4.ds2=2;s4.ds2RR=true;
 
   return [s1,s2,s3,s4];
 }
@@ -289,36 +286,37 @@ function calcSection(s){
   let t=0;
   s.siding.forEach(e=>t+=calcSidingEntry(e,s.pkg,s.prep));
   s.eaves.forEach(e=>t+=calcEavesEntry(e,s.pkg,s.prep));
-  if(s.guttersOn)t+=s.gutters*2.00*pm*pp;
-  if(s.singleTrimOn)t+=s.singleTrim*2.25*pm*pp;
-  if(s.railWoodPaintedOn)t+=s.railWoodPainted*3.50*pm*pp;
-  if(s.railWoodMetalOn)t+=s.railWoodMetal*4.50*pm*pp;
-  if(s.railMetalOn)t+=s.railMetal*3.00*pm*pp;
-  if(s.windowsOn)s.windowEntries.forEach(w=>t+=calcWindowEntry(w,s.pkg,s.prep));
-  if(s.windowTrimOnlyOn)t+=s.windowTrimOnly*25*pm*pp;
-  if(s.stormRROn)t+=s.stormRR*20*pm*pp;
-  if(s.stormPaintOn)t+=s.stormPaint*35*pm*pp;
-  if(s.windowGlazeOn)t+=s.windowGlaze*15*pm*pp;
-  if(s.doorsOn)t+=s.doors*65*pm*pp;
-  if(s.doorFrameOn)t+=s.doorFrame*35*pm*pp;
-  if(s.sidelightOn)t+=s.sidelight*25*pm*pp;
-  if(s.crawlDoorOn)t+=s.crawlDoor*45*pm*pp;
-  if(s.woodShuttersOn)t+=s.woodShutters*40*(s.woodShuttersBoth?2:1)*pm*pp+(s.woodShuttersRR?s.woodShutters*20:0);
-  if(s.vinylShuttersOn)t+=s.vinylShutters*30*pm*pp+(s.vinylShuttersRR?s.vinylShutters*15:0);
-  if(s.shutterHardwareOn)t+=s.shutterHardware*15*pm*pp;
-  if(s.garageDoorOn)t+=s.garageDoor*120*pm*pp;
-  if(s.garageFrameOn)t+=s.garageFrame*55*pm*pp;
-  if(s.garageHardwareOn)t+=s.garageHardware*20*pm*pp;
-  if(s.ds1On)t+=s.ds1*15*pm*pp+(s.ds1RR?s.ds1*10:0);
-  if(s.ds2On)t+=s.ds2*30*pm*pp+(s.ds2RR?s.ds2*15:0);
-  if(s.porchColumnsOn)t+=s.porchColumns*55*pm*pp;
-  if(s.soffitBoxesOn)t+=s.soffitBoxes*30*pm*pp;
-  if(s.atticVentsOn)t+=s.atticVents*20*pm*pp;
-  if(s.lintelsOn)s.lintels.forEach(l=>t+=l.ea*35*pm*pp);
-  if(s.foundationOn)t+=s.foundation*1.40*pm*pp;
-  if(s.porchCeilingOn)t+=s.porchCeiling*1.50*pm*pp;
-  if(s.porchConcreteOn)t+=s.porchConcrete*1.25*pm*pp;
-  if(s.woodPorchFloorOn)t+=s.woodPorchFloor*1.75*pm*pp;
+  // simple surfaces — value > 0 means it's on
+  t+=s.gutters*2.00*pm*pp;
+  t+=s.singleTrim*2.25*pm*pp;
+  t+=s.railWoodPainted*3.50*pm*pp;
+  t+=s.railWoodMetal*4.50*pm*pp;
+  t+=s.railMetal*3.00*pm*pp;
+  s.windowEntries.forEach(w=>t+=calcWindowEntry(w,s.pkg,s.prep));
+  t+=s.windowTrimOnly*25*pm*pp;
+  t+=s.stormRR*20*pm*pp;
+  t+=s.stormPaint*35*pm*pp;
+  t+=s.windowGlaze*15*pm*pp;
+  t+=s.doors*65*pm*pp;
+  t+=s.doorFrame*35*pm*pp;
+  t+=s.sidelight*25*pm*pp;
+  t+=s.crawlDoor*45*pm*pp;
+  t+=s.woodShutters*40*(s.woodShuttersBoth?2:1)*pm*pp+(s.woodShuttersRR?s.woodShutters*20:0);
+  t+=s.vinylShutters*30*pm*pp+(s.vinylShuttersRR?s.vinylShutters*15:0);
+  t+=s.shutterHardware*15*pm*pp;
+  t+=s.garageDoor*120*pm*pp;
+  t+=s.garageFrame*55*pm*pp;
+  t+=s.garageHardware*20*pm*pp;
+  t+=s.ds1*15*pm*pp+(s.ds1RR?s.ds1*10:0);
+  t+=s.ds2*30*pm*pp+(s.ds2RR?s.ds2*15:0);
+  t+=s.porchColumns*55*pm*pp;
+  t+=s.soffitBoxes*30*pm*pp;
+  t+=s.atticVents*20*pm*pp;
+  s.lintels.forEach(l=>t+=l.ea*35*pm*pp);
+  t+=s.foundation*1.40*pm*pp;
+  t+=s.porchCeiling*1.50*pm*pp;
+  t+=s.porchConcrete*1.25*pm*pp;
+  t+=s.woodPorchFloor*1.75*pm*pp;
   const autoSF=getAutoCalcSF(s);
   if(s.caulkingOn){const sf=s.caulkingOverride!=null?s.caulkingOverride:autoSF;t+=sf*0.50*pm*pp;}
   if(s.primerOn){const sf=s.primerOverride!=null?s.primerOverride:autoSF;t+=sf*0.75*pm*pp;}
@@ -327,13 +325,13 @@ function calcSection(s){
 }
 function getAutoCalcSF(s){
   let sf=0;s.siding.forEach(e=>sf+=e.sf);
-  if(s.foundationOn)sf+=s.foundation;
+  sf+=s.foundation;
   s.eaves.forEach(e=>sf+=e.lf*3);
   return sf;
 }
 function getPWCost(s,pm,pp){
   let sf=0;s.siding.forEach(e=>sf+=e.sf);
-  if(s.foundationOn)sf+=s.foundation;
+  sf+=s.foundation;
   s.eaves.forEach(e=>sf+=e.lf*3);
   return Math.max(sf*0.15,150);
 }
@@ -358,10 +356,10 @@ function renderList(){
   sections.forEach(s=>{
     total+=calcSection(s);
     s.siding.forEach(e=>sidingSF+=e.sf);
-    if(s.windowsOn)s.windowEntries.forEach(w=>winCount+=w.count);
-    if(s.singleTrimOn)trimLF+=s.singleTrim;
+    s.windowEntries.forEach(w=>winCount+=w.count);
+    trimLF+=s.singleTrim;
     s.eaves.forEach(e=>{if(e.fascia)trimLF+=e.fasciaLF});
-    if(s.guttersOn)trimLF+=s.gutters;
+    trimLF+=s.gutters;
   });
   document.getElementById('totalBar').innerHTML=`
     <span class="price">${fmt(total)}</span>
@@ -391,10 +389,10 @@ function sectionSummaryText(s){
   const parts=[];
   s.siding.forEach(e=>{if(e.sf)parts.push(`${e.type}: ${e.sf.toLocaleString()} SF (${e.height})${e.stain?' 🪵':''}`)});
   s.eaves.forEach(e=>{if(e.lf||e.fasciaLF)parts.push(`Eaves ${e.height}: ${e.lf} LF${e.fascia?' + Fascia '+e.fasciaLF+' LF':''}${e.difficult?' ⚠️':''}${e.stain?' 🪵':''}`)});
-  if(s.guttersOn&&s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
-  if(s.singleTrimOn&&s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
-  if(s.windowsOn){const wt=s.windowEntries.reduce((a,w)=>a+w.count,0);if(wt)parts.push(`Windows: ${wt}`)}
-  if(s.doorsOn&&s.doors)parts.push(`Doors: ${s.doors}${s.doorsFrontDoor?' (incl. front door)':''}`);
+  if(s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
+  if(s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
+  {const wt=s.windowEntries.reduce((a,w)=>a+w.count,0);if(wt)parts.push(`Windows: ${wt}`)}
+  if(s.doors)parts.push(`Doors: ${s.doors}${s.doorsFrontDoor?' (incl. front door)':''}`);
   return parts.join('<br>')||'No surfaces';
 }
 function toggleSummary(id){document.getElementById(id).classList.toggle('open')}
@@ -503,56 +501,79 @@ function eavesLFInput(i,el){
 
 // ---- SURFACE GROUPS ----
 function surfaceGroupsHTML(sec){
-  const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
   let h='<div class="card fade-in"><div class="card-title">📋 Surfaces</div>';
-  h+=groupHTML('Trim & Detail',true,[
-    toggleSurface(sec,'guttersOn','gutters','Gutters','$2.00/LF','LF',sec.gutters,'Trim & Detail'),
-    toggleSurface(sec,'singleTrimOn','singleTrim','Single Trim','$2.25/LF','LF',sec.singleTrim,'Trim & Detail'),
-  ]);
-  h+=groupHTML('Railings',false,[
-    toggleSurface(sec,'railWoodPaintedOn','railWoodPainted','Wood Railing (Painted)','$3.50/LF','LF',sec.railWoodPainted,'Railings'),
-    toggleSurface(sec,'railWoodMetalOn','railWoodMetal','Wood Railing (Metal Spindles)','$4.50/LF','LF',sec.railWoodMetal,'Railings'),
-    toggleSurface(sec,'railMetalOn','railMetal','Metal Railing','$3.00/LF','LF',sec.railMetal,'Railings'),
-  ]);
-  h+=groupHTML('Windows',true,[
-    windowsHTML(sec),
-    toggleSurface(sec,'windowTrimOnlyOn','windowTrimOnly','Window Trim Only','$25/EA','EA',sec.windowTrimOnly,'Windows'),
-    toggleSurface(sec,'stormRROn','stormRR','Storm Window R&R','$20/EA','EA',sec.stormRR,'Windows'),
-    toggleSurface(sec,'stormPaintOn','stormPaint','Storm Window Painting','$35/EA','EA',sec.stormPaint,'Windows'),
-    toggleSurface(sec,'windowGlazeOn','windowGlaze','Window Glazing Repair','$15/EA','EA',sec.windowGlaze,'Windows'),
-  ]);
-  h+=groupHTML('Doors',true,[
-    doorsHTML(sec),
-    doorFrameHTML(sec),
-    toggleSurface(sec,'sidelightOn','sidelight','Front Door Sidelight','$25/EA','EA',sec.sidelight,'Doors'),
-    toggleSurface(sec,'crawlDoorOn','crawlDoor','Crawlspace Door','$45/EA','EA',sec.crawlDoor,'Doors'),
-  ]);
-  h+=groupHTML('Shutters & Garage',false,[
-    woodShuttersHTML(sec),
-    vinylShuttersHTML(sec),
-    toggleSurface(sec,'shutterHardwareOn','shutterHardware','Shutter Hardware','$15/EA','EA',sec.shutterHardware,'Shutters & Garage'),
-    toggleSurface(sec,'garageDoorOn','garageDoor','Garage Door & Frame','$120/EA','EA',sec.garageDoor,'Shutters & Garage'),
-    toggleSurface(sec,'garageFrameOn','garageFrame','Garage Frame Only','$55/EA','EA',sec.garageFrame,'Shutters & Garage'),
-    toggleSurface(sec,'garageHardwareOn','garageHardware','Garage Hardware','$20/EA','EA',sec.garageHardware,'Shutters & Garage'),
-  ]);
-  h+=groupHTML('Porch & Foundation',false,[
-    foundationHTML(sec),
-    toggleSurface(sec,'porchCeilingOn','porchCeiling','Porch Ceiling','$1.50/SF','SF',sec.porchCeiling,'Porch & Foundation'),
-    toggleSurface(sec,'porchConcreteOn','porchConcrete','Porch Concrete','$1.25/SF','SF',sec.porchConcrete,'Porch & Foundation'),
-    toggleSurface(sec,'woodPorchFloorOn','woodPorchFloor','Wood Porch Floor','$1.75/SF','SF',sec.woodPorchFloor,'Porch & Foundation'),
-    porchColHTML(sec),
-  ]);
-  h+=groupHTML('Accessories',false,[
-    ds1HTML(sec),ds2HTML(sec),
-    toggleSurface(sec,'soffitBoxesOn','soffitBoxes','Open Soffit Boxes','$30/EA','EA',sec.soffitBoxes,'Accessories'),
-    toggleSurface(sec,'atticVentsOn','atticVents','Attic Vents','$20/EA','EA',sec.atticVents,'Accessories'),
-    lintelsHTML(sec),
-  ]);
-  h+=groupHTML('Full-House (Rare)',false,[
-    caulkHTML(sec),primerHTML(sec),
-  ]);
+
+  // — Trim & Detail —
+  h+=`<div class="sgrp-title">Trim & Detail</div>`;
+  h+=srow('Gutters','$2.00/LF','gutters','LF');
+  h+=srow('Single Trim','$2.25/LF','singleTrim','LF');
+
+  // — Railings —
+  h+=`<div class="sgrp-title">Railings</div>`;
+  h+=srow('Wood Railing (Painted)','$3.50/LF','railWoodPainted','LF');
+  h+=srow('Wood Railing (Metal Spindles)','$4.50/LF','railWoodMetal','LF');
+  h+=srow('Metal Railing','$3.00/LF','railMetal','LF');
+
+  // — Windows (multi-entry) —
+  h+=`<div class="sgrp-title">Windows</div>`;
+  h+=windowsHTML(sec);
+  h+=srow('Window Trim Only','$25/EA','windowTrimOnly','EA');
+  h+=srow('Storm Window R&R','$20/EA','stormRR','EA');
+  h+=srow('Storm Window Paint','$35/EA','stormPaint','EA');
+  h+=srow('Window Glazing Repair','$15/EA','windowGlaze','EA');
+
+  // — Doors —
+  h+=`<div class="sgrp-title">Doors</div>`;
+  h+=doorsHTML(sec);
+  h+=doorFrameHTML(sec);
+  h+=srow('Front Door Sidelight','$25/EA','sidelight','EA');
+  h+=srow('Crawlspace Door','$45/EA','crawlDoor','EA');
+
+  // — Shutters & Garage —
+  h+=`<div class="sgrp-title">Shutters & Garage</div>`;
+  h+=woodShuttersHTML(sec);
+  h+=vinylShuttersHTML(sec);
+  h+=srow('Shutter Hardware','$15/EA','shutterHardware','EA');
+  h+=srow('Garage Door & Frame','$120/EA','garageDoor','EA');
+  h+=srow('Garage Frame Only','$55/EA','garageFrame','EA');
+  h+=srow('Garage Hardware','$20/EA','garageHardware','EA');
+
+  // — Porch & Foundation —
+  h+=`<div class="sgrp-title">Porch & Foundation</div>`;
+  h+=srow('Foundation ⚠️','$1.40/SF','foundation','SF');
+  h+=srow('Porch Ceiling','$1.50/SF','porchCeiling','SF');
+  h+=srow('Porch Concrete','$1.25/SF','porchConcrete','SF');
+  h+=srow('Wood Porch Floor','$1.75/SF','woodPorchFloor','SF');
+  h+=porchColHTML(sec);
+
+  // — Accessories —
+  h+=`<div class="sgrp-title">Accessories</div>`;
+  h+=ds1HTML(sec);
+  h+=ds2HTML(sec);
+  h+=srow('Open Soffit Boxes','$30/EA','soffitBoxes','EA');
+  h+=srow('Attic Vents','$20/EA','atticVents','EA');
+  h+=lintelsHTML(sec);
+
+  // — Full-House (Rare) —
+  h+=`<div class="sgrp-title">Full-House (Rare)</div>`;
+  h+=caulkHTML(sec);
+  h+=primerHTML(sec);
+
   h+='</div>';
   return h;
+}
+
+// flat row: label + input — empty=off, value=on
+function srow(label,rate,key,unit){
+  const v=s()?.[key]||0;
+  return `<div class="srow">
+    <div class="srow-lbl">${label} <span class="srow-rate">${rate}</span></div>
+    <input class="srow-input${v?' has-val':''}" type="text" value="${v||''}" placeholder="${unit}" oninput="srowInput('${key}',this)">
+    <span class="srow-unit">${unit}</span></div>`;
+}
+function srowInput(key,el){
+  const c=tryCalc(el.value); const v=c!==null?c:(parseFloat(el.value)||0);
+  s()[key]=v; el.classList.toggle('has-val',!!v); updFormPrices();
 }
 
 let _groupId=0;
@@ -565,178 +586,108 @@ function groupHTML(title,defaultOpen,items){
     <h3>${title}</h3><span class="arrow${isOpen?' open':''}">▼</span></div>
     <div class="group-body${isOpen?' open':''}" id="${gid}">${items.join('')}</div></div>`;
 }
-function collapseGroup(t){groupOpen[t]=false;}
-
-function toggleSurface(sec,onKey,qtyKey,label,rateLabel,unit,val,grp){
-  const on=sec[onKey];
-  if(!on){
-    return `<div class="toggle-row"><div style="flex:1"><span class="lbl">${label}</span><br><span class="rate">${rateLabel}</span></div>
-      <label class="switch"><input type="checkbox" onchange="s()['${onKey}']=true;renderForm()"><span class="slider"></span></label></div>`;
-  }
-  const price=val?(parseFloat(val)||0)*(parseFloat(rateLabel.replace(/[^0-9.]/g,''))||0):0;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">${label}</span>
-    <input type="text" style="width:55px;padding:6px 8px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${val||''}" placeholder="${unit}" oninput="genericInput('${qtyKey}',this)">
-    <span style="font-size:11px;color:var(--text-light);flex-shrink:0">${unit}</span>
-    <label class="switch"><input type="checkbox" checked onchange="s()['${onKey}']=false;s()['${qtyKey}']=0;renderForm()"><span class="slider"></span></label></div>`;
-}
-
-function genericInput(key,el){
-  const v=el.value;const c=tryCalc(v);
-  const hint=document.getElementById('hint-'+key);
-  if(c!==null){hint.textContent='= '+c;s()[key]=c;}
-  else{hint.textContent='';s()[key]=parseFloat(v)||0;}
-  updFormPrices();
-}
+// toggleSurface and collapseGroup removed — all surfaces are flat rows now
 
 function windowsHTML(sec){
   const GRID_OPTS=[0,4,8,12,16,'custom'];
-  const on=sec.windowsOn;
-  if(!on){
-    return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Windows</span><br><span class="rate">$35/EA + $1/grid</span></div>
-      <label class="switch"><input type="checkbox" onchange="s().windowsOn=true;if(!s().windowEntries.length)s().windowEntries.push(mkWindow());collapseGroup('Windows');renderForm()"><span class="slider"></span></label></div>`;
-  }
-  let h=`<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Windows</span><div style="flex:1"></div>
-    <label class="switch"><input type="checkbox" checked onchange="s().windowsOn=false;renderForm()"><span class="slider"></span></label></div>`;
-  h+='<div class="surface-fields open">';
+  let h='';
   sec.windowEntries.forEach((w,i)=>{
     const price=calcWindowEntry(w,sec.pkg,sec.prep);
     const isCustom=![0,4,8,12,16].includes(w.grids);
-    h+=`<div style="display:flex;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid #f3f3f3">
-      <input type="text" value="${w.count||''}" placeholder="EA" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" oninput="const c=tryCalc(this.value);s().windowEntries[${i}].count=c!==null?c:(parseInt(this.value)||0);updFormPrices()">
-      <select style="flex:1;padding:6px 24px 6px 6px;font-size:12px;border:1px solid var(--border);border-radius:6px" onchange="const v=this.value;if(v==='custom'){s().windowEntries[${i}].grids=0;}else{s().windowEntries[${i}].grids=parseInt(v);}renderForm()">
+    h+=`<div class="srow" style="flex-wrap:wrap;gap:4px">
+      <span class="srow-lbl" style="flex:0 0 auto">${i===0?'Windows':''}${i>0?'':'<span class="srow-rate"> $35/EA+$1/grid</span>'}</span>
+      <input class="srow-input${w.count?' has-val':''}" type="text" value="${w.count||''}" placeholder="EA" style="width:45px" oninput="const c=tryCalc(this.value);s().windowEntries[${i}].count=c!==null?c:(parseInt(this.value)||0);updFormPrices()">
+      <select style="flex:1;min-width:90px;padding:5px 20px 5px 4px;font-size:11px;border:1px solid var(--border);border-radius:6px" onchange="const v=this.value;if(v==='custom'){s().windowEntries[${i}].grids=0;}else{s().windowEntries[${i}].grids=parseInt(v);}renderForm()">
         ${GRID_OPTS.map(g=>{const lbl=g===0?'No Grids':g==='custom'?'Custom ✏️':g+' Grids +$'+g;const val=g==='custom'?'custom':g;const sel=isCustom&&g==='custom'?true:w.grids===g;return`<option value="${val}"${sel?' selected':''}>${lbl}</option>`;}).join('')}</select>
-      ${isCustom?`<input type="number" value="${w.grids||''}" placeholder="#" min="1" style="width:40px;padding:6px;font-size:12px;text-align:center;border:1px solid var(--border);border-radius:6px" oninput="s().windowEntries[${i}].grids=parseInt(this.value)||0;updFormPrices()">`:``}
-      <span style="font-weight:700;font-size:12px;color:var(--navy);white-space:nowrap;min-width:40px;text-align:right">${price?fmt(price):''}</span>
-      ${sec.windowEntries.length>1?`<button style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;padding:2px" onclick="s().windowEntries.splice(${i},1);renderForm()">✕</button>`:''}
+      ${isCustom?`<input type="number" value="${w.grids||''}" placeholder="#" min="1" style="width:36px;padding:5px;font-size:12px;text-align:center;border:1px solid var(--border);border-radius:6px" oninput="s().windowEntries[${i}].grids=parseInt(this.value)||0;updFormPrices()">`:``}
+      ${sec.windowEntries.length>1?`<button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px" onclick="s().windowEntries.splice(${i},1);renderForm()">✕</button>`:''}
     </div>`;
   });
-  h+=`<button class="btn-add" style="margin-top:6px" onclick="s().windowEntries.push(mkWindow());renderForm()">+ Add Windows</button></div>`;
+  h+=`<div style="padding:4px 0"><button class="btn-add" style="font-size:11px;padding:4px 10px" onclick="s().windowEntries.push(mkWindow());renderForm()">+ Add Windows</button></div>`;
   return h;
 }
 
 function doorsHTML(sec){
-  const on=sec.doorsOn;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Doors & Frames</span><br><span class="rate">$65/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().doorsOn=true;collapseGroup('Doors');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Doors</span>
-    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.doors||''}" placeholder="EA" oninput="genericInput('doors',this)">
-    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front door</label>
-    <label class="switch"><input type="checkbox" checked onchange="s().doorsOn=false;s().doors=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow">
+    <div class="srow-lbl">Doors & Frames <span class="srow-rate">$65/EA</span></div>
+    <input class="srow-input${sec.doors?' has-val':''}" type="text" value="${sec.doors||''}" placeholder="EA" oninput="s().doors=parseInt(this.value)||0;updFormPrices()">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front</label></div></div>`;
 }
 
 function doorFrameHTML(sec){
-  const on=sec.doorFrameOn;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Door Frame Only</span><br><span class="rate">$35/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().doorFrameOn=true;collapseGroup('Doors');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row" style="flex-wrap:wrap"><span class="lbl" style="flex-shrink:0">Frame Only</span>
-    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.doorFrame||''}" placeholder="EA" oninput="s().doorFrame=parseInt(this.value)||0;updFormPrices()">
-    <input type="text" style="flex:1;padding:6px;font-size:12px;border:1px solid var(--border);border-radius:6px;min-width:80px" placeholder="Location note" value="${esc(sec.doorFrameNotes)}" oninput="s().doorFrameNotes=this.value">
-    <label class="switch"><input type="checkbox" checked onchange="s().doorFrameOn=false;s().doorFrame=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow" style="flex-wrap:wrap">
+    <div class="srow-lbl">Door Frame Only <span class="srow-rate">$35/EA</span></div>
+    <input class="srow-input${sec.doorFrame?' has-val':''}" type="text" value="${sec.doorFrame||''}" placeholder="EA" style="width:45px" oninput="s().doorFrame=parseInt(this.value)||0;updFormPrices()">
+    ${sec.doorFrame?`<input type="text" style="flex:1;min-width:70px;padding:5px;font-size:11px;border:1px solid var(--border);border-radius:6px" placeholder="Location note" value="${esc(sec.doorFrameNotes)}" oninput="s().doorFrameNotes=this.value">`:''}</div>`;
 }
 
 function woodShuttersHTML(sec){
-  const on=sec.woodShuttersOn;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Wood Shutters</span><br><span class="rate">$40/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().woodShuttersOn=true;collapseGroup('Shutters & Garage');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0;font-size:12px">Wood Shut.</span>
-    <input type="text" style="width:40px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.woodShutters||''}" placeholder="EA" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()">
-    <label class="check-opt" style="font-size:10px;white-space:nowrap"><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> Both</label>
-    <label class="check-opt" style="font-size:10px;white-space:nowrap"><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label>
-    <label class="switch"><input type="checkbox" checked onchange="s().woodShuttersOn=false;s().woodShutters=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow">
+    <div class="srow-lbl">Wood Shutters <span class="srow-rate">$40/EA</span></div>
+    <input class="srow-input${sec.woodShutters?' has-val':''}" type="text" value="${sec.woodShutters||''}" placeholder="EA" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> Both</label>
+    <label><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label></div></div>`;
 }
 
 function vinylShuttersHTML(sec){
-  const on=sec.vinylShuttersOn;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Vinyl Shutters</span><br><span class="rate">$30/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().vinylShuttersOn=true;collapseGroup('Shutters & Garage');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Vinyl Shut.</span>
-    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.vinylShutters||''}" placeholder="EA" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()">
-    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label>
-    <label class="switch"><input type="checkbox" checked onchange="s().vinylShuttersOn=false;s().vinylShutters=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow">
+    <div class="srow-lbl">Vinyl Shutters <span class="srow-rate">$30/EA</span></div>
+    <input class="srow-input${sec.vinylShutters?' has-val':''}" type="text" value="${sec.vinylShutters||''}" placeholder="EA" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label></div></div>`;
 }
 
 function ds1HTML(sec){
-  const on=sec.ds1On;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Downspout — 1-Story</span><br><span class="rate">$15/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().ds1On=true;collapseGroup('Accessories');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0;font-size:12px">DS 1-Story</span>
-    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.ds1||''}" placeholder="EA" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()">
-    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label>
-    <label class="switch"><input type="checkbox" checked onchange="s().ds1On=false;s().ds1=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow">
+    <div class="srow-lbl">Downspout 1-Story <span class="srow-rate">$15/EA</span></div>
+    <input class="srow-input${sec.ds1?' has-val':''}" type="text" value="${sec.ds1||''}" placeholder="EA" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label></div></div>`;
 }
 
 function ds2HTML(sec){
-  const on=sec.ds2On;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Downspout — 2-Story</span><br><span class="rate">$30/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().ds2On=true;collapseGroup('Accessories');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0;font-size:12px">DS 2-Story</span>
-    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.ds2||''}" placeholder="EA" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()">
-    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label>
-    <label class="switch"><input type="checkbox" checked onchange="s().ds2On=false;s().ds2=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow">
+    <div class="srow-lbl">Downspout 2-Story <span class="srow-rate">$30/EA</span></div>
+    <input class="srow-input${sec.ds2?' has-val':''}" type="text" value="${sec.ds2||''}" placeholder="EA" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label></div></div>`;
 }
 
 function porchColHTML(sec){
-  const on=sec.porchColumnsOn;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Porch Columns</span><br><span class="rate">$55/EA</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().porchColumnsOn=true;collapseGroup('Porch & Foundation');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Columns</span>
-    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.porchColumns||''}" placeholder="EA" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()">
-    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> 🪵 Stain</label>
-    <label class="switch"><input type="checkbox" checked onchange="s().porchColumnsOn=false;s().porchColumns=0;renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="srow">
+    <div class="srow-lbl">Porch Columns <span class="srow-rate">$55/EA</span></div>
+    <input class="srow-input${sec.porchColumns?' has-val':''}" type="text" value="${sec.porchColumns||''}" placeholder="EA" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> 🪵 Stain</label></div></div>`;
 }
 
 function lintelsHTML(sec){
-  const on=sec.lintelsOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Lintels</span><br><span class="rate">$35/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().lintelsOn=this.checked;if(this.checked&&!s().lintels.length)s().lintels.push(mkLintel());renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+='<div class="surface-fields open">';
-    sec.lintels.forEach((l,i)=>{
-      h+=`<div class="entry-card" style="margin-bottom:6px"><div class="field-row">
-        <div class="field"><label>Material</label><select onchange="s().lintels[${i}].material=this.value">
-          <option${l.material==='Steel'?' selected':''}>Steel</option><option${l.material==='Wood'?' selected':''}>Wood</option></select></div>
-        <div class="field"><label>EA</label><input type="number" min="0" value="${l.ea||''}" oninput="s().lintels[${i}].ea=parseInt(this.value)||0;updFormPrices()"></div>
-        ${sec.lintels.length>1?`<button style="background:none;border:none;color:var(--red);font-size:14px;cursor:pointer;align-self:flex-end;padding-bottom:10px" onclick="s().lintels.splice(${i},1);renderForm()">✕</button>`:''}
-      </div><label class="check-opt"><input type="checkbox" ${l.stain?'checked':''} onchange="s().lintels[${i}].stain=this.checked"> Stain</label></div>`;
-    });
-    h+=`<button class="btn-add" onclick="s().lintels.push(mkLintel());renderForm()">+ Add Lintels</button></div>`;
-  }
+  let h='';
+  sec.lintels.forEach((l,i)=>{
+    h+=`<div class="srow" style="gap:4px">
+      <div class="srow-lbl" style="flex:0 0 auto">${i===0?'Lintels <span class="srow-rate">$35/EA</span>':''}</div>
+      <select style="padding:4px;font-size:11px;border:1px solid var(--border);border-radius:6px;width:60px" onchange="s().lintels[${i}].material=this.value">
+        <option${l.material==='Steel'?' selected':''}>Steel</option><option${l.material==='Wood'?' selected':''}>Wood</option></select>
+      <input class="srow-input${l.ea?' has-val':''}" type="text" value="${l.ea||''}" placeholder="EA" style="width:40px" oninput="s().lintels[${i}].ea=parseInt(this.value)||0;updFormPrices()">
+      <div class="srow-checks"><label><input type="checkbox" ${l.stain?'checked':''} onchange="s().lintels[${i}].stain=this.checked;updFormPrices()"> Stain</label></div>
+      ${sec.lintels.length>1?`<button style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px" onclick="s().lintels.splice(${i},1);renderForm()">✕</button>`:''}</div>`;
+  });
+  h+=`<div style="padding:2px 0"><button class="btn-add" style="font-size:11px;padding:4px 10px" onclick="s().lintels.push(mkLintel());renderForm()">+ Add Lintels</button></div>`;
   return h;
 }
 
-function foundationHTML(sec){
-  const on=sec.foundationOn;
-  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Foundation ⚠️</span><br><span class="rate">$1.40/SF · Explicit opt-in</span></div>
-    <label class="switch"><input type="checkbox" onchange="s().foundationOn=true;collapseGroup('Porch & Foundation');renderForm()"><span class="slider"></span></label></div>`;
-  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Foundation ⚠️</span>
-    <input type="text" style="width:55px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.foundation||''}" placeholder="SF" oninput="genericInput('foundation',this)">
-    <span style="font-size:11px;color:var(--text-light)">SF</span>
-    <label class="switch"><input type="checkbox" checked onchange="s().foundationOn=false;s().foundation=0;renderForm()"><span class="slider"></span></label></div>`;
-}
+// Foundation removed as standalone toggle — now just a flat srow
 
 function caulkHTML(sec){
-  const on=sec.caulkingOn;
   const autoSF=getAutoCalcSF(sec);
-  const useSF=sec.caulkingOverride!=null?sec.caulkingOverride:autoSF;
-  let h=`<div class="toggle-row"><div><span class="lbl">Caulking (New/Remodel)</span><br><span class="rate">$0.50/SF · Auto-calc</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().caulkingOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div style="font-size:11px;color:var(--text-light);margin-bottom:4px">Auto: ${autoSF.toLocaleString()} SF</div>
-      <div class="field"><input type="number" min="0" placeholder="Override SF" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()"></div></div>`;
-  }
-  return h;
+  return `<div class="srow" style="flex-wrap:wrap;gap:4px">
+    <div class="srow-lbl">Caulking <span class="srow-rate">$0.50/SF</span></div>
+    <label style="font-size:11px;display:flex;align-items:center;gap:4px"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--navy)" ${sec.caulkingOn?'checked':''} onchange="s().caulkingOn=this.checked;updFormPrices()"> On</label>
+    ${sec.caulkingOn?`<input class="srow-input" type="text" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" placeholder="${autoSF}" style="width:60px" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()"><span class="srow-unit">SF</span>`:''}</div>`;
 }
 
 function primerHTML(sec){
-  const on=sec.primerOn;
   const autoSF=getAutoCalcSF(sec);
-  let h=`<div class="toggle-row"><div><span class="lbl">Exterior Primer (Full Coat)</span><br><span class="rate">$0.75/SF · Auto-calc</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().primerOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div style="font-size:11px;color:var(--text-light);margin-bottom:4px">Auto: ${autoSF.toLocaleString()} SF</div>
-      <div class="field"><input type="number" min="0" placeholder="Override SF" value="${sec.primerOverride!=null?sec.primerOverride:''}" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()"></div></div>`;
-  }
-  return h;
+  return `<div class="srow" style="flex-wrap:wrap;gap:4px">
+    <div class="srow-lbl">Ext. Primer <span class="srow-rate">$0.75/SF</span></div>
+    <label style="font-size:11px;display:flex;align-items:center;gap:4px"><input type="checkbox" style="width:14px;height:14px;accent-color:var(--navy)" ${sec.primerOn?'checked':''} onchange="s().primerOn=this.checked;updFormPrices()"> On</label>
+    ${sec.primerOn?`<input class="srow-input" type="text" value="${sec.primerOverride!=null?sec.primerOverride:''}" placeholder="${autoSF}" style="width:60px" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()"><span class="srow-unit">SF</span>`:''}</div>`;
 }
 
 // ---- AUTO-CALC CARDS ----
@@ -745,12 +696,12 @@ function autoCalcHTML(sec){
   let h='<div class="card fade-in"><div class="card-title">⚡ Auto-Calculated</div>';
   // Pressure wash
   let pwSF=0;sec.siding.forEach(e=>pwSF+=e.sf);
-  if(sec.foundationOn)pwSF+=sec.foundation;
+  pwSF+=sec.foundation;
   sec.eaves.forEach(e=>pwSF+=e.lf*3);
   const pwCost=Math.max(pwSF*0.15,150);
   if(!sec.pwSkip){
     h+=`<div class="auto-card"><div class="auto-title">🚿 Pressure Wash</div>
-      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+e.sf,0).toLocaleString()} SF${sec.foundationOn?' + Foundation: '+sec.foundation+' SF':''}
+      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+e.sf,0).toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''}
        + Eaves: ${sec.eaves.reduce((a,e)=>a+e.lf,0)} LF × 3 ft = ${sec.eaves.reduce((a,e)=>a+e.lf*3,0)} SF<br>
        Total: ${pwSF.toLocaleString()} SF × $0.15 = ${fmt(pwSF*0.15)}${pwSF*0.15<150?' → $150 minimum':''}</div>
       <div class="auto-price">${fmt(pwCost)}</div>
@@ -762,7 +713,7 @@ function autoCalcHTML(sec){
   }
   // Masking warning
   const hasSiding=sec.siding.some(e=>e.sf>0);
-  const hasNonSiding=sec.guttersOn||sec.singleTrimOn||sec.windowsOn||sec.doorsOn;
+  const hasNonSiding=sec.gutters||sec.singleTrim||sec.windowEntries.some(w=>w.count)||sec.doors;
   if(!hasSiding&&hasNonSiding){
     h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Masking Warning</div>
       <div class="auto-detail">Non-siding surfaces present without siding. Masking charge may apply (~$0.45/SF).</div></div>`;
