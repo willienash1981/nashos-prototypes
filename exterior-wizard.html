@@ -571,7 +571,7 @@ function toggleSurface(sec,onKey,qtyKey,label,rateLabel,unit,val,grp){
   const on=sec[onKey];
   if(!on){
     return `<div class="toggle-row"><div style="flex:1"><span class="lbl">${label}</span><br><span class="rate">${rateLabel}</span></div>
-      <label class="switch"><input type="checkbox" onchange="s()['${onKey}']=true;${grp?`collapseGroup('${grp}');`:''}renderForm()"><span class="slider"></span></label></div>`;
+      <label class="switch"><input type="checkbox" onchange="s()['${onKey}']=true;renderForm()"><span class="slider"></span></label></div>`;
   }
   const price=val?(parseFloat(val)||0)*(parseFloat(rateLabel.replace(/[^0-9.]/g,''))||0):0;
   return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">${label}</span>
