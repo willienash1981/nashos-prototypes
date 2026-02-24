@@ -338,14 +338,26 @@ function calcSection(s){
   if(!s.pwSkip){const pw=getPWCost(s,pm,pp);t+=pw;}
   return t;
 }
+function effectiveSF(e){
+  if(e.height==='1-Story') return e.sf;
+  if(e.height==='2-Story'){
+    const per=e.sf/2; let t=per; // 2nd always
+    if(e.incl1st) t+=per;
+    return t;
+  }
+  const per=e.sf/3; let t=per; // 3rd always
+  if(e.incl2nd) t+=per;
+  if(e.incl1st) t+=per;
+  return t;
+}
 function getAutoCalcSF(s){
-  let sf=0;s.siding.forEach(e=>sf+=e.sf);
+  let sf=0;s.siding.forEach(e=>sf+=effectiveSF(e));
   sf+=s.foundation;
   s.eaves.forEach(e=>sf+=e.lf*3);
   return sf;
 }
 function getPWCost(s,pm,pp){
-  let sf=0;s.siding.forEach(e=>sf+=e.sf);
+  let sf=0;s.siding.forEach(e=>sf+=effectiveSF(e));
   sf+=s.foundation;
   s.eaves.forEach(e=>sf+=e.lf*3);
   return Math.max(sf*0.15,150);
@@ -370,7 +382,7 @@ function renderList(){
   let total=0,sidingSF=0,winCount=0,trimLF=0;
   sections.forEach(s=>{
     total+=calcSection(s);
-    s.siding.forEach(e=>sidingSF+=e.sf);
+    s.siding.forEach(e=>sidingSF+=effectiveSF(e));
     s.windowEntries.forEach(w=>winCount+=w.count);
     trimLF+=s.singleTrim;
     s.eaves.forEach(e=>{if(e.fascia)trimLF+=e.fasciaLF});
@@ -705,13 +717,13 @@ function autoCalcHTML(sec){
   const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
   let h='<div class="card fade-in"><div class="card-title">⚡ Auto-Calculated</div>';
   // Pressure wash
-  let pwSF=0;sec.siding.forEach(e=>pwSF+=e.sf);
+  let pwSF=0;sec.siding.forEach(e=>pwSF+=effectiveSF(e));
   pwSF+=sec.foundation;
   sec.eaves.forEach(e=>pwSF+=e.lf*3);
   const pwCost=Math.max(pwSF*0.15,150);
   if(!sec.pwSkip){
     h+=`<div class="auto-card"><div class="auto-title">🚿 Pressure Wash</div>
-      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+e.sf,0).toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''}
+      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+effectiveSF(e),0).toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''}
        + Eaves: ${sec.eaves.reduce((a,e)=>a+e.lf,0)} LF × 3 ft = ${sec.eaves.reduce((a,e)=>a+e.lf*3,0)} SF<br>
        Total: ${pwSF.toLocaleString()} SF × $0.15 = ${fmt(pwSF*0.15)}${pwSF*0.15<150?' → $150 minimum':''}</div>
       <div class="auto-price">${fmt(pwCost)}</div>
