@@ -217,7 +217,7 @@ function renderSegments(){
       <div class="seg-row">
         <div class="seg-label">Sides ${forcedSides?'<span style="color:var(--gold);font-weight:400;text-transform:none">(always 2 — open board)</span>':''}</div>
         <div class="toggle-group" style="max-width:200px">
-          <div class="toggle-btn${s.sides===1?' active':''}${forcedSides?' disabled':''}" onclick="${forcedSides?'':'setSides(\\''+s.id+'\\',1)'}">1 Side</div>
+          <div class="toggle-btn${s.sides===1?' active':''}${forcedSides?' disabled':''}" onclick="${forcedSides?'':`setSides('${s.id}',1)`}">1 Side</div>
           <div class="toggle-btn${s.sides===2?' active':''}" onclick="setSides('${s.id}',2)">2 Sides</div>
         </div>
         <div style="font-size:11px;color:var(--text-light);margin-top:3px">2 sides = both faces stained</div>
