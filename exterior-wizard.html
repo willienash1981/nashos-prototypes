@@ -899,7 +899,8 @@ function calcPress(key) {
           calcTarget.value = rounded;
           calcTarget.dispatchEvent(new Event('input', { bubbles: true }));
         }
-        closeCalc();
+        calcFormula = String(rounded);
+        display.value = calcFormula;
         return;
       }
     } catch(e) {}
