@@ -630,80 +630,73 @@ function windowsHTML(sec){
 
 function doorsHTML(sec){
   const on=sec.doorsOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Doors & Frames</span><br><span class="rate">$65/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().doorsOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="text" class="calc-input" placeholder="EA" value="${sec.doors||''}" oninput="genericInput('doors',this)"><div class="calc-hint" id="hint-doors"></div></div>
-      <label class="check-opt" style="margin-top:4px"><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Incl. front door</label></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Doors & Frames</span><br><span class="rate">$65/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().doorsOn=true;collapseGroup('Doors');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Doors</span>
+    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.doors||''}" placeholder="EA" oninput="genericInput('doors',this)">
+    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front door</label>
+    <label class="switch"><input type="checkbox" checked onchange="s().doorsOn=false;s().doors=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function doorFrameHTML(sec){
   const on=sec.doorFrameOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Door Frame Only</span><br><span class="rate">$35/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().doorFrameOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.doorFrame||''}" oninput="s().doorFrame=parseInt(this.value)||0;updFormPrices()"></div>
-      <div class="field" style="margin-top:6px"><input type="text" placeholder="Notes (location)" value="${esc(sec.doorFrameNotes)}" oninput="s().doorFrameNotes=this.value"></div></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Door Frame Only</span><br><span class="rate">$35/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().doorFrameOn=true;collapseGroup('Doors');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row" style="flex-wrap:wrap"><span class="lbl" style="flex-shrink:0">Frame Only</span>
+    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.doorFrame||''}" placeholder="EA" oninput="s().doorFrame=parseInt(this.value)||0;updFormPrices()">
+    <input type="text" style="flex:1;padding:6px;font-size:12px;border:1px solid var(--border);border-radius:6px;min-width:80px" placeholder="Location note" value="${esc(sec.doorFrameNotes)}" oninput="s().doorFrameNotes=this.value">
+    <label class="switch"><input type="checkbox" checked onchange="s().doorFrameOn=false;s().doorFrame=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function woodShuttersHTML(sec){
   const on=sec.woodShuttersOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Wood Shutters</span><br><span class="rate">$40/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().woodShuttersOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.woodShutters||''}" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()"></div>
-      <label class="check-opt"><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> Both Sides (2× labor)</label>
-      <label class="check-opt"><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Wood Shutters</span><br><span class="rate">$40/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().woodShuttersOn=true;collapseGroup('Shutters & Garage');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0;font-size:12px">Wood Shut.</span>
+    <input type="text" style="width:40px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.woodShutters||''}" placeholder="EA" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()">
+    <label class="check-opt" style="font-size:10px;white-space:nowrap"><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> Both</label>
+    <label class="check-opt" style="font-size:10px;white-space:nowrap"><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label>
+    <label class="switch"><input type="checkbox" checked onchange="s().woodShuttersOn=false;s().woodShutters=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function vinylShuttersHTML(sec){
   const on=sec.vinylShuttersOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Vinyl Shutters</span><br><span class="rate">$30/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().vinylShuttersOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.vinylShutters||''}" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()"></div>
-      <label class="check-opt"><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Vinyl Shutters</span><br><span class="rate">$30/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().vinylShuttersOn=true;collapseGroup('Shutters & Garage');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Vinyl Shut.</span>
+    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.vinylShutters||''}" placeholder="EA" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()">
+    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label>
+    <label class="switch"><input type="checkbox" checked onchange="s().vinylShuttersOn=false;s().vinylShutters=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function ds1HTML(sec){
   const on=sec.ds1On;
-  let h=`<div class="toggle-row"><div><span class="lbl">Downspout — 1-Story</span><br><span class="rate">$15/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().ds1On=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.ds1||''}" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()"></div>
-      <label class="check-opt"><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Downspout — 1-Story</span><br><span class="rate">$15/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().ds1On=true;collapseGroup('Accessories');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0;font-size:12px">DS 1-Story</span>
+    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.ds1||''}" placeholder="EA" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()">
+    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label>
+    <label class="switch"><input type="checkbox" checked onchange="s().ds1On=false;s().ds1=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function ds2HTML(sec){
   const on=sec.ds2On;
-  let h=`<div class="toggle-row"><div><span class="lbl">Downspout — 2-Story</span><br><span class="rate">$30/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().ds2On=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.ds2||''}" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()"></div>
-      <label class="check-opt"><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Downspout — 2-Story</span><br><span class="rate">$30/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().ds2On=true;collapseGroup('Accessories');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0;font-size:12px">DS 2-Story</span>
+    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.ds2||''}" placeholder="EA" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()">
+    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label>
+    <label class="switch"><input type="checkbox" checked onchange="s().ds2On=false;s().ds2=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function porchColHTML(sec){
   const on=sec.porchColumnsOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Porch Columns</span><br><span class="rate">$55/EA</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().porchColumnsOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div class="field"><input type="number" min="0" placeholder="EA" value="${sec.porchColumns||''}" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()"></div>
-      <label class="check-opt"><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> Stain</label></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Porch Columns</span><br><span class="rate">$55/EA</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().porchColumnsOn=true;collapseGroup('Porch & Foundation');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Columns</span>
+    <input type="text" style="width:45px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.porchColumns||''}" placeholder="EA" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()">
+    <label class="check-opt" style="font-size:11px;white-space:nowrap"><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> 🪵 Stain</label>
+    <label class="switch"><input type="checkbox" checked onchange="s().porchColumnsOn=false;s().porchColumns=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function lintelsHTML(sec){
@@ -727,13 +720,12 @@ function lintelsHTML(sec){
 
 function foundationHTML(sec){
   const on=sec.foundationOn;
-  let h=`<div class="toggle-row"><div><span class="lbl">Foundation (Brick/Block)</span><br><span class="rate">$1.40/SF</span></div>
-    <div class="right"><label class="switch"><input type="checkbox" ${on?'checked':''} onchange="s().foundationOn=this.checked;renderForm()"><span class="slider"></span></label></div></div>`;
-  if(on){
-    h+=`<div class="surface-fields open"><div style="background:var(--red-bg);padding:6px 10px;border-radius:6px;font-size:11px;color:var(--red);margin-bottom:6px">⚠️ Explicit opt-in only</div>
-      <div class="field"><input type="text" class="calc-input" placeholder="SF" value="${sec.foundation||''}" oninput="genericInput('foundation',this)"><div class="calc-hint" id="hint-foundation"></div></div></div>`;
-  }
-  return h;
+  if(!on) return `<div class="toggle-row"><div style="flex:1"><span class="lbl">Foundation ⚠️</span><br><span class="rate">$1.40/SF · Explicit opt-in</span></div>
+    <label class="switch"><input type="checkbox" onchange="s().foundationOn=true;collapseGroup('Porch & Foundation');renderForm()"><span class="slider"></span></label></div>`;
+  return `<div class="toggle-row"><span class="lbl" style="flex-shrink:0">Foundation ⚠️</span>
+    <input type="text" style="width:55px;padding:6px;font-size:13px;text-align:center;border:1px solid var(--border);border-radius:6px" value="${sec.foundation||''}" placeholder="SF" oninput="genericInput('foundation',this)">
+    <span style="font-size:11px;color:var(--text-light)">SF</span>
+    <label class="switch"><input type="checkbox" checked onchange="s().foundationOn=false;s().foundation=0;renderForm()"><span class="slider"></span></label></div>`;
 }
 
 function caulkHTML(sec){
