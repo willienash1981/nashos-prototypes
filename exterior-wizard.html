@@ -78,7 +78,7 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 .group-header .arrow.open { transform:rotate(180deg); }
 .group-body { display:none; }
 .group-body.open { display:block; }
-.srow { display:flex; align-items:center; gap:6px; padding:7px 0; border-bottom:1px solid #f0f0f0; }
+.srow { display:flex; align-items:center; gap:6px; padding:7px 0; border-bottom:1px solid #f0f0f0; flex-wrap:nowrap; }
 .srow:last-child { border-bottom:none; }
 .srow-lbl { font-size:12px; font-weight:600; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .srow-rate { font-size:10px; color:var(--text-light); }
@@ -609,9 +609,9 @@ function windowsHTML(sec){
 
 function doorsHTML(sec){
   return `<div class="srow">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front</label></div>
     <div class="srow-lbl">Doors & Frames <span class="srow-rate">$65/EA</span></div>
-    <input class="srow-input${sec.doors?' has-val':''}" type="text" value="${sec.doors||''}" placeholder="EA" oninput="s().doors=parseInt(this.value)||0;updFormPrices()">
-    <div class="srow-checks"><label><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front</label></div></div>`;
+    <input class="srow-input${sec.doors?' has-val':''}" type="text" value="${sec.doors||''}" placeholder="EA" oninput="s().doors=parseInt(this.value)||0;updFormPrices()"></div>`;
 }
 
 function doorFrameHTML(sec){
@@ -623,38 +623,38 @@ function doorFrameHTML(sec){
 
 function woodShuttersHTML(sec){
   return `<div class="srow">
-    <div class="srow-lbl">Wood Shutters <span class="srow-rate">$40/EA</span></div>
-    <input class="srow-input${sec.woodShutters?' has-val':''}" type="text" value="${sec.woodShutters||''}" placeholder="EA" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()">
     <div class="srow-checks"><label><input type="checkbox" ${sec.woodShuttersBoth?'checked':''} onchange="s().woodShuttersBoth=this.checked;updFormPrices()"> Both</label>
-    <label><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label></div></div>`;
+    <label><input type="checkbox" ${sec.woodShuttersRR?'checked':''} onchange="s().woodShuttersRR=this.checked;updFormPrices()"> R&R</label></div>
+    <div class="srow-lbl">Wood Shutters <span class="srow-rate">$40/EA</span></div>
+    <input class="srow-input${sec.woodShutters?' has-val':''}" type="text" value="${sec.woodShutters||''}" placeholder="EA" oninput="s().woodShutters=parseInt(this.value)||0;updFormPrices()"></div>`;
 }
 
 function vinylShuttersHTML(sec){
   return `<div class="srow">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label></div>
     <div class="srow-lbl">Vinyl Shutters <span class="srow-rate">$30/EA</span></div>
-    <input class="srow-input${sec.vinylShutters?' has-val':''}" type="text" value="${sec.vinylShutters||''}" placeholder="EA" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()">
-    <div class="srow-checks"><label><input type="checkbox" ${sec.vinylShuttersRR?'checked':''} onchange="s().vinylShuttersRR=this.checked;updFormPrices()"> R&R</label></div></div>`;
+    <input class="srow-input${sec.vinylShutters?' has-val':''}" type="text" value="${sec.vinylShutters||''}" placeholder="EA" oninput="s().vinylShutters=parseInt(this.value)||0;updFormPrices()"></div>`;
 }
 
 function ds1HTML(sec){
   return `<div class="srow">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label></div>
     <div class="srow-lbl">Downspout 1-Story <span class="srow-rate">$15/EA</span></div>
-    <input class="srow-input${sec.ds1?' has-val':''}" type="text" value="${sec.ds1||''}" placeholder="EA" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()">
-    <div class="srow-checks"><label><input type="checkbox" ${sec.ds1RR?'checked':''} onchange="s().ds1RR=this.checked;updFormPrices()"> R&R</label></div></div>`;
+    <input class="srow-input${sec.ds1?' has-val':''}" type="text" value="${sec.ds1||''}" placeholder="EA" oninput="s().ds1=parseInt(this.value)||0;updFormPrices()"></div>`;
 }
 
 function ds2HTML(sec){
   return `<div class="srow">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label></div>
     <div class="srow-lbl">Downspout 2-Story <span class="srow-rate">$30/EA</span></div>
-    <input class="srow-input${sec.ds2?' has-val':''}" type="text" value="${sec.ds2||''}" placeholder="EA" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()">
-    <div class="srow-checks"><label><input type="checkbox" ${sec.ds2RR?'checked':''} onchange="s().ds2RR=this.checked;updFormPrices()"> R&R</label></div></div>`;
+    <input class="srow-input${sec.ds2?' has-val':''}" type="text" value="${sec.ds2||''}" placeholder="EA" oninput="s().ds2=parseInt(this.value)||0;updFormPrices()"></div>`;
 }
 
 function porchColHTML(sec){
   return `<div class="srow">
+    <div class="srow-checks"><label><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> 🪵</label></div>
     <div class="srow-lbl">Porch Columns <span class="srow-rate">$55/EA</span></div>
-    <input class="srow-input${sec.porchColumns?' has-val':''}" type="text" value="${sec.porchColumns||''}" placeholder="EA" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()">
-    <div class="srow-checks"><label><input type="checkbox" ${sec.porchColumnsStain?'checked':''} onchange="s().porchColumnsStain=this.checked;updFormPrices()"> 🪵 Stain</label></div></div>`;
+    <input class="srow-input${sec.porchColumns?' has-val':''}" type="text" value="${sec.porchColumns||''}" placeholder="EA" oninput="s().porchColumns=parseInt(this.value)||0;updFormPrices()"></div>`;
 }
 
 function lintelsHTML(sec){
