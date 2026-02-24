@@ -507,13 +507,9 @@ function surfaceGroupsHTML(sec){
   // — Trim & Detail —
   h+=`<div class="sgrp-title">Trim & Detail</div>`;
   h+=srow('Gutters','$2.00/LF','gutters','LF');
+  h+=ds1HTML(sec);
+  h+=ds2HTML(sec);
   h+=srow('Single Trim','$2.25/LF','singleTrim','LF');
-
-  // — Railings —
-  h+=`<div class="sgrp-title">Railings</div>`;
-  h+=srow('Wood Railing (Painted)','$3.50/LF','railWoodPainted','LF');
-  h+=srow('Wood Railing (Metal Spindles)','$4.50/LF','railWoodMetal','LF');
-  h+=srow('Metal Railing','$3.00/LF','railMetal','LF');
 
   // — Windows (multi-entry) —
   h+=`<div class="sgrp-title">Windows</div>`;
@@ -530,11 +526,8 @@ function surfaceGroupsHTML(sec){
   h+=srow('Front Door Sidelight','$25/EA','sidelight','EA');
   h+=srow('Crawlspace Door','$45/EA','crawlDoor','EA');
 
-  // — Shutters & Garage —
-  h+=`<div class="sgrp-title">Shutters & Garage</div>`;
-  h+=woodShuttersHTML(sec);
-  h+=vinylShuttersHTML(sec);
-  h+=srow('Shutter Hardware','$15/EA','shutterHardware','EA');
+  // — Garage —
+  h+=`<div class="sgrp-title">Garage</div>`;
   h+=srow('Garage Door & Frame','$120/EA','garageDoor','EA');
   h+=srow('Garage Frame Only','$55/EA','garageFrame','EA');
   h+=srow('Garage Hardware','$20/EA','garageHardware','EA');
@@ -546,11 +539,15 @@ function surfaceGroupsHTML(sec){
   h+=srow('Porch Concrete','$1.25/SF','porchConcrete','SF');
   h+=srow('Wood Porch Floor','$1.75/SF','woodPorchFloor','SF');
   h+=porchColHTML(sec);
+  h+=srow('Wood Railing (Painted)','$3.50/LF','railWoodPainted','LF');
+  h+=srow('Wood Railing (Metal Spindles)','$4.50/LF','railWoodMetal','LF');
+  h+=srow('Metal Railing','$3.00/LF','railMetal','LF');
 
   // — Accessories —
   h+=`<div class="sgrp-title">Accessories</div>`;
-  h+=ds1HTML(sec);
-  h+=ds2HTML(sec);
+  h+=woodShuttersHTML(sec);
+  h+=vinylShuttersHTML(sec);
+  h+=srow('Shutter Hardware','$15/EA','shutterHardware','EA');
   h+=srow('Open Soffit Boxes','$30/EA','soffitBoxes','EA');
   h+=srow('Attic Vents','$20/EA','atticVents','EA');
   h+=lintelsHTML(sec);
