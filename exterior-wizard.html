@@ -485,7 +485,7 @@ function eavesEntryHTML(e,i,sec){
     <div style="display:flex;gap:12px;margin-top:4px;align-items:center;flex-wrap:wrap">
       <label class="check-opt"><input type="checkbox" ${e.difficult?'checked':''} onchange="s().eaves[${i}].difficult=this.checked;renderForm()"> Difficult (+50%)</label>
       <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().eaves[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
-      <label class="check-opt"><input type="checkbox" ${e.fascia?'checked':''} onchange="s().eaves[${i}].fascia=this.checked;renderForm()"> Fascia</label>
+      <label class="check-opt"><input type="checkbox" ${e.fascia?'checked':''} onchange="s().eaves[${i}].fascia=this.checked;renderForm()"> Fascia Only</label>
     </div>${e.fascia?`<div class="field-row" style="margin-top:6px;gap:6px;align-items:center;padding-left:4px">
       <span style="font-size:12px;color:var(--text-light);white-space:nowrap">↳ Fascia</span>
       <div class="field" style="flex:0 0 70px"><input type="text" value="${e.fasciaLF||''}" placeholder="LF" oninput="const c=tryCalc(this.value);s().eaves[${i}].fasciaLF=c!==null?c:(parseFloat(this.value)||0);updFormPrices()"></div>
