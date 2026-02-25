@@ -171,7 +171,7 @@ const RATES = {
   body_sf:12.48, door_2side:129.22, door_1side:86.22,
   glass_removal:150.00, glass_declined:0.00,
   drawer_rf:118.67, drawer_nrf:210.54, box_interior:233.02,
-  built_in:138.52, drawer_inside:130.87, laminate_prep_hr:42.45,
+  built_in_sf:1.39, drawer_inside:130.87, laminate_prep_hr:42.45,
   knobs_new_holes:77.75, hinge_new:42.00, hinge_hidden:67.00,
   bore_fill:118.00, extra_color:300.00
 };
@@ -199,7 +199,7 @@ function mkLocation(name) {
     doorCount:0, doorSides:'2side',
     showGlass:false, glassCount:0, glassSiliconed:false, glassDeclined:false,
     drawerRF:0, drawerNRF:0,
-    builtIn:0,
+    showBuiltIn:false, biWidth:0, biHeight:0, biDepth:2, biShelves:0,
     showDrawerInside:false, drawerInside:0
   };
 }
@@ -210,6 +210,17 @@ function getCoats() {
 }
 function getCoatMult() { return getCoats()===2 ? COAT_2_MULT : 1.0; }
 function getPkgMult() { return PKG[state.pkg]; }
+
+function calcBuiltInSF(loc) {
+  if(!loc.showBuiltIn) return 0;
+  const w=loc.biWidth||0, h=loc.biHeight||0, d=loc.biDepth||2, s=loc.biShelves||0;
+  if(!w||!h) return 0;
+  const back = w * h;
+  const leftRight = 2 * (h * d);
+  const topBottom = 2 * (w * d);
+  const shelves = s * w * d * 2; // top + bottom of each shelf
+  return back + leftRight + topBottom + shelves;
+}
 
 // ---- PRICING ----
 function calcLocationTotal(loc) {
@@ -235,8 +246,8 @@ function calcLocationTotal(loc) {
   // Drawers
   t += loc.drawerRF * RATES.drawer_rf * cm * pm;
   t += loc.drawerNRF * RATES.drawer_nrf * cm * pm;
-  // Built-in
-  t += loc.builtIn * RATES.built_in * cm * pm;
+  // Built-in shelving (SF-based)
+  t += calcBuiltInSF(loc) * RATES.built_in_sf * cm * pm;
   // Drawer inside
   if(loc.showDrawerInside) t += loc.drawerInside * RATES.drawer_inside * cm * pm;
   return t;
@@ -273,7 +284,8 @@ function getTotalStats() {
   const bodySF=locs.reduce((s,l)=>s+l.uppersLowersLF*8+l.lowersOnlyLF*3+l.islandLF*3+l.sideBottom*8+l.sideUpper*4.5,0);
   const doors=locs.reduce((s,l)=>s+l.doorCount+(l.showGlass?l.glassCount:0),0);
   const drawers=locs.reduce((s,l)=>s+l.drawerRF+l.drawerNRF+(l.showDrawerInside?l.drawerInside:0),0);
-  return {bodySF:Math.round(bodySF),doors,drawers};
+  const builtInSF=locs.reduce((s,l)=>s+calcBuiltInSF(l),0);
+  return {bodySF:Math.round(bodySF),doors,drawers,builtInSF:Math.round(builtInSF)};
 }
 
 // ---- CALCULATOR ----
@@ -451,9 +463,27 @@ function renderLocation(loc, idx) {
   h+=qtyField(`loc_dnrf_${idx}`,loc.drawerNRF,idx,'drawerNRF','NRF Drawers');
   h+=`</div>`;
 
-  // Built-In (COMMON)
-  h+=`<div class="sgrp-title">Built-In Shelving / Boxes</div>`;
-  h+=srowCount('Built-in count',`$${(RATES.built_in*getCoatMult()).toFixed(0)}/ea · COMMON`,`loc_bi_${idx}`,loc.builtIn,idx,'builtIn');
+  // Built-In Shelving (SF-based)
+  h+=`<div class="sgrp-title">Built-In Shelving <span style="font-size:11px;color:var(--text-light);font-weight:400">· COMMON</span></div>`;
+  h+=`<div class="rare-toggle">Enable Built-In <label class="switch"><input type="checkbox" ${loc.showBuiltIn?'checked':''} onchange="setLocField(${idx},'showBuiltIn',this.checked);render()"><span class="slider"></span></label></div>`;
+  if(loc.showBuiltIn){
+    const biSF=calcBuiltInSF(loc);
+    h+=`<div class="srow"><div class="srow-lbl">Width<br><span class="srow-rate">ft</span></div>`;
+    h+=qtyField(`loc_biw_${idx}`,loc.biWidth,idx,'biWidth','Width');
+    h+=`</div>`;
+    h+=`<div class="srow"><div class="srow-lbl">Height<br><span class="srow-rate">ft</span></div>`;
+    h+=qtyField(`loc_bih_${idx}`,loc.biHeight,idx,'biHeight','Height');
+    h+=`</div>`;
+    h+=`<div class="srow"><div class="srow-lbl">Depth<br><span class="srow-rate">ft (default 2')</span></div>`;
+    h+=qtyField(`loc_bid_${idx}`,loc.biDepth,idx,'biDepth','Depth');
+    h+=`</div>`;
+    h+=`<div class="srow"><div class="srow-lbl">Shelves<br><span class="srow-rate">horizontal shelf count</span></div>`;
+    h+=qtyField(`loc_bis_${idx}`,loc.biShelves,idx,'biShelves','Shelves');
+    h+=`</div>`;
+    if(biSF>0){
+      h+=`<div class="info-note">📐 Back: ${(loc.biWidth*loc.biHeight).toFixed(0)} SF · Sides: ${(2*loc.biHeight*loc.biDepth).toFixed(0)} SF · Top+Bottom: ${(2*loc.biWidth*loc.biDepth).toFixed(0)} SF · Shelves: ${(loc.biShelves*loc.biWidth*loc.biDepth*2).toFixed(0)} SF<br><strong>Total: ${biSF.toFixed(0)} SF × $${RATES.built_in_sf}/SF = $${(biSF*RATES.built_in_sf*getCoatMult()*getPkgMult()).toFixed(0)}</strong></div>`;
+    }
+  }
 
   // Drawers Inside (RARE)
   h+=`<div class="rare-toggle"><span class="tag">RARE</span> Drawers Inside`;
@@ -579,6 +609,10 @@ function onQtyInput(locIdx,field,el) {
       sfEl.textContent=v?`× ${mults[field]} = ${sf} SF`:'';
     }
   }
+  // re-render built-in SF breakdown live
+  if(['biWidth','biHeight','biDepth','biShelves'].includes(field)&&locIdx>=0){
+    render();return;
+  }
   // update loc total
   if(locIdx>=0){
     const lt=document.getElementById('locTotal'+locIdx);
@@ -620,7 +654,8 @@ function updateTotal() {
   const condLabels={painted:'Prev. Painted',stained:'Stained → Painted',raw:'Raw Wood → Painted',laminate:'Laminate → Painted'};
   document.getElementById('totalPrice').textContent='$'+Math.round(total).toLocaleString();
   document.getElementById('totalMeta').textContent=`${getCoats()}-coat · ${condLabels[state.condition]} · ${state.pkg}`;
-  document.getElementById('totalDetail').textContent=`Bodies: ${stats.bodySF} SF | Doors: ${stats.doors} | Drawers: ${stats.drawers}`;
+  const biPart=stats.builtInSF?` | Built-In: ${stats.builtInSF} SF`:'';
+  document.getElementById('totalDetail').textContent=`Bodies: ${stats.bodySF} SF | Doors: ${stats.doors} | Drawers: ${stats.drawers}${biPart}`;
   // Update loc totals
   state.locations.forEach((l,i)=>{
     const el=document.getElementById('locTotal'+i);
