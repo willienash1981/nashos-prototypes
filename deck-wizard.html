@@ -580,9 +580,34 @@ function deckPerim(s, l, w) {
   return p;
 }
 
+function getDeckDeductions() {
+  const sects = state.railSections;
+  const deductions = {};
+  sects.forEach((s, i) => {
+    if (s.type !== 'staircase') return;
+    const opening = s.openingFt || 0;
+    if (opening <= 0) return;
+    // Find nearest deck BEFORE this staircase
+    for (let j = i - 1; j >= 0; j--) {
+      if (sects[j].type === 'deck') {
+        deductions[sects[j].id] = (deductions[sects[j].id] || 0) + opening;
+        break;
+      }
+    }
+    // Find nearest deck AFTER this staircase
+    for (let j = i + 1; j < sects.length; j++) {
+      if (sects[j].type === 'deck') {
+        deductions[sects[j].id] = (deductions[sects[j].id] || 0) + opening;
+        break;
+      }
+    }
+  });
+  return deductions;
+}
+
 function renderRailSections() {
   const c = document.getElementById('rail-sections');
-  const stairOpenings = state.railSections.filter(s=>s.type==='staircase').reduce((a,s)=>a+(s.openingFt||0),0);
+  const deductions = getDeckDeductions();
   let html = '';
 
   state.railSections.forEach((s,i) => {
@@ -595,6 +620,8 @@ function renderRailSections() {
         l = parseFloat(document.getElementById('flooring-l').value)||0;
         w = parseFloat(document.getElementById('flooring-w').value)||0;
       } else { l = s.l||0; w = s.w||0; }
+
+      const myDeduct = deductions[s.id] || 0;
 
       html += `<div class="rail-sect">
         <div class="rail-sect-head">
@@ -629,8 +656,8 @@ function renderRailSections() {
       html += `</div>`;
 
       const perim = deckPerim(s,l,w);
-      if (isFirst && stairOpenings > 0) {
-        html += `<div class="calc-note">${perim}' selected − ${stairOpenings}' stair opening = ${Math.max(0,perim-stairOpenings)}' net</div>`;
+      if (myDeduct > 0 && perim > 0) {
+        html += `<div class="calc-note">${perim}' selected − ${myDeduct}' stair opening = ${Math.max(0,perim-myDeduct)}' net</div>`;
       } else if (perim > 0) {
         html += `<div class="calc-note">${perim}' selected</div>`;
       }
@@ -745,7 +772,7 @@ function railInput(id, field, value) {
 }
 
 function calcRailTotal() {
-  const stairOpenings = state.railSections.filter(s=>s.type==='staircase').reduce((a,s)=>a+(s.openingFt||0),0);
+  const deductions = getDeckDeductions();
   let total = 0;
 
   state.railSections.forEach(s => {
@@ -759,7 +786,8 @@ function calcRailTotal() {
         w = parseFloat(document.getElementById('flooring-w').value)||0;
       } else { l = s.l||0; w = s.w||0; }
       sLf = deckPerim(s,l,w);
-      if (isFirst) sLf -= stairOpenings;
+      const myDeduct = deductions[s.id] || 0;
+      if (sLf > 0) sLf -= myDeduct; // only deduct if deck has railing
       sLf = Math.max(0, sLf);
     }
     else if (s.type === 'staircase') {
