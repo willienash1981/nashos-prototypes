@@ -104,8 +104,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   </div>
 
   <div class="running-total" id="runningTotal">
-    <div><span class="big" id="rtTotal">$1,621</span> <span class="detail" id="rtProduct">Semi-Transparent Stain</span></div>
-    <div class="detail" id="rtDetail">Flooring: 400 SF · Railing: 60 LF · 1 Coat</div>
+    <div><span class="big" id="rtTotal">$812</span> <span class="detail" id="rtProduct">Semi-Transparent Stain</span></div>
+    <div class="detail" id="rtDetail">Flooring: 400 SF · Railing: 0 LF · 1 Coat</div>
   </div>
 
   <!-- STEP 1: CONDITION ASSESSMENT -->
@@ -270,16 +270,52 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     <div class="measure-header" onclick="toggleMeasure('railing')">
       <div class="left">
         <div class="toggle on" id="railing-toggle"><div class="knob"></div></div>
-        <div class="name">Railing <span class="sf-inline" id="railing-lf">60 LF</span></div>
+        <div class="name">Railing <span class="sf-inline" id="railing-lf">0 LF</span></div>
       </div>
-      <div class="price" id="railing-price">$809</div>
+      <div class="price zero" id="railing-price">$0</div>
     </div>
     <div class="measure-body" id="railing-body">
+
+      <!-- Side selector -->
+      <div class="q-label" style="margin-bottom:6px">Which sides have railing? <span style="font-size:11px;color:var(--text-light)">(tap to toggle)</span></div>
+      <div id="rail-sides" style="position:relative;width:220px;height:180px;margin:0 auto 12px;user-select:none">
+        <!-- Visual deck box -->
+        <div style="position:absolute;top:30px;left:30px;right:30px;bottom:30px;border:2px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-light)">DECK</div>
+        <!-- House label -->
+        <div style="position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--text-light);letter-spacing:1px">🏠 HOUSE</div>
+        <!-- Top (house side) -->
+        <div class="rail-side" id="rail-top" data-side="top" onclick="toggleRailSide('top')" style="position:absolute;top:24px;left:40px;right:40px;height:12px;border-radius:6px;cursor:pointer;background:var(--border);transition:background .15s"></div>
+        <!-- Bottom (far from house) -->
+        <div class="rail-side selected" id="rail-bottom" data-side="bottom" onclick="toggleRailSide('bottom')" style="position:absolute;bottom:24px;left:40px;right:40px;height:12px;border-radius:6px;cursor:pointer;background:var(--green);transition:background .15s"></div>
+        <!-- Left -->
+        <div class="rail-side selected" id="rail-left" data-side="left" onclick="toggleRailSide('left')" style="position:absolute;top:40px;bottom:40px;left:24px;width:12px;border-radius:6px;cursor:pointer;background:var(--green);transition:background .15s"></div>
+        <!-- Right -->
+        <div class="rail-side selected" id="rail-right" data-side="right" onclick="toggleRailSide('right')" style="position:absolute;top:40px;bottom:40px;right:24px;width:12px;border-radius:6px;cursor:pointer;background:var(--green);transition:background .15s"></div>
+      </div>
+      <div class="calc-note" style="text-align:center;margin-bottom:12px" id="rail-calc-note">Tap sides to add/remove railing · Green = railing</div>
+
+      <!-- Staircase rail adjustment -->
+      <div id="stair-rail-adjust" class="hidden" style="margin-bottom:12px">
+        <div class="disclaimer info" style="margin:0">ℹ️ Staircase detected — opening (<span id="stair-open-w">0</span>') subtracted, stair side rails added</div>
+        <div class="input-row" style="margin-top:8px">
+          <label style="min-width:90px">Stair rail len</label>
+          <input type="number" id="stair-rail-len" value="3" oninput="calcRailLF()" style="max-width:60px">
+          <div class="unit">ft/side</div>
+        </div>
+      </div>
+
+      <!-- Calculated LF + override -->
       <div class="input-row">
-        <label>Lin Ft</label>
-        <input type="number" id="railing-linft" value="60" oninput="calc()">
+        <label>Calc LF</label>
+        <input type="number" id="railing-linft-calc" readonly style="background:#f9fafb;color:var(--text-light)" value="0">
         <div class="unit">LF</div>
       </div>
+      <div class="input-row">
+        <label>Override</label>
+        <input type="number" id="railing-linft" value="" placeholder="Leave blank to use calc" oninput="calc()">
+        <div class="unit">LF</div>
+      </div>
+
       <div class="input-row">
         <label>Type</label>
         <select id="railing-type" onchange="calc()">
@@ -387,7 +423,8 @@ const state = {
   toggles: { flooring:true, stairs:false, skirting:false, underside:false, railing:true },
   coat2: { flooring:false },
   addons: { brush:false, masking:false },
-  colors: 1
+  colors: 1,
+  railSides: { top:false, bottom:true, left:true, right:true }
 };
 
 function pick(el) {
@@ -496,7 +533,8 @@ function toggleMeasure(key) {
     const ss = parseFloat(document.getElementById('stairs-sqft').value)||0;
     document.getElementById('underside-sqft').value = fs + ss;
   }
-  calc();
+  if (key === 'stairs') calcRailLF(); // stair toggle affects railing calc
+  else calc();
 }
 
 function toggle2coat(key) {
@@ -515,7 +553,7 @@ function calcFloorDims() {
   const l = parseFloat(document.getElementById('flooring-l').value)||0;
   const w = parseFloat(document.getElementById('flooring-w').value)||0;
   if (l && w) document.getElementById('flooring-sqft').value = Math.round(l*w);
-  calc();
+  calcRailLF(); // recalc railing when dims change (also calls calc())
 }
 
 function calcStairs() {
@@ -523,13 +561,73 @@ function calcStairs() {
   const w = parseFloat(document.getElementById('stairs-width').value)||0;
   const sf = Math.round(s * 2 * (w/12));
   document.getElementById('stairs-sqft').value = sf;
-  calc();
+  calcRailLF(); // stair width affects railing calc (also calls calc())
 }
 
 function calcPosts() {
   const h = parseFloat(document.getElementById('post-h').value)||0;
   const c = parseFloat(document.getElementById('post-count').value)||0;
   document.getElementById('skirting-sqft').value = Math.round(h * 4 * c);
+  calc();
+}
+
+function toggleRailSide(side) {
+  state.railSides[side] = !state.railSides[side];
+  const el = document.getElementById('rail-'+side);
+  el.style.background = state.railSides[side] ? 'var(--green)' : 'var(--border)';
+  calcRailLF();
+}
+
+function calcRailLF() {
+  const l = parseFloat(document.getElementById('flooring-l').value)||0;
+  const w = parseFloat(document.getElementById('flooring-w').value)||0;
+
+  if (!l || !w) {
+    document.getElementById('railing-linft-calc').value = 0;
+    document.getElementById('rail-calc-note').textContent = 'Enter deck L × W in Flooring to auto-calculate';
+    calc();
+    return;
+  }
+
+  // Which sides have railing — top/bottom are the W dimension, left/right are the L dimension
+  let lf = 0;
+  if (state.railSides.top) lf += w;
+  if (state.railSides.bottom) lf += w;
+  if (state.railSides.left) lf += l;
+  if (state.railSides.right) lf += l;
+
+  // Staircase adjustment
+  const hasStairs = state.toggles.stairs;
+  document.getElementById('stair-rail-adjust').classList.toggle('hidden', !hasStairs);
+  if (hasStairs) {
+    const stairW = parseFloat(document.getElementById('stairs-width').value)||36;
+    const stairWft = stairW / 12;
+    const stairRailLen = parseFloat(document.getElementById('stair-rail-len').value)||3;
+    document.getElementById('stair-open-w').textContent = stairWft.toFixed(1);
+    // Subtract staircase opening from whichever side it's on (assume far side / bottom)
+    lf -= stairWft;
+    // Add staircase side rails (both sides)
+    lf += stairRailLen * 2;
+  }
+
+  lf = Math.max(0, Math.round(lf));
+  document.getElementById('railing-linft-calc').value = lf;
+
+  // Build explanation
+  const sides = [];
+  if (state.railSides.top) sides.push('house('+w+"')");
+  if (state.railSides.bottom) sides.push('front('+w+"')");
+  if (state.railSides.left) sides.push('left('+l+"')");
+  if (state.railSides.right) sides.push('right('+l+"')");
+  let note = sides.join(' + ');
+  if (hasStairs) {
+    const stairW = parseFloat(document.getElementById('stairs-width').value)||36;
+    const stairRailLen = parseFloat(document.getElementById('stair-rail-len').value)||3;
+    note += ' − stair opening(' + (stairW/12).toFixed(1) + "') + stair rails(" + stairRailLen + "'×2)";
+  }
+  note += ' = ' + lf + ' LF';
+  document.getElementById('rail-calc-note').textContent = note;
+
   calc();
 }
 
@@ -609,9 +707,11 @@ function calc() {
     document.getElementById('underside-sf').textContent = '';
   }
 
-  // Railing
+  // Railing — use override if provided, otherwise use calculated LF
   if (state.toggles.railing) {
-    const lf = parseFloat(document.getElementById('railing-linft').value)||0;
+    const override = document.getElementById('railing-linft').value.trim();
+    const calcLf = parseFloat(document.getElementById('railing-linft-calc').value)||0;
+    const lf = override !== '' ? parseFloat(override)||0 : calcLf;
     const type = document.getElementById('railing-type').value;
     const cost = lf * (railRates[type]||0);
     total += cost;
@@ -654,13 +754,16 @@ function calc() {
 
   // Detail line
   const fSf = state.toggles.flooring ? (parseFloat(document.getElementById('flooring-sqft').value)||0) : 0;
-  const rLf = state.toggles.railing ? (parseFloat(document.getElementById('railing-linft').value)||0) : 0;
+  const rOverride = document.getElementById('railing-linft').value.trim();
+  const rCalc = parseFloat(document.getElementById('railing-linft-calc').value)||0;
+  const rLf = state.toggles.railing ? (rOverride !== '' ? parseFloat(rOverride)||0 : rCalc) : 0;
   const coats = state.coat2.flooring ? '2 Coats' : '1 Coat';
   document.getElementById('rtDetail').textContent = `Flooring: ${fSf} SF · Railing: ${rLf} LF · ${coats}`;
 }
 
 // Init
 assess();
+calcRailLF();
 calc();
 </script>
 </body>
