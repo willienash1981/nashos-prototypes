@@ -128,17 +128,6 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
       </div>
     </div>
     <div class="global-row">
-      <div><div class="gr-label">Extra Colors</div><div class="gr-sub">+$75 each beyond 1</div></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="gr-val" id="extraColorPrice">$0</span>
-        <div class="counter">
-          <button onclick="adjColors(-1)">−</button>
-          <span class="count" id="extraColors">0</span>
-          <button onclick="adjColors(1)">+</button>
-        </div>
-      </div>
-    </div>
-    <div class="global-row">
       <div><div class="gr-label">Heavy Masking</div><div class="gr-sub">+$2.00/LF (~4ft masking width)</div></div>
       <div style="display:flex;align-items:center;gap:10px">
         <span class="gr-val" id="maskPrice">$0</span>
@@ -173,7 +162,6 @@ const RATES={
 };
 const LABELS=['Front','Back','Left','Right','Pool Area'];
 let segments=[];
-let extraColorCount=0;
 let product='Stain';
 
 function uid(){return '_'+Math.random().toString(36).slice(2,9)}
@@ -275,12 +263,6 @@ function setProduct(p,el){
   product=p;
   document.querySelectorAll('[data-prod]').forEach(b=>b.classList.toggle('active',b.dataset.prod===p));
 }
-function adjColors(d){
-  extraColorCount=Math.max(0,extraColorCount+d);
-  document.getElementById('extraColors').textContent=extraColorCount;
-  recalc();
-}
-
 function recalc(){
   const coat2On=document.getElementById('coat2').checked;
   const maskOn=document.getElementById('masking').checked;
@@ -296,20 +278,17 @@ function recalc(){
   });
 
   const coat2Cost=coat2On?subtotal*0.85:0;
-  const extraColorCost=extraColorCount*75;
   const maskCost=maskOn?totalLF*2.00:0;
-  const total=subtotal+coat2Cost+extraColorCost+maskCost;
+  const total=subtotal+coat2Cost+maskCost;
   const gallons=totalSF/100;
 
   document.getElementById('coat2price').textContent=coat2On?'$'+coat2Cost.toFixed(2):'$0';
-  document.getElementById('extraColorPrice').textContent=extraColorCost?'$'+extraColorCost.toFixed(2):'$0';
   document.getElementById('maskPrice').textContent=maskOn?'$'+maskCost.toFixed(2):'$0';
 
   // Summary
   let html=lines.map(l=>`<div class="sum-line seg-line"><span>${l.label} — ${l.type}, ${l.sides}s, ${l.lf} LF</span><span class="sum-val">$${l.price.toFixed(2)}</span></div>`).join('');
   html+=`<div class="sum-line"><span>Subtotal</span><span class="sum-val">$${subtotal.toFixed(2)}</span></div>`;
   if(coat2On)html+=`<div class="sum-line addon"><span>2nd Coat (0.85×)</span><span class="sum-val">+$${coat2Cost.toFixed(2)}</span></div>`;
-  if(extraColorCount)html+=`<div class="sum-line addon"><span>Extra Colors (×${extraColorCount})</span><span class="sum-val">+$${extraColorCost.toFixed(2)}</span></div>`;
   if(maskOn)html+=`<div class="sum-line addon"><span>Heavy Masking (${totalLF} LF × $2.00)</span><span class="sum-val">+$${maskCost.toFixed(2)}</span></div>`;
   html+=`<div class="sum-line total"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
   html+=`<div class="sum-meta"><div>Total SF: <span>${totalSF.toLocaleString()}</span></div><div>Est. Gallons: <span>${gallons.toFixed(1)}</span></div></div>`;
