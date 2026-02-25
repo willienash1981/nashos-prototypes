@@ -118,8 +118,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   </div>
 
   <div class="running-total" id="runningTotal">
-    <div><span class="big" id="rtTotal">$812</span> <span class="detail" id="rtProduct">Semi-Transparent Stain</span></div>
-    <div class="detail" id="rtDetail">Flooring: 400 SF · Railing: 0 LF · 1 Coat</div>
+    <div><span class="big" id="rtTotal">$0</span> <span class="detail" id="rtProduct">Semi-Transparent Stain</span></div>
+    <div class="detail" id="rtDetail">Flooring: 0 SF · Stairs: 0 SF · Rail: 0 LF</div>
   </div>
 
   <!-- STEP 1: CONDITION ASSESSMENT -->
@@ -218,7 +218,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     <div class="measure-header" onclick="toggleMeasure('skirting')">
       <div class="left">
         <div class="toggle" id="skirting-toggle"><div class="knob"></div></div>
-        <div class="name">Skirting / Lattice / Posts <span class="sf-inline" id="skirting-sf"></span></div>
+        <div class="name">Lattice / Skirting / Posts <span class="sf-inline" id="skirting-sf"></span></div>
       </div>
       <div class="price zero" id="skirting-price">$0</div>
     </div>
@@ -229,11 +229,19 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
         <div class="unit">SF</div>
       </div>
       <div class="input-row">
-        <label>OR posts</label>
-        <input type="number" id="post-h" placeholder="H" style="max-width:55px" oninput="calcPosts()">
-        <span style="font-size:12px">×4×</span>
+        <label>OR dims</label>
+        <input type="number" id="skirting-l" placeholder="L" style="max-width:55px" oninput="calcSkirtingDims()">
+        <span style="font-size:12px">×</span>
+        <input type="number" id="skirting-h" placeholder="H" style="max-width:55px" oninput="calcSkirtingDims()">
+        <div class="unit">ft → SF</div>
+      </div>
+      <div class="input-row" style="margin-top:4px">
+        <label>Posts</label>
+        <input type="number" id="post-h" placeholder="H (ft)" style="max-width:55px" oninput="calcPosts()">
+        <span style="font-size:12px">× qty</span>
         <input type="number" id="post-count" placeholder="Qty" style="max-width:55px" oninput="calcPosts()">
       </div>
+      <div class="calc-note" id="posts-note">Post: 0.5' wide × H × 4 sides × count → adds to SF</div>
       <div class="calc-note">Rate: $1.39/SF</div>
     </div>
   </div>
@@ -252,7 +260,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
         <input type="number" id="underside-sqft" value="0" oninput="calc()">
         <div class="unit">SF</div>
       </div>
-      <div class="calc-note">Rate: $1.39/SF</div>
+      <div class="calc-note">Auto-fills from all sections · Rate: $1.39/SF</div>
     </div>
   </div>
 
@@ -261,26 +269,14 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 
   <div class="addon-card">
     <div class="left">
-      <div class="aname">Additional Colors</div>
-      <div class="adesc">1 included, +$75 each additional</div>
+      <div class="aname">New Replacement Boards</div>
+      <div class="adesc">Each board = 4 SF (8'×6") · Auto-applies 2 coats</div>
     </div>
     <div class="counter">
-      <span class="aprice" id="colors-price">$0</span>
-      <button onclick="adjColors(-1)">−</button>
-      <span id="colors-count">1</span>
-      <button onclick="adjColors(1)">+</button>
-    </div>
-  </div>
-
-  <div class="addon-card">
-    <div class="left">
-      <div class="aname">New Replacement Boards</div>
-      <div class="adesc">Auto-applies 2 coats</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
       <span class="aprice" id="newboards-price">$0</span>
-      <input type="number" id="newboards-sf" value="0" style="width:60px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px" oninput="calc()">
-      <span style="font-size:11px;color:var(--text-light)">SF</span>
+      <button onclick="adjBoards(-1)">−</button>
+      <span id="newboards-count">0</span>
+      <button onclick="adjBoards(1)">+</button>
     </div>
   </div>
 
@@ -317,22 +313,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
       <input type="text" id="color-railing" placeholder="Same as floor (leave blank)" oninput="checkColors()">
     </div>
     <div id="colorWaiver" class="disclaimer warning">⚠️ Semi-transparent requires color waiver — natural wood variation will show through.</div>
-    <div id="colorMismatch" class="disclaimer info hidden">ℹ️ Railing ≠ floor color detected — masking upcharge applied.</div>
-  </div>
-
-  <!-- Business Rules -->
-  <div class="card" style="margin-top:16px;background:var(--bg);border:1px dashed var(--border)">
-    <div class="card-title" style="font-size:12px;color:var(--text-light)">📋 Business Rules (always enforced)</div>
-    <div style="font-size:11px;color:var(--text-light);line-height:1.6">
-      • NO paint products on decks (stain/seal only)<br>
-      • NO sanding — Nash doesn't sand decks<br>
-      • NO stripping — Nash doesn't strip decks<br>
-      • Railings stained BEFORE flooring<br>
-      • New replacement boards → auto 2 coats<br>
-      • Semi-transparent → color waiver required<br>
-      • SuperDeck → one-way door (lock-in)<br>
-      • Behr DeckOver → NO WARRANTY
-    </div>
+    <div id="colorMismatch" class="disclaimer info hidden">ℹ️ Railing ≠ floor color detected — masking upcharge applied ($0.50/SF of stainable surface).</div>
+    <div id="colorMismatchCost" class="disclaimer info hidden"></div>
   </div>
 </div>
 
@@ -340,7 +322,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 <div class="bottom-bar">
   <div>
     <div class="label">Deck Staining</div>
-    <div class="total" id="bottomTotal">$1,621</div>
+    <div class="total" id="bottomTotal">$0</div>
   </div>
   <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
 </div>
@@ -353,7 +335,7 @@ const state = {
   q1:'no', q1a:null, q2:'bare', q3:'no', q4:'standard', q5:'minimal',
   toggles: { skirting:false, underside:false },
   addons: { brush:false, masking:false },
-  colors: 1,
+  newboards: 0,
   sections: [
     { id:0, type:'deck', l:0, w:0, coat2:false, sides:{top:false, bottom:true, left:true, right:true} }
   ],
@@ -384,7 +366,6 @@ function assess() {
 
   const {q1, q1a, q2, q3, q4, q5} = state;
 
-  // Decision logic
   if (q1 === 'yes' && q1a === 'lt2') {
     product = 'superdeck-locked';
     reason = 'Active water beading with recent coating (<2 years). SuperDeck is the ONLY option.';
@@ -462,12 +443,9 @@ function toggleMeasure(key) {
   document.getElementById(key+'-toggle').classList.toggle('on', state.toggles[key]);
   document.getElementById(key+'-body').classList.toggle('hidden', !state.toggles[key]);
   if (key === 'underside' && state.toggles[key]) {
-    // Auto-fill from total deck + landing SF
-    let sf = 0;
-    state.sections.forEach(s => {
-      if (s.type==='deck' || s.type==='landing') sf += (s.l||0)*(s.w||0);
-    });
-    document.getElementById('underside-sqft').value = sf;
+    // Auto-fill from total deck + staircase + landing SF
+    const totalSF = getTotalStainableSF();
+    document.getElementById('underside-sqft').value = Math.round(totalSF);
   }
   calc();
 }
@@ -478,11 +456,39 @@ function toggleAddon(key) {
   calc();
 }
 
+function calcSkirtingDims() {
+  const l = parseFloat(document.getElementById('skirting-l').value)||0;
+  const h = parseFloat(document.getElementById('skirting-h').value)||0;
+  if (l > 0 && h > 0) {
+    document.getElementById('skirting-sqft').value = Math.round(l * h);
+  }
+  calc();
+}
+
 function calcPosts() {
   const h = parseFloat(document.getElementById('post-h').value)||0;
   const c = parseFloat(document.getElementById('post-count').value)||0;
-  document.getElementById('skirting-sqft').value = Math.round(h * 4 * c);
+  // Post: 0.5' wide × height × 4 sides × count = 2 × h × count
+  const postSF = Math.round(2 * h * c);
+  const currentSF = parseFloat(document.getElementById('skirting-sqft').value)||0;
+  // Add posts SF to existing skirting SF (from dims if any)
+  const sl = parseFloat(document.getElementById('skirting-l').value)||0;
+  const sh = parseFloat(document.getElementById('skirting-h').value)||0;
+  const dimSF = (sl > 0 && sh > 0) ? Math.round(sl * sh) : 0;
+  document.getElementById('skirting-sqft').value = dimSF + postSF;
+  document.getElementById('posts-note').textContent = `Post: 0.5' wide × ${h||0}' × 4 sides × ${c||0} = ${postSF} SF`;
   calc();
+}
+
+// ── Get total stainable SF (deck floors + stair SF + landing floors) ──
+function getTotalStainableSF() {
+  let sf = 0;
+  state.sections.forEach(s => {
+    if (s.type === 'deck') sf += (s.l||0) * (s.w||0);
+    else if (s.type === 'staircase') sf += Math.round((s.steps||0) * 2 * ((s.widthIn||36)/12));
+    else if (s.type === 'landing') sf += (s.l||4) * (s.w||4);
+  });
+  return sf;
 }
 
 // ── Unified Section Builder ──
@@ -510,6 +516,15 @@ function getDeckDeductions() {
 }
 
 function renderSections() {
+  // Save focused element info for keyboard fix
+  const activeEl = document.activeElement;
+  let focusSid = null, focusField = null, focusPos = 0;
+  if (activeEl && activeEl.dataset && activeEl.dataset.sid !== undefined) {
+    focusSid = activeEl.dataset.sid;
+    focusField = activeEl.dataset.field;
+    focusPos = activeEl.selectionStart || 0;
+  }
+
   const c = document.getElementById('deck-sections');
   const ded = getDeckDeductions();
   let html = '';
@@ -537,9 +552,9 @@ function renderSections() {
 
         <div class="q-label" style="font-size:12px">Dimensions</div>
         <div class="input-row">
-          <label>L</label><input type="number" value="${l||''}" placeholder="L" oninput="sectInput(${s.id},'l',this.value)" style="max-width:65px">
+          <label>L</label><input type="number" data-sid="${s.id}" data-field="l" value="${l||''}" placeholder="L" oninput="sectInput(${s.id},'l',this.value)" style="max-width:65px">
           <span style="font-size:12px">×</span>
-          <label>W</label><input type="number" value="${w||''}" placeholder="W" oninput="sectInput(${s.id},'w',this.value)" style="max-width:65px">
+          <label>W</label><input type="number" data-sid="${s.id}" data-field="w" value="${w||''}" placeholder="W" oninput="sectInput(${s.id},'w',this.value)" style="max-width:65px">
           <div class="unit">ft → ${sf} SF</div>
         </div>
         <div class="coat-toggle" style="margin:4px 0 10px">
@@ -575,11 +590,11 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label style="min-width:55px">Steps</label>
-          <input type="number" value="${s.steps||''}" oninput="sectInput(${s.id},'steps',this.value)" style="max-width:65px">
+          <input type="number" data-sid="${s.id}" data-field="steps" value="${s.steps||''}" oninput="sectInput(${s.id},'steps',this.value)" style="max-width:65px">
         </div>
         <div class="input-row">
           <label style="min-width:55px">Width</label>
-          <input type="number" value="${s.widthIn||36}" oninput="sectInput(${s.id},'widthIn',this.value);sectInput(${s.id},'openingFt',Math.round(this.value/12*10)/10)" style="max-width:65px">
+          <input type="number" data-sid="${s.id}" data-field="widthIn" value="${s.widthIn||36}" oninput="sectInput(${s.id},'widthIn',this.value);sectInput(${s.id},'openingFt',Math.round(this.value/12*10)/10)" style="max-width:65px">
           <div class="unit">in → ${((s.widthIn||36)/12).toFixed(1)}' opening</div>
         </div>
         <div class="calc-note">Surface: ${stairSF} SF @ $${RATES.stair}/SF = $${Math.round(stairSF*RATES.stair)}</div>
@@ -590,7 +605,7 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label style="min-width:55px">Rail len</label>
-          <input type="number" value="${s.railLen||''}" oninput="sectInput(${s.id},'railLen',this.value)" style="max-width:65px">
+          <input type="number" data-sid="${s.id}" data-field="railLen" value="${s.railLen||''}" oninput="sectInput(${s.id},'railLen',this.value)" style="max-width:65px">
           <div class="unit">ft/side <span style="font-size:10px;color:var(--text-light)">(≈ # steps)</span></div>
         </div>
       </div>`;
@@ -611,9 +626,9 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label>Size</label>
-          <input type="number" value="${s.l||4}" oninput="sectInput(${s.id},'l',this.value)" style="max-width:50px">
+          <input type="number" data-sid="${s.id}" data-field="l" value="${s.l||4}" oninput="sectInput(${s.id},'l',this.value)" style="max-width:50px">
           <span style="font-size:12px">×</span>
-          <input type="number" value="${s.w||4}" oninput="sectInput(${s.id},'w',this.value)" style="max-width:50px">
+          <input type="number" data-sid="${s.id}" data-field="w" value="${s.w||4}" oninput="sectInput(${s.id},'w',this.value)" style="max-width:50px">
           <div class="unit">ft → ${sf} SF</div>
         </div>
         <div class="coat-toggle" style="margin:4px 0 8px">
@@ -622,7 +637,7 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label>Rail sides</label>
-          <input type="number" value="${s.sides!==undefined?s.sides:2}" min="0" max="4" oninput="sectInput(${s.id},'sides',this.value)" style="max-width:50px">
+          <input type="number" data-sid="${s.id}" data-field="sides" value="${s.sides!==undefined?s.sides:2}" min="0" max="4" oninput="sectInput(${s.id},'sides',this.value)" style="max-width:50px">
           <div class="unit">of 4 → ${railLf} LF</div>
         </div>
       </div>`;
@@ -639,7 +654,7 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label>Linear ft</label>
-          <input type="number" value="${s.lf||''}" oninput="sectInput(${s.id},'lf',this.value)">
+          <input type="number" data-sid="${s.id}" data-field="lf" value="${s.lf||''}" oninput="sectInput(${s.id},'lf',this.value)">
           <div class="unit">LF</div>
         </div>
       </div>`;
@@ -647,6 +662,16 @@ function renderSections() {
   });
 
   c.innerHTML = html;
+
+  // Restore focus after innerHTML (keyboard fix)
+  if (focusSid !== null && focusField !== null) {
+    const target = c.querySelector(`input[data-sid="${focusSid}"][data-field="${focusField}"]`);
+    if (target) {
+      target.focus();
+      try { target.setSelectionRange(focusPos, focusPos); } catch(e) {}
+    }
+  }
+
   calc();
 }
 
@@ -693,16 +718,18 @@ function setStairSides(id, value) {
 
 // ── Pricing Calc ──
 
-function adjColors(d) {
-  state.colors = Math.max(1, state.colors + d);
-  document.getElementById('colors-count').textContent = state.colors;
+function adjBoards(d) {
+  state.newboards = Math.max(0, state.newboards + d);
+  document.getElementById('newboards-count').textContent = state.newboards;
   calc();
 }
 
 function checkColors() {
   const f = document.getElementById('color-floor').value.trim();
   const r = document.getElementById('color-railing').value.trim();
-  document.getElementById('colorMismatch').classList.toggle('hidden', !(r && f && r.toLowerCase()!==f.toLowerCase()));
+  const mismatch = r && f && r.toLowerCase() !== f.toLowerCase();
+  document.getElementById('colorMismatch').classList.toggle('hidden', !mismatch);
+  document.getElementById('colorMismatchCost').classList.toggle('hidden', !mismatch);
   calc();
 }
 
@@ -783,9 +810,14 @@ function calc() {
     document.getElementById('skirting-sf').textContent = '';
   }
 
-  // Underside
+  // Underside — auto-fill when toggled on
   if (state.toggles.underside) {
-    const sf = parseFloat(document.getElementById('underside-sqft').value)||0;
+    const totalStainable = getTotalStainableSF();
+    const undersideEl = document.getElementById('underside-sqft');
+    if (undersideEl && document.activeElement !== undersideEl) {
+      undersideEl.value = Math.round(totalStainable);
+    }
+    const sf = parseFloat(undersideEl.value)||0;
     const cost = sf * RATES.underside;
     total += cost;
     document.getElementById('underside-price').textContent = '$'+Math.round(cost);
@@ -797,13 +829,9 @@ function calc() {
     document.getElementById('underside-sf').textContent = '';
   }
 
-  // Add-ons
-  const extraColors = Math.max(0, state.colors - 1) * 75;
-  total += extraColors;
-  document.getElementById('colors-price').textContent = extraColors ? '$'+extraColors : '$0';
-
-  const nbSf = parseFloat(document.getElementById('newboards-sf').value)||0;
-  const nbCost = nbSf * RATES.floor * 2;
+  // New Replacement Boards: count × 4 SF × floor_rate × 2 coats
+  const nbCount = state.newboards;
+  const nbCost = nbCount * 4 * RATES.floor * 2;
   total += nbCost;
   document.getElementById('newboards-price').textContent = nbCost ? '$'+Math.round(nbCost) : '$0';
 
@@ -813,9 +841,17 @@ function calc() {
   total += maskingFee;
   document.getElementById('masking-price').textContent = maskingFee ? '$'+maskingFee : '$0';
 
+  // Color mismatch upcharge: $0.50/SF of total stainable surface
   const f = document.getElementById('color-floor').value.trim();
   const r = document.getElementById('color-railing').value.trim();
-  if (r && f && r.toLowerCase() !== f.toLowerCase()) total += 75;
+  const mismatch = r && f && r.toLowerCase() !== f.toLowerCase();
+  if (mismatch) {
+    const totalStainable = getTotalStainableSF();
+    const mismatchCost = Math.round(totalStainable * 0.50);
+    total += mismatchCost;
+    const el = document.getElementById('colorMismatchCost');
+    if (el) el.textContent = `🎭 Masking upcharge: $${mismatchCost} ($0.50 × ${Math.round(totalStainable)} SF — extra paint waste for masking inefficiencies)`;
+  }
 
   const totalRound = Math.round(total);
   document.getElementById('rtTotal').textContent = '$'+totalRound.toLocaleString();
