@@ -434,11 +434,10 @@ function renderLocation(loc, idx) {
   h+=qtyField(`loc_dc_${idx}`,loc.doorCount,idx,'doorCount','Doors');
   h+=`</div>`;
 
-  // Glass Doors (RARE)
-  h+=`<div class="rare-toggle"><span class="tag">RARE</span> Glass Doors`;
-  h+=`<label class="switch"><input type="checkbox" ${loc.showGlass?'checked':''} onchange="setLocField(${idx},'showGlass',this.checked);render()"><span class="slider"></span></label></div>`;
-  if(loc.showGlass){
-    h+=srowCount('Glass door count','auto-adds box interiors',`loc_gc_${idx}`,loc.glassCount,idx,'glassCount');
+  // Glass Doors
+  h+=`<div class="sgrp-title">Glass Doors <span class="tag" style="margin-left:6px;vertical-align:middle">RARE</span></div>`;
+  h+=srowCount('Glass doors',`$${RATES.glass_removal.toFixed(0)}/ea removal · auto-adds box interiors`,`loc_gc_${idx}`,loc.glassCount,idx,'glassCount');
+  if(loc.glassCount>0){
     h+=`<div class="srow"><div class="srow-lbl">Siliconed?<br><span style="font-size:10px;color:var(--text-light)">+$150/ea removal</span></div>`;
     h+=`<label class="switch"><input type="checkbox" ${loc.glassSiliconed?'checked':''} onchange="setLocField(${idx},'glassSiliconed',this.checked);render()"><span class="slider"></span></label></div>`;
     h+=`<div class="srow"><div class="srow-lbl">Declined (CYA $0)</div>`;
