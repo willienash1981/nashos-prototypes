@@ -204,6 +204,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <span style="color:var(--orange);font-weight:600;flex:1">Ceiling masking auto-added</span>
     <span style="font-weight:700;color:var(--orange)" id="masking-auto-sf">239 SF</span>
   </div>
+  <!-- Popcorn Removal — smart toggle, itemized separately -->
+  <div class="sf" id="popcorn-row">
+    <div class="sf-tog" id="popcorn-tog" onclick="togPopcorn()"></div>
+    <div class="sf-name">Popcorn Removal<div class="sf-sub">Itemized separately on proposal</div></div>
+    <div id="popcorn-price" style="font-size:12px;font-weight:700;color:var(--orange);display:none">$0</div>
+  </div>
+  <div id="popcorn-detail" style="display:none;background:#FFF8E1;padding:8px 10px;border-bottom:1px solid var(--g100)">
+    <div style="display:flex;gap:8px;margin-bottom:6px">
+      <div style="flex:1">
+        <div style="font-size:9px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Ceiling condition</div>
+        <div style="display:flex;gap:4px">
+          <button class="pc-opt active" id="pc-unpainted" onclick="setPopcornPaint(false)" style="flex:1;padding:6px 4px;border-radius:6px;border:1.5px solid var(--navy);background:var(--navy);color:white;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center">Unpainted</button>
+          <button class="pc-opt" id="pc-painted" onclick="setPopcornPaint(true)" style="flex:1;padding:6px 4px;border-radius:6px;border:1.5px solid var(--g300);background:white;color:var(--g700);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center">Painted</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px">Stairway?</div>
+        <div style="display:flex;align-items:center;gap:4px;padding-top:2px">
+          <div class="sf-tog" id="stair-tog" onclick="tog(this);calcPopcorn()" style="width:32px;height:18px;border-radius:9px"></div>
+          <span style="font-size:11px;font-weight:600" id="stair-label">No</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;padding-top:4px;border-top:1px solid rgba(0,0,0,.08)">
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:600" id="pc-rate-label">Unpainted 8-9' — $1.83/SF</div>
+        <div style="font-size:10px;color:var(--g500)" id="pc-sf-label">239 SF ceiling</div>
+      </div>
+      <div style="font-size:16px;font-weight:800;color:var(--navy)" id="pc-total">$437</div>
+    </div>
+    <div style="font-size:9px;color:var(--orange);margin-top:4px;line-height:1.3">⚠️ If builder never finished drywall tape under popcorn, additional finishing required ($4/SF). Toggle "Drywall Finishing" in Prep card below.</div>
+    <div style="font-size:9px;color:var(--g500);margin-top:2px">Sub crew performs removal. Ceiling painting included in room estimate above.</div>
+  </div>
+
   <!-- Advanced — 2-col grid -->
   <div id="wall-adv" style="display:none">
     <div class="adv-grid">
@@ -592,6 +626,7 @@ function recalc(){
   document.getElementById('aCh').textContent=Math.round(p)+' LF';
   document.getElementById('aWn').textContent=Math.round(p*3)+' SF';
   updateClosetCalc(cl,h);
+  if(typeof calcPopcorn==='function') calcPopcorn();
 }
 
 function updateClosetCalc(cl,h){
@@ -818,12 +853,19 @@ function prepCalc() {
   totalEl.style.display = anyActive ? 'flex' : 'none';
   document.getElementById('prep-total-val').textContent = '$' + Math.round(total).toLocaleString();
 
-  // Update bottom bar — base room price + drywall
+  // Update bottom bar — base painting + itemized add-ons
   const basePrice = 3450;
-  const roomTotal = basePrice + Math.round(total);
+  const drywallTotal = Math.round(total);
+  const popcornTotal = pcTotal || 0;
+  const roomTotal = basePrice + drywallTotal + popcornTotal;
   document.getElementById('bot-price').textContent = '$' + roomTotal.toLocaleString();
-  document.getElementById('bot-sub').textContent = anyActive
-    ? 'Master Bedroom · incl $' + Math.round(total).toLocaleString() + ' drywall'
+
+  // Build itemized subtitle
+  const parts = ['Painting $' + basePrice.toLocaleString()];
+  if (popcornTotal > 0) parts.push('Popcorn $' + popcornTotal.toLocaleString());
+  if (drywallTotal > 0) parts.push('Drywall $' + drywallTotal.toLocaleString());
+  document.getElementById('bot-sub').textContent = parts.length > 1
+    ? parts.join(' · ')
     : 'Master Bedroom';
 }
 
@@ -854,6 +896,72 @@ function renderHolePhotos() {
       <button onclick="holePhotos.splice(${i},1);renderHolePhotos()" style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#EF4444;color:white;border:none;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
   `).join('');
+}
+
+// ── Popcorn Removal ──
+const PC_RATES = {
+  '8_unpainted': 1.83, '8_painted': 2.54,
+  '9_unpainted': 3.16, '9_painted': 4.56,
+  'stair_8_unpainted': 2.26, 'stair_8_painted': 2.54,  // stair 8-9 painted same as regular
+  'stair_9_unpainted': 2.26, 'stair_9_painted': 3.99,
+};
+let pcPainted = false;
+let pcActive = false;
+let pcTotal = 0;
+
+function togPopcorn() {
+  const togEl = document.getElementById('popcorn-tog');
+  tog(togEl);
+  pcActive = togEl.classList.contains('on');
+  document.getElementById('popcorn-detail').style.display = pcActive ? '' : 'none';
+  document.getElementById('popcorn-price').style.display = pcActive ? '' : 'none';
+  calcPopcorn();
+}
+
+function setPopcornPaint(painted) {
+  pcPainted = painted;
+  const pBtn = document.getElementById('pc-painted');
+  const uBtn = document.getElementById('pc-unpainted');
+  if (painted) {
+    pBtn.style.border = '1.5px solid var(--navy)'; pBtn.style.background = 'var(--navy)'; pBtn.style.color = 'white';
+    uBtn.style.border = '1.5px solid var(--g300)'; uBtn.style.background = 'white'; uBtn.style.color = 'var(--g700)';
+  } else {
+    uBtn.style.border = '1.5px solid var(--navy)'; uBtn.style.background = 'var(--navy)'; uBtn.style.color = 'white';
+    pBtn.style.border = '1.5px solid var(--g300)'; pBtn.style.background = 'white'; pBtn.style.color = 'var(--g700)';
+  }
+  calcPopcorn();
+}
+
+function calcPopcorn() {
+  const h = parseFloat(document.getElementById('rh').value) || 9;
+  const ceilSF = getCeilSF();
+  const isStair = document.getElementById('stair-tog').classList.contains('on');
+  document.getElementById('stair-label').textContent = isStair ? 'Yes' : 'No';
+
+  // Pick rate
+  const hTier = h > 9 ? '9' : '8';
+  const paintKey = pcPainted ? 'painted' : 'unpainted';
+  const prefix = isStair ? 'stair_' : '';
+  const rateKey = prefix + hTier + '_' + paintKey;
+  const rate = PC_RATES[rateKey] || 1.83;
+
+  const hLabel = h > 9 ? '9-14\'' : '8-9\'';
+  const condLabel = pcPainted ? 'Painted' : 'Unpainted';
+  const stairLabel = isStair ? ' Stairway' : '';
+
+  document.getElementById('pc-rate-label').textContent = `${condLabel}${stairLabel} ${hLabel} — $${rate.toFixed(2)}/SF`;
+  document.getElementById('pc-sf-label').textContent = ceilSF + ' SF ceiling';
+
+  pcTotal = pcActive ? Math.round(ceilSF * rate) : 0;
+  document.getElementById('pc-total').textContent = '$' + pcTotal.toLocaleString();
+  document.getElementById('popcorn-price').textContent = '$' + pcTotal.toLocaleString();
+
+  updateBotBar();
+}
+
+function updateBotBar() {
+  // Recalculate everything for bottom bar
+  prepCalc(); // this already calls updateBotBar via the old path, so let's just do the bar here
 }
 
 recalc();
