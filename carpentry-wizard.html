@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Carpentry & Repairs</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --red-bg: #FEF2F2;
+  --orange: #F59E0B;
+  --orange-bg: #FFFBEB;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
+.topbar { background: var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:16px; font-weight:700; }
+.topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.running-total { position:sticky; top:42px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; }
+.running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
+.running-total .detail { opacity:.8; }
+
+/* Category sections */
+.cat-header { padding:12px 12px 4px; display:flex; align-items:center; gap:8px; }
+.cat-header h2 { font-size:14px; font-weight:700; color:var(--navy); }
+.cat-header .icon { font-size:16px; }
+.cat-badge { font-size:10px; background:var(--gold); color:var(--navy); padding:1px 7px; border-radius:10px; font-weight:700; }
+
+/* Line item cards */
+.item-card { background:var(--card); border-radius:var(--radius); margin:4px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.item-name { font-size:13px; font-weight:600; flex:1; line-height:1.3; }
+.item-rate { font-size:12px; color:var(--gold); font-weight:700; white-space:nowrap; }
+.item-desc { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.3; }
+.item-min { font-size:10px; color:var(--orange); font-weight:600; margin-top:2px; }
+
+/* Quantity row */
+.qty-row { display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+.qty-controls { display:flex; align-items:center; gap:4px; }
+.qty-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; color:var(--text); transition:all .15s; }
+.qty-btn:hover { border-color:var(--gold); }
+.qty-btn:active { background:rgba(196,169,98,.1); }
+.qty-input { width:56px; padding:5px 4px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; text-align:center; font-family:inherit; }
+.qty-input:focus { outline:none; border-color:var(--gold); }
+.qty-unit { font-size:11px; color:var(--text-light); font-weight:600; min-width:24px; }
+.item-total { font-size:14px; font-weight:700; color:var(--navy); }
+.item-total.zero { color:var(--text-light); font-weight:400; }
+.min-applied { font-size:10px; color:var(--orange); background:var(--orange-bg); padding:2px 6px; border-radius:4px; margin-top:4px; display:inline-block; }
+
+/* Addons */
+.addon-card { background:var(--card); border-radius:var(--radius); margin:4px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; }
+.addon-card .left { flex:1; }
+.addon-card .aname { font-size:13px; font-weight:600; }
+.addon-card .adesc { font-size:11px; color:var(--text-light); }
+.addon-card .aprice { font-size:14px; font-weight:700; color:var(--navy); margin-right:8px; }
+.toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.toggle.on { background:var(--green); }
+.toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.toggle.on .knob { left:22px; }
+
+/* Summary */
+.summary-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.summary-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.summary-row.cat-row { font-weight:600; color:var(--navy); }
+.summary-row.total-row { border-top:2px solid var(--navy); margin-top:6px; padding-top:8px; font-size:15px; font-weight:700; color:var(--navy); }
+.summary-row .items { color:var(--text-light); font-weight:400; }
+.disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; margin:6px 12px; }
+.disclaimer.info { background:#EFF6FF; color:#1E40AF; }
+
+/* Bottom bar */
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.bottom-bar .label { font-size:11px; opacity:.8; }
+.bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
+.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <h1>🔨 Carpentry & Repairs</h1>
+    <span class="badge">BETA</span>
+  </div>
+
+  <div class="running-total">
+    <div><span class="big" id="rtTotal">$0</span></div>
+    <div class="detail" id="rtDetail">0 line items</div>
+  </div>
+
+  <div id="wizard"></div>
+
+  <!-- NOTES -->
+  <div class="cat-header" style="margin-top:8px"><div class="icon">📝</div><h2>Notes</h2></div>
+  <div style="margin:4px 12px">
+    <textarea id="notes" placeholder="Repair locations, photo references, access notes..." style="width:100%;min-height:70px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;resize:vertical;background:var(--card)" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+  </div>
+
+  <div class="disclaimer info">ℹ️ Painting of all repaired surfaces is included in the paint estimate — NOT in carpentry pricing.</div>
+</div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div>
+    <div class="label">Carpentry Total</div>
+    <div class="total" id="bottomTotal">$0</div>
+  </div>
+  <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
+</div>
+
+<script>
+// ── Line Item Definitions ──
+const CATEGORIES = [
+  {
+    id: 'trim', icon: '🪵', label: 'Trim & Moulding',
+    items: [
+      { id:'brick_mould_full', name:'Brick Moulding (Full Length)', rate:30.23, unit:'LF', min:0, desc:'Full-length replacement around doors/windows' },
+      { id:'brick_mould_splice', name:'Brick Moulding (Splice)', rate:106.32, unit:'EA', min:0, desc:'Cut out rotted section, splice with rot-free PVC' },
+      { id:'single_trim_full', name:'Single Trim (Full Pieces)', rate:14.61, unit:'LF', min:8, desc:'Full board replacement (8\' min)' },
+      { id:'single_trim_splice', name:'Single Trim (Splice)', rate:133.42, unit:'EA', min:0, desc:'Remove rotten section, patch with rot-free PVC' },
+      { id:'window_trim_full', name:'Window Trim (Full Piece)', rate:14.61, unit:'LF', min:4, desc:'Full replacement of window trim piece (4\' min)' },
+      { id:'window_sill_nose', name:'Window Sill Nose', rate:143.00, unit:'EA', min:0, desc:'Bottom ledge replacement — precise fit required' },
+      { id:'door_jamb_splice', name:'Door Jamb (Splice)', rate:191.83, unit:'EA', min:0, desc:'~1\' splice at bottom of door frame (common rot)' },
+      { id:'gable_triangle', name:'Gable Peak Decorative Triangle', rate:85.46, unit:'EA', min:0, desc:'Triangular "pork chop" trim at gable peaks' },
+      { id:'triangle_gable_bird', name:'Triangle Gable (Bird Box)', rate:167.75, unit:'EA', min:0, desc:'Larger gable triangle with bird box access' },
+      { id:'garage_door_framing', name:'Garage Door 2×12 Framing (Splice)', rate:230.50, unit:'EA', min:0, desc:'Splice repair on heavy 2×12 garage door framing' },
+    ]
+  },
+  {
+    id: 'fascia', icon: '📏', label: 'Fascia',
+    items: [
+      { id:'fascia_1st', name:'Fascia Board (1st Floor)', rate:30.23, unit:'LF', min:3, desc:'Standard height, accessible from ladder (3\' min)' },
+      { id:'fascia_2nd', name:'Fascia Board (2nd Floor)', rate:55.23, unit:'LF', min:3, desc:'Height premium ~1.8× first floor (3\' min)' },
+      { id:'fascia_difficult', name:'Fascia Board (Difficult)', rate:131.97, unit:'LF', min:3, desc:'Steep roof lines, limited access ~4.4× (3\' min)' },
+    ]
+  },
+  {
+    id: 'soffit', icon: '🔲', label: 'Soffit',
+    items: [
+      { id:'soffit', name:'Soffit Replacement', rate:96.00, unit:'SF', min:3, desc:'Overhead panel replacement (3 SF min)' },
+      { id:'soffit_vent_rr', name:'Soffit: Light or Vent R&R', rate:75.00, unit:'EA', min:0, desc:'Remove fixture, cut new opening, reinstall' },
+    ]
+  },
+  {
+    id: 'columns', icon: '🏛️', label: 'Columns',
+    items: [
+      { id:'column_base', name:'Column 2×12 Base', rate:193.00, unit:'EA', min:0, desc:'Pressure treated base plate replacement (ground rot)' },
+      { id:'column_boxed_side', name:'Column: Boxed Side (Per Side)', rate:191.83, unit:'EA', min:0, desc:'Remove & reinstall trim boards around column' },
+      { id:'column_single_trim', name:'Column: Single Trim', rate:42.73, unit:'LF', min:0, desc:'Trim piece on column — precision work' },
+      { id:'column_tapered_side', name:'Column: Tapered Side (Per Side)', rate:371.00, unit:'EA', min:0, desc:'Custom-cut tapered boards — most expensive column repair' },
+    ]
+  },
+  {
+    id: 'deck', icon: '🪜', label: 'Deck Carpentry',
+    items: [
+      { id:'deck_floor_boards', name:'Deck: Floor Boards', rate:7.19, unit:'LF', min:0, desc:'Match board gaps with existing' },
+      { id:'deck_handrail', name:'Deck Top Handrail (Full Piece)', rate:7.19, unit:'LF', min:0, desc:'Full handrail replacement' },
+      { id:'deck_spindles', name:'Deck: Wood Spindles', rate:11.81, unit:'EA', min:0, desc:'Individual spindle replacement' },
+      { id:'deck_post_4x4', name:'Deck: 4×4 Post Replacement', rate:361.47, unit:'EA', min:0, desc:'Structural post — may need temp support' },
+    ]
+  },
+  {
+    id: 'overhead', icon: '⚙️', label: 'Overhead & Modifiers',
+    items: [
+      { id:'additional_labor', name:'Additional Labor', rate:75.00, unit:'HR', min:0, desc:'Hourly catch-all for work outside specific line items' },
+      { id:'material_catchall', name:'Additional Material', rate:0, unit:'$', min:0, desc:'Specialty materials not covered by line item pricing', isFlat:true },
+      { id:'handyman_service', name:'Handyman / Service Call', rate:175.00, unit:'EA', min:0, desc:'Up to 30 min labor + travel. Materials NOT included.' },
+    ]
+  }
+];
+
+// State: qty per item id
+const state = {};
+CATEGORIES.forEach(cat => cat.items.forEach(item => { state[item.id] = 0; }));
+
+// Addons
+let perishables = true;
+let difficultCount = 0;
+
+// ── Render ──
+function render() {
+  const el = document.getElementById('wizard');
+  let html = '';
+
+  CATEGORIES.forEach(cat => {
+    const catTotal = cat.items.reduce((sum, item) => sum + itemCost(item), 0);
+    const catCount = cat.items.filter(item => state[item.id] > 0).length;
+
+    html += `<div class="cat-header">
+      <div class="icon">${cat.icon}</div>
+      <h2>${cat.label}</h2>
+      ${catCount > 0 ? `<span class="cat-badge">${catCount} · $${catTotal.toLocaleString()}</span>` : ''}
+    </div>`;
+
+    cat.items.forEach(item => {
+      const qty = state[item.id];
+      const cost = itemCost(item);
+      const effectiveQty = item.min > 0 && qty > 0 && qty < item.min ? item.min : qty;
+      const minApplied = item.min > 0 && qty > 0 && qty < item.min;
+
+      html += `<div class="item-card">
+        <div class="item-top">
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-desc">${item.desc}</div>
+            ${item.min > 0 ? `<div class="item-min">Min: ${item.min} ${item.unit}</div>` : ''}
+          </div>
+          <div class="item-rate">${item.isFlat ? 'Variable' : '$'+item.rate.toFixed(2)+'/'+item.unit}</div>
+        </div>
+        <div class="qty-row">
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="adj('${item.id}',-1)">−</button>
+            <input class="qty-input" type="number" min="0" value="${qty || ''}" placeholder="0"
+              data-id="${item.id}"
+              oninput="setQty('${item.id}', this.value)">
+            <button class="qty-btn" onclick="adj('${item.id}',1)">+</button>
+            <span class="qty-unit">${item.unit}</span>
+          </div>
+          <div class="item-total ${cost === 0 ? 'zero' : ''}">$${cost.toLocaleString()}</div>
+        </div>
+        ${minApplied ? `<div class="min-applied">⚠️ ${item.min} ${item.unit} minimum applied</div>` : ''}
+      </div>`;
+    });
+  });
+
+  // Addons section
+  html += `<div class="cat-header" style="margin-top:8px"><div class="icon">📦</div><h2>Job Charges</h2></div>`;
+
+  html += `<div class="addon-card">
+    <div class="left">
+      <div class="aname">Perishables</div>
+      <div class="adesc">Trip charge + consumables (auto-added)</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice">$125</span>
+      <div class="toggle ${perishables?'on':''}" onclick="togglePerishables()"><div class="knob"></div></div>
+    </div>
+  </div>`;
+
+  html += `<div class="addon-card">
+    <div class="left">
+      <div class="aname">Difficult Location</div>
+      <div class="adesc">$125/ea — hard-to-access areas</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice" style="min-width:36px;text-align:right">$${(difficultCount*125).toLocaleString()}</span>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="adjDifficult(-1)" style="width:28px;height:28px;font-size:16px">−</button>
+        <span style="font-size:14px;font-weight:600;min-width:20px;text-align:center">${difficultCount}</span>
+        <button class="qty-btn" onclick="adjDifficult(1)" style="width:28px;height:28px;font-size:16px">+</button>
+      </div>
+    </div>
+  </div>`;
+
+  // Summary
+  html += `<div class="cat-header" style="margin-top:8px"><div class="icon">📋</div><h2>Summary</h2></div>`;
+  html += `<div class="summary-card">`;
+
+  let grandTotal = 0;
+  let lineCount = 0;
+
+  CATEGORIES.forEach(cat => {
+    const catItems = cat.items.filter(i => state[i.id] > 0);
+    if (catItems.length === 0) return;
+    const catTotal = catItems.reduce((sum, i) => sum + itemCost(i), 0);
+    grandTotal += catTotal;
+    lineCount += catItems.length;
+
+    html += `<div class="summary-row cat-row"><span>${cat.icon} ${cat.label} <span class="items">(${catItems.length})</span></span><span>$${catTotal.toLocaleString()}</span></div>`;
+    catItems.forEach(i => {
+      const qty = state[i.id];
+      const eff = i.min > 0 && qty < i.min ? i.min : qty;
+      html += `<div class="summary-row"><span style="padding-left:16px;color:var(--text-light)">${i.name} — ${eff} ${i.unit}</span><span>$${itemCost(i).toLocaleString()}</span></div>`;
+    });
+  });
+
+  if (perishables) { grandTotal += 125; }
+  grandTotal += difficultCount * 125;
+
+  if (perishables) {
+    html += `<div class="summary-row"><span>📦 Perishables</span><span>$125</span></div>`;
+  }
+  if (difficultCount > 0) {
+    html += `<div class="summary-row"><span>📦 Difficult Location ×${difficultCount}</span><span>$${(difficultCount*125).toLocaleString()}</span></div>`;
+  }
+
+  html += `<div class="summary-row total-row"><span>Carpentry Total</span><span>$${grandTotal.toLocaleString()}</span></div>`;
+  html += `</div>`;
+
+  el.innerHTML = html;
+
+  // Update running total + bottom bar
+  document.getElementById('rtTotal').textContent = '$' + grandTotal.toLocaleString();
+  document.getElementById('rtDetail').textContent = lineCount > 0 ? `${lineCount} line item${lineCount!==1?'s':''} across ${CATEGORIES.filter(c=>c.items.some(i=>state[i.id]>0)).length} categories` : '0 line items';
+  document.getElementById('bottomTotal').textContent = '$' + grandTotal.toLocaleString();
+}
+
+function itemCost(item) {
+  const qty = state[item.id];
+  if (qty <= 0) return 0;
+  if (item.isFlat) return qty; // direct dollar amount
+  const effectiveQty = item.min > 0 && qty < item.min ? item.min : qty;
+  return Math.round(effectiveQty * item.rate * 100) / 100;
+}
+
+function adj(id, delta) {
+  const item = findItem(id);
+  const step = (item && item.unit === 'HR') ? 0.5 : 1;
+  state[id] = Math.max(0, (state[id] || 0) + delta * step);
+  render();
+}
+
+function setQty(id, val) {
+  const num = parseFloat(val);
+  state[id] = isNaN(num) || num < 0 ? 0 : num;
+  // Don't re-render (would lose focus) — just update costs
+  updateCosts();
+}
+
+function updateCosts() {
+  // Lightweight update without full re-render (preserves focus)
+  let grandTotal = 0;
+  let lineCount = 0;
+
+  CATEGORIES.forEach(cat => {
+    cat.items.forEach(item => {
+      const cost = itemCost(item);
+      if (state[item.id] > 0) { grandTotal += cost; lineCount++; }
+    });
+  });
+
+  if (perishables) grandTotal += 125;
+  grandTotal += difficultCount * 125;
+
+  document.getElementById('rtTotal').textContent = '$' + grandTotal.toLocaleString();
+  document.getElementById('rtDetail').textContent = lineCount > 0 ? `${lineCount} line item${lineCount!==1?'s':''} across ${CATEGORIES.filter(c=>c.items.some(i=>state[i.id]>0)).length} categories` : '0 line items';
+  document.getElementById('bottomTotal').textContent = '$' + grandTotal.toLocaleString();
+
+  // Update individual item totals
+  CATEGORIES.forEach(cat => cat.items.forEach(item => {
+    const card = document.querySelector(`input[data-id="${item.id}"]`);
+    if (card) {
+      const totalEl = card.closest('.item-card').querySelector('.item-total');
+      const cost = itemCost(item);
+      totalEl.textContent = '$' + cost.toLocaleString();
+      totalEl.className = 'item-total' + (cost === 0 ? ' zero' : '');
+    }
+  }));
+}
+
+function togglePerishables() {
+  perishables = !perishables;
+  render();
+}
+
+function adjDifficult(d) {
+  difficultCount = Math.max(0, difficultCount + d);
+  render();
+}
+
+function findItem(id) {
+  for (const cat of CATEGORIES) {
+    const item = cat.items.find(i => i.id === id);
+    if (item) return item;
+  }
+  return null;
+}
+
+// Init
+render();
+</script>
+</body>
+</html>
