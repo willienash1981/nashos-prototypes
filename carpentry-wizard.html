@@ -20,48 +20,94 @@
   --red-bg: #FEF2F2;
   --orange: #F59E0B;
   --orange-bg: #FFFBEB;
+  --blue: #3B82F6;
+  --blue-bg: #EFF6FF;
   --border: #E5E7EB;
   --radius: 12px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { overflow-x:hidden; width:100%; }
-body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 .shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
-.topbar { background: var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar { background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
 .topbar h1 { font-size:16px; font-weight:700; }
 .topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
 .running-total { position:sticky; top:42px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; }
 .running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
 .running-total .detail { opacity:.8; }
 
-/* Category sections */
-.cat-header { padding:12px 12px 4px; display:flex; align-items:center; gap:8px; }
-.cat-header h2 { font-size:14px; font-weight:700; color:var(--navy); }
-.cat-header .icon { font-size:16px; }
-.cat-badge { font-size:10px; background:var(--gold); color:var(--navy); padding:1px 7px; border-radius:10px; font-weight:700; }
+/* Location cards */
+.loc-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+.loc-header { padding:10px 12px; border-bottom:1px solid var(--border); }
+.loc-header-row { display:flex; align-items:center; gap:8px; }
+.loc-label-input { flex:1; padding:6px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-weight:600; font-family:inherit; }
+.loc-label-input:focus { outline:none; border-color:var(--gold); }
+.loc-remove { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:18px; padding:4px 8px; }
+.loc-remove:hover { color:var(--red); }
+.loc-subtotal { font-size:13px; font-weight:700; color:var(--gold); margin-top:4px; }
 
-/* Line item cards */
-.item-card { background:var(--card); border-radius:var(--radius); margin:4px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
-.item-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
-.item-name { font-size:13px; font-weight:600; flex:1; line-height:1.3; }
-.item-rate { font-size:12px; color:var(--gold); font-weight:700; white-space:nowrap; }
-.item-desc { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.3; }
-.item-min { font-size:10px; color:var(--orange); font-weight:600; margin-top:2px; }
+/* Photo section */
+.photo-section { padding:8px 12px; border-bottom:1px solid var(--border); background:#fafafa; }
+.photo-row { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; }
+.photo-thumb { width:72px; height:72px; border-radius:8px; object-fit:cover; border:1.5px solid var(--border); cursor:pointer; }
+.photo-thumb-wrap { position:relative; }
+.photo-remove { position:absolute; top:-4px; right:-4px; width:20px; height:20px; border-radius:50%; background:var(--red); color:#fff; border:none; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.photo-actions { display:flex; gap:6px; margin-top:6px; }
+.photo-btn { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); transition:all .15s; }
+.photo-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
+.photo-btn .ico { font-size:14px; }
 
-/* Quantity row */
-.qty-row { display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
-.qty-controls { display:flex; align-items:center; gap:4px; }
-.qty-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; color:var(--text); transition:all .15s; }
-.qty-btn:hover { border-color:var(--gold); }
-.qty-btn:active { background:rgba(196,169,98,.1); }
-.qty-input { width:56px; padding:5px 4px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; text-align:center; font-family:inherit; }
-.qty-input:focus { outline:none; border-color:var(--gold); }
-.qty-unit { font-size:11px; color:var(--text-light); font-weight:600; min-width:24px; }
-.item-total { font-size:14px; font-weight:700; color:var(--navy); }
-.item-total.zero { color:var(--text-light); font-weight:400; }
-.min-applied { font-size:10px; color:var(--orange); background:var(--orange-bg); padding:2px 6px; border-radius:4px; margin-top:4px; display:inline-block; }
+/* Line items inside location */
+.loc-items { padding:8px 12px 12px; }
+.loc-items-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.loc-items-header h3 { font-size:12px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; }
 
-/* Addons */
+.li-row { display:flex; align-items:center; gap:6px; padding:8px 0; border-bottom:1px solid #f3f4f6; }
+.li-row:last-child { border-bottom:none; }
+.li-info { flex:1; min-width:0; }
+.li-name { font-size:12px; font-weight:600; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.li-meta { font-size:10px; color:var(--text-light); }
+.li-qty { display:flex; align-items:center; gap:3px; }
+.li-qty-btn { width:26px; height:26px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.li-qty-btn:hover { border-color:var(--gold); }
+.li-qty-input { width:44px; padding:4px 2px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; text-align:center; font-family:inherit; }
+.li-qty-input:focus { outline:none; border-color:var(--gold); }
+.li-unit { font-size:10px; color:var(--text-light); font-weight:600; }
+.li-cost { font-size:13px; font-weight:700; color:var(--navy); min-width:50px; text-align:right; }
+.li-cost.zero { color:var(--border); font-weight:400; }
+.li-remove { background:none; border:none; color:var(--border); cursor:pointer; font-size:14px; padding:2px 4px; }
+.li-remove:hover { color:var(--red); }
+.min-tag { font-size:9px; color:var(--orange); background:var(--orange-bg); padding:1px 5px; border-radius:3px; font-weight:600; }
+
+/* Add item picker */
+.add-item-btn { display:flex; align-items:center; gap:4px; padding:7px 12px; border-radius:8px; border:1.5px dashed var(--border); background:transparent; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--text-light); width:100%; justify-content:center; margin-top:6px; transition:all .15s; }
+.add-item-btn:hover { border-color:var(--gold); color:var(--navy); }
+
+/* Item picker modal */
+.picker-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:200; display:flex; align-items:flex-end; justify-content:center; }
+.picker-sheet { background:var(--bg); width:100%; max-width:430px; max-height:80vh; border-radius:16px 16px 0 0; overflow:hidden; display:flex; flex-direction:column; }
+.picker-header { padding:12px 16px; background:var(--navy); color:#fff; display:flex; justify-content:space-between; align-items:center; }
+.picker-header h3 { font-size:15px; font-weight:700; }
+.picker-close { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; padding:4px 8px; }
+.picker-search { padding:8px 12px; border-bottom:1px solid var(--border); background:#fff; }
+.picker-search input { width:100%; padding:8px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; }
+.picker-search input:focus { outline:none; border-color:var(--gold); }
+.picker-list { overflow-y:auto; flex:1; padding:4px 0; }
+.picker-cat { padding:6px 16px 2px; font-size:11px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:.5px; }
+.picker-item { padding:10px 16px; cursor:pointer; transition:background .1s; display:flex; justify-content:space-between; align-items:center; }
+.picker-item:hover { background:rgba(196,169,98,.08); }
+.picker-item:active { background:rgba(196,169,98,.15); }
+.picker-item .pi-name { font-size:13px; font-weight:600; }
+.picker-item .pi-desc { font-size:11px; color:var(--text-light); }
+.picker-item .pi-rate { font-size:12px; color:var(--gold); font-weight:700; }
+
+/* Add location button */
+.add-loc-btn { background:#fff; border:1.5px dashed var(--gold); border-radius:var(--radius); padding:14px 16px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); margin:8px 12px; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+.add-loc-btn:hover { background:rgba(196,169,98,.08); border-style:solid; }
+
+/* Addons & summary */
+.section-header { padding:12px 12px 4px; display:flex; align-items:center; gap:8px; }
+.section-header h2 { font-size:14px; font-weight:700; color:var(--navy); }
 .addon-card { background:var(--card); border-radius:var(--radius); margin:4px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; }
 .addon-card .left { flex:1; }
 .addon-card .aname { font-size:13px; font-weight:600; }
@@ -71,15 +117,23 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .toggle.on { background:var(--green); }
 .toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
 .toggle.on .knob { left:22px; }
+.counter-wrap { display:flex; align-items:center; gap:4px; }
+.counter-btn { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.counter-btn:hover { border-color:var(--gold); }
 
 /* Summary */
 .summary-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
-.summary-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
-.summary-row.cat-row { font-weight:600; color:var(--navy); }
-.summary-row.total-row { border-top:2px solid var(--navy); margin-top:6px; padding-top:8px; font-size:15px; font-weight:700; color:var(--navy); }
-.summary-row .items { color:var(--text-light); font-weight:400; }
+.sum-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.sum-row.loc-row { font-weight:600; color:var(--navy); border-bottom:1px solid #f3f4f6; padding:5px 0; }
+.sum-row.sub { padding-left:12px; color:var(--text-light); }
+.sum-row.total { border-top:2px solid var(--navy); margin-top:8px; padding-top:8px; font-size:15px; font-weight:700; color:var(--navy); }
+
 .disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; margin:6px 12px; }
-.disclaimer.info { background:#EFF6FF; color:#1E40AF; }
+.disclaimer.info { background:var(--blue-bg); color:#1E40AF; }
+
+/* Photo lightbox */
+.lightbox { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.lightbox img { max-width:95%; max-height:90vh; border-radius:8px; }
 
 /* Bottom bar */
 .bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
@@ -98,16 +152,47 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 
   <div class="running-total">
     <div><span class="big" id="rtTotal">$0</span></div>
-    <div class="detail" id="rtDetail">0 line items</div>
+    <div class="detail" id="rtDetail">0 locations · 0 line items</div>
   </div>
 
-  <div id="wizard"></div>
+  <div id="locations"></div>
 
-  <!-- NOTES -->
-  <div class="cat-header" style="margin-top:8px"><div class="icon">📝</div><h2>Notes</h2></div>
-  <div style="margin:4px 12px">
-    <textarea id="notes" placeholder="Repair locations, photo references, access notes..." style="width:100%;min-height:70px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;resize:vertical;background:var(--card)" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+  <button class="add-loc-btn" onclick="addLocation()">
+    <span style="font-size:20px">+</span> Add Repair Location
+  </button>
+
+  <!-- Job Charges -->
+  <div class="section-header" style="margin-top:8px"><span style="font-size:16px">📦</span><h2>Job Charges</h2></div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Perishables</div>
+      <div class="adesc">Trip charge + consumables (auto-added)</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice">$125</span>
+      <div class="toggle on" id="perish-toggle" onclick="togglePerishables()"><div class="knob"></div></div>
+    </div>
   </div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Difficult Location</div>
+      <div class="adesc">$125/ea — hard-to-access areas</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice" id="diff-price">$0</span>
+      <div class="counter-wrap">
+        <button class="counter-btn" onclick="adjDifficult(-1)">−</button>
+        <span style="font-size:14px;font-weight:600;min-width:20px;text-align:center" id="diff-count">0</span>
+        <button class="counter-btn" onclick="adjDifficult(1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section-header" style="margin-top:8px"><span style="font-size:16px">📋</span><h2>Summary</h2></div>
+  <div id="summary"></div>
 
   <div class="disclaimer info">ℹ️ Painting of all repaired surfaces is included in the paint estimate — NOT in carpentry pricing.</div>
 </div>
@@ -121,266 +206,429 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
 </div>
 
+<!-- Picker Overlay (hidden) -->
+<div id="picker-overlay" class="picker-overlay hidden" onclick="if(event.target===this)closePicker()"></div>
+
+<!-- Lightbox (hidden) -->
+<div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+
 <script>
-// ── Line Item Definitions ──
-const CATEGORIES = [
-  {
-    id: 'trim', icon: '🪵', label: 'Trim & Moulding',
-    items: [
-      { id:'brick_mould_full', name:'Brick Moulding (Full Length)', rate:30.23, unit:'LF', min:0, desc:'Full-length replacement around doors/windows' },
-      { id:'brick_mould_splice', name:'Brick Moulding (Splice)', rate:106.32, unit:'EA', min:0, desc:'Cut out rotted section, splice with rot-free PVC' },
-      { id:'single_trim_full', name:'Single Trim (Full Pieces)', rate:14.61, unit:'LF', min:8, desc:'Full board replacement (8\' min)' },
-      { id:'single_trim_splice', name:'Single Trim (Splice)', rate:133.42, unit:'EA', min:0, desc:'Remove rotten section, patch with rot-free PVC' },
-      { id:'window_trim_full', name:'Window Trim (Full Piece)', rate:14.61, unit:'LF', min:4, desc:'Full replacement of window trim piece (4\' min)' },
-      { id:'window_sill_nose', name:'Window Sill Nose', rate:143.00, unit:'EA', min:0, desc:'Bottom ledge replacement — precise fit required' },
-      { id:'door_jamb_splice', name:'Door Jamb (Splice)', rate:191.83, unit:'EA', min:0, desc:'~1\' splice at bottom of door frame (common rot)' },
-      { id:'gable_triangle', name:'Gable Peak Decorative Triangle', rate:85.46, unit:'EA', min:0, desc:'Triangular "pork chop" trim at gable peaks' },
-      { id:'triangle_gable_bird', name:'Triangle Gable (Bird Box)', rate:167.75, unit:'EA', min:0, desc:'Larger gable triangle with bird box access' },
-      { id:'garage_door_framing', name:'Garage Door 2×12 Framing (Splice)', rate:230.50, unit:'EA', min:0, desc:'Splice repair on heavy 2×12 garage door framing' },
-    ]
-  },
-  {
-    id: 'fascia', icon: '📏', label: 'Fascia',
-    items: [
-      { id:'fascia_1st', name:'Fascia Board (1st Floor)', rate:30.23, unit:'LF', min:3, desc:'Standard height, accessible from ladder (3\' min)' },
-      { id:'fascia_2nd', name:'Fascia Board (2nd Floor)', rate:55.23, unit:'LF', min:3, desc:'Height premium ~1.8× first floor (3\' min)' },
-      { id:'fascia_difficult', name:'Fascia Board (Difficult)', rate:131.97, unit:'LF', min:3, desc:'Steep roof lines, limited access ~4.4× (3\' min)' },
-    ]
-  },
-  {
-    id: 'soffit', icon: '🔲', label: 'Soffit',
-    items: [
-      { id:'soffit', name:'Soffit Replacement', rate:96.00, unit:'SF', min:3, desc:'Overhead panel replacement (3 SF min)' },
-      { id:'soffit_vent_rr', name:'Soffit: Light or Vent R&R', rate:75.00, unit:'EA', min:0, desc:'Remove fixture, cut new opening, reinstall' },
-    ]
-  },
-  {
-    id: 'columns', icon: '🏛️', label: 'Columns',
-    items: [
-      { id:'column_base', name:'Column 2×12 Base', rate:193.00, unit:'EA', min:0, desc:'Pressure treated base plate replacement (ground rot)' },
-      { id:'column_boxed_side', name:'Column: Boxed Side (Per Side)', rate:191.83, unit:'EA', min:0, desc:'Remove & reinstall trim boards around column' },
-      { id:'column_single_trim', name:'Column: Single Trim', rate:42.73, unit:'LF', min:0, desc:'Trim piece on column — precision work' },
-      { id:'column_tapered_side', name:'Column: Tapered Side (Per Side)', rate:371.00, unit:'EA', min:0, desc:'Custom-cut tapered boards — most expensive column repair' },
-    ]
-  },
-  {
-    id: 'deck', icon: '🪜', label: 'Deck Carpentry',
-    items: [
-      { id:'deck_floor_boards', name:'Deck: Floor Boards', rate:7.19, unit:'LF', min:0, desc:'Match board gaps with existing' },
-      { id:'deck_handrail', name:'Deck Top Handrail (Full Piece)', rate:7.19, unit:'LF', min:0, desc:'Full handrail replacement' },
-      { id:'deck_spindles', name:'Deck: Wood Spindles', rate:11.81, unit:'EA', min:0, desc:'Individual spindle replacement' },
-      { id:'deck_post_4x4', name:'Deck: 4×4 Post Replacement', rate:361.47, unit:'EA', min:0, desc:'Structural post — may need temp support' },
-    ]
-  },
-  {
-    id: 'overhead', icon: '⚙️', label: 'Overhead & Modifiers',
-    items: [
-      { id:'additional_labor', name:'Additional Labor', rate:75.00, unit:'HR', min:0, desc:'Hourly catch-all for work outside specific line items' },
-      { id:'material_catchall', name:'Additional Material', rate:0, unit:'$', min:0, desc:'Specialty materials not covered by line item pricing', isFlat:true },
-      { id:'handyman_service', name:'Handyman / Service Call', rate:175.00, unit:'EA', min:0, desc:'Up to 30 min labor + travel. Materials NOT included.' },
-    ]
-  }
+// ── Catalog ──
+const CATALOG = [
+  { cat:'Trim & Moulding', icon:'🪵', items:[
+    { id:'brick_mould_full', name:'Brick Moulding (Full)', rate:30.23, unit:'LF', min:0 },
+    { id:'brick_mould_splice', name:'Brick Moulding (Splice)', rate:106.32, unit:'EA', min:0 },
+    { id:'single_trim_full', name:'Single Trim (Full)', rate:14.61, unit:'LF', min:8 },
+    { id:'single_trim_splice', name:'Single Trim (Splice)', rate:133.42, unit:'EA', min:0 },
+    { id:'window_trim_full', name:'Window Trim (Full)', rate:14.61, unit:'LF', min:4 },
+    { id:'window_sill_nose', name:'Window Sill Nose', rate:143.00, unit:'EA', min:0 },
+    { id:'door_jamb_splice', name:'Door Jamb (Splice)', rate:191.83, unit:'EA', min:0 },
+    { id:'gable_triangle', name:'Gable Peak Triangle', rate:85.46, unit:'EA', min:0 },
+    { id:'triangle_gable_bird', name:'Triangle Gable (Bird Box)', rate:167.75, unit:'EA', min:0 },
+    { id:'garage_door_framing', name:'Garage 2×12 Framing (Splice)', rate:230.50, unit:'EA', min:0 },
+  ]},
+  { cat:'Fascia', icon:'📏', items:[
+    { id:'fascia_1st', name:'Fascia (1st Floor)', rate:30.23, unit:'LF', min:3 },
+    { id:'fascia_2nd', name:'Fascia (2nd Floor)', rate:55.23, unit:'LF', min:3 },
+    { id:'fascia_difficult', name:'Fascia (Difficult)', rate:131.97, unit:'LF', min:3 },
+  ]},
+  { cat:'Soffit', icon:'🔲', items:[
+    { id:'soffit', name:'Soffit Replacement', rate:96.00, unit:'SF', min:3 },
+    { id:'soffit_vent_rr', name:'Soffit: Light/Vent R&R', rate:75.00, unit:'EA', min:0 },
+  ]},
+  { cat:'Columns', icon:'🏛️', items:[
+    { id:'column_base', name:'Column 2×12 Base', rate:193.00, unit:'EA', min:0 },
+    { id:'column_boxed_side', name:'Column: Boxed Side', rate:191.83, unit:'EA', min:0 },
+    { id:'column_single_trim', name:'Column: Single Trim', rate:42.73, unit:'LF', min:0 },
+    { id:'column_tapered_side', name:'Column: Tapered Side', rate:371.00, unit:'EA', min:0 },
+  ]},
+  { cat:'Deck', icon:'🪜', items:[
+    { id:'deck_floor_boards', name:'Deck Floor Boards', rate:7.19, unit:'LF', min:0 },
+    { id:'deck_handrail', name:'Deck Handrail (Full)', rate:7.19, unit:'LF', min:0 },
+    { id:'deck_spindles', name:'Deck Spindles', rate:11.81, unit:'EA', min:0 },
+    { id:'deck_post_4x4', name:'Deck 4×4 Post', rate:361.47, unit:'EA', min:0 },
+  ]},
+  { cat:'Overhead', icon:'⚙️', items:[
+    { id:'additional_labor', name:'Additional Labor', rate:75.00, unit:'HR', min:0 },
+    { id:'material_catchall', name:'Additional Material', rate:0, unit:'$', min:0, isFlat:true },
+    { id:'handyman_service', name:'Handyman / Service Call', rate:175.00, unit:'EA', min:0 },
+  ]},
 ];
 
-// State: qty per item id
-const state = {};
-CATEGORIES.forEach(cat => cat.items.forEach(item => { state[item.id] = 0; }));
+// Flatten for lookup
+const ITEMS_MAP = {};
+CATALOG.forEach(c => c.items.forEach(i => { ITEMS_MAP[i.id] = i; }));
 
-// Addons
+// ── State ──
+let locations = [];
+let nextLocId = 0;
 let perishables = true;
 let difficultCount = 0;
+let pickerLocId = null; // which location the picker is adding to
 
-// ── Render ──
-function render() {
-  const el = document.getElementById('wizard');
-  let html = '';
+function addLocation() {
+  const id = nextLocId++;
+  locations.push({
+    id,
+    label: '',
+    photos: [], // { src: dataURL, caption: '' }
+    items: []   // { itemId, qty }
+  });
+  renderAll();
+  // Focus the label input
+  setTimeout(() => {
+    const input = document.querySelector(`.loc-card[data-loc="${id}"] .loc-label-input`);
+    if (input) input.focus();
+  }, 50);
+}
 
-  CATEGORIES.forEach(cat => {
-    const catTotal = cat.items.reduce((sum, item) => sum + itemCost(item), 0);
-    const catCount = cat.items.filter(item => state[item.id] > 0).length;
+function removeLocation(locId) {
+  locations = locations.filter(l => l.id !== locId);
+  renderAll();
+}
 
-    html += `<div class="cat-header">
-      <div class="icon">${cat.icon}</div>
-      <h2>${cat.label}</h2>
-      ${catCount > 0 ? `<span class="cat-badge">${catCount} · $${catTotal.toLocaleString()}</span>` : ''}
-    </div>`;
+function locLabelChange(locId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (loc) loc.label = val;
+  updateTotals();
+}
 
+// ── Photos ──
+function capturePhoto(locId) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.capture = 'environment'; // rear camera
+  input.onchange = (e) => handlePhotoFile(locId, e.target.files[0]);
+  input.click();
+}
+
+function pickPhoto(locId) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  // No capture attribute — opens gallery/file picker
+  input.onchange = (e) => handlePhotoFile(locId, e.target.files[0]);
+  input.click();
+}
+
+function handlePhotoFile(locId, file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const loc = locations.find(l => l.id === locId);
+    if (loc) {
+      loc.photos.push({ src: e.target.result, caption: '' });
+      renderAll();
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(locId, photoIdx) {
+  const loc = locations.find(l => l.id === locId);
+  if (loc) {
+    loc.photos.splice(photoIdx, 1);
+    renderAll();
+  }
+}
+
+function showPhoto(src) {
+  const lb = document.getElementById('lightbox');
+  lb.innerHTML = `<img src="${src}">`;
+  lb.classList.remove('hidden');
+}
+
+// ── Item Picker ──
+function openPicker(locId) {
+  pickerLocId = locId;
+  const overlay = document.getElementById('picker-overlay');
+
+  let html = `<div class="picker-sheet">
+    <div class="picker-header">
+      <h3>Add Repair Item</h3>
+      <button class="picker-close" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-search">
+      <input type="text" placeholder="Search items..." oninput="filterPicker(this.value)" id="picker-search-input">
+    </div>
+    <div class="picker-list" id="picker-list">`;
+
+  CATALOG.forEach(cat => {
+    html += `<div class="picker-cat" data-cat="${cat.cat}">${cat.icon} ${cat.cat}</div>`;
     cat.items.forEach(item => {
-      const qty = state[item.id];
-      const cost = itemCost(item);
-      const effectiveQty = item.min > 0 && qty > 0 && qty < item.min ? item.min : qty;
-      const minApplied = item.min > 0 && qty > 0 && qty < item.min;
-
-      html += `<div class="item-card">
-        <div class="item-top">
-          <div>
-            <div class="item-name">${item.name}</div>
-            <div class="item-desc">${item.desc}</div>
-            ${item.min > 0 ? `<div class="item-min">Min: ${item.min} ${item.unit}</div>` : ''}
-          </div>
-          <div class="item-rate">${item.isFlat ? 'Variable' : '$'+item.rate.toFixed(2)+'/'+item.unit}</div>
+      html += `<div class="picker-item" data-name="${item.name.toLowerCase()}" data-cat="${cat.cat}" onclick="addItem(${locId},'${item.id}')">
+        <div>
+          <div class="pi-name">${item.name}</div>
+          <div class="pi-desc">${item.min > 0 ? item.min+' '+item.unit+' min · ' : ''}${item.isFlat ? 'Variable' : '$'+item.rate.toFixed(2)+'/'+item.unit}</div>
         </div>
-        <div class="qty-row">
-          <div class="qty-controls">
-            <button class="qty-btn" onclick="adj('${item.id}',-1)">−</button>
-            <input class="qty-input" type="number" min="0" value="${qty || ''}" placeholder="0"
-              data-id="${item.id}"
-              oninput="setQty('${item.id}', this.value)">
-            <button class="qty-btn" onclick="adj('${item.id}',1)">+</button>
-            <span class="qty-unit">${item.unit}</span>
-          </div>
-          <div class="item-total ${cost === 0 ? 'zero' : ''}">$${cost.toLocaleString()}</div>
-        </div>
-        ${minApplied ? `<div class="min-applied">⚠️ ${item.min} ${item.unit} minimum applied</div>` : ''}
+        <div class="pi-rate">${item.isFlat ? '$' : '$'+item.rate.toFixed(2)}</div>
       </div>`;
     });
   });
 
-  // Addons section
-  html += `<div class="cat-header" style="margin-top:8px"><div class="icon">📦</div><h2>Job Charges</h2></div>`;
+  html += `</div></div>`;
+  overlay.innerHTML = html;
+  overlay.classList.remove('hidden');
+  setTimeout(() => document.getElementById('picker-search-input')?.focus(), 100);
+}
 
-  html += `<div class="addon-card">
-    <div class="left">
-      <div class="aname">Perishables</div>
-      <div class="adesc">Trip charge + consumables (auto-added)</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span class="aprice">$125</span>
-      <div class="toggle ${perishables?'on':''}" onclick="togglePerishables()"><div class="knob"></div></div>
-    </div>
-  </div>`;
+function closePicker() {
+  document.getElementById('picker-overlay').classList.add('hidden');
+  pickerLocId = null;
+}
 
-  html += `<div class="addon-card">
-    <div class="left">
-      <div class="aname">Difficult Location</div>
-      <div class="adesc">$125/ea — hard-to-access areas</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span class="aprice" style="min-width:36px;text-align:right">$${(difficultCount*125).toLocaleString()}</span>
-      <div class="qty-controls">
-        <button class="qty-btn" onclick="adjDifficult(-1)" style="width:28px;height:28px;font-size:16px">−</button>
-        <span style="font-size:14px;font-weight:600;min-width:20px;text-align:center">${difficultCount}</span>
-        <button class="qty-btn" onclick="adjDifficult(1)" style="width:28px;height:28px;font-size:16px">+</button>
-      </div>
-    </div>
-  </div>`;
-
-  // Summary
-  html += `<div class="cat-header" style="margin-top:8px"><div class="icon">📋</div><h2>Summary</h2></div>`;
-  html += `<div class="summary-card">`;
-
-  let grandTotal = 0;
-  let lineCount = 0;
-
-  CATEGORIES.forEach(cat => {
-    const catItems = cat.items.filter(i => state[i.id] > 0);
-    if (catItems.length === 0) return;
-    const catTotal = catItems.reduce((sum, i) => sum + itemCost(i), 0);
-    grandTotal += catTotal;
-    lineCount += catItems.length;
-
-    html += `<div class="summary-row cat-row"><span>${cat.icon} ${cat.label} <span class="items">(${catItems.length})</span></span><span>$${catTotal.toLocaleString()}</span></div>`;
-    catItems.forEach(i => {
-      const qty = state[i.id];
-      const eff = i.min > 0 && qty < i.min ? i.min : qty;
-      html += `<div class="summary-row"><span style="padding-left:16px;color:var(--text-light)">${i.name} — ${eff} ${i.unit}</span><span>$${itemCost(i).toLocaleString()}</span></div>`;
-    });
+function filterPicker(query) {
+  const q = query.toLowerCase();
+  const list = document.getElementById('picker-list');
+  list.querySelectorAll('.picker-item').forEach(el => {
+    el.style.display = el.dataset.name.includes(q) ? '' : 'none';
   });
-
-  if (perishables) { grandTotal += 125; }
-  grandTotal += difficultCount * 125;
-
-  if (perishables) {
-    html += `<div class="summary-row"><span>📦 Perishables</span><span>$125</span></div>`;
-  }
-  if (difficultCount > 0) {
-    html += `<div class="summary-row"><span>📦 Difficult Location ×${difficultCount}</span><span>$${(difficultCount*125).toLocaleString()}</span></div>`;
-  }
-
-  html += `<div class="summary-row total-row"><span>Carpentry Total</span><span>$${grandTotal.toLocaleString()}</span></div>`;
-  html += `</div>`;
-
-  el.innerHTML = html;
-
-  // Update running total + bottom bar
-  document.getElementById('rtTotal').textContent = '$' + grandTotal.toLocaleString();
-  document.getElementById('rtDetail').textContent = lineCount > 0 ? `${lineCount} line item${lineCount!==1?'s':''} across ${CATEGORIES.filter(c=>c.items.some(i=>state[i.id]>0)).length} categories` : '0 line items';
-  document.getElementById('bottomTotal').textContent = '$' + grandTotal.toLocaleString();
+  // Show/hide category headers
+  list.querySelectorAll('.picker-cat').forEach(el => {
+    const catItems = list.querySelectorAll(`.picker-item[data-cat="${el.dataset.cat}"]`);
+    const anyVisible = Array.from(catItems).some(i => i.style.display !== 'none');
+    el.style.display = anyVisible ? '' : 'none';
+  });
 }
 
-function itemCost(item) {
-  const qty = state[item.id];
-  if (qty <= 0) return 0;
-  if (item.isFlat) return qty; // direct dollar amount
-  const effectiveQty = item.min > 0 && qty < item.min ? item.min : qty;
-  return Math.round(effectiveQty * item.rate * 100) / 100;
+function addItem(locId, itemId) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  // Check if already added
+  const existing = loc.items.find(i => i.itemId === itemId);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    loc.items.push({ itemId, qty: 1 });
+  }
+  closePicker();
+  renderAll();
 }
 
-function adj(id, delta) {
-  const item = findItem(id);
+function removeItem(locId, itemId) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.items = loc.items.filter(i => i.itemId !== itemId);
+  renderAll();
+}
+
+function adjItemQty(locId, itemId, delta) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  const li = loc.items.find(i => i.itemId === itemId);
+  if (!li) return;
+  const item = ITEMS_MAP[itemId];
   const step = (item && item.unit === 'HR') ? 0.5 : 1;
-  state[id] = Math.max(0, (state[id] || 0) + delta * step);
-  render();
+  li.qty = Math.max(0, li.qty + delta * step);
+  if (li.qty <= 0) {
+    loc.items = loc.items.filter(i => i.itemId !== itemId);
+  }
+  renderAll();
 }
 
-function setQty(id, val) {
-  const num = parseFloat(val);
-  state[id] = isNaN(num) || num < 0 ? 0 : num;
-  // Don't re-render (would lose focus) — just update costs
-  updateCosts();
+function setItemQty(locId, itemId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  const li = loc.items.find(i => i.itemId === itemId);
+  if (!li) return;
+  li.qty = parseFloat(val) || 0;
+  updateTotals();
 }
 
-function updateCosts() {
-  // Lightweight update without full re-render (preserves focus)
-  let grandTotal = 0;
-  let lineCount = 0;
+// ── Cost Calc ──
+function liCost(itemId, qty) {
+  const item = ITEMS_MAP[itemId];
+  if (!item || qty <= 0) return 0;
+  if (item.isFlat) return qty;
+  const eff = item.min > 0 && qty > 0 && qty < item.min ? item.min : qty;
+  return Math.round(eff * item.rate * 100) / 100;
+}
 
-  CATEGORIES.forEach(cat => {
-    cat.items.forEach(item => {
-      const cost = itemCost(item);
-      if (state[item.id] > 0) { grandTotal += cost; lineCount++; }
+function locTotal(loc) {
+  return loc.items.reduce((sum, li) => sum + liCost(li.itemId, li.qty), 0);
+}
+
+function grandTotal() {
+  let t = locations.reduce((sum, loc) => sum + locTotal(loc), 0);
+  if (perishables) t += 125;
+  t += difficultCount * 125;
+  return t;
+}
+
+// ── Render ──
+function renderAll() {
+  // Save focus
+  const ae = document.activeElement;
+  let focusLoc = ae?.dataset?.loc, focusField = ae?.dataset?.field, focusItem = ae?.dataset?.item, focusPos = ae?.selectionStart || 0;
+
+  const container = document.getElementById('locations');
+  let html = '';
+
+  if (locations.length === 0) {
+    html = `<div style="text-align:center;padding:40px 20px;color:var(--text-light)">
+      <div style="font-size:32px;margin-bottom:8px">📸</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px">No repair locations yet</div>
+      <div style="font-size:12px">Walk to the damage, name it, snap a photo,<br>then add the repair line items.</div>
+    </div>`;
+  }
+
+  locations.forEach(loc => {
+    const lt = locTotal(loc);
+
+    html += `<div class="loc-card" data-loc="${loc.id}">
+      <div class="loc-header">
+        <div class="loc-header-row">
+          <input class="loc-label-input" placeholder="Location name (e.g. Right side middle door)"
+            value="${esc(loc.label)}" data-loc="${loc.id}" data-field="label"
+            oninput="locLabelChange(${loc.id}, this.value)">
+          <button class="loc-remove" onclick="removeLocation(${loc.id})">✕</button>
+        </div>
+        ${lt > 0 ? `<div class="loc-subtotal">$${lt.toLocaleString()}</div>` : ''}
+      </div>
+
+      <div class="photo-section">
+        <div class="photo-row">`;
+
+    loc.photos.forEach((photo, pi) => {
+      html += `<div class="photo-thumb-wrap">
+        <img class="photo-thumb" src="${photo.src}" onclick="showPhoto('${photo.src.replace(/'/g,"\\'")}')">
+        <button class="photo-remove" onclick="removePhoto(${loc.id},${pi})">✕</button>
+      </div>`;
+    });
+
+    html += `</div>
+        <div class="photo-actions">
+          <button class="photo-btn" onclick="capturePhoto(${loc.id})"><span class="ico">📷</span> Take Photo</button>
+          <button class="photo-btn" onclick="pickPhoto(${loc.id})"><span class="ico">🖼️</span> From Library</button>
+        </div>
+      </div>
+
+      <div class="loc-items">
+        <div class="loc-items-header">
+          <h3>Repairs</h3>
+          <span style="font-size:11px;color:var(--text-light)">${loc.items.length} item${loc.items.length!==1?'s':''}</span>
+        </div>`;
+
+    if (loc.items.length === 0) {
+      html += `<div style="text-align:center;padding:12px;color:var(--text-light);font-size:12px">No repairs added yet</div>`;
+    }
+
+    loc.items.forEach(li => {
+      const item = ITEMS_MAP[li.itemId];
+      if (!item) return;
+      const cost = liCost(li.itemId, li.qty);
+      const eff = item.min > 0 && li.qty > 0 && li.qty < item.min ? item.min : li.qty;
+      const minApplied = item.min > 0 && li.qty > 0 && li.qty < item.min;
+
+      html += `<div class="li-row">
+        <div class="li-info">
+          <div class="li-name">${item.name}</div>
+          <div class="li-meta">${item.isFlat ? 'Variable' : '$'+item.rate.toFixed(2)+'/'+item.unit}${minApplied ? ' ' : ''}</div>
+          ${minApplied ? `<span class="min-tag">⚠️ ${item.min} ${item.unit} min</span>` : ''}
+        </div>
+        <div class="li-qty">
+          <button class="li-qty-btn" onclick="adjItemQty(${loc.id},'${item.id}',-1)">−</button>
+          <input class="li-qty-input" type="number" min="0" value="${li.qty || ''}" placeholder="0"
+            data-loc="${loc.id}" data-item="${item.id}" data-field="qty"
+            oninput="setItemQty(${loc.id},'${item.id}',this.value)">
+          <button class="li-qty-btn" onclick="adjItemQty(${loc.id},'${item.id}',1)">+</button>
+          <span class="li-unit">${item.unit}</span>
+        </div>
+        <div class="li-cost ${cost===0?'zero':''}">$${cost.toLocaleString()}</div>
+        <button class="li-remove" onclick="removeItem(${loc.id},'${item.id}')">✕</button>
+      </div>`;
+    });
+
+    html += `<button class="add-item-btn" onclick="openPicker(${loc.id})">+ Add Repair Item</button>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Restore focus
+  if (focusLoc !== undefined && focusField) {
+    let sel;
+    if (focusItem) {
+      sel = container.querySelector(`input[data-loc="${focusLoc}"][data-item="${focusItem}"][data-field="${focusField}"]`);
+    } else {
+      sel = container.querySelector(`input[data-loc="${focusLoc}"][data-field="${focusField}"]`);
+    }
+    if (sel) {
+      sel.focus();
+      try { sel.setSelectionRange(focusPos, focusPos); } catch(e) {}
+    }
+  }
+
+  updateTotals();
+  renderSummary();
+}
+
+function updateTotals() {
+  const gt = grandTotal();
+  const itemCount = locations.reduce((s, l) => s + l.items.length, 0);
+  const locCount = locations.filter(l => l.items.length > 0).length;
+
+  document.getElementById('rtTotal').textContent = '$' + gt.toLocaleString();
+  document.getElementById('rtDetail').textContent = `${locations.length} location${locations.length!==1?'s':''} · ${itemCount} line item${itemCount!==1?'s':''}`;
+  document.getElementById('bottomTotal').textContent = '$' + gt.toLocaleString();
+}
+
+function renderSummary() {
+  const el = document.getElementById('summary');
+  let html = '<div class="summary-card">';
+
+  const activeLocs = locations.filter(l => l.items.length > 0);
+  if (activeLocs.length === 0 && !perishables && difficultCount === 0) {
+    html += '<div style="text-align:center;padding:8px;color:var(--text-light);font-size:12px">No repairs yet</div>';
+  }
+
+  activeLocs.forEach(loc => {
+    const lt = locTotal(loc);
+    const label = loc.label || 'Unnamed location';
+    const hasPhoto = loc.photos.length > 0;
+    html += `<div class="sum-row loc-row"><span>${hasPhoto ? '📸 ' : ''}${esc(label)}</span><span>$${lt.toLocaleString()}</span></div>`;
+    loc.items.forEach(li => {
+      const item = ITEMS_MAP[li.itemId];
+      if (!item) return;
+      const eff = item.min > 0 && li.qty > 0 && li.qty < item.min ? item.min : li.qty;
+      html += `<div class="sum-row sub"><span>${item.name} — ${eff} ${item.unit}</span><span>$${liCost(li.itemId, li.qty).toLocaleString()}</span></div>`;
     });
   });
 
-  if (perishables) grandTotal += 125;
-  grandTotal += difficultCount * 125;
+  if (perishables) html += `<div class="sum-row"><span>📦 Perishables</span><span>$125</span></div>`;
+  if (difficultCount > 0) html += `<div class="sum-row"><span>📦 Difficult Location ×${difficultCount}</span><span>$${(difficultCount*125).toLocaleString()}</span></div>`;
 
-  document.getElementById('rtTotal').textContent = '$' + grandTotal.toLocaleString();
-  document.getElementById('rtDetail').textContent = lineCount > 0 ? `${lineCount} line item${lineCount!==1?'s':''} across ${CATEGORIES.filter(c=>c.items.some(i=>state[i.id]>0)).length} categories` : '0 line items';
-  document.getElementById('bottomTotal').textContent = '$' + grandTotal.toLocaleString();
-
-  // Update individual item totals
-  CATEGORIES.forEach(cat => cat.items.forEach(item => {
-    const card = document.querySelector(`input[data-id="${item.id}"]`);
-    if (card) {
-      const totalEl = card.closest('.item-card').querySelector('.item-total');
-      const cost = itemCost(item);
-      totalEl.textContent = '$' + cost.toLocaleString();
-      totalEl.className = 'item-total' + (cost === 0 ? ' zero' : '');
-    }
-  }));
+  const gt = grandTotal();
+  html += `<div class="sum-row total"><span>Carpentry Total</span><span>$${gt.toLocaleString()}</span></div>`;
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 function togglePerishables() {
   perishables = !perishables;
-  render();
+  document.getElementById('perish-toggle').classList.toggle('on', perishables);
+  updateTotals();
+  renderSummary();
 }
 
 function adjDifficult(d) {
   difficultCount = Math.max(0, difficultCount + d);
-  render();
+  document.getElementById('diff-count').textContent = difficultCount;
+  document.getElementById('diff-price').textContent = '$' + (difficultCount * 125).toLocaleString();
+  updateTotals();
+  renderSummary();
 }
 
-function findItem(id) {
-  for (const cat of CATEGORIES) {
-    const item = cat.items.find(i => i.id === id);
-    if (item) return item;
-  }
-  return null;
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
 }
 
-// Init
-render();
+// Init — start with one empty location
+addLocation();
 </script>
 </body>
 </html>
