@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Color Change Order</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --red-bg: #FEF2F2;
+  --orange: #F59E0B;
+  --orange-bg: #FFFBEB;
+  --blue: #3B82F6;
+  --blue-bg: #EFF6FF;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
+.topbar { background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:16px; font-weight:700; }
+.topbar .badge { background:var(--orange); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.running-total { position:sticky; top:42px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; }
+.running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
+.running-total .detail { opacity:.8; }
+
+.section-header { padding:12px 12px 4px; display:flex; align-items:center; gap:8px; }
+.section-header h2 { font-size:14px; font-weight:700; color:var(--navy); }
+.section-header .num { background:var(--navy); color:#fff; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+
+.card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+
+/* Context fields */
+.field { display:flex; flex-direction:column; gap:3px; margin-bottom:12px; }
+.field:last-child { margin-bottom:0; }
+.field label { font-size:11px; color:var(--text-light); font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+.field input, .field select, .field textarea { padding:8px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; width:100%; }
+.field input:focus, .field select:focus, .field textarea:focus { outline:none; border-color:var(--gold); }
+.field .hint { font-size:10px; color:var(--text-light); }
+.field textarea { min-height:60px; resize:vertical; }
+
+/* Color display */
+.color-row { display:flex; gap:10px; }
+.color-box { flex:1; }
+.color-preview { height:36px; border-radius:8px; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text-light); margin-top:4px; background:#f3f4f6; }
+
+/* Line item cards */
+.li-card { background:var(--card); border-radius:var(--radius); margin:4px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.li-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.li-name { font-size:13px; font-weight:600; flex:1; line-height:1.3; }
+.li-rate { font-size:12px; color:var(--gold); font-weight:700; white-space:nowrap; }
+.li-desc { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.3; }
+.qty-row { display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+.qty-controls { display:flex; align-items:center; gap:4px; }
+.qty-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:inherit; color:var(--text); transition:all .15s; }
+.qty-btn:hover { border-color:var(--gold); }
+.qty-input { width:56px; padding:5px 4px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; text-align:center; font-family:inherit; }
+.qty-input:focus { outline:none; border-color:var(--gold); }
+.qty-unit { font-size:11px; color:var(--text-light); font-weight:600; min-width:28px; }
+.li-total { font-size:14px; font-weight:700; color:var(--navy); }
+.li-total.zero { color:var(--text-light); font-weight:400; }
+
+/* Photo section */
+.photo-section { margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+.photo-row { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; }
+.photo-thumb { width:64px; height:64px; border-radius:8px; object-fit:cover; border:1.5px solid var(--border); cursor:pointer; }
+.photo-thumb-wrap { position:relative; }
+.photo-remove { position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--red); color:#fff; border:none; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.photo-actions { display:flex; gap:6px; margin-top:6px; }
+.photo-btn { display:flex; align-items:center; gap:4px; padding:5px 10px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); transition:all .15s; }
+.photo-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
+
+/* Summary */
+.summary-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.sum-row { display:flex; justify-content:space-between; padding:4px 0; font-size:12px; }
+.sum-row.item { color:var(--text-light); }
+.sum-row.total { border-top:2px solid var(--navy); margin-top:6px; padding-top:8px; font-size:15px; font-weight:700; color:var(--navy); }
+.sum-note { font-size:11px; color:var(--text-light); margin-top:6px; font-style:italic; line-height:1.3; }
+
+.disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; margin:6px 12px; }
+.disclaimer.warning { background:var(--orange-bg); color:#92400E; }
+.disclaimer.info { background:var(--blue-bg); color:#1E40AF; }
+
+/* Lightbox */
+.lightbox { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.lightbox img { max-width:95%; max-height:90vh; border-radius:8px; }
+
+/* Bottom bar */
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.bottom-bar .label { font-size:11px; opacity:.8; }
+.bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
+.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <h1>🎨 Color Change Order</h1>
+    <span class="badge">CHANGE ORDER</span>
+  </div>
+
+  <div class="running-total">
+    <div><span class="big" id="rtTotal">$0</span></div>
+    <div class="detail" id="rtDetail">Change order total</div>
+  </div>
+
+  <div class="disclaimer warning">⚠️ Use when customer changes paint color after purchase and/or work has begun.</div>
+
+  <!-- STEP 1: CONTEXT -->
+  <div class="section-header"><h2><span class="num">1</span> Change Details</h2></div>
+
+  <div class="card">
+    <div class="field">
+      <label>Service Instance</label>
+      <select id="instance-select" onchange="calc()">
+        <option value="">Select what's changing...</option>
+        <option value="interior-master">Interior — Master Bedroom</option>
+        <option value="interior-living">Interior — Living Room</option>
+        <option value="interior-kitchen">Interior — Kitchen</option>
+        <option value="exterior-main">Exterior — Main House</option>
+        <option value="exterior-garage">Exterior — Detached Garage</option>
+      </select>
+      <div class="hint">Links this change order to the original service instance</div>
+    </div>
+
+    <div class="field">
+      <label>What's Changing</label>
+      <select id="scope-select" onchange="calc()">
+        <option value="room">Entire room / area</option>
+        <option value="surface">Specific surfaces only</option>
+        <option value="accent">Accent wall color</option>
+      </select>
+    </div>
+
+    <div class="field" id="surface-detail-field" style="display:none">
+      <label>Which Surfaces</label>
+      <input type="text" id="surface-detail" placeholder="e.g., Walls only, Trim only, Ceiling">
+    </div>
+
+    <div class="color-row">
+      <div class="color-box">
+        <div class="field" style="margin-bottom:0">
+          <label>Original Color</label>
+          <input type="text" id="color-old" placeholder="e.g., SW Agreeable Gray">
+        </div>
+      </div>
+      <div class="color-box">
+        <div class="field" style="margin-bottom:0">
+          <label>New Color</label>
+          <input type="text" id="color-new" placeholder="e.g., BM Simply White">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: LINE ITEMS -->
+  <div class="section-header"><h2><span class="num">2</span> Charges</h2></div>
+
+  <!-- Additional Labor -->
+  <div class="li-card">
+    <div class="li-top">
+      <div>
+        <div class="li-name">Additional Labor</div>
+        <div class="li-desc">Cleaning brushes/rollers, repainting. 1 hr minimum for switchover.</div>
+      </div>
+      <div class="li-rate">$58.00/hr</div>
+    </div>
+    <div class="qty-row">
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="adj('labor',-0.5)">−</button>
+        <input class="qty-input" type="number" min="0" step="0.5" value="1" id="qty-labor" oninput="calc()">
+        <button class="qty-btn" onclick="adj('labor',0.5)">+</button>
+        <span class="qty-unit">HR</span>
+      </div>
+      <div class="li-total" id="cost-labor">$58</div>
+    </div>
+  </div>
+
+  <!-- Wasted Paint -->
+  <div class="li-card">
+    <div class="li-top">
+      <div>
+        <div class="li-name">Wasted Paint</div>
+        <div class="li-desc">Gallons already purchased that can't be used or returned.</div>
+      </div>
+      <div class="li-rate">$68.00/gal</div>
+    </div>
+    <div class="qty-row">
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="adj('paint',-1)">−</button>
+        <input class="qty-input" type="number" min="0" value="0" id="qty-paint" oninput="calc()">
+        <button class="qty-btn" onclick="adj('paint',1)">+</button>
+        <span class="qty-unit">GAL</span>
+      </div>
+      <div class="li-total zero" id="cost-paint">$0</div>
+    </div>
+  </div>
+
+  <!-- Delivery Fee -->
+  <div class="li-card">
+    <div class="li-top">
+      <div>
+        <div class="li-name">Delivery Fee</div>
+        <div class="li-desc">Additional trip to pick up the new paint color.</div>
+      </div>
+      <div class="li-rate">$25.00/ea</div>
+    </div>
+    <div class="qty-row">
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="adj('delivery',-1)">−</button>
+        <input class="qty-input" type="number" min="0" value="1" id="qty-delivery" oninput="calc()">
+        <button class="qty-btn" onclick="adj('delivery',1)">+</button>
+        <span class="qty-unit">EA</span>
+      </div>
+      <div class="li-total" id="cost-delivery">$25</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: PHOTOS -->
+  <div class="section-header"><h2><span class="num">3</span> Documentation</h2></div>
+
+  <div class="card">
+    <div style="font-size:12px;font-weight:600;margin-bottom:6px">Photos</div>
+    <div style="font-size:11px;color:var(--text-light);margin-bottom:8px">Document the current state before the color change</div>
+    <div class="photo-row" id="photo-row"></div>
+    <div class="photo-actions">
+      <button class="photo-btn" onclick="capturePhoto()"><span>📷</span> Take Photo</button>
+      <button class="photo-btn" onclick="pickPhoto()"><span>🖼️</span> From Library</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field" style="margin-bottom:0">
+      <label>Notes</label>
+      <textarea id="notes" placeholder="Reason for change, timing details, customer communication..." oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    </div>
+  </div>
+
+  <div class="disclaimer info">ℹ️ New paint cost is handled automatically by the material system — not included in this change order.</div>
+
+  <!-- SUMMARY -->
+  <div class="section-header"><h2><span class="num">4</span> Summary</h2></div>
+
+  <div class="summary-card" id="summary"></div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div>
+    <div class="label">Color Change Order</div>
+    <div class="total" id="bottomTotal">$0</div>
+  </div>
+  <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
+</div>
+
+<script>
+const RATES = { labor: 58.00, paint: 68.00, delivery: 25.00 };
+
+const photos = [];
+
+function adj(item, delta) {
+  const el = document.getElementById('qty-' + item);
+  const step = item === 'labor' ? 0.5 : 1;
+  let val = parseFloat(el.value) || 0;
+  val = Math.max(0, val + delta);
+  el.value = val;
+  calc();
+}
+
+function calc() {
+  const labor = parseFloat(document.getElementById('qty-labor').value) || 0;
+  const paint = parseFloat(document.getElementById('qty-paint').value) || 0;
+  const delivery = parseFloat(document.getElementById('qty-delivery').value) || 0;
+
+  const laborCost = Math.round(labor * RATES.labor * 100) / 100;
+  const paintCost = Math.round(paint * RATES.paint * 100) / 100;
+  const deliveryCost = Math.round(delivery * RATES.delivery * 100) / 100;
+  const total = laborCost + paintCost + deliveryCost;
+
+  // Update line item costs
+  updateCostEl('cost-labor', laborCost);
+  updateCostEl('cost-paint', paintCost);
+  updateCostEl('cost-delivery', deliveryCost);
+
+  // Surface detail field
+  const scope = document.getElementById('scope-select').value;
+  document.getElementById('surface-detail-field').style.display = scope === 'surface' ? '' : 'none';
+
+  // Running total
+  document.getElementById('rtTotal').textContent = '$' + total.toLocaleString();
+  const items = [labor > 0, paint > 0, delivery > 0].filter(Boolean).length;
+  document.getElementById('rtDetail').textContent = items + ' charge' + (items !== 1 ? 's' : '');
+  document.getElementById('bottomTotal').textContent = '$' + total.toLocaleString();
+
+  // Summary
+  renderSummary(labor, paint, delivery, laborCost, paintCost, deliveryCost, total);
+}
+
+function updateCostEl(id, cost) {
+  const el = document.getElementById(id);
+  el.textContent = '$' + cost.toLocaleString();
+  el.className = 'li-total' + (cost === 0 ? ' zero' : '');
+}
+
+function renderSummary(labor, paint, delivery, laborCost, paintCost, deliveryCost, total) {
+  const instance = document.getElementById('instance-select');
+  const instanceLabel = instance.selectedIndex > 0 ? instance.options[instance.selectedIndex].text : 'Not selected';
+  const oldColor = document.getElementById('color-old').value || '—';
+  const newColor = document.getElementById('color-new').value || '—';
+
+  let html = '';
+  html += `<div class="sum-row" style="font-weight:600;color:var(--navy);padding-bottom:6px;border-bottom:1px solid var(--border)"><span>🎨 ${esc(instanceLabel)}</span></div>`;
+  html += `<div class="sum-row item"><span style="padding-top:4px">${esc(oldColor)} → ${esc(newColor)}</span></div>`;
+
+  if (labor > 0) html += `<div class="sum-row item"><span>Additional Labor — ${labor} hr</span><span>$${laborCost.toLocaleString()}</span></div>`;
+  if (paint > 0) html += `<div class="sum-row item"><span>Wasted Paint — ${paint} gal</span><span>$${paintCost.toLocaleString()}</span></div>`;
+  if (delivery > 0) html += `<div class="sum-row item"><span>Delivery Fee — ${delivery}</span><span>$${deliveryCost.toLocaleString()}</span></div>`;
+
+  html += `<div class="sum-row total"><span>Change Order Total</span><span>$${total.toLocaleString()}</span></div>`;
+  html += `<div class="sum-note">New paint cost is calculated automatically by the material system and added to the change order separately.</div>`;
+
+  document.getElementById('summary').innerHTML = html;
+}
+
+// ── Photos ──
+function capturePhoto() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment';
+  input.onchange = (e) => handleFile(e.target.files[0]);
+  input.click();
+}
+
+function pickPhoto() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = (e) => handleFile(e.target.files[0]);
+  input.click();
+}
+
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => { photos.push(e.target.result); renderPhotos(); };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(idx) {
+  photos.splice(idx, 1);
+  renderPhotos();
+}
+
+function renderPhotos() {
+  const row = document.getElementById('photo-row');
+  row.innerHTML = photos.map((src, i) => `
+    <div class="photo-thumb-wrap">
+      <img class="photo-thumb" src="${src}" onclick="showPhoto(${i})">
+      <button class="photo-remove" onclick="removePhoto(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function showPhoto(idx) {
+  const lb = document.getElementById('lightbox');
+  lb.innerHTML = `<img src="${photos[idx]}">`;
+  lb.classList.remove('hidden');
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Init
+calc();
+</script>
+</body>
+</html>
