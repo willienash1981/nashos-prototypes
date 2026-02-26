@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Wood Door Stain / Seal</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --orange: #F59E0B;
+  --orange-bg: #FFFBEB;
+  --blue: #3B82F6;
+  --blue-bg: #EFF6FF;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
+.topbar { background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:16px; font-weight:700; }
+.topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.running-total { position:sticky; top:42px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; }
+.running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
+.running-total .detail { opacity:.8; }
+
+.section-header { padding:12px 12px 4px; display:flex; align-items:center; gap:8px; }
+.section-header h2 { font-size:14px; font-weight:700; color:var(--navy); }
+.section-header .num { background:var(--navy); color:#fff; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
+
+.card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+
+/* Counter rows */
+.count-row { display:flex; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+.count-row:last-child { border-bottom:none; }
+.count-info { flex:1; }
+.count-name { font-size:13px; font-weight:600; }
+.count-desc { font-size:11px; color:var(--text-light); }
+.count-rate { font-size:11px; color:var(--gold); font-weight:700; margin-top:1px; }
+.count-controls { display:flex; align-items:center; gap:4px; }
+.count-btn { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.count-btn:hover { border-color:var(--gold); }
+.count-val { font-size:16px; font-weight:700; min-width:28px; text-align:center; }
+.count-price { font-size:14px; font-weight:700; color:var(--navy); min-width:65px; text-align:right; }
+.count-price.zero { color:var(--border); }
+
+/* Option buttons */
+.opt-row { display:flex; gap:6px; margin-top:6px; }
+.opt-btn { flex:1; padding:8px 6px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; text-align:center; transition:all .15s; font-family:inherit; }
+.opt-btn.active { border-color:var(--navy); background:var(--navy); color:#fff; }
+.opt-label { font-size:11px; font-weight:600; color:var(--text); margin-bottom:4px; }
+
+/* Trip charge */
+.trip-card { background:var(--green-bg); border:1.5px solid var(--green); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; display:flex; align-items:center; gap:10px; }
+.trip-card.inactive { background:var(--card); border-color:var(--border); }
+.trip-info { flex:1; }
+.trip-title { font-size:13px; font-weight:600; }
+.trip-desc { font-size:11px; color:var(--text-light); }
+.trip-amount { font-size:14px; font-weight:700; }
+.toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.toggle.on { background:var(--green); }
+.toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.toggle.on .knob { left:22px; }
+
+/* Photos */
+.photo-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+.photo-thumb { width:64px; height:64px; border-radius:8px; object-fit:cover; border:1.5px solid var(--border); cursor:pointer; }
+.photo-thumb-wrap { position:relative; }
+.photo-remove { position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--red); color:#fff; border:none; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.photo-actions { display:flex; gap:6px; margin-top:6px; }
+.photo-btn { display:flex; align-items:center; gap:4px; padding:5px 10px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); }
+.photo-btn:hover { border-color:var(--gold); }
+
+/* Maintenance */
+.maint-card { background:var(--blue-bg); border:1.5px solid var(--blue); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; }
+.maint-card.inactive { background:var(--card); border-color:var(--border); }
+
+/* Summary */
+.summary-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.sum-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.sum-row.sub { color:var(--text-light); padding-left:12px; }
+.sum-row.discount { color:var(--green); }
+.sum-row.total { border-top:2px solid var(--navy); margin-top:6px; padding-top:8px; font-size:15px; font-weight:700; color:var(--navy); }
+.sum-row.maint { color:var(--blue); font-style:italic; border-top:1px dashed var(--border); margin-top:4px; padding-top:4px; }
+
+/* Timeline */
+.timeline-step { display:flex; gap:10px; padding:6px 0; }
+.timeline-dot { width:24px; height:24px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.timeline-line { width:2px; background:var(--border); margin:0 11px; height:4px; }
+.timeline-text { font-size:12px; line-height:1.4; }
+.timeline-text .role { font-weight:600; color:var(--navy); }
+.timeline-text .desc { color:var(--text-light); font-size:11px; }
+
+.disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; margin:6px 12px; }
+.disclaimer.info { background:var(--blue-bg); color:#1E40AF; }
+.disclaimer.warning { background:var(--orange-bg); color:#92400E; }
+
+/* Lightbox */
+.lightbox { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.lightbox img { max-width:95%; max-height:90vh; border-radius:8px; }
+
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.bottom-bar .label { font-size:11px; opacity:.8; }
+.bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
+.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <h1>🚪 Wood Door Stain / Seal</h1>
+    <span class="badge">BETA</span>
+  </div>
+
+  <div class="running-total">
+    <div><span class="big" id="rtTotal">$1,025</span></div>
+    <div class="detail" id="rtDetail">1 door · 3-4 visits</div>
+  </div>
+
+  <!-- STEP 1: DOORS -->
+  <div class="section-header"><h2><span class="num">1</span> Doors</h2></div>
+
+  <div class="card">
+    <div class="count-row">
+      <div class="count-info">
+        <div class="count-name">Main Door Panel</div>
+        <div class="count-desc">First/primary door (includes trip charge)</div>
+        <div class="count-rate">$1,025.36/ea</div>
+      </div>
+      <div class="count-controls">
+        <div class="count-val">1</div>
+      </div>
+      <div class="count-price" id="price-main">$1,025</div>
+    </div>
+
+    <div class="count-row">
+      <div class="count-info">
+        <div class="count-name">Additional Doors</div>
+        <div class="count-desc">Same site — no extra trip charge</div>
+        <div class="count-rate">$278.78/ea</div>
+      </div>
+      <div class="count-controls">
+        <button class="count-btn" onclick="adj('addl',-1)">−</button>
+        <div class="count-val" id="val-addl">0</div>
+        <button class="count-btn" onclick="adj('addl',1)">+</button>
+      </div>
+      <div class="count-price zero" id="price-addl">$0</div>
+    </div>
+
+    <div class="count-row">
+      <div class="count-info">
+        <div class="count-name">Sidelights / Transoms</div>
+        <div class="count-desc">Glass-adjacent wood panels</div>
+        <div class="count-rate">$113.27/ea</div>
+      </div>
+      <div class="count-controls">
+        <button class="count-btn" onclick="adj('side',-1)">−</button>
+        <div class="count-val" id="val-side">0</div>
+        <button class="count-btn" onclick="adj('side',1)">+</button>
+      </div>
+      <div class="count-price zero" id="price-side">$0</div>
+    </div>
+
+    <div class="count-row">
+      <div class="count-info">
+        <div class="count-name">Door R&R (Remove & Replace)</div>
+        <div class="count-desc">Rare — remove to shop, plywood fill, reinstall</div>
+        <div class="count-rate">$1,275.00/ea</div>
+      </div>
+      <div class="count-controls">
+        <button class="count-btn" onclick="adj('rr',-1)">−</button>
+        <div class="count-val" id="val-rr">0</div>
+        <button class="count-btn" onclick="adj('rr',1)">+</button>
+      </div>
+      <div class="count-price zero" id="price-rr">$0</div>
+    </div>
+  </div>
+
+  <!-- STEP 2: CONDITION -->
+  <div class="section-header"><h2><span class="num">2</span> Condition</h2></div>
+
+  <div class="card">
+    <div class="opt-label">Current finish condition</div>
+    <div class="opt-row">
+      <button class="opt-btn active" onclick="setCondition('good')">👍 Good</button>
+      <button class="opt-btn" onclick="setCondition('moderate')">⚠️ Moderate</button>
+      <button class="opt-btn" onclick="setCondition('severe')">🔴 Severe</button>
+    </div>
+    <div id="condition-note" style="font-size:10px;color:var(--text-light);margin-top:4px">Light wear, fading — standard refinish (sand, stain, 3-4 coats)</div>
+    <div id="restoration-warn" style="display:none;font-size:10px;color:var(--orange);margin-top:4px;font-weight:600">⚠️ Restoration pricing: 2.5× standard. Full strip to bare wood required.</div>
+
+    <div style="margin-top:10px">
+      <div class="opt-label">Stain color</div>
+      <div class="opt-row">
+        <button class="opt-btn active" onclick="setColor('match')">Match Existing</button>
+        <button class="opt-btn" onclick="setColor('new')">New Color</button>
+      </div>
+      <div id="color-warn" style="display:none;font-size:10px;color:var(--orange);margin-top:4px;font-weight:600">⚠️ Full color change = restoration pricing (2.5×)</div>
+    </div>
+
+    <div style="margin-top:10px">
+      <div style="font-size:11px;font-weight:600;margin-bottom:4px">Photos</div>
+      <div class="photo-row" id="photo-row"></div>
+      <div class="photo-actions">
+        <button class="photo-btn" onclick="takePhoto()"><span>📷</span> Take Photo</button>
+        <button class="photo-btn" onclick="pickPhoto()"><span>🖼️</span> From Library</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: TRIP CHARGE -->
+  <div class="section-header"><h2><span class="num">3</span> Trip Charge</h2></div>
+
+  <div class="trip-card" id="trip-card">
+    <div class="trip-info">
+      <div class="trip-title" id="trip-title">💡 Bundled with paint job?</div>
+      <div class="trip-desc" id="trip-desc">Waive trip charge — crew already on-site</div>
+    </div>
+    <div class="trip-amount" id="trip-amount" style="color:var(--green)">−$450</div>
+    <div class="toggle" id="trip-toggle" onclick="toggleTrip()"><div class="knob"></div></div>
+  </div>
+
+  <!-- STEP 4: MAINTENANCE -->
+  <div class="section-header"><h2><span class="num">4</span> Maintenance Plan</h2></div>
+
+  <div class="maint-card" id="maint-card">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">🛡️ Spring & Fall Maintenance</div>
+        <div style="font-size:11px;color:var(--text-light)">Every 6 months: light sand + 1 coat urethane</div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue);margin-top:2px" id="maint-price">~$308/visit</div>
+      </div>
+      <div class="toggle" id="maint-toggle" onclick="toggleMaint()"><div class="knob"></div></div>
+    </div>
+    <div id="maint-detail" style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text-light)">
+      Enrollment confirmed at job close. Price = 30% of door job total. Customer can cancel anytime.
+    </div>
+  </div>
+
+  <!-- STEP 5: SCHEDULE -->
+  <div class="section-header"><h2><span class="num">5</span> Schedule</h2></div>
+
+  <div class="card">
+    <div style="font-size:11px;color:var(--text-light);margin-bottom:6px">3–4 visits spaced 24 hours apart</div>
+    <div class="timeline-step">
+      <div class="timeline-dot">1</div>
+      <div class="timeline-text"><div class="role">Prep + Stain + First Coat</div><div class="desc">3-4 hours. Remove weather stripping if possible.</div></div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">2</div>
+      <div class="timeline-text"><div class="role">Second Coat</div><div class="desc">~1 hour. Door ajar 2 hrs after for curing.</div></div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">3</div>
+      <div class="timeline-text"><div class="role">Third Coat</div><div class="desc">~1 hour. Most doors complete here.</div></div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">4</div>
+      <div class="timeline-text"><div class="role">Fourth Coat (if needed)</div><div class="desc">Condition-dependent. Reinstall weather stripping.</div></div>
+    </div>
+  </div>
+
+  <div class="disclaimer info">ℹ️ Product: PROLUXE® Door & Window Wood Finish. Stain/seal only — no paint on wood doors.</div>
+
+  <!-- SUMMARY -->
+  <div class="section-header"><h2><span class="num">6</span> Summary</h2></div>
+  <div id="summary"></div>
+
+  <!-- NOTES -->
+  <div style="margin:6px 12px">
+    <textarea id="notes" placeholder="Door brand, hardware notes, access info, stain color preference..." style="width:100%;min-height:60px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;resize:vertical;background:var(--card)"></textarea>
+  </div>
+</div>
+
+<div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+
+<div class="bottom-bar">
+  <div>
+    <div class="label">Wood Door Total</div>
+    <div class="total" id="bottomTotal">$1,025</div>
+  </div>
+  <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
+</div>
+
+<script>
+const RATES = {
+  main: 1025.36, addl: 278.78, side: 113.27, rr: 1275.00,
+  tripWaiver: -450, restorationMult: 2.5, maintPct: 0.30
+};
+
+const state = { addl:0, side:0, rr:0, condition:'good', color:'match', tripWaive:false, maintPlan:false };
+const photos = [];
+
+function adj(key, delta) {
+  state[key] = Math.max(0, state[key] + delta);
+  document.getElementById('val-' + key).textContent = state[key];
+  calc();
+}
+
+function setCondition(c) {
+  state.condition = c;
+  document.querySelectorAll('.card .opt-row')[0].querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const notes = { good:'Light wear, fading — standard refinish (sand, stain, 3-4 coats)', moderate:'Peeling, cracking — standard refinish, may need 4th coat', severe:'Bare wood, deep damage — full strip to bare wood required' };
+  document.getElementById('condition-note').textContent = notes[c];
+  document.getElementById('restoration-warn').style.display = (c === 'severe') ? '' : 'none';
+
+  // Severe or new color = restoration
+  calc();
+}
+
+function setColor(c) {
+  state.color = c;
+  document.querySelectorAll('.card .opt-row')[1].querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('color-warn').style.display = (c === 'new') ? '' : 'none';
+  calc();
+}
+
+function toggleTrip() {
+  state.tripWaive = !state.tripWaive;
+  document.getElementById('trip-toggle').classList.toggle('on', state.tripWaive);
+  const card = document.getElementById('trip-card');
+  if (state.tripWaive) {
+    card.classList.remove('inactive');
+    card.style.background = 'var(--green-bg)';
+    card.style.borderColor = 'var(--green)';
+    document.getElementById('trip-title').textContent = '✅ Trip charge waived';
+    document.getElementById('trip-desc').textContent = 'Bundled with paint job — crew on-site';
+  } else {
+    card.style.background = 'var(--card)';
+    card.style.borderColor = 'var(--border)';
+    document.getElementById('trip-title').textContent = '💡 Bundled with paint job?';
+    document.getElementById('trip-desc').textContent = 'Waive trip charge — crew already on-site';
+  }
+  calc();
+}
+
+function toggleMaint() {
+  state.maintPlan = !state.maintPlan;
+  document.getElementById('maint-toggle').classList.toggle('on', state.maintPlan);
+  document.getElementById('maint-detail').style.display = state.maintPlan ? '' : 'none';
+  const card = document.getElementById('maint-card');
+  if (state.maintPlan) {
+    card.style.background = 'var(--blue-bg)';
+    card.style.borderColor = 'var(--blue)';
+  } else {
+    card.style.background = 'var(--card)';
+    card.style.borderColor = 'var(--border)';
+  }
+  calc();
+}
+
+function isRestoration() {
+  return state.condition === 'severe' || state.color === 'new';
+}
+
+function calc() {
+  const mult = isRestoration() ? RATES.restorationMult : 1;
+  const mainCost = Math.round(RATES.main * mult);
+  const addlCost = Math.round(state.addl * RATES.addl * mult);
+  const sideCost = Math.round(state.side * RATES.side * mult);
+  const rrCost = Math.round(state.rr * RATES.rr);
+  const tripAdj = state.tripWaive ? RATES.tripWaiver : 0;
+
+  let subtotal = mainCost + addlCost + sideCost + rrCost + tripAdj;
+  const total = Math.max(0, subtotal);
+
+  // Maintenance
+  const maintPerVisit = Math.round(total * RATES.maintPct);
+  document.getElementById('maint-price').textContent = '~$' + maintPerVisit.toLocaleString() + '/visit';
+
+  // Update line prices
+  document.getElementById('price-main').textContent = '$' + mainCost.toLocaleString();
+  document.getElementById('price-main').className = 'count-price';
+
+  updatePrice('addl', addlCost);
+  updatePrice('side', sideCost);
+  updatePrice('rr', rrCost);
+
+  // Door count
+  const doorCount = 1 + state.addl;
+  const totalPieces = doorCount + state.side;
+
+  // Running total
+  document.getElementById('rtTotal').textContent = '$' + total.toLocaleString();
+  document.getElementById('rtDetail').textContent = totalPieces + ' piece' + (totalPieces !== 1 ? 's' : '') + ' · 3-4 visits' + (isRestoration() ? ' · RESTORATION' : '');
+  document.getElementById('bottomTotal').textContent = '$' + total.toLocaleString();
+
+  // Summary
+  renderSummary(mainCost, addlCost, sideCost, rrCost, tripAdj, total, maintPerVisit);
+}
+
+function updatePrice(key, cost) {
+  const el = document.getElementById('price-' + key);
+  el.textContent = '$' + cost.toLocaleString();
+  el.className = 'count-price' + (cost === 0 ? ' zero' : '');
+}
+
+function renderSummary(mainCost, addlCost, sideCost, rrCost, tripAdj, total, maintPerVisit) {
+  let html = '<div class="summary-card">';
+  html += `<div class="sum-row" style="font-weight:600">
+    <span>Main Door Panel${isRestoration() ? ' (Restoration 2.5×)' : ''}</span><span>$${mainCost.toLocaleString()}</span></div>`;
+  if (state.addl > 0)
+    html += `<div class="sum-row"><span>Additional Doors ×${state.addl}</span><span>$${addlCost.toLocaleString()}</span></div>`;
+  if (state.side > 0)
+    html += `<div class="sum-row"><span>Sidelights/Transoms ×${state.side}</span><span>$${sideCost.toLocaleString()}</span></div>`;
+  if (state.rr > 0)
+    html += `<div class="sum-row"><span>Door R&R ×${state.rr}</span><span>$${rrCost.toLocaleString()}</span></div>`;
+  if (tripAdj !== 0)
+    html += `<div class="sum-row discount"><span>Trip charge waiver</span><span>−$450</span></div>`;
+
+  html += `<div class="sum-row total"><span>Door Refinishing Total</span><span>$${total.toLocaleString()}</span></div>`;
+
+  if (state.maintPlan)
+    html += `<div class="sum-row maint"><span>🛡️ Maintenance plan (~$${maintPerVisit}/visit, 2×/yr)</span><span>enrolled</span></div>`;
+
+  html += '<div style="font-size:10px;color:var(--text-light);margin-top:6px">🛡️ 1-year warranty · Recoat recommended every 2 years</div>';
+  html += '</div>';
+  document.getElementById('summary').innerHTML = html;
+}
+
+// Photos
+function takePhoto() {
+  const i = document.createElement('input'); i.type='file'; i.accept='image/*'; i.capture='environment';
+  i.onchange = e => addPhotoFile(e.target.files[0]); i.click();
+}
+function pickPhoto() {
+  const i = document.createElement('input'); i.type='file'; i.accept='image/*';
+  i.onchange = e => addPhotoFile(e.target.files[0]); i.click();
+}
+function addPhotoFile(f) {
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = e => { photos.push(e.target.result); renderPhotos(); };
+  r.readAsDataURL(f);
+}
+function removePhoto(idx) { photos.splice(idx, 1); renderPhotos(); }
+function renderPhotos() {
+  document.getElementById('photo-row').innerHTML = photos.map((s,i) => `
+    <div class="photo-thumb-wrap">
+      <img class="photo-thumb" src="${s}" onclick="document.getElementById('lightbox').innerHTML='<img src=\\'${s.replace(/'/g,"\\\\'")}\\'>'; document.getElementById('lightbox').classList.remove('hidden')">
+      <button class="photo-remove" onclick="removePhoto(${i})">✕</button>
+    </div>`).join('');
+}
+
+calc();
+</script>
+</body>
+</html>
