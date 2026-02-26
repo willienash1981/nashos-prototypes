@@ -465,7 +465,8 @@ function toggleMeasure(key) {
 
 function toggleAddon(key) {
   state.addons[key] = !state.addons[key];
-  document.getElementById(key+'-toggle').classList.toggle('on', state.addons[key]);
+  const elId = key === 'diffFinish' ? 'diff-finish-toggle' : key+'-toggle';
+  document.getElementById(elId).classList.toggle('on', state.addons[key]);
   calc();
 }
 
