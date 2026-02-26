@@ -194,12 +194,26 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:13px;font-weight:600">Railing Type</span>
     </div>
-    <select id="railing-type" onchange="calc()" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit">
-      <option value="wood" selected>Wood ($13.49/LF)</option>
+    <select id="railing-type" onchange="calc()" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+      <option value="wood" selected>Wood Stain ($13.49/LF)</option>
       <option value="wood-metal">Wood + Metal Spindles ($18.39/LF)</option>
+      <option value="painted">Painted Wood Railing ($16.50/LF)</option>
       <option value="metal">Metal (quote separately)</option>
     </select>
-    <div class="disclaimer info" style="margin-top:8px">ℹ️ Railings stained BEFORE deck flooring</div>
+
+    <!-- Different finish on railing -->
+    <div class="addon-card" style="margin:8px 0;padding:10px 12px;box-shadow:none;border:1px solid var(--border)">
+      <div class="left">
+        <div class="aname" style="font-size:12px">Different finish on railing vs floor</div>
+        <div class="adesc" style="font-size:10px">Requires masking — $0.50/SF of all stainable surface</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="aprice" style="font-size:12px" id="diff-finish-price">$0</span>
+        <div class="toggle" id="diff-finish-toggle" onclick="toggleAddon('diffFinish')"><div class="knob"></div></div>
+      </div>
+    </div>
+
+    <div class="disclaimer info" style="margin-top:4px">ℹ️ Railings stained/painted BEFORE deck flooring</div>
     <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:10px">
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-light);margin-bottom:4px">
         <span>Flooring: <strong id="sum-floor-sf">0</strong> SF → <strong id="sum-floor-cost">$0</strong></span>
@@ -300,22 +314,13 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     </div>
   </div>
 
-  <!-- STEP 4: COLORS -->
-  <div class="step-header"><h2><span class="num">4</span> Colors</h2></div>
+  <!-- STEP 4: NOTES -->
+  <div class="step-header"><h2><span class="num">4</span> Notes</h2></div>
 
   <div class="card">
-    <div class="card-title">🎨 Color Selection <span style="font-size:12px;font-weight:400;color:var(--text-light)" id="productLabel">Semi-Transparent Stain</span></div>
-    <div class="input-row">
-      <label>Floor</label>
-      <input type="text" id="color-floor" placeholder="Color name or code" value="" oninput="checkColors()">
-    </div>
-    <div class="input-row">
-      <label>Railing</label>
-      <input type="text" id="color-railing" placeholder="Same as floor (leave blank)" oninput="checkColors()">
-    </div>
-    <div id="colorWaiver" class="disclaimer warning">⚠️ Semi-transparent requires color waiver — natural wood variation will show through.</div>
-    <div id="colorMismatch" class="disclaimer info hidden">ℹ️ Railing ≠ floor color detected — masking upcharge applied ($0.50/SF of stainable surface).</div>
-    <div id="colorMismatchCost" class="disclaimer info hidden"></div>
+    <div class="q-label">Condition notes & color details for customer</div>
+    <textarea id="deck-notes" placeholder="Document deck condition, color selections, railing finish details, etc." style="width:100%;min-height:80px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <div class="calc-note">Include condition details for reference when processing submitted colors</div>
   </div>
 </div>
 
@@ -330,12 +335,12 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 
 <script>
 const RATES = { floor:2.03, stair:3.35, skirting:1.39, underside:1.39 };
-const RAIL_RATES = { wood:13.49, 'wood-metal':18.39, metal:0 };
+const RAIL_RATES = { wood:13.49, 'wood-metal':18.39, painted:16.50, metal:0 };
 
 const state = {
   q1:'no', q1a:null, q2:'bare', q3:'no', q4:'standard', q5:'minimal',
   toggles: { skirting:false, underside:false },
-  addons: { brush:false, masking:false },
+  addons: { brush:false, masking:false, diffFinish:false },
   newboards: 0,
   sections: [
     { id:0, type:'deck', l:0, w:0, coat2:false, sides:{top:false, bottom:true, left:true, right:true} }
@@ -442,8 +447,7 @@ function assess() {
   disclaimers.forEach(d => { dhtml += `<div class="disclaimer ${d.t}">${d.m}</div>`; });
   document.getElementById('disclaimers').innerHTML = dhtml;
 
-  document.getElementById('productLabel').textContent = pName;
-  document.getElementById('colorWaiver').classList.toggle('hidden', !product.startsWith('semi'));
+  // productLabel removed (colors section deleted)
 
   state.product = product;
   state.productName = pName;
@@ -736,15 +740,6 @@ function adjBoards(d) {
   calc();
 }
 
-function checkColors() {
-  const f = document.getElementById('color-floor').value.trim();
-  const r = document.getElementById('color-railing').value.trim();
-  const mismatch = r && f && r.toLowerCase() !== f.toLowerCase();
-  document.getElementById('colorMismatch').classList.toggle('hidden', !mismatch);
-  document.getElementById('colorMismatchCost').classList.toggle('hidden', !mismatch);
-  calc();
-}
-
 function calc() {
   const railRate = RAIL_RATES[document.getElementById('railing-type').value] || 0;
   const ded = getDeckDeductions();
@@ -853,16 +848,15 @@ function calc() {
   total += maskingFee;
   document.getElementById('masking-price').textContent = maskingFee ? '$'+maskingFee : '$0';
 
-  // Color mismatch upcharge: $0.50/SF of total stainable surface
-  const f = document.getElementById('color-floor').value.trim();
-  const r = document.getElementById('color-railing').value.trim();
-  const mismatch = r && f && r.toLowerCase() !== f.toLowerCase();
-  if (mismatch) {
-    const totalStainable = getTotalStainableSF();
-    const mismatchCost = Math.round(totalStainable * 0.50);
-    total += mismatchCost;
-    const el = document.getElementById('colorMismatchCost');
-    if (el) el.textContent = `🎭 Masking upcharge: $${mismatchCost} ($0.50 × ${Math.round(totalStainable)} SF — extra paint waste for masking inefficiencies)`;
+  // Different finish on railing: $0.50/SF masking of total stainable surface
+  if (state.addons.diffFinish) {
+    let stainableSF = sumFloorSF + sumStairSF;
+    state.sections.forEach(s => { if (s.type==='landing') stainableSF += (s.l||4)*(s.w||4); });
+    const dfCost = Math.round(stainableSF * 0.50);
+    total += dfCost;
+    document.getElementById('diff-finish-price').textContent = dfCost ? '$'+dfCost : '$0';
+  } else {
+    document.getElementById('diff-finish-price').textContent = '$0';
   }
 
   const totalRound = Math.round(total);
