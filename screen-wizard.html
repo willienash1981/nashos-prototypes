@@ -291,9 +291,9 @@ const state = {
   roof: 'flat',
   trimType: 'wood',
   walls: [
-    { id:0, label:'Front', w:0, h:8, squares:0, posts:0, doors:0 },
-    { id:1, label:'Left',  w:0, h:8, squares:0, posts:0, doors:0 },
-    { id:2, label:'Right', w:0, h:8, squares:0, posts:0, doors:0 }
+    { id:0, label:'Front', w:0, h:8, squares:0, sections:0, doors:0 },
+    { id:1, label:'Left',  w:0, h:8, squares:0, sections:0, doors:0 },
+    { id:2, label:'Right', w:0, h:8, squares:0, sections:0, doors:0 }
   ],
   nextId: 3,
   addons: { perishables:true },
@@ -312,14 +312,13 @@ function pickRadio(el) {
 }
 
 // ── Wall Math ──
-// LF = 2 × (squares × width / columns + height × columns)
-// columns = posts - 1 (minimum 1)
+// LF = 2 × (squares × width / sections + height × sections)
 
 function wallTrimLF(w) {
   const W = w.w || 0, H = w.h || 8, N = w.squares || 0;
-  const cols = Math.max(1, (w.posts || 2) - 1);
-  if (W === 0 || N === 0) return 0;
-  return Math.round(2 * (N * W / cols + H * cols));
+  const S = Math.max(1, w.sections || 0);
+  if (W === 0 || N === 0 || S === 0) return 0;
+  return Math.round(2 * (N * W / S + H * S));
 }
 
 function wallScreenSF(w) {
@@ -343,7 +342,7 @@ function renderWalls() {
   state.walls.forEach((w, i) => {
     const lf = wallTrimLF(w);
     const sf = wallScreenSF(w);
-    const cols = Math.max(1, (w.posts || 2) - 1);
+    const S = Math.max(1, w.sections || 0);
     const removable = state.walls.length > 1;
 
     html += `<div class="wall-card">
@@ -367,13 +366,13 @@ function renderWalls() {
         </div>
         <div class="field">
           <label>Squares</label>
-          <input type="number" data-wid="${w.id}" data-field="squares" value="${w.squares||''}" placeholder="incl. doors" oninput="wallInput(${w.id},'squares',this.value)">
-          <div class="hint">Count all boxes + doors</div>
+          <input type="number" data-wid="${w.id}" data-field="squares" value="${w.squares||''}" placeholder="total" oninput="wallInput(${w.id},'squares',this.value)">
+          <div class="hint">All boxes including doors</div>
         </div>
         <div class="field">
-          <label>Posts</label>
-          <input type="number" data-wid="${w.id}" data-field="posts" value="${w.posts||''}" placeholder="count" oninput="wallInput(${w.id},'posts',this.value)">
-          <div class="hint">${cols} section${cols!==1?'s':''}</div>
+          <label>Sections</label>
+          <input type="number" data-wid="${w.id}" data-field="sections" value="${w.sections||''}" placeholder="count" oninput="wallInput(${w.id},'sections',this.value)">
+          <div class="hint">Post-to-post gaps</div>
         </div>
         <div class="field">
           <label>Screen Doors</label>
@@ -384,7 +383,7 @@ function renderWalls() {
 
       ${lf > 0 ? `<div class="calc-result">
         <strong>${lf} LF trim</strong> · ${sf} SF screen${w.doors ? ' · '+w.doors+' door'+(w.doors>1?'s':'') : ''}<br>
-        <span style="font-size:11px;color:var(--text-light)">= 2 × (${w.squares||0} squares × ${w.w||0}' ÷ ${cols} cols + ${w.h||8}' × ${cols} cols)</span>
+        <span style="font-size:11px;color:var(--text-light)">= 2 × (${w.squares||0} sq × ${w.w||0}' ÷ ${S} sec + ${w.h||8}' × ${S} sec)</span>
       </div>` : ''}
     </div>`;
   });
@@ -406,7 +405,7 @@ function addWall() {
   const id = state.nextId++;
   const labels = ['Front','Left','Right','Back','Wall 5','Wall 6','Wall 7','Wall 8'];
   const label = labels[state.walls.length] || 'Wall '+(state.walls.length+1);
-  state.walls.push({ id, label, w:0, h:8, squares:0, posts:0, doors:0 });
+  state.walls.push({ id, label, w:0, h:8, squares:0, sections:0, doors:0 });
   renderWalls();
 }
 
