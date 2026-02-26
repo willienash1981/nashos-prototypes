@@ -39,7 +39,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
 .q-label { font-size:12px; font-weight:600; margin-bottom:5px; color:var(--text); }
 .radios { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
-.radios.horizontal { flex-direction:row; flex-wrap:wrap; }
 .radio-btn { display:flex; align-items:center; gap:8px; padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:12px; transition:all .15s; line-height:1.3; }
 .radio-btn:hover { border-color:var(--gold-light); }
 .radio-btn.selected { border-color:var(--gold); background:rgba(196,169,98,.08); }
@@ -53,14 +52,14 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .wall-header .remove-btn { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:2px 6px; }
 .wall-header .remove-btn:hover { color:var(--red); }
 .sf-inline { font-size:12px; color:var(--gold); font-weight:600; }
-.input-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
-.input-row label { font-size:11px; color:var(--text-light); min-width:30px; flex-shrink:0; }
-.input-row input, .input-row select { flex:1; min-width:0; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-family:inherit; }
-.input-row input:focus, .input-row select:focus { outline:none; border-color:var(--gold); }
-.input-row .unit { font-size:11px; color:var(--text-light); flex-shrink:0; }
-.calc-note { font-size:11px; color:var(--text-light); margin-top:4px; line-height:1.4; }
-.calc-breakdown { font-size:11px; color:var(--text-light); background:#f9fafb; border-radius:8px; padding:8px 10px; margin-top:8px; line-height:1.6; border:1px solid var(--border); }
-.calc-breakdown strong { color:var(--text); }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px; }
+.field { display:flex; flex-direction:column; gap:2px; }
+.field label { font-size:10px; color:var(--text-light); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+.field input { padding:8px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; width:100%; }
+.field input:focus { outline:none; border-color:var(--gold); }
+.field .hint { font-size:10px; color:var(--text-light); }
+.calc-result { font-size:12px; color:var(--navy); background:rgba(196,169,98,.08); border:1px solid var(--gold); border-radius:8px; padding:8px 10px; margin-top:8px; line-height:1.5; }
+.calc-result strong { font-size:13px; }
 .addon-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; }
 .addon-card .left { flex:1; }
 .addon-card .aname { font-size:13px; font-weight:600; }
@@ -70,7 +69,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .toggle.on { background:var(--green); }
 .toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
 .toggle.on .knob { left:22px; }
-.counter { display:flex; align-items:center; gap:8px; }
+.counter { display:flex; align-items:center; gap:6px; }
 .counter button { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .counter button:hover { border-color:var(--gold); }
 .counter span { font-size:14px; font-weight:600; min-width:20px; text-align:center; }
@@ -79,12 +78,12 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; margin-top:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; }
 .disclaimer.info { background:#EFF6FF; color:#1E40AF; }
 .disclaimer.warning { background:#FFFBEB; color:#92400E; }
-.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px 8px; font-size:11px; color:var(--text-light); border-top:1px solid var(--border); margin-top:8px; padding-top:8px; }
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px 8px; font-size:12px; color:var(--text-light); }
 .summary-grid strong { color:var(--text); }
-.timeline { margin:6px 12px; }
-.timeline-step { display:flex; gap:10px; padding:8px 0; }
-.timeline-dot { width:28px; height:28px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
-.timeline-line { width:2px; background:var(--border); margin:0 13px; height:8px; }
+.timeline { margin:0; }
+.timeline-step { display:flex; gap:10px; padding:6px 0; }
+.timeline-dot { width:24px; height:24px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.timeline-line { width:2px; background:var(--border); margin:0 11px; height:6px; }
 .timeline-text { font-size:12px; line-height:1.4; }
 .timeline-text .role { font-weight:600; color:var(--navy); }
 .timeline-text .desc { color:var(--text-light); font-size:11px; }
@@ -98,37 +97,37 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 <body>
 <div class="shell">
   <div class="topbar">
-    <h1>🏗️ Screen Replacement Wizard</h1>
+    <h1>🏗️ Screen Replacement</h1>
     <span class="badge">BETA</span>
   </div>
 
-  <div class="running-total" id="runningTotal">
+  <div class="running-total">
     <div><span class="big" id="rtTotal">$0</span> <span class="detail" id="rtTrimType">New Wood Trim</span></div>
     <div class="detail" id="rtDetail">Screen: 0 SF · Trim: 0 LF · Doors: 0</div>
   </div>
 
-  <!-- STEP 1: PORCH CONFIG -->
-  <div class="step-header"><h2><span class="num">1</span> Porch Configuration</h2></div>
+  <!-- STEP 1: CONFIG -->
+  <div class="step-header"><h2><span class="num">1</span> Configuration</h2></div>
 
   <div class="card">
-    <div class="q-label">Roof / Ceiling Type</div>
-    <div class="radios" data-q="roof">
-      <div class="radio-btn selected" data-v="flat" onclick="pickRadio(this)"><div class="dot"></div>Flat ceiling — rectangular walls only</div>
-      <div class="radio-btn" data-v="gable-screen" onclick="pickRadio(this)"><div class="dot"></div>Gable peak — screen at peak</div>
-      <div class="radio-btn" data-v="gable-wood" onclick="pickRadio(this)"><div class="dot"></div>Gable peak — wood at peak (no screen)</div>
-    </div>
-
     <div class="q-label">Trim Type</div>
     <div class="radios" data-q="trimType">
-      <div class="radio-btn selected" data-v="wood" onclick="pickRadio(this)"><div class="dot"></div>New wood trim ($2.15/LF)</div>
-      <div class="radio-btn" data-v="pvc" onclick="pickRadio(this)"><div class="dot"></div>New PVC trim ($4.15/LF)</div>
-      <div class="radio-btn" data-v="reuse" onclick="pickRadio(this)"><div class="dot"></div>Reuse old wood ($1.74/LF)</div>
+      <div class="radio-btn selected" data-v="wood" onclick="pickRadio(this)"><div class="dot"></div>New wood trim — $2.15/LF</div>
+      <div class="radio-btn" data-v="pvc" onclick="pickRadio(this)"><div class="dot"></div>New PVC trim — $4.15/LF</div>
+      <div class="radio-btn" data-v="reuse" onclick="pickRadio(this)"><div class="dot"></div>Reuse old wood — $1.74/LF</div>
     </div>
-    <div class="disclaimer warning" id="reuse-warn" style="display:none">⚠️ Broken/damaged boards = additional labor & material. New boards will NOT match with semi-transparent stained porches.</div>
+    <div class="disclaimer warning" id="reuse-warn" style="display:none">⚠️ Broken/damaged boards = extra labor & material. New boards won't match semi-transparent stain.</div>
+
+    <div class="q-label">Roof Type</div>
+    <div class="radios" data-q="roof">
+      <div class="radio-btn selected" data-v="flat" onclick="pickRadio(this)"><div class="dot"></div>Flat ceiling</div>
+      <div class="radio-btn" data-v="gable-screen" onclick="pickRadio(this)"><div class="dot"></div>Gable peak — screened</div>
+      <div class="radio-btn" data-v="gable-wood" onclick="pickRadio(this)"><div class="dot"></div>Gable peak — wood (no screen)</div>
+    </div>
   </div>
 
   <!-- STEP 2: WALLS -->
-  <div class="step-header"><h2><span class="num">2</span> Walls</h2></div>
+  <div class="step-header"><h2><span class="num">2</span> Walls — Count the Squares</h2></div>
 
   <div id="walls-container"></div>
 
@@ -136,85 +135,76 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     <button class="add-btn" onclick="addWall()">+ Add Wall</button>
   </div>
 
-  <!-- Gable Section (conditional) -->
+  <!-- GABLE (conditional) -->
   <div id="gable-section" class="hidden">
     <div class="step-header"><h2 style="font-size:13px">▲ Gable Screen</h2></div>
-    <div class="card">
-      <div class="calc-note" style="margin-bottom:8px">Triangle screen area at the roof peak</div>
-      <div class="input-row">
-        <label>Base</label>
-        <input type="number" id="gable-base" value="" placeholder="Width" oninput="calc()" style="max-width:70px">
-        <div class="unit">ft</div>
-        <label>Peak H</label>
-        <input type="number" id="gable-peak" value="" placeholder="Height" oninput="calc()" style="max-width:70px">
-        <div class="unit">ft</div>
+    <div class="wall-card">
+      <div class="field-grid">
+        <div class="field">
+          <label>Base width</label>
+          <input type="number" id="gable-base" placeholder="ft" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>Peak height</label>
+          <input type="number" id="gable-peak" placeholder="ft" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>How many gables</label>
+          <input type="number" id="gable-count" value="1" min="1" max="2" oninput="calc()">
+        </div>
       </div>
-      <div class="input-row">
-        <label>Gable walls</label>
-        <input type="number" id="gable-count" value="1" min="1" max="2" oninput="calc()" style="max-width:50px">
-        <div class="unit">typically 1 or 2</div>
-      </div>
-      <div class="calc-note" id="gable-calc">SF: 0 · Trim LF: 0</div>
+      <div class="calc-result" id="gable-calc" style="display:none"></div>
     </div>
   </div>
 
-  <!-- TOTALS -->
-  <div class="card" style="margin-top:4px">
-    <div style="font-size:14px;font-weight:700;margin-bottom:8px">📐 Calculated Totals</div>
+  <!-- TOTALS CARD -->
+  <div class="card" style="margin-top:8px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:6px">📐 Totals</div>
     <div class="summary-grid">
-      <span>Screen SF: <strong id="tot-sf">0</strong></span>
-      <span>Trim LF: <strong id="tot-lf">0</strong></span>
-      <span>Screen Doors: <strong id="tot-doors">0</strong></span>
-      <span>Boxes: <strong id="tot-boxes">0</strong></span>
+      <span>Screen: <strong id="tot-sf">0</strong> SF</span>
+      <span>Trim: <strong id="tot-lf">0</strong> LF</span>
+      <span>Doors: <strong id="tot-doors">0</strong></span>
+      <span>Squares: <strong id="tot-boxes">0</strong></span>
     </div>
-    <div class="summary-grid" style="margin-top:4px;padding-top:4px">
-      <span>Removal: <strong id="cost-removal">$0</strong></span>
-      <span>Install: <strong id="cost-install">$0</strong></span>
-      <span>Trim: <strong id="cost-trim">$0</strong></span>
-      <span style="font-weight:600;color:var(--navy)">Subtotal: <strong id="cost-subtotal">$0</strong></span>
+    <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px">
+      <div class="summary-grid">
+        <span>Removal: <strong id="cost-removal">$0</strong></span>
+        <span>Install: <strong id="cost-install">$0</strong></span>
+        <span>Trim: <strong id="cost-trim">$0</strong></span>
+        <span style="font-weight:600;color:var(--navy)">Subtotal: <strong id="cost-subtotal">$0</strong></span>
+      </div>
     </div>
   </div>
 
   <!-- STEP 3: EXTRAS -->
-  <div class="step-header"><h2><span class="num">3</span> Extras & Adjustments</h2></div>
+  <div class="step-header"><h2><span class="num">3</span> Extras</h2></div>
 
   <div class="addon-card">
     <div class="left">
       <div class="aname">Extra Trim LF</div>
-      <div class="adesc">Sections not covered by box math</div>
+      <div class="adesc">Sections not covered by square math</div>
     </div>
     <div class="counter">
-      <input type="number" id="extra-lf" value="0" oninput="calc()" style="width:60px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:center;font-family:inherit">
-      <div class="unit">LF</div>
+      <input type="number" id="extra-lf" value="0" oninput="calc()" style="width:55px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:center;font-family:inherit">
+      <span style="font-size:11px;color:var(--text-light)">LF</span>
     </div>
   </div>
 
   <div class="addon-card">
     <div class="left">
       <div class="aname">Extra Screen SF</div>
-      <div class="adesc">Additional screen area not in wall calc</div>
+      <div class="adesc">Additional area not in wall calc</div>
     </div>
     <div class="counter">
-      <input type="number" id="extra-sf" value="0" oninput="calc()" style="width:60px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:center;font-family:inherit">
-      <div class="unit">SF</div>
-    </div>
-  </div>
-
-  <div class="addon-card">
-    <div class="left">
-      <div class="aname">Screen Doors</div>
-      <div class="adesc">More intricate to disassemble — extra labor</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span class="aprice" id="doors-note" style="font-size:11px;color:var(--text-light)">from walls</span>
-      <span style="font-size:16px;font-weight:700;color:var(--navy)" id="doors-total">0</span>
+      <input type="number" id="extra-sf" value="0" oninput="calc()" style="width:55px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:center;font-family:inherit">
+      <span style="font-size:11px;color:var(--text-light)">SF</span>
     </div>
   </div>
 
   <div class="addon-card">
     <div class="left">
       <div class="aname">Perishables</div>
-      <div class="adesc">Trip charge + consumables (auto-included)</div>
+      <div class="adesc">Trip charge + consumables</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="aprice">$125</span>
@@ -225,7 +215,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="addon-card">
     <div class="left">
       <div class="aname">Difficult Location</div>
-      <div class="adesc">Hard-to-reach, extra setup needed</div>
+      <div class="adesc">$125/ea — hard to reach, extra setup</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="aprice" id="difficult-price">$0</span>
@@ -237,17 +227,17 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     </div>
   </div>
 
-  <!-- STEP 4: WORK ORDER SEQUENCE -->
+  <!-- STEP 4: WORK ORDER -->
   <div class="step-header"><h2><span class="num">4</span> Work Order Sequence</h2></div>
 
   <div class="card">
-    <div class="disclaimer info" style="margin:0 0 8px">ℹ️ Screen replacement requires 3-crew coordination</div>
+    <div class="disclaimer info" style="margin:0 0 6px">ℹ️ 3-crew coordination required</div>
     <div class="timeline">
       <div class="timeline-step">
         <div class="timeline-dot">1</div>
         <div class="timeline-text">
-          <div class="role">🔨 Carpentry Crew — Demo Day</div>
-          <div class="desc">Remove old screens & trim. Supply new trim material to painters.</div>
+          <div class="role">🔨 Carpentry — Demo Day</div>
+          <div class="desc">Remove screens & trim. Supply new trim to painters.</div>
         </div>
       </div>
       <div class="timeline-line"></div>
@@ -255,15 +245,15 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
         <div class="timeline-dot">2</div>
         <div class="timeline-text">
           <div class="role">🎨 Paint Crew — Trim Finish</div>
-          <div class="desc">Paint/stain new trim to match per work order specs.</div>
+          <div class="desc">Paint/stain new trim to match specs.</div>
         </div>
       </div>
       <div class="timeline-line"></div>
       <div class="timeline-step">
         <div class="timeline-dot">3</div>
         <div class="timeline-text">
-          <div class="role">🔨 Carpentry Crew — Reinstall Day</div>
-          <div class="desc">Install new screen + reinstall painted/stained trim.</div>
+          <div class="role">🔨 Carpentry — Reinstall</div>
+          <div class="desc">Install new screen + reinstall finished trim.</div>
         </div>
       </div>
     </div>
@@ -273,8 +263,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="step-header"><h2><span class="num">5</span> Notes</h2></div>
 
   <div class="card">
-    <div class="q-label">Scope notes & special instructions</div>
-    <textarea id="notes" placeholder="Screen type (standard/upgraded), trim condition, paint color match details, access notes..." style="width:100%;min-height:80px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <textarea id="notes" placeholder="Screen type, trim condition, paint color match, access notes..." style="width:100%;min-height:70px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
   </div>
 </div>
 
@@ -302,9 +291,9 @@ const state = {
   roof: 'flat',
   trimType: 'wood',
   walls: [
-    { id:0, label:'Front', w:0, h:8, rail:3, sections:2, subs:2, doors:0 },
-    { id:1, label:'Left', w:0, h:8, rail:3, sections:2, subs:2, doors:0 },
-    { id:2, label:'Right', w:0, h:8, rail:3, sections:2, subs:2, doors:0 }
+    { id:0, label:'Front', w:0, h:8, squares:0, posts:0, doors:0 },
+    { id:1, label:'Left',  w:0, h:8, squares:0, posts:0, doors:0 },
+    { id:2, label:'Right', w:0, h:8, squares:0, posts:0, doors:0 }
   ],
   nextId: 3,
   addons: { perishables:true },
@@ -316,39 +305,28 @@ function pickRadio(el) {
   group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   const q = group.dataset.q;
-  const v = el.dataset.v;
-  state[q] = v;
-
-  // Gable section visibility
+  state[q] = el.dataset.v;
   document.getElementById('gable-section').classList.toggle('hidden', state.roof !== 'gable-screen');
-
-  // Reuse warning
   document.getElementById('reuse-warn').style.display = state.trimType === 'reuse' ? '' : 'none';
-
   calc();
 }
 
-// ── Wall Calculations ──
+// ── Wall Math ──
+// LF = 2 × (squares × width / columns + height × columns)
+// columns = posts - 1 (minimum 1)
 
 function wallTrimLF(w) {
-  const W = w.w || 0, H = w.h || 8, R = w.rail || 3;
-  const S = w.sections || 1, D = w.subs || 1;
-  if (W === 0 || S === 0) return 0;
-  return Math.round(4*W + 2*S*(R + D*(H - R)));
+  const W = w.w || 0, H = w.h || 8, N = w.squares || 0;
+  const cols = Math.max(1, (w.posts || 2) - 1);
+  if (W === 0 || N === 0) return 0;
+  return Math.round(2 * (N * W / cols + H * cols));
 }
 
 function wallScreenSF(w) {
-  const W = w.w || 0, H = w.h || 8;
-  return Math.round(W * H);
+  return Math.round((w.w || 0) * (w.h || 8));
 }
 
-function wallBoxes(w) {
-  const S = w.sections || 1, D = w.subs || 1;
-  // boxes = S below-rail + S*D above-rail
-  return S * (1 + D);
-}
-
-// ── Render Walls ──
+// ── Render ──
 
 function renderWalls() {
   const activeEl = document.activeElement;
@@ -365,62 +343,54 @@ function renderWalls() {
   state.walls.forEach((w, i) => {
     const lf = wallTrimLF(w);
     const sf = wallScreenSF(w);
-    const boxes = wallBoxes(w);
+    const cols = Math.max(1, (w.posts || 2) - 1);
     const removable = state.walls.length > 1;
-
-    // Below-rail box dimensions
-    const secW = w.sections > 0 ? ((w.w||0) / w.sections).toFixed(1) : 0;
-    const aboveH = ((w.h||8) - (w.rail||3)).toFixed(1);
-    const subW = (w.sections > 0 && w.subs > 0) ? ((w.w||0) / (w.sections * w.subs)).toFixed(1) : 0;
 
     html += `<div class="wall-card">
       <div class="wall-header">
-        <div class="title">🧱 ${w.label || 'Wall '+(i+1)}</div>
+        <div class="title">🧱 ${w.label}</div>
         <div class="stats">
           <span class="sf-inline">${sf} SF</span>
           <span class="sf-inline">${lf} LF</span>
-          <span class="sf-inline">${boxes} boxes</span>
           ${removable ? `<button class="remove-btn" onclick="removeWall(${w.id})">✕</button>` : ''}
         </div>
       </div>
 
-      <div class="input-row">
-        <label style="min-width:50px">Width</label>
-        <input type="number" data-wid="${w.id}" data-field="w" value="${w.w||''}" placeholder="ft" oninput="wallInput(${w.id},'w',this.value)" style="max-width:70px">
-        <div class="unit">ft</div>
-        <label style="min-width:40px">Height</label>
-        <input type="number" data-wid="${w.id}" data-field="h" value="${w.h||8}" oninput="wallInput(${w.id},'h',this.value)" style="max-width:60px">
-        <div class="unit">ft</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Width</label>
+          <input type="number" data-wid="${w.id}" data-field="w" value="${w.w||''}" placeholder="ft" oninput="wallInput(${w.id},'w',this.value)">
+        </div>
+        <div class="field">
+          <label>Height</label>
+          <input type="number" data-wid="${w.id}" data-field="h" value="${w.h||''}" placeholder="ft" oninput="wallInput(${w.id},'h',this.value)">
+        </div>
+        <div class="field">
+          <label>Squares</label>
+          <input type="number" data-wid="${w.id}" data-field="squares" value="${w.squares||''}" placeholder="incl. doors" oninput="wallInput(${w.id},'squares',this.value)">
+          <div class="hint">Count all boxes + doors</div>
+        </div>
+        <div class="field">
+          <label>Posts</label>
+          <input type="number" data-wid="${w.id}" data-field="posts" value="${w.posts||''}" placeholder="count" oninput="wallInput(${w.id},'posts',this.value)">
+          <div class="hint">${cols} section${cols!==1?'s':''}</div>
+        </div>
+        <div class="field">
+          <label>Screen Doors</label>
+          <input type="number" data-wid="${w.id}" data-field="doors" value="${w.doors||''}" placeholder="0" oninput="wallInput(${w.id},'doors',this.value)">
+          <div class="hint">Included in squares</div>
+        </div>
       </div>
 
-      <div class="input-row">
-        <label style="min-width:50px">Rail H</label>
-        <input type="number" data-wid="${w.id}" data-field="rail" value="${w.rail||3}" oninput="wallInput(${w.id},'rail',this.value)" style="max-width:60px">
-        <div class="unit">ft</div>
-        <label style="min-width:40px">Sections</label>
-        <input type="number" data-wid="${w.id}" data-field="sections" value="${w.sections||2}" min="1" oninput="wallInput(${w.id},'sections',this.value)" style="max-width:50px">
-      </div>
-
-      <div class="input-row">
-        <label style="min-width:50px">Dividers above</label>
-        <input type="number" data-wid="${w.id}" data-field="subs" value="${w.subs||2}" min="1" oninput="wallInput(${w.id},'subs',this.value)" style="max-width:50px">
-        <div class="unit">per section</div>
-        <label style="min-width:40px">Doors</label>
-        <input type="number" data-wid="${w.id}" data-field="doors" value="${w.doors||0}" min="0" oninput="wallInput(${w.id},'doors',this.value)" style="max-width:50px">
-      </div>
-
-      <div class="calc-breakdown">
-        <strong>${w.sections||0} sections × (1 below + ${w.subs||0} above) = ${boxes} boxes</strong><br>
-        Below rail: ${secW}' × ${w.rail||3}' = ${Math.round(secW*(w.rail||3))} SF/box<br>
-        Above rail: ${subW}' × ${aboveH}' = ${Math.round(subW*aboveH)} SF/box<br>
-        <strong>LF = 4(${w.w||0}) + 2(${w.sections||0})(${w.rail||3} + ${w.subs||0}×${aboveH}) = ${lf} LF</strong>
-      </div>
+      ${lf > 0 ? `<div class="calc-result">
+        <strong>${lf} LF trim</strong> · ${sf} SF screen${w.doors ? ' · '+w.doors+' door'+(w.doors>1?'s':'') : ''}<br>
+        <span style="font-size:11px;color:var(--text-light)">= 2 × (${w.squares||0} squares × ${w.w||0}' ÷ ${cols} cols + ${w.h||8}' × ${cols} cols)</span>
+      </div>` : ''}
     </div>`;
   });
 
   c.innerHTML = html;
 
-  // Restore focus
   if (focusWid !== null && focusField !== null) {
     const target = c.querySelector(`input[data-wid="${focusWid}"][data-field="${focusField}"]`);
     if (target) {
@@ -434,9 +404,9 @@ function renderWalls() {
 
 function addWall() {
   const id = state.nextId++;
-  const labels = ['Front','Left','Right','Back','Wall 5','Wall 6'];
+  const labels = ['Front','Left','Right','Back','Wall 5','Wall 6','Wall 7','Wall 8'];
   const label = labels[state.walls.length] || 'Wall '+(state.walls.length+1);
-  state.walls.push({ id, label, w:0, h:8, rail:3, sections:2, subs:2, doors:0 });
+  state.walls.push({ id, label, w:0, h:8, squares:0, posts:0, doors:0 });
   renderWalls();
 }
 
@@ -452,11 +422,11 @@ function wallInput(id, field, value) {
   renderWalls();
 }
 
-// ── Add-ons ──
+// ── Addons ──
 
 function toggleAddon(key) {
   state.addons[key] = !state.addons[key];
-  document.getElementById(key === 'perishables' ? 'perish-toggle' : key+'-toggle').classList.toggle('on', state.addons[key]);
+  document.getElementById('perish-toggle').classList.toggle('on', state.addons.perishables);
   calc();
 }
 
@@ -469,71 +439,66 @@ function adjDifficult(d) {
 // ── Main Calc ──
 
 function calc() {
-  let totalSF = 0, totalLF = 0, totalBoxes = 0, totalDoors = 0;
+  let totalSF = 0, totalLF = 0, totalSquares = 0, totalDoors = 0;
 
-  // Walls
   state.walls.forEach(w => {
     totalSF += wallScreenSF(w);
     totalLF += wallTrimLF(w);
-    totalBoxes += wallBoxes(w);
+    totalSquares += (w.squares || 0);
     totalDoors += (w.doors || 0);
   });
 
   // Gable
-  let gableSF = 0, gableLF = 0;
   if (state.roof === 'gable-screen') {
     const base = parseFloat(document.getElementById('gable-base').value) || 0;
     const peak = parseFloat(document.getElementById('gable-peak').value) || 0;
     const count = parseInt(document.getElementById('gable-count').value) || 1;
     if (base > 0 && peak > 0) {
-      const triArea = 0.5 * base * peak;
+      const triSF = Math.round(0.5 * base * peak * count);
       const hyp = Math.sqrt((base/2)*(base/2) + peak*peak);
-      const triLF = Math.round(base + 2*hyp);
-      gableSF = Math.round(triArea * count);
-      gableLF = Math.round(triLF * count);
-      document.getElementById('gable-calc').textContent = `SF: ${gableSF} · Trim LF: ${gableLF} (per gable: ${Math.round(triArea)} SF, ${Math.round(triLF)} LF)`;
+      const triLF = Math.round((base + 2*hyp) * count);
+      totalSF += triSF;
+      totalLF += triLF;
+      const el = document.getElementById('gable-calc');
+      el.style.display = '';
+      el.innerHTML = `<strong>${triLF} LF trim · ${triSF} SF screen</strong> (${count} gable${count>1?'s':''})`;
+    } else {
+      document.getElementById('gable-calc').style.display = 'none';
     }
   }
-  totalSF += gableSF;
-  totalLF += gableLF;
 
   // Extras
   totalLF += parseInt(document.getElementById('extra-lf').value) || 0;
   totalSF += parseInt(document.getElementById('extra-sf').value) || 0;
 
-  // Trim rate
+  // Rates
   const trimRate = state.trimType === 'pvc' ? RATES.trimPvc : state.trimType === 'reuse' ? RATES.trimReuse : RATES.trimWood;
   const trimNames = { wood:'New Wood Trim', pvc:'New PVC Trim', reuse:'Reuse Old Wood' };
 
-  // Costs
   const removalCost = Math.round(totalSF * RATES.removal);
   const installCost = Math.round(totalSF * RATES.install);
   const trimCost = Math.round(totalLF * trimRate);
-  let subtotal = removalCost + installCost + trimCost;
+  let total = removalCost + installCost + trimCost;
 
-  // Add-ons
-  if (state.addons.perishables) subtotal += RATES.perishables;
+  if (state.addons.perishables) total += RATES.perishables;
   const difficultCost = state.difficultCount * RATES.difficult;
-  subtotal += difficultCost;
+  total += difficultCost;
 
   // Update UI
   document.getElementById('tot-sf').textContent = totalSF;
   document.getElementById('tot-lf').textContent = totalLF;
   document.getElementById('tot-doors').textContent = totalDoors;
-  document.getElementById('tot-boxes').textContent = totalBoxes;
-
+  document.getElementById('tot-boxes').textContent = totalSquares;
   document.getElementById('cost-removal').textContent = '$'+removalCost;
   document.getElementById('cost-install').textContent = '$'+installCost;
   document.getElementById('cost-trim').textContent = '$'+trimCost;
-  document.getElementById('cost-subtotal').textContent = '$'+subtotal;
-
-  document.getElementById('doors-total').textContent = totalDoors;
+  document.getElementById('cost-subtotal').textContent = '$'+total;
   document.getElementById('difficult-price').textContent = difficultCost ? '$'+difficultCost : '$0';
 
-  document.getElementById('rtTotal').textContent = '$'+subtotal.toLocaleString();
+  document.getElementById('rtTotal').textContent = '$'+total.toLocaleString();
   document.getElementById('rtTrimType').textContent = trimNames[state.trimType];
   document.getElementById('rtDetail').textContent = `Screen: ${totalSF} SF · Trim: ${totalLF} LF · Doors: ${totalDoors}`;
-  document.getElementById('bottomTotal').textContent = '$'+subtotal.toLocaleString();
+  document.getElementById('bottomTotal').textContent = '$'+total.toLocaleString();
 }
 
 // Init
