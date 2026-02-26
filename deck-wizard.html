@@ -147,6 +147,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
       <div class="radio-btn" data-v="stained-good" onclick="pick(this)"><div class="dot"></div>Previously stained (good condition)</div>
       <div class="radio-btn" data-v="stained-weathered" onclick="pick(this)"><div class="dot"></div>Previously stained (weathered/patchy)</div>
       <div class="radio-btn selected" data-v="bare" onclick="pick(this)"><div class="dot"></div>None (bare/new wood)</div>
+      <div class="radio-btn" data-v="oil-wax" onclick="pick(this)"><div class="dot"></div>Suspected oil-based or wax-based</div>
       <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
     </div>
 
@@ -166,7 +167,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     <div class="radios" data-q="q5">
       <div class="radio-btn selected" data-v="minimal" onclick="pick(this)"><div class="dot"></div>Minimal (cosmetic only)</div>
       <div class="radio-btn" data-v="moderate" onclick="pick(this)"><div class="dot"></div>Moderate (some greying, board damage)</div>
-      <div class="radio-btn" data-v="severe" onclick="pick(this)"><div class="dot"></div>Severe (structural concerns, heavy decay)</div>
+      <div class="radio-btn" data-v="severe" onclick="pick(this)"><div class="dot"></div>Severe (multiple failing coats, mixed products, splintering, extremely weathered)</div>
     </div>
   </div>
 
@@ -376,10 +377,16 @@ function assess() {
     reason = 'Active water beading with older coating. Solid stain or SuperDeck recommended.';
     disclaimers.push({t:'warning', m:'⚠️ SuperDeck also available but is a one-way door (lock-in).'});
   } else if (q2 === 'deckover') {
-    product = 'solid-nowarranty';
-    reason = 'Previous Behr DeckOver/thick-film detected. Solid stain only — NO WARRANTY.';
+    product = 'superdeck-locked';
+    reason = 'Previous Behr DeckOver/thick-film detected. SuperDeck self-priming solid is required.';
+    disclaimers.push({t:'danger', m:'🔒 SuperDeck LOCK-IN: Once applied, only SuperDeck can be recoated. This is a one-way door.'});
     disclaimers.push({t:'danger', m:'🚫 NO WARRANTY — Behr DeckOver/Rustoleum Restore substrates void all product warranties.'});
     cardClass = 'error';
+  } else if (q2 === 'oil-wax') {
+    product = 'superdeck-locked';
+    reason = 'Suspected oil-based or wax-based coating. SuperDeck self-priming solid required — only product that adheres over these substrates.';
+    disclaimers.push({t:'danger', m:'🔒 SuperDeck LOCK-IN: Once applied, only SuperDeck can be recoated. This is a one-way door.'});
+    cardClass = 'warn';
   } else if (q2 === 'stained-good') {
     product = 'semi-transparent';
     reason = 'Previously stained in good condition. Semi-transparent maintains look; can upgrade to solid.';
@@ -390,8 +397,10 @@ function assess() {
     product = 'semi-transparent';
     reason = 'Bare/new wood in good condition. Semi-transparent preserves natural grain.';
   } else {
-    product = 'solid';
-    reason = 'Unknown previous coating — solid stain is the safe choice.';
+    product = 'superdeck-locked';
+    reason = 'Unknown previous coating — SuperDeck self-priming solid is the safe choice. Adheres over anything.';
+    disclaimers.push({t:'danger', m:'🔒 SuperDeck LOCK-IN: Once applied, only SuperDeck can be recoated. This is a one-way door.'});
+    cardClass = 'warn';
   }
 
   if (q3 === 'yes' && product.startsWith('semi')) {
@@ -405,7 +414,10 @@ function assess() {
   }
 
   if (q5 === 'severe') {
-    disclaimers.push({t:'warning', m:'⚠️ Severe condition — SuperDeck recommended. Structural concerns should be addressed first.'});
+    product = 'superdeck-locked';
+    reason = 'Severe condition — multiple failing coats, splintering, extreme weathering. SuperDeck self-priming solid required.';
+    disclaimers.push({t:'danger', m:'🔒 SuperDeck LOCK-IN: Once applied, only SuperDeck can be recoated. This is a one-way door.'});
+    cardClass = 'warn';
   }
 
   if (product.startsWith('semi')) {
@@ -416,7 +428,7 @@ function assess() {
     'semi-transparent': 'Semi-Transparent Stain',
     'solid': 'Solid Stain',
     'solid-nowarranty': 'Solid Stain (NO WARRANTY)',
-    'superdeck-locked': 'SuperDeck (LOCKED)'
+    'superdeck-locked': 'SuperDeck Self-Priming Solid (LOCKED)'
   };
   const pName = productNames[product] || product;
   const icon = cardClass === 'error' ? '🚫' : cardClass === 'warn' ? '⚠️' : '✅';
