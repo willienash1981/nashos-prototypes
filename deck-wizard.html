@@ -303,7 +303,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="addon-card">
     <div class="left">
       <div class="aname">Heavy Masking</div>
-      <div class="adesc">Adjacent structures need protection</div>
+      <div class="adesc">$150 min or 15% of deck total (whichever is greater)</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="aprice" id="masking-price">$0</span>
@@ -842,7 +842,7 @@ function calc() {
 
   if (state.addons.brush) total *= 1.15;
 
-  const maskingFee = state.addons.masking ? 150 : 0;
+  const maskingFee = state.addons.masking ? Math.max(150, Math.round(total * 0.15)) : 0;
   total += maskingFee;
   document.getElementById('masking-price').textContent = maskingFee ? '$'+maskingFee : '$0';
 
