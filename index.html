@@ -431,8 +431,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="bot">
   <div class="bot-info">
     <div class="bot-label">Room Estimate</div>
-    <div class="bot-price">$3,450</div>
-    <div class="bot-sub">Master Bedroom</div>
+    <div class="bot-price" id="bot-price">$3,450</div>
+    <div class="bot-sub" id="bot-sub">Master Bedroom</div>
   </div>
   <button class="bot-btn" onclick="showToast('✓ Room saved')">Save</button>
 </div>
@@ -817,6 +817,14 @@ function prepCalc() {
   badge.style.display = anyActive ? '' : 'none';
   totalEl.style.display = anyActive ? 'flex' : 'none';
   document.getElementById('prep-total-val').textContent = '$' + Math.round(total).toLocaleString();
+
+  // Update bottom bar — base room price + drywall
+  const basePrice = 3450;
+  const roomTotal = basePrice + Math.round(total);
+  document.getElementById('bot-price').textContent = '$' + roomTotal.toLocaleString();
+  document.getElementById('bot-sub').textContent = anyActive
+    ? 'Master Bedroom · incl $' + Math.round(total).toLocaleString() + ' drywall'
+    : 'Master Bedroom';
 }
 
 // Hole repair photos
