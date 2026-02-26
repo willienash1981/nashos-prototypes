@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Screen Replacement Wizard</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --red-bg: #FEF2F2;
+  --blue: #3B82F6;
+  --orange: #F59E0B;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
+.topbar { background: var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:16px; font-weight:700; }
+.topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.running-total { position:sticky; top:42px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; }
+.running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
+.running-total .detail { opacity:.8; }
+.step-header { padding:12px 12px 4px; }
+.step-header h2 { font-size:14px; font-weight:700; color:var(--navy); display:flex; align-items:center; gap:6px; }
+.step-header h2 .num { background:var(--navy); color:#fff; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; }
+.card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.q-label { font-size:12px; font-weight:600; margin-bottom:5px; color:var(--text); }
+.radios { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
+.radio-btn { display:flex; align-items:center; gap:8px; padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:12px; transition:all .15s; line-height:1.3; }
+.radio-btn:hover { border-color:var(--gold-light); }
+.radio-btn.selected { border-color:var(--gold); background:rgba(196,169,98,.08); }
+.radio-btn .dot { width:16px; height:16px; border-radius:50%; border:1.5px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.radio-btn.selected .dot { border-color:var(--gold); }
+.radio-btn.selected .dot::after { content:''; width:8px; height:8px; border-radius:50%; background:var(--gold); }
+.wall-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.wall-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid var(--border); margin-bottom:10px; }
+.wall-header .title { font-size:14px; font-weight:700; display:flex; align-items:center; gap:6px; }
+.wall-header .stats { display:flex; align-items:center; gap:8px; }
+.wall-header .remove-btn { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:2px 6px; }
+.wall-header .remove-btn:hover { color:var(--red); }
+.sf-inline { font-size:12px; color:var(--gold); font-weight:600; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 10px; margin-bottom:8px; }
+.field { display:flex; flex-direction:column; gap:2px; }
+.field label { font-size:10px; color:var(--text-light); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+.field input { padding:8px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; width:100%; }
+.field input:focus { outline:none; border-color:var(--gold); }
+.field .hint { font-size:10px; color:var(--text-light); }
+.calc-result { font-size:12px; color:var(--navy); background:rgba(196,169,98,.08); border:1px solid var(--gold); border-radius:8px; padding:8px 10px; margin-top:4px; line-height:1.6; }
+.calc-result strong { font-size:13px; }
+.trim-toggle { display:flex; align-items:center; gap:6px; margin-top:8px; padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:#f9fafb; }
+.trim-toggle label { font-size:11px; font-weight:600; color:var(--text); flex-shrink:0; }
+.trim-toggle .opts { display:flex; gap:4px; flex:1; }
+.opt-btn { flex:1; padding:5px 4px; border-radius:6px; cursor:pointer; text-align:center; font-size:11px; transition:all .15s; border:1.5px solid var(--border); background:#fff; }
+.opt-btn.active { border-color:var(--gold); background:rgba(196,169,98,.08); font-weight:600; }
+.addon-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; }
+.addon-card .left { flex:1; }
+.addon-card .aname { font-size:13px; font-weight:600; }
+.addon-card .adesc { font-size:11px; color:var(--text-light); }
+.addon-card .aprice { font-size:14px; font-weight:700; color:var(--navy); margin-right:12px; }
+.toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.toggle.on { background:var(--green); }
+.toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.toggle.on .knob { left:22px; }
+.counter { display:flex; align-items:center; gap:6px; }
+.counter button { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.counter button:hover { border-color:var(--gold); }
+.counter span { font-size:14px; font-weight:600; min-width:20px; text-align:center; }
+.add-btn { background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 16px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); }
+.add-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
+.disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; }
+.disclaimer.info { background:#EFF6FF; color:#1E40AF; }
+.disclaimer.warning { background:#FFFBEB; color:#92400E; }
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px 8px; font-size:12px; color:var(--text-light); }
+.summary-grid strong { color:var(--text); }
+.timeline { margin:0; }
+.timeline-step { display:flex; gap:10px; padding:6px 0; }
+.timeline-dot { width:24px; height:24px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+.timeline-line { width:2px; background:var(--border); margin:0 11px; height:6px; }
+.timeline-text { font-size:12px; line-height:1.4; }
+.timeline-text .role { font-weight:600; color:var(--navy); }
+.timeline-text .desc { color:var(--text-light); font-size:11px; }
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.bottom-bar .label { font-size:11px; opacity:.8; }
+.bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
+.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <h1>🏗️ Screen Replacement</h1>
+    <span class="badge">BETA</span>
+  </div>
+
+  <div class="running-total">
+    <div><span class="big" id="rtTotal">$0</span></div>
+    <div class="detail" id="rtDetail">Screen: 0 SF · Wall trim: 0 LF · Door trim: 0 LF</div>
+  </div>
+
+  <!-- STEP 1: WALLS — COUNT THE STICKS -->
+  <div class="step-header"><h2><span class="num">1</span> Walls — Count the Sticks</h2></div>
+
+  <div id="walls-container"></div>
+
+  <div style="margin:6px 12px">
+    <button class="add-btn" onclick="addWall()">+ Add Wall</button>
+  </div>
+
+  <!-- GABLE (conditional) -->
+  <div id="gable-section" class="hidden">
+    <div class="step-header"><h2 style="font-size:13px">▲ Gable Screen</h2></div>
+    <div class="wall-card">
+      <div style="font-size:11px;color:var(--text-light);margin-bottom:8px">Triangle screen at roof peak</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Base width</label>
+          <input type="number" id="gable-base" placeholder="ft" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>Peak height</label>
+          <input type="number" id="gable-peak" placeholder="ft" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>Gable count</label>
+          <input type="number" id="gable-count" value="1" min="1" max="2" oninput="calc()">
+        </div>
+        <div class="field">
+          <label>Trim sticks in gable</label>
+          <input type="number" id="gable-sticks" placeholder="extra LF" oninput="calc()">
+          <div class="hint">Internal dividers</div>
+        </div>
+      </div>
+      <div class="trim-toggle">
+        <label>Gable trim:</label>
+        <div class="opts">
+          <div class="opt-btn active" onclick="setGableTrim('replace')">Replace</div>
+          <div class="opt-btn" onclick="setGableTrim('reuse')">Reuse</div>
+        </div>
+      </div>
+      <div class="calc-result" id="gable-calc" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- TOTALS -->
+  <div class="card" style="margin-top:8px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:6px">📐 Totals</div>
+    <div class="summary-grid">
+      <span>Screen: <strong id="tot-sf">0</strong> SF</span>
+      <span>Squares: <strong id="tot-squares">0</strong></span>
+      <span>Wall trim: <strong id="tot-wall-lf">0</strong> LF</span>
+      <span>Door trim: <strong id="tot-door-lf">0</strong> LF</span>
+    </div>
+    <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px">
+      <div class="summary-grid">
+        <span>Removal: <strong id="cost-removal">$0</strong></span>
+        <span>Install: <strong id="cost-install">$0</strong></span>
+        <span>Trim (replace): <strong id="cost-replace">$0</strong></span>
+        <span>Trim (reuse): <strong id="cost-reuse">$0</strong></span>
+      </div>
+      <div style="margin-top:6px;font-size:13px;font-weight:700;color:var(--navy)">Total: <strong id="cost-total">$0</strong></div>
+    </div>
+  </div>
+
+  <!-- STEP 2: CONFIG -->
+  <div class="step-header"><h2><span class="num">2</span> Configuration</h2></div>
+
+  <div class="card">
+    <div id="replace-material-section" class="hidden">
+      <div class="q-label">Replacement trim material</div>
+      <div class="radios" data-q="replaceMaterial">
+        <div class="radio-btn selected" data-v="wood" onclick="pickRadio(this)"><div class="dot"></div>New wood — $3.00/LF</div>
+        <div class="radio-btn" data-v="pvc" onclick="pickRadio(this)"><div class="dot"></div>New PVC — $4.15/LF</div>
+      </div>
+    </div>
+
+    <div class="q-label">Roof type</div>
+    <div class="radios" data-q="roof">
+      <div class="radio-btn selected" data-v="flat" onclick="pickRadio(this)"><div class="dot"></div>Flat ceiling</div>
+      <div class="radio-btn" data-v="gable-screen" onclick="pickRadio(this)"><div class="dot"></div>Gable — screened at peak</div>
+      <div class="radio-btn" data-v="gable-wood" onclick="pickRadio(this)"><div class="dot"></div>Gable — wood at peak</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: EXTRAS -->
+  <div class="step-header"><h2><span class="num">3</span> Extras</h2></div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Extra Trim LF</div>
+      <div class="adesc">Odd sections the stick count missed</div>
+    </div>
+    <div class="counter">
+      <input type="number" id="extra-lf" value="0" oninput="calc()" style="width:55px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;text-align:center;font-family:inherit">
+      <span style="font-size:11px;color:var(--text-light)">LF</span>
+    </div>
+  </div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Perishables</div>
+      <div class="adesc">Trip charge + consumables</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice">$125</span>
+      <div class="toggle on" id="perish-toggle" onclick="toggleAddon('perishables')"><div class="knob"></div></div>
+    </div>
+  </div>
+
+  <div class="addon-card">
+    <div class="left">
+      <div class="aname">Difficult Location</div>
+      <div class="adesc">$125/ea — extra setup</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="aprice" id="difficult-price">$0</span>
+      <div class="counter">
+        <button onclick="adjDifficult(-1)">−</button>
+        <span id="difficult-count">0</span>
+        <button onclick="adjDifficult(1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: WORK ORDER -->
+  <div class="step-header"><h2><span class="num">4</span> Work Order Sequence</h2></div>
+
+  <div class="card">
+    <div class="disclaimer info" style="margin:0 0 6px">ℹ️ 3-crew coordination required</div>
+    <div class="timeline">
+      <div class="timeline-step">
+        <div class="timeline-dot">1</div>
+        <div class="timeline-text">
+          <div class="role">🔨 Carpentry — Demo Day</div>
+          <div class="desc">Remove screens & trim. Supply new trim to painters.</div>
+        </div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-text">
+          <div class="role">🎨 Paint Crew — Trim Finish</div>
+          <div class="desc">Paint/stain new trim to match specs.</div>
+        </div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot">3</div>
+        <div class="timeline-text">
+          <div class="role">🔨 Carpentry — Reinstall</div>
+          <div class="desc">Install new screen + reinstall finished trim.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="step-header"><h2><span class="num">5</span> Notes</h2></div>
+  <div class="card">
+    <textarea id="notes" placeholder="Screen type, trim condition, paint color, access notes..." style="width:100%;min-height:70px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+  </div>
+</div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div>
+    <div class="label">Screen Replacement</div>
+    <div class="total" id="bottomTotal">$0</div>
+  </div>
+  <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
+</div>
+
+<script>
+const RATES = {
+  removal: 0.92,
+  install: 1.44,
+  trimWood: 3.00,
+  trimPvc: 4.15,
+  trimReuse: 1.74,
+  perishables: 125,
+  difficult: 125
+};
+
+const state = {
+  roof: 'flat',
+  replaceMaterial: 'wood',
+  gableTrim: 'replace',
+  walls: [
+    { id:0, label:'Front', w:0, h:8, horiz:3, vert:0, doors:0, wallTrim:'replace', doorTrim:'reuse' },
+    { id:1, label:'Left',  w:0, h:8, horiz:3, vert:0, doors:0, wallTrim:'replace', doorTrim:'reuse' },
+    { id:2, label:'Right', w:0, h:8, horiz:3, vert:0, doors:0, wallTrim:'replace', doorTrim:'reuse' }
+  ],
+  nextId: 3,
+  addons: { perishables:true },
+  difficultCount: 0
+};
+
+const DOOR_PERIM = 20; // 2(7+3) standard screen door
+
+function pickRadio(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state[group.dataset.q] = el.dataset.v;
+  document.getElementById('gable-section').classList.toggle('hidden', state.roof !== 'gable-screen');
+  calc();
+}
+
+// ── Wall Math: Count the Sticks ──
+// Wall Trim LF = horizontals × width + verticals × height
+// Door Trim LF = doors × 20 (perimeter of standard screen door)
+// Screen SF = width × height
+// Squares = (horizontals - 1) × (verticals - 1)
+
+function wallTrimLF(w) {
+  return Math.round((w.horiz||0) * (w.w||0) + (w.vert||0) * (w.h||8));
+}
+function doorTrimLF(w) {
+  return (w.doors||0) * DOOR_PERIM;
+}
+function wallScreenSF(w) {
+  return Math.round((w.w||0) * (w.h||8));
+}
+function wallSquares(w) {
+  const h = Math.max(0, (w.horiz||0) - 1);
+  const v = Math.max(0, (w.vert||0) - 1);
+  return h * v;
+}
+
+// ── Render ──
+
+function renderWalls() {
+  const activeEl = document.activeElement;
+  let focusWid = null, focusField = null, focusPos = 0;
+  if (activeEl && activeEl.dataset && activeEl.dataset.wid !== undefined) {
+    focusWid = activeEl.dataset.wid;
+    focusField = activeEl.dataset.field;
+    focusPos = activeEl.selectionStart || 0;
+  }
+
+  const c = document.getElementById('walls-container');
+  let html = '';
+
+  state.walls.forEach((w, i) => {
+    const wlf = wallTrimLF(w);
+    const dlf = doorTrimLF(w);
+    const sf = wallScreenSF(w);
+    const sq = wallSquares(w);
+    const removable = state.walls.length > 1;
+    const hLF = (w.horiz||0) * (w.w||0);
+    const vLF = (w.vert||0) * (w.h||8);
+
+    html += `<div class="wall-card">
+      <div class="wall-header">
+        <div class="title">🧱 ${w.label}</div>
+        <div class="stats">
+          <span class="sf-inline">${sf} SF</span>
+          <span class="sf-inline">${wlf}${dlf?'+'+dlf:''} LF</span>
+          ${removable ? `<button class="remove-btn" onclick="removeWall(${w.id})">✕</button>` : ''}
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>Width</label>
+          <input type="number" data-wid="${w.id}" data-field="w" value="${w.w||''}" placeholder="ft" oninput="wallInput(${w.id},'w',this.value)">
+        </div>
+        <div class="field">
+          <label>Height</label>
+          <input type="number" data-wid="${w.id}" data-field="h" value="${w.h||''}" placeholder="ft" oninput="wallInput(${w.id},'h',this.value)">
+          <div class="hint">Screen area only</div>
+        </div>
+        <div class="field">
+          <label>Horizontal boards</label>
+          <input type="number" data-wid="${w.id}" data-field="horiz" value="${w.horiz||''}" placeholder="#" oninput="wallInput(${w.id},'horiz',this.value)">
+          <div class="hint">End-to-end runs</div>
+        </div>
+        <div class="field">
+          <label>Vertical posts</label>
+          <input type="number" data-wid="${w.id}" data-field="vert" value="${w.vert||''}" placeholder="#" oninput="wallInput(${w.id},'vert',this.value)">
+          <div class="hint">Full-height runs</div>
+        </div>
+        <div class="field">
+          <label>Screen doors</label>
+          <input type="number" data-wid="${w.id}" data-field="doors" value="${w.doors||''}" placeholder="0" oninput="wallInput(${w.id},'doors',this.value)">
+          <div class="hint">${DOOR_PERIM} LF/door</div>
+        </div>
+        <div class="field">
+          <label>Squares</label>
+          <div style="padding:8px 0;font-size:14px;font-weight:600;color:var(--gold)">${sq}</div>
+          <div class="hint">Auto-calculated</div>
+        </div>
+      </div>
+
+      ${wlf > 0 ? `<div class="calc-result">
+        <strong>Wall: ${wlf} LF</strong> <span style="font-size:11px;color:var(--text-light)">(${w.horiz||0}h × ${w.w||0}' = ${hLF} + ${w.vert||0}v × ${w.h||8}' = ${vLF})</span>
+        ${dlf ? `<br><strong>Door: ${dlf} LF</strong> <span style="font-size:11px;color:var(--text-light)">(${w.doors} × ${DOOR_PERIM}')</span>` : ''}
+      </div>` : ''}
+
+      <div class="trim-toggle">
+        <label>Wall trim:</label>
+        <div class="opts">
+          <div class="opt-btn ${w.wallTrim==='replace'?'active':''}" onclick="setWallOpt(${w.id},'wallTrim','replace')">Replace</div>
+          <div class="opt-btn ${w.wallTrim==='reuse'?'active':''}" onclick="setWallOpt(${w.id},'wallTrim','reuse')">Reuse</div>
+        </div>
+      </div>
+      ${w.doors > 0 ? `<div class="trim-toggle">
+        <label>Door trim:</label>
+        <div class="opts">
+          <div class="opt-btn ${w.doorTrim==='replace'?'active':''}" onclick="setWallOpt(${w.id},'doorTrim','replace')">Replace</div>
+          <div class="opt-btn ${w.doorTrim==='reuse'?'active':''}" onclick="setWallOpt(${w.id},'doorTrim','reuse')">Reuse</div>
+        </div>
+      </div>` : ''}
+    </div>`;
+  });
+
+  c.innerHTML = html;
+
+  if (focusWid !== null && focusField !== null) {
+    const target = c.querySelector(`input[data-wid="${focusWid}"][data-field="${focusField}"]`);
+    if (target) {
+      target.focus();
+      try { target.setSelectionRange(focusPos, focusPos); } catch(e) {}
+    }
+  }
+  calc();
+}
+
+function addWall() {
+  const id = state.nextId++;
+  const labels = ['Front','Left','Right','Back','Wall 5','Wall 6'];
+  const label = labels[state.walls.length] || 'Wall '+(state.walls.length+1);
+  state.walls.push({ id, label, w:0, h:8, horiz:3, vert:0, doors:0, wallTrim:'replace', doorTrim:'reuse' });
+  renderWalls();
+}
+
+function removeWall(id) {
+  state.walls = state.walls.filter(w => w.id !== id);
+  renderWalls();
+}
+
+function wallInput(id, field, value) {
+  const w = state.walls.find(x => x.id === id);
+  if (!w) return;
+  w[field] = parseFloat(value) || 0;
+  renderWalls();
+}
+
+function setWallOpt(id, field, value) {
+  const w = state.walls.find(x => x.id === id);
+  if (!w) return;
+  w[field] = value;
+  renderWalls();
+}
+
+function setGableTrim(value) {
+  state.gableTrim = value;
+  document.querySelectorAll('#gable-section .opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  calc();
+}
+
+// ── Addons ──
+
+function toggleAddon(key) {
+  state.addons[key] = !state.addons[key];
+  document.getElementById('perish-toggle').classList.toggle('on', state.addons.perishables);
+  calc();
+}
+
+function adjDifficult(d) {
+  state.difficultCount = Math.max(0, state.difficultCount + d);
+  document.getElementById('difficult-count').textContent = state.difficultCount;
+  calc();
+}
+
+// ── Main Calc ──
+
+function calc() {
+  let totalSF = 0, totalSquares = 0;
+  let replaceLF = 0, reuseLF = 0, totalDoorLF = 0;
+  const replaceRate = state.replaceMaterial === 'pvc' ? RATES.trimPvc : RATES.trimWood;
+
+  state.walls.forEach(w => {
+    totalSF += wallScreenSF(w);
+    totalSquares += wallSquares(w);
+
+    const wlf = wallTrimLF(w);
+    const dlf = doorTrimLF(w);
+    totalDoorLF += dlf;
+
+    if (w.wallTrim === 'replace') replaceLF += wlf;
+    else reuseLF += wlf;
+
+    if (w.doorTrim === 'replace') replaceLF += dlf;
+    else reuseLF += dlf;
+  });
+
+  // Gable
+  let gableSF = 0, gableLF = 0, gableMaterialSF = 0;
+  if (state.roof === 'gable-screen') {
+    const base = parseFloat(document.getElementById('gable-base').value) || 0;
+    const peak = parseFloat(document.getElementById('gable-peak').value) || 0;
+    const count = parseInt(document.getElementById('gable-count').value) || 1;
+    const extraSticks = parseInt(document.getElementById('gable-sticks').value) || 0;
+    if (base > 0 && peak > 0) {
+      gableSF = Math.round(0.5 * base * peak * count);
+      gableMaterialSF = Math.round(base * peak * count);
+      const hyp = Math.sqrt((base/2)*(base/2) + peak*peak);
+      gableLF = Math.round((base + 2*hyp + extraSticks) * count);
+      totalSF += gableSF;
+      if (state.gableTrim === 'replace') replaceLF += gableLF;
+      else reuseLF += gableLF;
+      const el = document.getElementById('gable-calc');
+      el.style.display = '';
+      const waste = gableMaterialSF - gableSF;
+      el.innerHTML = `<strong>${gableLF} LF · ${gableSF} SF labor · ${gableMaterialSF} SF material</strong> (${count} gable${count>1?'s':''}, ${waste} SF waste)`;
+    } else {
+      document.getElementById('gable-calc').style.display = 'none';
+    }
+  }
+
+  // Extra LF
+  const extraLF = parseInt(document.getElementById('extra-lf').value) || 0;
+  replaceLF += extraLF;
+
+  // Show/hide replacement material selector based on whether any trim is being replaced
+  const hasReplace = state.walls.some(w => w.wallTrim === 'replace' || w.doorTrim === 'replace')
+    || (state.roof === 'gable-screen' && state.gableTrim === 'replace');
+  document.getElementById('replace-material-section').classList.toggle('hidden', !hasReplace);
+
+  // Costs — install uses material SF (full rectangle for gables, accounts for waste)
+  const materialSF = totalSF - gableSF + gableMaterialSF;
+  const removalCost = Math.round(totalSF * RATES.removal);
+  const installCost = Math.round(materialSF * RATES.install);
+  const replaceCost = Math.round(replaceLF * replaceRate);
+  const reuseCost = Math.round(reuseLF * RATES.trimReuse);
+  let total = removalCost + installCost + replaceCost + reuseCost;
+
+  if (state.addons.perishables) total += RATES.perishables;
+  total += state.difficultCount * RATES.difficult;
+
+  // UI
+  document.getElementById('tot-sf').textContent = totalSF;
+  document.getElementById('tot-squares').textContent = totalSquares;
+  document.getElementById('tot-wall-lf').textContent = Math.round(replaceLF + reuseLF - totalDoorLF);
+  document.getElementById('tot-door-lf').textContent = totalDoorLF;
+  document.getElementById('cost-removal').textContent = '$'+removalCost;
+  document.getElementById('cost-install').textContent = '$'+installCost;
+  document.getElementById('cost-replace').textContent = replaceLF ? replaceCost+' ('+replaceLF+' LF)' : '$0';
+  document.getElementById('cost-reuse').textContent = reuseLF ? reuseCost+' ('+reuseLF+' LF)' : '$0';
+  document.getElementById('cost-total').textContent = '$'+total;
+  document.getElementById('difficult-price').textContent = state.difficultCount ? '$'+(state.difficultCount*RATES.difficult) : '$0';
+
+  document.getElementById('rtTotal').textContent = '$'+total.toLocaleString();
+  document.getElementById('rtDetail').textContent = `Screen: ${totalSF} SF · Replace: ${replaceLF} LF · Reuse: ${reuseLF} LF`;
+  document.getElementById('bottomTotal').textContent = '$'+total.toLocaleString();
+}
+
+// Init
+renderWalls();
+</script>
+</body>
+</html>
