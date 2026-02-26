@@ -508,7 +508,7 @@ function calc() {
   });
 
   // Gable
-  let gableSF = 0, gableLF = 0;
+  let gableSF = 0, gableLF = 0, gableMaterialSF = 0;
   if (state.roof === 'gable-screen') {
     const base = parseFloat(document.getElementById('gable-base').value) || 0;
     const peak = parseFloat(document.getElementById('gable-peak').value) || 0;
@@ -516,6 +516,7 @@ function calc() {
     const extraSticks = parseInt(document.getElementById('gable-sticks').value) || 0;
     if (base > 0 && peak > 0) {
       gableSF = Math.round(0.5 * base * peak * count);
+      gableMaterialSF = Math.round(base * peak * count);
       const hyp = Math.sqrt((base/2)*(base/2) + peak*peak);
       gableLF = Math.round((base + 2*hyp + extraSticks) * count);
       totalSF += gableSF;
@@ -523,7 +524,8 @@ function calc() {
       else reuseLF += gableLF;
       const el = document.getElementById('gable-calc');
       el.style.display = '';
-      el.innerHTML = `<strong>${gableLF} LF · ${gableSF} SF</strong> (${count} gable${count>1?'s':''})`;
+      const waste = gableMaterialSF - gableSF;
+      el.innerHTML = `<strong>${gableLF} LF · ${gableSF} SF labor · ${gableMaterialSF} SF material</strong> (${count} gable${count>1?'s':''}, ${waste} SF waste)`;
     } else {
       document.getElementById('gable-calc').style.display = 'none';
     }
@@ -533,9 +535,10 @@ function calc() {
   const extraLF = parseInt(document.getElementById('extra-lf').value) || 0;
   replaceLF += extraLF;
 
-  // Costs
+  // Costs — install uses material SF (full rectangle for gables, accounts for waste)
+  const materialSF = totalSF - gableSF + gableMaterialSF;
   const removalCost = Math.round(totalSF * RATES.removal);
-  const installCost = Math.round(totalSF * RATES.install);
+  const installCost = Math.round(materialSF * RATES.install);
   const replaceCost = Math.round(replaceLF * replaceRate);
   const reuseCost = Math.round(reuseLF * RATES.trimReuse);
   let total = removalCost + installCost + replaceCost + reuseCost;
