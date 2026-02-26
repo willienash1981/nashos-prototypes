@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Drywall Repairs</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --orange: #F59E0B;
+  --orange-bg: #FFFBEB;
+  --blue: #3B82F6;
+  --blue-bg: #EFF6FF;
+  --border: #E5E7EB;
+  --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
+.topbar { background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:16px; font-weight:700; }
+.topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.running-total { position:sticky; top:42px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; }
+.running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
+.running-total .detail { opacity:.8; }
+
+/* Location cards */
+.loc-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; }
+.loc-header { padding:10px 12px; border-bottom:1px solid var(--border); }
+.loc-header-row { display:flex; align-items:center; gap:8px; }
+.loc-label-input { flex:1; padding:6px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-weight:600; font-family:inherit; }
+.loc-label-input:focus { outline:none; border-color:var(--gold); }
+.loc-remove { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:18px; padding:4px 8px; }
+.loc-remove:hover { color:var(--red); }
+.loc-subtotal { font-size:13px; font-weight:700; color:var(--gold); margin-top:4px; }
+
+/* Photo section */
+.photo-section { padding:8px 12px; border-bottom:1px solid var(--border); background:#fafafa; }
+.photo-row { display:flex; gap:8px; flex-wrap:wrap; }
+.photo-thumb { width:64px; height:64px; border-radius:8px; object-fit:cover; border:1.5px solid var(--border); cursor:pointer; }
+.photo-thumb-wrap { position:relative; }
+.photo-remove { position:absolute; top:-4px; right:-4px; width:18px; height:18px; border-radius:50%; background:var(--red); color:#fff; border:none; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.photo-actions { display:flex; gap:6px; margin-top:6px; }
+.photo-btn { display:flex; align-items:center; gap:4px; padding:5px 10px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); transition:all .15s; }
+.photo-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
+
+/* Line items */
+.loc-items { padding:8px 12px 12px; }
+.li-row { padding:8px 0; border-bottom:1px solid #f3f4f6; }
+.li-row:last-child { border-bottom:none; }
+.li-top { display:flex; justify-content:space-between; align-items:flex-start; gap:6px; }
+.li-name { font-size:13px; font-weight:600; line-height:1.3; }
+.li-rate { font-size:11px; color:var(--gold); font-weight:700; white-space:nowrap; }
+.li-desc { font-size:11px; color:var(--text-light); line-height:1.3; margin-top:1px; }
+.li-controls { display:flex; align-items:center; justify-content:space-between; margin-top:6px; }
+.qty-group { display:flex; align-items:center; gap:3px; }
+.qty-btn { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.qty-btn:hover { border-color:var(--gold); }
+.qty-input { width:52px; padding:4px 2px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; text-align:center; font-family:inherit; }
+.qty-input:focus { outline:none; border-color:var(--gold); }
+.qty-unit { font-size:10px; color:var(--text-light); font-weight:600; }
+.li-cost { font-size:13px; font-weight:700; color:var(--navy); }
+.li-cost.zero { color:var(--border); font-weight:400; }
+.disclaimer-inline { font-size:10px; color:#92400E; background:var(--orange-bg); padding:3px 6px; border-radius:4px; margin-top:4px; line-height:1.3; }
+
+/* Crew toggle */
+.crew-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.crew-opts { display:flex; gap:6px; margin-top:6px; }
+.crew-btn { flex:1; padding:8px 4px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; text-align:center; transition:all .15s; font-family:inherit; }
+.crew-btn.active { border-color:var(--gold); background:rgba(196,169,98,.08); }
+.crew-note { font-size:10px; color:var(--text-light); margin-top:4px; }
+
+/* Add location button */
+.add-loc-btn { background:#fff; border:1.5px dashed var(--gold); border-radius:var(--radius); padding:14px 16px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); margin:8px 12px; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+.add-loc-btn:hover { background:rgba(196,169,98,.08); border-style:solid; }
+
+/* Summary */
+.section-header { padding:12px 12px 4px; display:flex; align-items:center; gap:8px; }
+.section-header h2 { font-size:14px; font-weight:700; color:var(--navy); }
+.summary-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.sum-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.sum-row.loc { font-weight:600; color:var(--navy); border-bottom:1px solid #f3f4f6; padding:5px 0; }
+.sum-row.sub { padding-left:12px; color:var(--text-light); }
+.sum-row.total { border-top:2px solid var(--navy); margin-top:8px; padding-top:8px; font-size:15px; font-weight:700; color:var(--navy); }
+
+.disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; margin:6px 12px; }
+.disclaimer.info { background:var(--blue-bg); color:#1E40AF; }
+.disclaimer.warning { background:var(--orange-bg); color:#92400E; }
+
+/* Lightbox */
+.lightbox { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.lightbox img { max-width:95%; max-height:90vh; border-radius:8px; }
+
+/* Bottom bar */
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.bottom-bar .label { font-size:11px; opacity:.8; }
+.bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
+.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <h1>🧱 Drywall Repairs</h1>
+    <span class="badge">BETA</span>
+  </div>
+
+  <div class="running-total">
+    <div><span class="big" id="rtTotal">$0</span></div>
+    <div class="detail" id="rtDetail">0 locations · 0 items</div>
+  </div>
+
+  <div id="locations"></div>
+
+  <button class="add-loc-btn" onclick="addLocation()">
+    <span style="font-size:20px">+</span> Add Room / Area
+  </button>
+
+  <!-- Crew Assignment -->
+  <div class="section-header"><span style="font-size:16px">👷</span><h2>Crew Assignment</h2></div>
+  <div class="crew-card">
+    <div style="font-size:12px;font-weight:600">Who handles the drywall work?</div>
+    <div class="crew-opts">
+      <div class="crew-btn active" id="crew-same" onclick="setCrew('same')">🎨 Same as paint crew</div>
+      <div class="crew-btn" id="crew-separate" onclick="setCrew('separate')">👷 Separate drywall crew</div>
+    </div>
+    <div class="crew-note" id="crew-note">Drywall repairs included on paint work order</div>
+  </div>
+
+  <!-- Notes -->
+  <div class="section-header"><span style="font-size:16px">📝</span><h2>Notes</h2></div>
+  <div style="margin:4px 12px">
+    <textarea id="notes" placeholder="Drywall condition, special requirements, wallpaper history..." style="width:100%;min-height:60px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;resize:vertical;background:var(--card)" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+  </div>
+
+  <div class="disclaimer info">ℹ️ Painting repaired surfaces is included in the paint estimate — NOT in drywall pricing.</div>
+
+  <!-- Summary -->
+  <div class="section-header"><span style="font-size:16px">📋</span><h2>Summary</h2></div>
+  <div id="summary"></div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <div>
+    <div class="label">Drywall Total</div>
+    <div class="total" id="bottomTotal">$0</div>
+  </div>
+  <button class="save-btn" onclick="alert('Saved! (prototype)')">Save</button>
+</div>
+
+<script>
+// ── Line Item Definitions ──
+const ITEMS = [
+  { id:'tape_seam', name:'Tape Seam Repair', rate:29.83, unit:'LF', desc:'Remove failing tape, install new, finish to paint-ready' },
+  { id:'hole_repair', name:'Large Hole Repair', rate:35.00, unit:'SF', desc:'Install new drywall, tape, mud, sand to paint-ready' },
+  { id:'skim_coat', name:'Skim Coat / Repairs', rate:2.00, unit:'SF', desc:'Skim coat surface imperfections, sand to paint-ready', disclaimer:'If builder never finished tape seams, use "Finishing (Unfinished)" instead — different scope & rate.' },
+  { id:'finishing', name:'Finishing (Unfinished)', rate:4.00, unit:'SF', desc:'Finish exposed tape seams never completed by builder. 2× skim coat rate.' },
+  { id:'wallpaper_repair', name:'Wallpaper Removal Repair', rate:4.00, unit:'SF', desc:'Skim coat walls damaged by wallpaper removal' },
+];
+
+const ITEMS_MAP = {};
+ITEMS.forEach(i => { ITEMS_MAP[i.id] = i; });
+
+// ── State ──
+let locations = [];
+let nextLocId = 0;
+let crewMode = 'same';
+
+function addLocation() {
+  const id = nextLocId++;
+  const labels = ['Living Room','Master Bedroom','Kitchen','Hallway','Bedroom 2','Bedroom 3','Bathroom','Dining Room'];
+  const label = locations.length < labels.length ? labels[locations.length] : 'Room ' + (locations.length + 1);
+  locations.push({
+    id,
+    label,
+    photos: [],
+    items: ITEMS.map(i => ({ itemId: i.id, qty: 0 }))
+  });
+  renderAll();
+  setTimeout(() => {
+    const input = document.querySelector(`.loc-card[data-loc="${id}"] .loc-label-input`);
+    if (input) { input.focus(); input.select(); }
+  }, 50);
+}
+
+function removeLocation(locId) {
+  locations = locations.filter(l => l.id !== locId);
+  renderAll();
+}
+
+function locLabelChange(locId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (loc) loc.label = val;
+  updateTotals();
+  renderSummary();
+}
+
+// ── Photos ──
+function capturePhoto(locId) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment';
+  input.onchange = (e) => handleFile(locId, e.target.files[0]);
+  input.click();
+}
+
+function pickPhoto(locId) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = (e) => handleFile(locId, e.target.files[0]);
+  input.click();
+}
+
+function handleFile(locId, file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const loc = locations.find(l => l.id === locId);
+    if (loc) { loc.photos.push(e.target.result); renderAll(); }
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhotoAt(locId, idx) {
+  const loc = locations.find(l => l.id === locId);
+  if (loc) { loc.photos.splice(idx, 1); renderAll(); }
+}
+
+function showPhoto(src) {
+  const lb = document.getElementById('lightbox');
+  lb.innerHTML = `<img src="${src}">`;
+  lb.classList.remove('hidden');
+}
+
+// ── Qty ──
+function adjQty(locId, itemId, delta) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  const li = loc.items.find(i => i.itemId === itemId);
+  if (!li) return;
+  li.qty = Math.max(0, (li.qty || 0) + delta);
+  renderAll();
+}
+
+function setQty(locId, itemId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  const li = loc.items.find(i => i.itemId === itemId);
+  if (!li) return;
+  li.qty = parseFloat(val) || 0;
+  updateTotals();
+  renderSummary();
+}
+
+function liCost(itemId, qty) {
+  const item = ITEMS_MAP[itemId];
+  if (!item || qty <= 0) return 0;
+  return Math.round(qty * item.rate * 100) / 100;
+}
+
+function locTotal(loc) {
+  return loc.items.reduce((sum, li) => sum + liCost(li.itemId, li.qty), 0);
+}
+
+function grandTotal() {
+  return locations.reduce((sum, l) => sum + locTotal(l), 0);
+}
+
+// ── Crew ──
+function setCrew(mode) {
+  crewMode = mode;
+  document.getElementById('crew-same').classList.toggle('active', mode === 'same');
+  document.getElementById('crew-separate').classList.toggle('active', mode === 'separate');
+  document.getElementById('crew-note').textContent = mode === 'same'
+    ? 'Drywall repairs included on paint work order'
+    : 'Separate drywall work order generated';
+}
+
+// ── Render ──
+function renderAll() {
+  const ae = document.activeElement;
+  let focusLoc = ae?.dataset?.loc, focusItem = ae?.dataset?.item, focusField = ae?.dataset?.field, focusPos = ae?.selectionStart || 0;
+
+  const container = document.getElementById('locations');
+  let html = '';
+
+  if (locations.length === 0) {
+    html = `<div style="text-align:center;padding:40px 20px;color:var(--text-light)">
+      <div style="font-size:32px;margin-bottom:8px">🧱</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px">No rooms added yet</div>
+      <div style="font-size:12px">Add rooms where drywall repairs are needed.<br>All 5 repair types available per room.</div>
+    </div>`;
+  }
+
+  locations.forEach(loc => {
+    const lt = locTotal(loc);
+    const activeCount = loc.items.filter(i => i.qty > 0).length;
+
+    html += `<div class="loc-card" data-loc="${loc.id}">
+      <div class="loc-header">
+        <div class="loc-header-row">
+          <input class="loc-label-input" value="${esc(loc.label)}" placeholder="Room / area name"
+            data-loc="${loc.id}" data-field="label"
+            oninput="locLabelChange(${loc.id}, this.value)">
+          <button class="loc-remove" onclick="removeLocation(${loc.id})">✕</button>
+        </div>
+        ${lt > 0 ? `<div class="loc-subtotal">${activeCount} item${activeCount!==1?'s':''} · $${lt.toLocaleString()}</div>` : ''}
+      </div>
+
+      <div class="photo-section">
+        <div class="photo-row">`;
+
+    loc.photos.forEach((src, pi) => {
+      html += `<div class="photo-thumb-wrap">
+        <img class="photo-thumb" src="${src}" onclick="showPhoto('${src.replace(/'/g,"\\'")}')">
+        <button class="photo-remove" onclick="removePhotoAt(${loc.id},${pi})">✕</button>
+      </div>`;
+    });
+
+    html += `</div>
+        <div class="photo-actions">
+          <button class="photo-btn" onclick="capturePhoto(${loc.id})"><span>📷</span> Take Photo</button>
+          <button class="photo-btn" onclick="pickPhoto(${loc.id})"><span>🖼️</span> From Library</button>
+        </div>
+      </div>
+
+      <div class="loc-items">`;
+
+    loc.items.forEach(li => {
+      const item = ITEMS_MAP[li.itemId];
+      const cost = liCost(li.itemId, li.qty);
+
+      html += `<div class="li-row">
+        <div class="li-top">
+          <div>
+            <div class="li-name">${item.name}</div>
+            <div class="li-desc">${item.desc}</div>
+          </div>
+          <div class="li-rate">$${item.rate.toFixed(2)}/${item.unit}</div>
+        </div>
+        <div class="li-controls">
+          <div class="qty-group">
+            <button class="qty-btn" onclick="adjQty(${loc.id},'${item.id}',-1)">−</button>
+            <input class="qty-input" type="number" min="0" value="${li.qty || ''}" placeholder="0"
+              data-loc="${loc.id}" data-item="${item.id}" data-field="qty"
+              oninput="setQty(${loc.id},'${item.id}',this.value)">
+            <button class="qty-btn" onclick="adjQty(${loc.id},'${item.id}',1)">+</button>
+            <span class="qty-unit">${item.unit}</span>
+          </div>
+          <div class="li-cost ${cost===0?'zero':''}">$${cost.toLocaleString()}</div>
+        </div>
+        ${item.disclaimer && li.qty > 0 ? `<div class="disclaimer-inline">⚠️ ${item.disclaimer}</div>` : ''}
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Restore focus
+  if (focusLoc !== undefined && focusField) {
+    let sel;
+    if (focusItem) {
+      sel = container.querySelector(`input[data-loc="${focusLoc}"][data-item="${focusItem}"][data-field="${focusField}"]`);
+    } else {
+      sel = container.querySelector(`input[data-loc="${focusLoc}"][data-field="${focusField}"]`);
+    }
+    if (sel) {
+      sel.focus();
+      try { sel.setSelectionRange(focusPos, focusPos); } catch(e) {}
+    }
+  }
+
+  updateTotals();
+  renderSummary();
+}
+
+function updateTotals() {
+  const gt = grandTotal();
+  const itemCount = locations.reduce((s, l) => s + l.items.filter(i => i.qty > 0).length, 0);
+  document.getElementById('rtTotal').textContent = '$' + gt.toLocaleString();
+  document.getElementById('rtDetail').textContent = `${locations.length} room${locations.length!==1?'s':''} · ${itemCount} item${itemCount!==1?'s':''}`;
+  document.getElementById('bottomTotal').textContent = '$' + gt.toLocaleString();
+}
+
+function renderSummary() {
+  const el = document.getElementById('summary');
+  let html = '<div class="summary-card">';
+  const gt = grandTotal();
+
+  const activeLocs = locations.filter(l => l.items.some(i => i.qty > 0));
+  if (activeLocs.length === 0) {
+    html += '<div style="text-align:center;padding:8px;color:var(--text-light);font-size:12px">No repairs yet</div>';
+  }
+
+  activeLocs.forEach(loc => {
+    const lt = locTotal(loc);
+    const hasPhoto = loc.photos.length > 0;
+    html += `<div class="sum-row loc"><span>${hasPhoto ? '📸 ' : ''}${esc(loc.label)}</span><span>$${lt.toLocaleString()}</span></div>`;
+    loc.items.filter(i => i.qty > 0).forEach(li => {
+      const item = ITEMS_MAP[li.itemId];
+      html += `<div class="sum-row sub"><span>${item.name} — ${li.qty} ${item.unit}</span><span>$${liCost(li.itemId, li.qty).toLocaleString()}</span></div>`;
+    });
+  });
+
+  html += `<div class="sum-row total"><span>Drywall Total</span><span>$${gt.toLocaleString()}</span></div>`;
+  html += `<div style="font-size:10px;color:var(--text-light);margin-top:4px;">Crew: ${crewMode === 'same' ? 'Paint crew (shared work order)' : 'Separate drywall crew (split work order)'}</div>`;
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Init — start with one room
+addLocation();
+</script>
+</body>
+</html>
