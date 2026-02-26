@@ -179,10 +179,12 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="step-header"><h2><span class="num">2</span> Configuration</h2></div>
 
   <div class="card">
-    <div class="q-label">Replacement trim material</div>
-    <div class="radios" data-q="replaceMaterial">
-      <div class="radio-btn selected" data-v="wood" onclick="pickRadio(this)"><div class="dot"></div>New wood — $3.00/LF</div>
-      <div class="radio-btn" data-v="pvc" onclick="pickRadio(this)"><div class="dot"></div>New PVC — $4.15/LF</div>
+    <div id="replace-material-section" class="hidden">
+      <div class="q-label">Replacement trim material</div>
+      <div class="radios" data-q="replaceMaterial">
+        <div class="radio-btn selected" data-v="wood" onclick="pickRadio(this)"><div class="dot"></div>New wood — $3.00/LF</div>
+        <div class="radio-btn" data-v="pvc" onclick="pickRadio(this)"><div class="dot"></div>New PVC — $4.15/LF</div>
+      </div>
     </div>
 
     <div class="q-label">Roof type</div>
@@ -534,6 +536,11 @@ function calc() {
   // Extra LF
   const extraLF = parseInt(document.getElementById('extra-lf').value) || 0;
   replaceLF += extraLF;
+
+  // Show/hide replacement material selector based on whether any trim is being replaced
+  const hasReplace = state.walls.some(w => w.wallTrim === 'replace' || w.doorTrim === 'replace')
+    || (state.roof === 'gable-screen' && state.gableTrim === 'replace');
+  document.getElementById('replace-material-section').classList.toggle('hidden', !hasReplace);
 
   // Costs — install uses material SF (full rectangle for gables, accounts for waste)
   const materialSF = totalSF - gableSF + gableMaterialSF;
