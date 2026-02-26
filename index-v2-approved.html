@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>NashOS — Room Wizard</title>
+<style>
+:root{--navy:#1a2332;--gold:#c8a85c;--green:#34a853;--blue:#4285f4;--blue-light:#e8f0fe;--orange:#e65100;--g50:#f8f9fa;--g100:#f1f3f4;--g200:#e8eaed;--g300:#dadce0;--g400:#bdc1c6;--g500:#9aa0a6;--g600:#80868b;--g700:#5f6368;--g800:#3c4043;--g900:#202124;--r:10px;--rs:6px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g50);color:var(--g900);-webkit-font-smoothing:antialiased;padding-bottom:80px;font-size:14px;max-width:430px;margin:0 auto}
+@media(min-width:431px){body{box-shadow:0 0 40px rgba(0,0,0,.1);min-height:100vh;border-left:1px solid var(--g200);border-right:1px solid var(--g200)}html{background:#e0e0e0}}
+.topbar{background:var(--navy);color:white;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;max-width:430px;margin:0 auto}
+.topbar-back{font-size:20px;cursor:pointer;padding:2px 4px}
+.topbar-logo{width:28px;height:28px;background:var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy);flex-shrink:0}
+.topbar-title{font-size:14px;font-weight:600;flex:1}
+.card{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.card-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px 4px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.card-action{font-size:11px;color:var(--blue);font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0}
+.row{display:flex;gap:6px;padding:4px 12px}.fg{flex:1;min-width:0}.fg.w2{flex:2}
+.lbl{font-size:9px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.inp{width:100%;padding:8px 10px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:14px;outline:none;background:white}
+.inp:focus{border-color:var(--navy)}.inp::placeholder{color:var(--g400)}
+.inp-sm{width:44px;padding:6px 2px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:13px;font-weight:700;text-align:center;outline:none;-webkit-appearance:none}
+.inp-sm:focus{border-color:var(--navy)}
+
+/* 2-col surface grid */
+.sf-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.sf-cell{display:flex;align-items:center;padding:8px 10px;gap:6px;border-bottom:1px solid var(--g100);border-right:1px solid var(--g100);min-height:40px}
+.sf-cell:nth-child(2n){border-right:none}
+.sf-cell .sf-tog{width:32px;height:18px;border-radius:9px;flex-shrink:0}
+.sf-cell .sf-tog::after{width:14px;height:14px;top:2px;left:2px}
+.sf-cell .sf-tog.on::after{transform:translateX(14px)}
+.sf-cell-name{font-size:12px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sf-cell-auto{font-size:9px;color:var(--g500);white-space:nowrap}
+
+/* Single-row surface */
+.sf{display:flex;align-items:center;padding:7px 12px;gap:8px;border-bottom:1px solid var(--g100);min-height:38px}
+.sf:last-child{border-bottom:none}
+.sf-tog{width:36px;height:20px;background:var(--g300);border-radius:10px;cursor:pointer;position:relative;flex-shrink:0;transition:background .15s}
+.sf-tog.on{background:var(--navy)}
+.sf-tog::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:2px;left:2px;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.sf-tog.on::after{transform:translateX(16px)}
+.sf-name{flex:1;font-size:13px;font-weight:600;min-width:0}
+.sf-sub{font-size:10px;color:var(--g500);font-weight:400}
+.sf-auto{font-size:10px;color:var(--g500);white-space:nowrap}
+.trim-tag{font-size:8px;background:var(--blue-light);color:var(--blue);padding:1px 5px;border-radius:6px;font-weight:700;flex-shrink:0}
+
+/* Coat stepper — compact inline */
+.coat-s{display:inline-flex;align-items:center;background:var(--g100);border-radius:4px;height:24px;flex-shrink:0;overflow:hidden}
+.coat-s button{width:22px;height:24px;border:none;background:none;font-size:13px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.coat-s button:active{background:var(--g200)}
+.coat-s .cv{font-size:10px;font-weight:700;min-width:14px;text-align:center;color:var(--g800)}
+.coat-s.locked{opacity:.5;pointer-events:none}
+
+/* Tiny coat number — for override grid items */
+.coat-tiny{display:inline-flex;align-items:center;border:1.5px solid var(--g300);border-radius:4px;height:22px;overflow:hidden;flex-shrink:0}
+.coat-tiny button{width:18px;height:22px;border:none;background:var(--g50);font-size:11px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.coat-tiny button:active{background:var(--g200)}
+.coat-tiny .cv{font-size:10px;font-weight:700;min-width:12px;text-align:center;color:var(--g800);padding:0 1px}
+
+/* Linked bar */
+.lnk-bar{display:flex;align-items:center;gap:4px}
+.lnk-icon{font-size:11px}
+.lnk-btn{font-size:9px;font-weight:700;cursor:pointer;padding:2px 6px;border:1.5px solid var(--blue);border-radius:3px;background:white;color:var(--blue);white-space:nowrap;line-height:1.2}
+.lnk-btn:active{background:var(--blue-light)}
+.lnk-btn.active{background:var(--blue);color:white;border-color:var(--blue)}
+
+.extra{background:var(--blue-light);border-radius:var(--rs);margin:4px 12px;padding:6px 10px;display:flex;align-items:center;gap:6px;font-size:12px}
+.extra-info{flex:1;font-weight:600}.extra-info small{font-weight:400;color:var(--g600);display:block;font-size:10px}
+.extra .xbtn{width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,.06);color:var(--g600);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.add-row{display:flex;gap:6px;padding:6px 12px;flex-wrap:wrap}
+.add-pill{display:flex;align-items:center;gap:3px;padding:5px 10px;border:1.5px dashed var(--blue);border-radius:14px;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-light);cursor:pointer;white-space:nowrap}
+.add-pill:active{transform:scale(.96)}.add-pill.accent{border-color:var(--gold);color:#8B6914;background:#FFF8E1}
+.calc{padding:4px 12px 8px;font-size:10px;color:var(--g500);display:flex;gap:10px;flex-wrap:wrap}.calc strong{color:var(--g700)}
+.qty-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.qg-item{display:flex;align-items:center;padding:6px 10px;gap:5px;border-bottom:1px solid var(--g100);border-right:1px solid var(--g100)}
+.qg-item:nth-child(2n){border-right:none}
+.qg-item .qg-name{flex:1;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-tabs{display:flex;border-bottom:1px solid var(--g200)}
+.note-tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--g500);cursor:pointer;border-bottom:2px solid transparent}
+.note-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.note-area{width:100%;border:none;padding:8px 12px;font-size:13px;font-family:inherit;resize:none;outline:none;min-height:50px;background:white}.note-area::placeholder{color:var(--g400)}
+.tpl-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#E8F5E9;border-bottom:1px solid #C8E6C9;font-size:12px;font-weight:600;color:#2E7D32}
+.tpl-bar .sf-tog.on{background:var(--green)}.tpl-hint{font-size:10px;color:#558B2F;font-weight:400;display:block}
+.bot{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--navy);color:white;padding:10px 14px;display:flex;align-items:center;z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,.15)}
+.bot-info{flex:1}.bot-label{font-size:10px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.bot-price{font-size:18px;font-weight:800}.bot-sub{font-size:10px;color:var(--gold)}
+.bot-btn{background:var(--gold);color:var(--navy);border:none;padding:10px 18px;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer}.bot-btn:active{transform:scale(.97)}
+.toast{position:fixed;top:52px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--g900);color:white;padding:8px 16px;border-radius:16px;font-size:12px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:300;white-space:nowrap;max-width:88%}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.dov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}.dov.open{opacity:1;pointer-events:all}
+.dwr{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:white;border-radius:16px 16px 0 0;max-height:55vh;overflow-y:auto;transition:transform .25s ease;z-index:201;padding-bottom:env(safe-area-inset-bottom,16px)}
+.dov.open .dwr{transform:translateX(-50%) translateY(0)}
+.dwr-handle{width:32px;height:3px;background:var(--g300);border-radius:2px;margin:8px auto}
+.dwr-title{font-size:16px;font-weight:800;padding:4px 16px 6px}
+.dwr-note{font-size:11px;color:var(--g500);padding:0 16px 8px;line-height:1.3}
+.dwr-field{padding:6px 16px}.dwr-row{display:flex;gap:8px}.dwr-row>*{flex:1}
+.dwr-actions{display:flex;gap:8px;padding:12px 16px}
+.dwr-btn{flex:1;padding:12px;border-radius:var(--rs);font-size:14px;font-weight:700;border:none;cursor:pointer}
+.dwr-btn.pri{background:var(--navy);color:white}.dwr-btn.sec{background:var(--g100);color:var(--g700)}.dwr-btn:active{transform:scale(.97)}
+.ovr-btn{font-size:10px;color:var(--blue);font-weight:700;cursor:pointer;padding:4px 10px;text-align:center;border-top:1px solid var(--g100)}
+.ovr-box{background:var(--g50);padding:6px 10px;display:none}.ovr-box.open{display:flex;flex-wrap:wrap;gap:4px}
+/* Prefix bar */
+.prefix-bar{display:flex;gap:6px;padding:8px 12px 2px;flex-wrap:wrap}
+.prefix-chip{padding:5px 12px;border-radius:14px;font-size:11px;font-weight:700;color:var(--g600);background:var(--g100);cursor:pointer;transition:all .15s;border:1.5px solid transparent}
+.prefix-chip:active{transform:scale(.95)}
+.prefix-chip.active{background:var(--navy);color:white;border-color:var(--navy)}
+.prefix-custom{padding:5px 10px;border-radius:14px;font-size:11px;font-weight:700;color:var(--g600);background:var(--g100);border:1.5px solid transparent;outline:none;width:90px;transition:all .15s}
+.prefix-custom:focus,.prefix-custom.active{border-color:var(--navy);background:var(--navy);color:white}
+.prefix-custom::placeholder{color:var(--g400)}
+.prefix-custom.active::placeholder{color:rgba(255,255,255,.5)}
+
+/* Suggest dropdown */
+.suggest-box{position:absolute;top:100%;left:0;right:0;background:white;border:1.5px solid var(--g200);border-radius:var(--rs);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:50;max-height:200px;overflow-y:auto;display:none}
+.suggest-box.open{display:block}
+.suggest-item{padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:1px solid var(--g100)}
+.suggest-item:last-child{border-bottom:none}
+.suggest-item:active{background:var(--blue-light)}
+.suggest-item .si-match{color:var(--navy)}
+.suggest-item .si-sub{font-size:10px;color:var(--g500);font-weight:400;display:block}
+
+/* Room name preview */
+.room-preview{padding:2px 12px 6px;font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.3px}
+
+.closet-calc{padding:6px 12px 8px;font-size:10px;color:var(--g600);line-height:1.5;background:var(--g50);border-top:1px solid var(--g100)}.closet-calc strong{color:var(--navy)}.closet-calc .num{color:var(--green);font-weight:700}
+
+/* 2-col advanced toggles */
+.adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--g50)}
+.adv-cell{display:flex;align-items:center;padding:6px 10px;gap:6px;border-bottom:1px solid var(--g100);border-right:1px solid var(--g100)}
+.adv-cell:nth-child(2n){border-right:none}
+.adv-cell .sf-tog{width:32px;height:18px;border-radius:9px;flex-shrink:0}
+.adv-cell .sf-tog::after{width:14px;height:14px;top:2px;left:2px}
+.adv-cell .sf-tog.on::after{transform:translateX(14px)}
+.adv-name{font-size:11px;font-weight:600;flex:1}
+.adv-full{grid-column:1/-1}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-back">‹</div>
+  <div class="topbar-logo">N</div>
+  <div class="topbar-title">Master Bedroom — Interior</div>
+</div>
+
+<div class="tpl-bar">
+  <div class="sf-tog on" onclick="tog(this)"></div>
+  <div>Use as template for new rooms<span class="tpl-hint">Surfaces, coats & prep carry over. Counts don't.</span></div>
+</div>
+
+<!-- ROOM DIMS -->
+<div class="card">
+  <!-- Location Prefix — sticky -->
+  <div class="prefix-bar">
+    <div class="prefix-chip active" onclick="setPrefix(this)">Main</div>
+    <div class="prefix-chip" onclick="setPrefix(this)">Upstairs</div>
+    <div class="prefix-chip" onclick="setPrefix(this)">Basement</div>
+    <input class="prefix-custom" id="prefix-custom" placeholder="Custom..." onfocus="activateCustomPrefix()" oninput="updateCustomPrefix()" value="">
+  </div>
+  <div class="row" style="padding-top:6px">
+    <div class="fg w2" style="position:relative">
+      <div class="lbl">Room</div>
+      <input class="inp" value="Master Bedroom" id="rn" autocomplete="off" onfocus="showSuggest()" oninput="filterSuggest()" onblur="setTimeout(hideSuggest,200)">
+      <div class="suggest-box" id="suggest-box"></div>
+    </div>
+    <div class="fg"><div class="lbl">L</div><input class="inp" type="number" value="16" id="rl" onchange="recalc()"></div>
+    <div class="fg"><div class="lbl">W</div><input class="inp" type="number" value="14" id="rw" onchange="recalc()"></div>
+    <div class="fg"><div class="lbl">H</div><input class="inp" type="number" value="9" id="rh" onchange="recalc()"></div>
+  </div>
+  <!-- Full room name preview -->
+  <div class="room-preview" id="room-preview">Main Floor — Master Bedroom</div>
+  <div id="extras-box"></div>
+  <div class="add-row">
+    <div class="add-pill" onclick="openD('section')">+ Section</div>
+    <div class="add-pill" onclick="openD('wall')">+ Wall</div>
+    <div class="add-pill accent" onclick="openD('accent')">+ Accent Wall</div>
+  </div>
+  <div class="calc">
+    <span>Walls <strong id="cW">684 SF</strong></span>
+    <span>Ceiling <strong id="cC">239 SF</strong></span>
+    <span>Perim <strong id="cP">76 LF</strong></span>
+  </div>
+</div>
+
+<!-- WALLS & CEILING — side by side -->
+<div class="card">
+  <div class="card-title">Walls & Ceiling<span class="card-action" onclick="toggleEl('wall-adv')">Advanced ▾</span></div>
+  <div class="sf-grid">
+    <div class="sf-cell">
+      <div class="sf-tog on" id="walls-tog" onclick="tog(this);checkMasking();recalc()"></div>
+      <div class="sf-cell-name">Walls</div>
+      <div class="sf-cell-auto" id="aW">684 SF</div>
+      <div class="coat-s"><button onclick="sc(this,-1)">−</button><span class="cv">2</span><button onclick="sc(this,1)">+</button></div>
+    </div>
+    <div class="sf-cell">
+      <div class="sf-tog on" id="ceil-tog" onclick="tog(this);checkMasking();recalc()"></div>
+      <div class="sf-cell-name">Ceiling</div>
+      <div class="sf-cell-auto" id="aC">239 SF</div>
+      <div class="coat-s"><button onclick="sc(this,-1)">−</button><span class="cv">2</span><button onclick="sc(this,1)">+</button></div>
+    </div>
+  </div>
+  <!-- Auto masking -->
+  <div id="masking-auto" style="display:none;background:#FFF8E1;border-left:3px solid var(--gold);padding:6px 10px;display:none;align-items:center;gap:6px;font-size:11px">
+    <span>⚠️</span>
+    <span style="color:var(--orange);font-weight:600;flex:1">Ceiling masking auto-added</span>
+    <span style="font-weight:700;color:var(--orange)" id="masking-auto-sf">239 SF</span>
+  </div>
+  <!-- Advanced — 2-col grid -->
+  <div id="wall-adv" style="display:none">
+    <div class="adv-grid">
+      <div class="adv-cell">
+        <div class="sf-tog" onclick="tog(this)"></div>
+        <div class="adv-name">Sand Texture</div>
+      </div>
+      <div class="adv-cell">
+        <div class="sf-tog" onclick="tog(this)"></div>
+        <div class="adv-name">Heavy Spackle</div>
+      </div>
+      <div class="adv-cell adv-full">
+        <div class="sf-tog on" id="floor-mask-tog" onclick="tog(this)"></div>
+        <div class="adv-name">Floor Protection <span style="font-weight:400;color:var(--g500);font-size:10px">— off if replacing floors</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRIM -->
+<div class="card" id="trim-card">
+  <div class="card-title">
+    <span>Trim</span>
+    <span class="lnk-bar">
+      <span style="font-size:10px;color:var(--g600);font-weight:600">All:</span>
+      <div class="coat-s" id="trim-master"><button onclick="sc(this,-1);syncAllTrim()">−</button><span class="cv" id="tmv">1</span><button onclick="sc(this,1);syncAllTrim()">+</button></div>
+      <button class="lnk-btn" id="trim-ovr-btn" onclick="toggleTrimOvr()">Override</button>
+    </span>
+  </div>
+  <!-- 2-col: baseboards+crown left, chair+wainscot right -->
+  <div class="sf-grid">
+    <div class="sf-cell">
+      <div class="sf-tog on" id="base-tog" onclick="tog(this);recalc()"></div>
+      <div class="sf-cell-name">Baseboards</div>
+      <div class="sf-cell-auto" id="aB">76 LF</div>
+    </div>
+    <div class="sf-cell">
+      <div class="sf-tog" onclick="tog(this)"></div>
+      <div class="sf-cell-name">Crown</div>
+      <div class="sf-cell-auto" id="aCr">76 LF</div>
+    </div>
+    <div class="sf-cell">
+      <div class="sf-tog" onclick="tog(this)"></div>
+      <div class="sf-cell-name">Chair Rail</div>
+      <div class="sf-cell-auto" id="aCh">76 LF</div>
+    </div>
+    <div class="sf-cell">
+      <div class="sf-tog" onclick="tog(this)"></div>
+      <div class="sf-cell-name">Wainscoting</div>
+      <div class="sf-cell-auto" id="aWn">228 SF</div>
+    </div>
+  </div>
+  <!-- Per-surface override — only visible when Override active -->
+  <div id="trim-surf-ovr" style="display:none;background:var(--g50)">
+    <div class="qty-grid">
+      <div class="qg-item" style="background:var(--g50)"><div class="qg-name">Baseboards</div><div class="coat-tiny"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+      <div class="qg-item" style="background:var(--g50)"><div class="qg-name">Crown</div><div class="coat-tiny"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+      <div class="qg-item" style="background:var(--g50)"><div class="qg-name">Chair Rail</div><div class="coat-tiny"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+      <div class="qg-item" style="background:var(--g50)"><div class="qg-name">Wainscoting</div><div class="coat-tiny"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DOORS & WINDOWS -->
+<div class="card" id="dw-card">
+  <div class="card-title">
+    <span>Doors & Windows</span>
+    <span class="lnk-bar">
+      <span class="lnk-icon" id="dw-link-icon">🔗</span>
+      <div class="coat-s locked" id="dw-coat"><button onclick="sc(this,-1)">−</button><span class="cv" id="dw-cv">1</span><button onclick="sc(this,1)">+</button></div>
+      <button class="lnk-btn" id="dw-unlink" onclick="unlinkSection('dw')">Override</button>
+    </span>
+  </div>
+  <div class="qty-grid" id="dw-grid">
+    <!-- Row 1: & Frame -->
+    <div class="qg-item"><div class="qg-name">Door & Frame</div><input type="number" class="inp-sm" value="2" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <div class="qg-item"><div class="qg-name">Win & Frame</div><input type="number" class="inp-sm" value="3" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <!-- Row 2: Frame only -->
+    <div class="qg-item"><div class="qg-name">Door Frame</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <div class="qg-item"><div class="qg-name">Win Frame</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <!-- Row 3: Only (expanded) -->
+    <div class="qg-item dw-exp" style="display:none;background:var(--g50)"><div class="qg-name">Door Only</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <div class="qg-item dw-exp" style="display:none;background:var(--g50)"><div class="qg-name">Win Only</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <!-- Row 4: Misc (expanded) -->
+    <div class="qg-item dw-exp" style="display:none;background:var(--g50)"><div class="qg-name">Closet Dr Back</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <div class="qg-item dw-exp" style="display:none;background:var(--g50)"><div class="qg-name">Win Grille 8+</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny dw-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+  </div>
+  <div class="ovr-btn" onclick="toggleDWExpand()">Expand Doors & Windows ▾</div>
+</div>
+
+<!-- SPECIALTY TRIM -->
+<div class="card" id="spec-card">
+  <div class="card-title">
+    <span>Specialty Trim</span>
+    <span class="lnk-bar">
+      <span class="lnk-icon" id="spec-link-icon">🔗</span>
+      <div class="coat-s locked" id="spec-coat"><button onclick="sc(this,-1)">−</button><span class="cv" id="spec-cv">1</span><button onclick="sc(this,1)">+</button></div>
+      <button class="lnk-btn" id="spec-unlink" onclick="unlinkSection('spec')">Override</button>
+    </span>
+  </div>
+  <div class="qty-grid">
+    <div class="qg-item"><div class="qg-name">Fireplace Mantle<br><span style="font-size:9px;color:var(--g500)">hours</span></div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny spec-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <div class="qg-item"><div class="qg-name">Rail Spindles</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny spec-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+    <div class="qg-item"><div class="qg-name">Stair Kicks</div><input type="number" class="inp-sm" value="0" min="0"><div class="coat-tiny spec-ovr-coat" style="display:none"><button onclick="sc(this,-1)">−</button><span class="cv">1</span><button onclick="sc(this,1)">+</button></div></div>
+  </div>
+</div>
+
+<!-- CLOSETS -->
+<div class="card">
+  <div class="card-title">Closets</div>
+  <div class="qty-grid">
+    <div class="qg-item"><div class="qg-name">Single Door<br><span style="font-size:9px;color:var(--g500)">avg 5×3</span></div><input type="number" class="inp-sm" value="1" min="0" id="closet-single" onchange="recalc()"></div>
+    <div class="qg-item"><div class="qg-name">Double Door<br><span style="font-size:9px;color:var(--g500)">avg 10×3</span></div><input type="number" class="inp-sm" value="0" min="0" id="closet-double" onchange="recalc()"></div>
+    <div class="qg-item"><div class="qg-name">Shelving Drywall<br><span style="font-size:9px;color:var(--g500)">shelf box backs, SF</span></div><input type="number" class="inp-sm" value="0" min="0" placeholder="SF"></div>
+  </div>
+  <div class="closet-calc" id="closet-calc"><strong>1 single:</strong> +144 SF walls · +15 SF ceil · +16 LF base</div>
+</div>
+
+<!-- PREP & DRYWALL -->
+<div class="card" id="prep-card">
+  <div class="card-title">Prep & Drywall<span class="card-action" id="prep-badge" style="color:var(--green);display:none">● Active</span></div>
+
+  <!-- Smart toggles — each reveals qty row when ON -->
+  <div class="sf" id="prep-wallpaper">
+    <div class="sf-tog" id="wp-tog" onclick="togPrep('wp')"></div>
+    <div class="sf-name">Wallpaper Removal<div class="sf-sub">Auto-adds drywall repair underneath</div></div>
+  </div>
+  <div id="wp-detail" style="display:none;background:var(--g50);padding:6px 10px;border-bottom:1px solid var(--g100)">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+      <div style="flex:1;font-size:11px;font-weight:600">Wallpaper Strip</div>
+      <input type="number" class="inp-sm" id="prep-wp-sf" value="0" min="0" placeholder="SF" onchange="prepCalc()">
+      <span style="font-size:10px;color:var(--g500)">SF</span>
+      <button style="font-size:9px;padding:2px 6px;border:1px solid var(--g300);border-radius:4px;background:white;color:var(--blue);font-weight:700;cursor:pointer" onclick="prefillWP()">= walls</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="flex:1;font-size:11px;font-weight:600;color:var(--orange)">↳ Wallpaper Drywall Repair</div>
+      <input type="number" class="inp-sm" id="prep-wp-repair" value="0" min="0" placeholder="SF" onchange="prepCalc()">
+      <span style="font-size:10px;color:var(--g500)">SF</span>
+      <span style="font-size:9px;color:var(--g500)">$4/SF</span>
+    </div>
+    <div style="font-size:9px;color:var(--g500);margin-top:2px">Skim coat damaged walls after wallpaper removal. Auto-matched to strip SF.</div>
+  </div>
+
+  <div class="sf" id="prep-skim">
+    <div class="sf-tog" id="skim-tog" onclick="togPrep('skim')"></div>
+    <div class="sf-name">Skim Coat<div class="sf-sub">Surface imperfections, sand to paint-ready ($2/SF)</div></div>
+  </div>
+  <div id="skim-detail" style="display:none;background:var(--g50);padding:6px 10px;border-bottom:1px solid var(--g100)">
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="flex:1;font-size:11px;font-weight:600">Skim Coat Area</div>
+      <input type="number" class="inp-sm" id="prep-skim-sf" value="0" min="0" placeholder="SF" onchange="prepCalc()">
+      <span style="font-size:10px;color:var(--g500)">SF</span>
+      <button style="font-size:9px;padding:2px 6px;border:1px solid var(--g300);border-radius:4px;background:white;color:var(--blue);font-weight:700;cursor:pointer" onclick="prefillSkim()">= walls</button>
+    </div>
+    <div id="skim-warn" style="display:none;font-size:9px;color:var(--orange);margin-top:3px;line-height:1.3">⚠️ Skim coat covers surface imperfections only — NOT unfinished tape seams. If builder never finished the tape, use "Drywall Finishing (Unfinished)" instead — different scope, 2× rate, may need separate crew.</div>
+  </div>
+
+  <div class="sf" id="prep-finishing">
+    <div class="sf-tog" id="finish-tog" onclick="togPrep('finish')"></div>
+    <div class="sf-name">Drywall Finishing (Unfinished)<div class="sf-sub">Builder never finished tape seams ($4/SF)</div></div>
+  </div>
+  <div id="finish-detail" style="display:none;background:var(--g50);padding:6px 10px;border-bottom:1px solid var(--g100)">
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="flex:1;font-size:11px;font-weight:600">Finishing Area</div>
+      <input type="number" class="inp-sm" id="prep-finish-sf" value="0" min="0" placeholder="SF" onchange="prepCalc()">
+      <span style="font-size:10px;color:var(--g500)">SF</span>
+      <button style="font-size:9px;padding:2px 6px;border:1px solid var(--g300);border-radius:4px;background:white;color:var(--blue);font-weight:700;cursor:pointer" onclick="prefillFinish()">= ceiling</button>
+    </div>
+  </div>
+
+  <div class="sf" id="prep-tape">
+    <div class="sf-tog" id="tape-tog" onclick="togPrep('tape')"></div>
+    <div class="sf-name">Tape Seam Repair<div class="sf-sub">Remove failing tape, install new ($29.83/LF)</div></div>
+  </div>
+  <div id="tape-detail" style="display:none;background:var(--g50);padding:6px 10px;border-bottom:1px solid var(--g100)">
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="flex:1;font-size:11px;font-weight:600">Tape Seam</div>
+      <input type="number" class="inp-sm" id="prep-tape-lf" value="0" min="0" placeholder="LF" onchange="prepCalc()">
+      <span style="font-size:10px;color:var(--g500)">LF</span>
+    </div>
+  </div>
+
+  <div class="sf" id="prep-hole">
+    <div class="sf-tog" id="hole-tog" onclick="togPrep('hole')"></div>
+    <div class="sf-name">Large Hole Repair<div class="sf-sub">New drywall, tape, mud, sand ($35/SF)</div></div>
+  </div>
+  <div id="hole-detail" style="display:none;background:var(--g50);padding:6px 10px;border-bottom:1px solid var(--g100)">
+    <div style="display:flex;align-items:center;gap:6px">
+      <div style="flex:1;font-size:11px;font-weight:600">Repair Area</div>
+      <input type="number" class="inp-sm" id="prep-hole-sf" value="0" min="0" placeholder="SF" onchange="prepCalc()">
+      <span style="font-size:10px;color:var(--g500)">SF</span>
+    </div>
+    <div id="hole-photos" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"></div>
+    <div style="display:flex;gap:4px;margin-top:4px">
+      <button style="font-size:10px;padding:3px 8px;border:1px solid var(--g300);border-radius:4px;background:white;cursor:pointer;font-weight:600;color:var(--navy)" onclick="holePhoto('capture')">📷 Photo</button>
+      <button style="font-size:10px;padding:3px 8px;border:1px solid var(--g300);border-radius:4px;background:white;cursor:pointer;font-weight:600;color:var(--navy)" onclick="holePhoto('pick')">🖼️ Library</button>
+    </div>
+  </div>
+
+  <!-- Prep subtotal -->
+  <div id="prep-total" style="display:none;padding:6px 10px;font-size:12px;font-weight:700;color:var(--navy);border-top:1px solid var(--g200);display:none">
+    Drywall: <span id="prep-total-val">$0</span>
+  </div>
+</div>
+
+<!-- ADJUSTMENTS -->
+<div class="card">
+  <div class="card-title">Adjustments</div>
+  <div class="row" style="padding-bottom:8px">
+    <div class="fg"><div class="lbl">+ Hours</div><input class="inp" type="number" value="0" placeholder="0" style="text-align:center"></div>
+    <div class="fg"><div class="lbl">$ Override (+/−)</div><input class="inp" type="number" value="0" placeholder="$0" style="text-align:center"></div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="card">
+  <div class="note-tabs">
+    <div class="note-tab active" onclick="switchNote(this,0)">📋 Estimate Notes</div>
+    <div class="note-tab" onclick="switchNote(this,1)">👷 Crew Notes</div>
+  </div>
+  <textarea class="note-area" id="note-0" placeholder="Internal notes for this room on the estimate..."></textarea>
+  <textarea class="note-area" id="note-1" style="display:none" placeholder="Notes the crew will see on the work order..."></textarea>
+</div>
+
+<div class="bot">
+  <div class="bot-info">
+    <div class="bot-label">Room Estimate</div>
+    <div class="bot-price" id="bot-price">$3,450</div>
+    <div class="bot-sub" id="bot-sub">Master Bedroom</div>
+  </div>
+  <button class="bot-btn" onclick="showToast('✓ Room saved')">Save</button>
+</div>
+
+<div class="dov" id="dov" onclick="if(event.target===this)closeD()">
+  <div class="dwr">
+    <div class="dwr-handle"></div>
+    <div class="dwr-title" id="dt">Add Section</div>
+    <div class="dwr-note" id="dn"></div>
+    <div id="drawer-body">
+      <div class="dwr-field"><div class="lbl">Name</div><input class="inp" id="di1" placeholder="e.g., Hallway nook"></div>
+      <div class="dwr-field"><div class="dwr-row"><div><div class="lbl">Length (ft)</div><input class="inp" type="number" id="dL"></div><div id="dWg"><div class="lbl">Width (ft)</div><input class="inp" type="number" id="dW"></div></div></div>
+    </div>
+    <div class="dwr-actions" id="drawer-actions"><button class="dwr-btn sec" onclick="closeD()">Cancel</button><button class="dwr-btn pri" onclick="saveD()">Add</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+let dType='section',extras=[];
+const CLS={l:5,w:3},CLD={l:10,w:3};
+const linked={dw:true,spec:true,trim:true};
+
+// Location prefix
+let currentPrefix='Main';
+function activateCustomPrefix(){
+  document.querySelectorAll('.prefix-chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('prefix-custom').classList.add('active');
+  updateCustomPrefix();
+}
+function updateCustomPrefix(){
+  const val=document.getElementById('prefix-custom').value.trim();
+  currentPrefix=val||'Custom';
+  updateRoomPreview();
+}
+function setPrefix(el){
+  document.querySelectorAll('.prefix-chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('prefix-custom').classList.remove('active');
+  el.classList.add('active');
+  currentPrefix=el.textContent;
+  updateRoomPreview();
+  showToast('📍 '+currentPrefix+' — stays sticky for next rooms');
+}
+function updateRoomPreview(){
+  const name=document.getElementById('rn').value||'';
+  const prefixMap={'Main':'Main Floor','Upstairs':'Upstairs','Basement':'Basement','3rd Floor':'3rd Floor'};
+  document.getElementById('room-preview').textContent=(prefixMap[currentPrefix]||currentPrefix)+' — '+name;
+  // Update topbar
+  document.querySelector('.topbar-title').textContent=name+' — Interior';
+}
+
+// Room name typeahead
+const ROOMS=[
+  {name:'Master Bedroom',sub:'Most common first room'},
+  {name:'Bedroom 2',sub:''},
+  {name:'Bedroom 3',sub:''},
+  {name:'Bedroom 4',sub:''},
+  {name:'Living Room',sub:''},
+  {name:'Dining Room',sub:''},
+  {name:'Kitchen',sub:'Different product defaults'},
+  {name:'Family Room',sub:''},
+  {name:'Great Room',sub:''},
+  {name:'Office / Study',sub:''},
+  {name:'Hallway',sub:'Narrow — consider L×W'},
+  {name:'Stairwell',sub:'Tall walls — check height'},
+  {name:'Foyer / Entry',sub:''},
+  {name:'Laundry Room',sub:''},
+  {name:'Mudroom',sub:''},
+  {name:'Master Bathroom',sub:'Moisture-rated products'},
+  {name:'Bathroom 2',sub:'Moisture-rated products'},
+  {name:'Bathroom 3',sub:'Moisture-rated products'},
+  {name:'Powder Room',sub:'Half bath'},
+  {name:'Garage',sub:''},
+  {name:'Bonus Room',sub:''},
+  {name:'Sunroom',sub:''},
+  {name:'Pantry',sub:'Small — quick entry'},
+  {name:'Nursery',sub:''},
+];
+let usedRooms=[];// track used rooms to de-prioritize
+
+function showSuggest(){
+  filterSuggest();
+  document.getElementById('suggest-box').classList.add('open');
+}
+function hideSuggest(){
+  document.getElementById('suggest-box').classList.remove('open');
+}
+function filterSuggest(){
+  const q=(document.getElementById('rn').value||'').toLowerCase();
+  const box=document.getElementById('suggest-box');
+  // Sort: unused first, then alpha
+  const sorted=[...ROOMS].sort((a,b)=>{
+    const aUsed=usedRooms.includes(a.name)?1:0;
+    const bUsed=usedRooms.includes(b.name)?1:0;
+    return aUsed-bUsed;
+  });
+  const filtered=q.length>0?sorted.filter(r=>r.name.toLowerCase().includes(q)):sorted;
+  if(filtered.length===0){
+    box.innerHTML='<div class="suggest-item" onclick="selectRoom(this)" data-name="'+document.getElementById('rn').value+'"><span class="si-match">'+document.getElementById('rn').value+'</span><span class="si-sub">Custom room name</span></div>';
+  } else {
+    box.innerHTML=filtered.slice(0,8).map(r=>{
+      // Bold the matching part
+      const idx=r.name.toLowerCase().indexOf(q);
+      let display=r.name;
+      if(q.length>0&&idx>=0){
+        display=r.name.slice(0,idx)+'<span class="si-match">'+r.name.slice(idx,idx+q.length)+'</span>'+r.name.slice(idx+q.length);
+      }
+      const used=usedRooms.includes(r.name)?' <span style="font-size:9px;color:var(--g400)">✓ used</span>':'';
+      return '<div class="suggest-item" onclick="selectRoom(this)" data-name="'+r.name+'">'+display+used+(r.sub?'<span class="si-sub">'+r.sub+'</span>':'')+'</div>';
+    }).join('');
+  }
+}
+function selectRoom(el){
+  const name=el.dataset.name;
+  document.getElementById('rn').value=name;
+  hideSuggest();
+  updateRoomPreview();
+  // Mark as used
+  if(!usedRooms.includes(name))usedRooms.push(name);
+}
+
+// Update preview on room name input
+document.getElementById('rn').addEventListener('input',updateRoomPreview);
+
+function isBaseOn(){return document.getElementById('base-tog').classList.contains('on')}
+function isWallsOn(){return document.getElementById('walls-tog').classList.contains('on')}
+function isCeilOn(){return document.getElementById('ceil-tog').classList.contains('on')}
+
+function getClosetSF(h){
+  const s=+(document.getElementById('closet-single').value)||0,d=+(document.getElementById('closet-double').value)||0;
+  let wSF=0,cSF=0,bLF=0;
+  if(s>0){const p=2*(CLS.l+CLS.w);wSF+=p*h*s;cSF+=CLS.l*CLS.w*s;bLF+=p*s}
+  if(d>0){const p=2*(CLD.l+CLD.w);wSF+=p*h*d;cSF+=CLD.l*CLD.w*d;bLF+=p*d}
+  return{wSF,cSF,bLF,s,d}
+}
+
+function recalc(){
+  const l=+(document.getElementById('rl').value)||0,w=+(document.getElementById('rw').value)||0,h=+(document.getElementById('rh').value)||0;
+  let p=2*(l+w),ws=p*h,cs=l*w;
+  extras.forEach(e=>{
+    if(e.t==='section'){const ep=2*(e.l+(e.w||0));p+=ep;ws+=ep*h;cs+=e.l*(e.w||0)}
+    else if(e.t==='wall'){p+=e.l;ws+=e.l*h}
+    else if(e.t==='accent'){ws+=e.l*h}
+  });
+  const cl=getClosetSF(h);
+  if(isWallsOn())ws+=cl.wSF;
+  if(isCeilOn())cs+=cl.cSF;
+  if(isBaseOn())p+=cl.bLF;
+
+  document.getElementById('cW').textContent=Math.round(ws)+' SF';
+  document.getElementById('cC').textContent=Math.round(cs)+' SF';
+  document.getElementById('cP').textContent=Math.round(p)+' LF';
+  document.getElementById('aW').textContent=Math.round(ws)+' SF';
+  document.getElementById('aC').textContent=Math.round(cs)+' SF';
+  document.getElementById('aB').textContent=Math.round(p)+' LF';
+  document.getElementById('aCr').textContent=Math.round(p)+' LF';
+  document.getElementById('aCh').textContent=Math.round(p)+' LF';
+  document.getElementById('aWn').textContent=Math.round(p*3)+' SF';
+  updateClosetCalc(cl,h);
+}
+
+function updateClosetCalc(cl,h){
+  if(cl.s===0&&cl.d===0){document.getElementById('closet-calc').innerHTML='<span style="color:var(--g400)">No closets</span>';return}
+  const parts=[];
+  [{n:'single',c:cl.s,dim:CLS},{n:'double',c:cl.d,dim:CLD}].forEach(x=>{
+    if(x.c<1)return;
+    const p=2*(x.dim.l+x.dim.w),ww=p*h*x.c,cc=x.dim.l*x.dim.w*x.c,bb=p*x.c;
+    let s=`<strong>${x.c} ${x.n}${x.c>1?'s':''}:</strong>`;
+    const bits=[];
+    if(isWallsOn())bits.push('<span class="num">+'+ww+'</span> SF walls');
+    if(isCeilOn())bits.push('<span class="num">+'+cc+'</span> SF ceil');
+    if(isBaseOn())bits.push('<span class="num">+'+bb+'</span> LF base');
+    s+=bits.length?' '+bits.join(' · '):' <span style="color:var(--g400)">(off)</span>';
+    parts.push(s);
+  });
+  document.getElementById('closet-calc').innerHTML=parts.join('<br>');
+}
+
+function tog(el){el.classList.toggle('on')}
+function toggleEl(id){
+  const el=document.getElementById(id);
+  if(el.classList.contains('ovr-box')){el.classList.toggle('open');el.style.display=el.classList.contains('open')?'flex':'none'}
+  else{el.style.display=el.style.display==='none'?'':'none'}
+}
+
+const coatOpts=['1','2','P+2','3'];
+function sc(btn,dir){
+  const p=btn.closest('.coat-s,.coat-tiny'),v=p.querySelector('.cv');
+  let i=coatOpts.indexOf(v.textContent);if(i<0)i=0;
+  i+=dir;if(i<0)i=0;if(i>=coatOpts.length)i=coatOpts.length-1;
+  v.textContent=coatOpts[i];
+}
+
+function syncAllTrim(){
+  const m=document.getElementById('tmv').textContent;
+  document.querySelectorAll('#trim-surf-ovr .cv').forEach(v=>v.textContent=m);
+  if(linked.dw){document.getElementById('dw-cv').textContent=m;document.querySelectorAll('.dw-ovr-coat .cv').forEach(v=>v.textContent=m)}
+  if(linked.spec){document.getElementById('spec-cv').textContent=m;document.querySelectorAll('.spec-ovr-coat .cv').forEach(v=>v.textContent=m)}
+}
+
+function toggleTrimOvr(){
+  const btn=document.getElementById('trim-ovr-btn');
+  const box=document.getElementById('trim-surf-ovr');
+  linked.trim=!linked.trim;
+  if(!linked.trim){
+    box.style.display='block';
+    btn.textContent='Re-link';btn.classList.add('active');
+    showToast('🔓 Override individual trim coats');
+  } else {
+    box.style.display='none';
+    btn.textContent='Override';btn.classList.remove('active');
+    const m=document.getElementById('tmv').textContent;
+    document.querySelectorAll('#trim-surf-ovr .cv').forEach(v=>v.textContent=m);
+    showToast('🔗 Re-linked to master');
+  }
+}
+
+function unlinkSection(sec){
+  const btn=document.getElementById(sec+'-unlink');
+  const pill=document.getElementById(sec+'-coat');
+  const icon=document.getElementById(sec+'-link-icon');
+  const coats=document.querySelectorAll('.'+sec+'-ovr-coat');
+  if(linked[sec]){
+    linked[sec]=false;
+    pill.classList.remove('locked');
+    icon.textContent='🔓';
+    btn.textContent='Re-link';btn.classList.add('active');
+    coats.forEach(c=>c.style.display='inline-flex');
+    showToast('🔓 Override — set coats per item');
+  } else {
+    linked[sec]=true;
+    const m=document.getElementById('tmv').textContent;
+    document.getElementById(sec+'-cv').textContent=m;
+    pill.classList.add('locked');
+    icon.textContent='🔗';
+    btn.textContent='Override';btn.classList.remove('active');
+    coats.forEach(c=>{c.style.display='none';c.querySelector('.cv').textContent=m});
+    showToast('🔗 Re-linked to trim master');
+  }
+}
+
+let dwExpanded=false;
+function toggleDWExpand(){
+  dwExpanded=!dwExpanded;
+  document.querySelectorAll('.dw-exp').forEach(el=>{
+    el.style.display=dwExpanded?'flex':'none';
+  });
+}
+
+function checkMasking(){
+  const wOn=isWallsOn(),cOn=isCeilOn();
+  const am=document.getElementById('masking-auto'),ft=document.getElementById('floor-mask-tog');
+  if(!wOn&&cOn){am.style.display='flex';document.getElementById('masking-auto-sf').textContent=document.getElementById('aC').textContent}
+  else{am.style.display='none'}
+  if(wOn&&!ft.classList.contains('on'))ft.classList.add('on');
+  if(!wOn&&ft.classList.contains('on'))ft.classList.remove('on');
+}
+
+function switchNote(tab,idx){
+  tab.parentElement.querySelectorAll('.note-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('note-0').style.display=idx===0?'':'none';
+  document.getElementById('note-1').style.display=idx===1?'':'none';
+}
+
+function openD(type){
+  dType=type;
+  document.getElementById('di1').value='';document.getElementById('dL').value='';document.getElementById('dW').value='';
+  document.getElementById('dt').textContent={section:'Add Section',wall:'Add Wall',accent:'Add Accent Wall'}[type];
+  document.getElementById('dn').textContent={section:'Sub-area (hallway in master). Adds walls, ceiling, trim.',wall:'Extra wall length. Walls + trim only, no ceiling.',accent:'Accent wall area. No trim/ceiling impact.'}[type];
+  document.getElementById('dWg').style.display=type==='section'?'':'none';
+  document.getElementById('dov').classList.add('open');
+}
+function closeD(){document.getElementById('dov').classList.remove('open')}
+function saveD(){
+  const nm=document.getElementById('di1').value||{section:'Sub-section',wall:'Extra wall',accent:'Accent wall'}[dType];
+  const l=+(document.getElementById('dL').value)||0,w=+(document.getElementById('dW').value)||0;
+  if(!l){showToast('⚠️ Enter a length');return}
+  extras.push({t:dType,nm,l,w});renderExtras();recalc();closeD();
+  showToast({section:'📐',wall:'🧱',accent:'🎨'}[dType]+' Added');
+}
+function renderExtras(){
+  const c=document.getElementById('extras-box');c.innerHTML='';
+  extras.forEach((e,i)=>{
+    const ic={section:'📐',wall:'🧱',accent:'🎨'}[e.t];
+    const desc={section:`${e.l}×${e.w} — walls+ceil+trim`,wall:`${e.l}′ — walls+trim`,accent:`${e.l}′ — wall only`}[e.t];
+    c.innerHTML+=`<div class="extra"><span>${ic}</span><div class="extra-info">${e.nm}<small>${desc}</small></div><button class="xbtn" onclick="extras.splice(${i},1);renderExtras();recalc()">✕</button></div>`;
+  });
+}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800)}
+
+// ── Prep & Drywall ──
+const PREP_RATES = { wp_strip: 0, wp_repair: 4.00, skim: 2.00, finish: 4.00, tape: 29.83, hole: 35.00 };
+const prepState = { wp:false, skim:false, finish:false, tape:false, hole:false };
+let holePhotos = [];
+
+function togPrep(key) {
+  const togEl = document.getElementById({wp:'wp-tog',skim:'skim-tog',finish:'finish-tog',tape:'tape-tog',hole:'hole-tog'}[key]);
+  tog(togEl);
+  prepState[key] = togEl.classList.contains('on');
+
+  // Show/hide detail
+  const detailId = {wp:'wp-detail',skim:'skim-detail',finish:'finish-detail',tape:'tape-detail',hole:'hole-detail'}[key];
+  document.getElementById(detailId).style.display = prepState[key] ? '' : 'none';
+
+  // Smart cascades
+  if (key === 'wp' && prepState.wp) {
+    // Auto-prefill wallpaper SF from wall SF
+    prefillWP();
+  }
+  if (key === 'skim' && prepState.skim) {
+    prefillSkim();
+    document.getElementById('skim-warn').style.display = '';
+  } else if (key === 'skim') {
+    document.getElementById('skim-warn').style.display = 'none';
+  }
+  if (key === 'finish' && prepState.finish) {
+    prefillFinish();
+  }
+
+  prepCalc();
+}
+
+function getWallSF() {
+  return parseInt(document.getElementById('cW').textContent) || 0;
+}
+function getCeilSF() {
+  return parseInt(document.getElementById('cC').textContent) || 0;
+}
+
+function prefillWP() {
+  const sf = getWallSF();
+  document.getElementById('prep-wp-sf').value = sf;
+  document.getElementById('prep-wp-repair').value = sf; // auto-match repair to strip
+  prepCalc();
+  showToast('📐 Auto-filled ' + sf + ' SF from walls');
+}
+
+function prefillSkim() {
+  const sf = getWallSF();
+  document.getElementById('prep-skim-sf').value = sf;
+  prepCalc();
+  showToast('📐 Auto-filled ' + sf + ' SF from walls');
+}
+
+function prefillFinish() {
+  const sf = getCeilSF();
+  document.getElementById('prep-finish-sf').value = sf;
+  prepCalc();
+  showToast('📐 Auto-filled ' + sf + ' SF from ceiling');
+}
+
+function prepCalc() {
+  let total = 0;
+  let anyActive = false;
+
+  if (prepState.wp) {
+    const stripSF = parseFloat(document.getElementById('prep-wp-sf').value) || 0;
+    const repairSF = parseFloat(document.getElementById('prep-wp-repair').value) || 0;
+    total += repairSF * PREP_RATES.wp_repair;
+    anyActive = true;
+  }
+  if (prepState.skim) {
+    total += (parseFloat(document.getElementById('prep-skim-sf').value) || 0) * PREP_RATES.skim;
+    anyActive = true;
+  }
+  if (prepState.finish) {
+    total += (parseFloat(document.getElementById('prep-finish-sf').value) || 0) * PREP_RATES.finish;
+    anyActive = true;
+  }
+  if (prepState.tape) {
+    total += (parseFloat(document.getElementById('prep-tape-lf').value) || 0) * PREP_RATES.tape;
+    anyActive = true;
+  }
+  if (prepState.hole) {
+    total += (parseFloat(document.getElementById('prep-hole-sf').value) || 0) * PREP_RATES.hole;
+    anyActive = true;
+  }
+
+  const badge = document.getElementById('prep-badge');
+  const totalEl = document.getElementById('prep-total');
+  badge.style.display = anyActive ? '' : 'none';
+  totalEl.style.display = anyActive ? 'flex' : 'none';
+  document.getElementById('prep-total-val').textContent = '$' + Math.round(total).toLocaleString();
+
+  // Update bottom bar — base room price + drywall
+  const basePrice = 3450;
+  const roomTotal = basePrice + Math.round(total);
+  document.getElementById('bot-price').textContent = '$' + roomTotal.toLocaleString();
+  document.getElementById('bot-sub').textContent = anyActive
+    ? 'Master Bedroom · incl $' + Math.round(total).toLocaleString() + ' drywall'
+    : 'Master Bedroom';
+}
+
+// Hole repair photos
+function holePhoto(mode) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  if (mode === 'capture') input.capture = 'environment';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      holePhotos.push(ev.target.result);
+      renderHolePhotos();
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function renderHolePhotos() {
+  const row = document.getElementById('hole-photos');
+  row.innerHTML = holePhotos.map((src, i) => `
+    <div style="position:relative">
+      <img src="${src}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid var(--g200);cursor:pointer" onclick="document.getElementById('lb-img').src='${src.replace(/'/g,"\\'")}';document.getElementById('prep-lb').style.display='flex'">
+      <button onclick="holePhotos.splice(${i},1);renderHolePhotos()" style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#EF4444;color:white;border:none;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+  `).join('');
+}
+
+recalc();
+</script>
+<!-- Photo lightbox for prep -->
+<div id="prep-lb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;cursor:pointer" onclick="this.style.display='none'">
+  <img id="lb-img" style="max-width:95%;max-height:90vh;border-radius:8px">
+</div>
+</body>
+</html>
