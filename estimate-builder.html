@@ -6,183 +6,251 @@
 <title>NashOS — Estimate Builder</title>
 <style>
 :root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3F6A;
-  --gold: #C4A962;
-  --gold-light: #D4C182;
-  --bg: #F5F3EF;
-  --card: #FFFFFF;
-  --text: #2C2C2C;
-  --text-light: #6B7280;
-  --green: #10B981;
-  --green-bg: #ECFDF5;
-  --red: #EF4444;
-  --red-bg: #FEF2F2;
-  --orange: #F59E0B;
-  --orange-bg: #FFFBEB;
-  --blue: #3B82F6;
-  --blue-bg: #EFF6FF;
-  --purple: #8B5CF6;
-  --border: #E5E7EB;
-  --radius: 12px;
+  --navy: #1B2A4A; --navy-light: #2A3F6A; --gold: #C4A962; --gold-light: #D4C182;
+  --bg: #F5F3EF; --card: #FFFFFF; --text: #2C2C2C; --text-light: #6B7280;
+  --green: #10B981; --green-bg: #ECFDF5; --red: #EF4444; --red-bg: #FEF2F2;
+  --orange: #F59E0B; --orange-bg: #FFFBEB; --blue: #3B82F6; --blue-bg: #EFF6FF;
+  --purple: #8B5CF6; --border: #E5E7EB; --radius: 12px;
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body { overflow-x:hidden; width:100%; }
-body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:160px; overflow-x:hidden; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden;width:100%}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.shell{max-width:430px;width:100%;margin:0 auto;padding-bottom:180px;overflow-x:hidden}
 
 /* TOP BAR */
-.topbar { background:var(--navy); color:#fff; padding:12px 16px 14px; position:sticky; top:0; z-index:100; }
-.topbar-back { color:var(--gold); font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px; font-weight:500; }
-.topbar-back:active { opacity:.7; }
-.topbar h1 { font-size:18px; font-weight:700; line-height:1.2; }
-.topbar-meta { display:flex; align-items:center; gap:8px; margin-top:4px; font-size:12px; color:rgba(255,255,255,.65); flex-wrap:wrap; }
-.status-pill { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; background:var(--gold); color:var(--navy); }
+.topbar{background:var(--navy);color:#fff;padding:12px 16px 14px;position:sticky;top:0;z-index:100}
+.topbar-row{display:flex;justify-content:space-between;align-items:flex-start}
+.topbar-left{flex:1;min-width:0}
+.topbar-back{color:var(--gold);font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-bottom:6px;font-weight:500}
+.topbar-back:active{opacity:.7}
+.topbar h1{font-size:18px;font-weight:700;line-height:1.2}
+.topbar-meta{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:rgba(255,255,255,.65);flex-wrap:wrap}
+.status-pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--gold);color:var(--navy);cursor:pointer;transition:transform .1s}
+.status-pill:active{transform:scale(.95)}
+.topbar-menu{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;cursor:pointer;border-radius:8px;flex-shrink:0;margin-top:14px}
+.topbar-menu:active{background:rgba(255,255,255,.1)}
 
 /* CONTROLS BAR */
-.controls-bar { position:sticky; top:0; z-index:99; background:var(--navy-light); color:#fff; padding:7px 16px; display:flex; align-items:center; gap:12px; font-size:11px; flex-wrap:wrap; }
-.ctrl-badge { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:6px; font-weight:600; }
-.ctrl-vol { background:rgba(196,169,98,.2); color:var(--gold-light); }
-.ctrl-comm { background:rgba(16,185,129,.15); color:#6ee7b7; }
-.ctrl-gp { background:rgba(16,185,129,.15); color:#6ee7b7; font-weight:700; }
+.controls-bar{position:sticky;top:0;z-index:99;background:var(--navy-light);color:#fff;padding:7px 16px;display:flex;align-items:center;gap:8px;font-size:11px;flex-wrap:wrap}
+.ctrl-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-weight:600;cursor:pointer;transition:transform .1s}
+.ctrl-badge:active{transform:scale(.95)}
+.ctrl-vol{background:rgba(139,92,246,.2);color:#c4b5fd}
+.ctrl-comm{background:rgba(16,185,129,.15);color:#6ee7b7}
+.ctrl-gp{background:rgba(16,185,129,.15);color:#6ee7b7;font-weight:700}
+.ctrl-gp.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+.ctrl-adjust{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(196,169,98,.25);color:var(--gold-light);cursor:pointer;border:none;font-family:inherit}
+.ctrl-adjust:active{opacity:.7}
 
 /* CONTENT */
-.content { padding:12px 12px 0; }
+.content{padding:12px 12px 0}
+
+/* GROUP CONTAINER */
+.group-container{margin-bottom:16px;border-left:3px solid var(--gold);border-radius:var(--radius);overflow:hidden}
+.group-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--navy);color:#fff;cursor:pointer;user-select:none}
+.group-header-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.group-header-left .icon{font-size:16px}
+.group-header-left .name{font-size:14px;font-weight:700}
+.group-header-left .count{font-size:10px;font-weight:700;color:var(--navy);background:var(--gold);padding:1px 7px;border-radius:10px}
+.group-header-right{display:flex;align-items:center;gap:8px}
+.group-subtotal{font-size:14px;font-weight:800;color:var(--gold)}
+.group-menu{font-size:16px;color:rgba(255,255,255,.6);cursor:pointer;padding:0 4px}
+.group-menu:active{color:#fff}
+.group-arrow{font-size:10px;color:rgba(255,255,255,.5);transition:transform .2s}
+.group-arrow.collapsed{transform:rotate(-90deg)}
+.group-body{overflow:hidden;transition:max-height .35s ease;background:var(--bg)}
+.group-inner{padding:8px 8px 4px}
 
 /* TYPE GROUP */
-.type-group { margin-bottom:16px; }
-.type-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--card); border-radius:var(--radius) var(--radius) 0 0; border-bottom:2px solid var(--gold); cursor:pointer; user-select:none; }
-.type-header-left { display:flex; align-items:center; gap:8px; }
-.type-icon { font-size:18px; }
-.type-name { font-size:14px; font-weight:700; color:var(--navy); }
-.type-count { font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:1px 7px; border-radius:10px; }
-.type-header-right { display:flex; align-items:center; gap:8px; }
-.type-subtotal { font-size:15px; font-weight:800; color:var(--navy); }
-.type-arrow { font-size:10px; color:var(--text-light); transition:transform .2s; }
-.type-arrow.collapsed { transform:rotate(-90deg); }
-.type-body { overflow:hidden; transition:max-height .3s ease; }
+.type-group{margin-bottom:8px;border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.type-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--card);border-bottom:2px solid var(--gold);cursor:pointer;user-select:none}
+.type-header-left{display:flex;align-items:center;gap:8px}
+.type-icon{font-size:18px}
+.type-name{font-size:14px;font-weight:700;color:var(--navy)}
+.type-count{font-size:11px;font-weight:700;color:#fff;background:var(--navy);padding:1px 7px;border-radius:10px}
+.type-header-right{display:flex;align-items:center;gap:8px}
+.type-subtotal{font-size:15px;font-weight:800;color:var(--navy)}
+.type-arrow{font-size:10px;color:var(--text-light);transition:transform .2s}
+.type-arrow.collapsed{transform:rotate(-90deg)}
+.type-body{overflow:hidden;transition:max-height .3s ease}
 
-/* PACKAGE CHIPS ROW — inside type header area */
-.pkg-row { display:flex; align-items:center; gap:4px; padding:6px 14px 8px; background:var(--card); border-bottom:1px solid var(--border); }
-.pkg-label { font-size:11px; color:var(--text-light); font-weight:500; margin-right:4px; }
-.chip { padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:all .15s; }
-.chip:active { transform:scale(.95); }
-.chip.active { background:var(--gold); color:var(--navy); border-color:var(--gold); }
+/* Sub controls row */
+.type-controls{display:flex;align-items:center;gap:6px;padding:6px 14px 8px;background:var(--card);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.pkg-row{display:flex;align-items:center;gap:4px}
+.pkg-label{font-size:11px;color:var(--text-light);font-weight:500;margin-right:2px}
+.chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:var(--card);color:var(--text-light);cursor:pointer;transition:all .15s}
+.chip:active{transform:scale(.95)}
+.chip.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.type-ctrl-sep{width:1px;height:16px;background:var(--border)}
+.prep-select,.section-adjust-select{font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:600;font-family:inherit}
+.section-adjust-select{min-width:52px}
 
 /* INSTANCE CARD */
-.instance-card { background:var(--card); border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
-.instance-card:last-child { border-bottom:none; }
-.instance-main { padding:12px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; transition:background .1s; position:relative; }
-.instance-main:active { background:#faf9f6; }
-.inst-left { flex:1; min-width:0; }
-.inst-label { font-size:13px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; }
-.inst-spec { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.4; }
-.inst-price { font-size:15px; font-weight:800; color:var(--navy); white-space:nowrap; flex-shrink:0; }
+.instance-card{background:var(--card);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.instance-card:last-child{border-bottom:none}
+.instance-main{padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;transition:background .1s;position:relative}
+.instance-main:active{background:#faf9f6}
+.inst-left{flex:1;min-width:0}
+.inst-label{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.inst-spec{font-size:11px;color:var(--text-light);margin-top:2px;line-height:1.4}
+.inst-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.inst-price{font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap}
+.inst-dots{font-size:16px;color:var(--text-light);cursor:pointer;padding:2px 4px}
+.inst-dots:active{color:var(--text)}
+.swipe-hint{position:absolute;right:0;top:0;bottom:0;width:60px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;transform:translateX(54px);transition:transform .2s;pointer-events:none}
+.instance-card:hover .swipe-hint{transform:translateX(0)}
+.inst-detail{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.inst-detail.open{max-height:600px}
+.inst-detail-inner{padding:0 16px 12px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px}
+.detail-box{background:#f9f8f5;border-radius:8px;padding:8px;text-align:center}
+.detail-box .lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-light);font-weight:600}
+.detail-box .val{font-size:14px;font-weight:700;color:var(--navy);margin-top:2px}
+.surface-line{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px;border-bottom:1px solid #f3f4f6}
+.surface-line:last-child{border-bottom:none}
+.surf-name{color:var(--text);font-weight:500}
+.surf-price{font-weight:700;color:var(--navy)}
+.info-row{display:flex;align-items:center;gap:6px;padding:4px 0 6px;font-size:11px;flex-wrap:wrap}
+.info-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-weight:600;font-size:11px}
+.tag-green{background:var(--green-bg);color:#065F46}
+.tag-blue{background:var(--blue-bg);color:#1E40AF}
+.tag-orange{background:var(--orange-bg);color:#92400E}
+.btn-edit-wizard{width:100%;margin-top:8px;padding:8px;border-radius:8px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-edit-wizard:active{background:rgba(196,169,98,.1)}
+.override-badge{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:700;color:var(--orange);background:var(--orange-bg);padding:1px 6px;border-radius:4px}
 
-/* Swipe delete hint */
-.swipe-hint { position:absolute; right:0; top:0; bottom:0; width:60px; background:var(--red); display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; transform:translateX(54px); transition:transform .2s; pointer-events:none; }
-.instance-card:hover .swipe-hint { transform:translateX(0); }
+/* OPTIONAL ADD-ONS */
+.optional-section{margin:16px 0 12px}
+.optional-divider{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px}
+.optional-divider::before,.optional-divider::after{content:'';flex:1;height:1px;background:var(--orange)}
+.optional-card{background:var(--card);border:2px dashed var(--orange);border-radius:var(--radius);padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.optional-header{display:flex;justify-content:space-between;align-items:center}
+.optional-left{display:flex;align-items:center;gap:8px;flex:1}
+.optional-icon{font-size:20px}
+.optional-info .opt-title{font-size:13px;font-weight:700}
+.optional-info .opt-sub{font-size:11px;color:var(--text-light)}
+.opt-badge{font-size:10px;font-weight:700;color:var(--orange);background:var(--orange-bg);padding:2px 8px;border-radius:6px;margin-left:6px}
+.opt-price{font-size:15px;font-weight:800;color:var(--navy);margin-right:10px}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle-knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on .toggle-knob{left:22px}
+.opt-savings{font-size:11px;color:var(--green);font-weight:600;margin-top:6px}
 
-/* Instance expand detail */
-.inst-detail { max-height:0; overflow:hidden; transition:max-height .3s ease; }
-.inst-detail.open { max-height:500px; }
-.inst-detail-inner { padding:0 16px 12px; }
-.detail-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:4px; }
-.detail-box { background:#f9f8f5; border-radius:8px; padding:8px; text-align:center; }
-.detail-box .lbl { font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-light); font-weight:600; }
-.detail-box .val { font-size:14px; font-weight:700; color:var(--navy); margin-top:2px; }
+/* MINI SECTIONS */
+.mini-section{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:12px;overflow:hidden}
+.mini-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;font-size:13px;font-weight:600;user-select:none}
+.mini-header .badge-count{font-size:11px;font-weight:700;color:#fff;background:var(--navy);padding:1px 7px;border-radius:10px;margin-left:6px}
+.mini-arrow{font-size:10px;color:var(--text-light);transition:transform .2s}
+.mini-arrow.open{transform:rotate(90deg)}
+.mini-body{border-top:1px solid var(--border);padding:12px 16px;display:none}
+.mini-body.open{display:block}
 
-/* Exterior surface lines */
-.surface-line { display:flex; justify-content:space-between; align-items:center; padding:6px 16px; font-size:12px; border-bottom:1px solid #f3f4f6; }
-.surface-line:last-child { border-bottom:none; }
-.surf-name { color:var(--text); font-weight:500; }
-.surf-meta { color:var(--text-light); font-size:11px; }
-.surf-price { font-weight:700; color:var(--navy); }
+/* Colors */
+.color-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.color-row:last-child{margin-bottom:0}
+.color-swatch{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--border);flex-shrink:0}
+.color-info{font-size:12px}
+.color-name{font-weight:600}
+.color-code{color:var(--text-light);font-size:11px}
+.color-surcharge{margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--orange-bg);font-size:11px;color:#92400E;font-weight:500}
+.btn-add{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:6px 14px;border-radius:8px;border:1.5px dashed var(--gold);background:transparent;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-add:active{background:rgba(196,169,98,.08)}
 
-/* Trip charge / maintenance */
-.info-row { display:flex; align-items:center; gap:6px; padding:4px 16px 6px; font-size:11px; }
-.info-tag { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:6px; font-weight:600; font-size:11px; }
-.tag-green { background:var(--green-bg); color:#065F46; }
-.tag-blue { background:var(--blue-bg); color:#1E40AF; }
-.tag-orange { background:var(--orange-bg); color:#92400E; }
+/* Notes */
+.note-tabs{display:flex;gap:4px;margin-bottom:10px}
+.note-tab{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1.5px solid var(--border);background:var(--card);color:var(--text-light);cursor:pointer;transition:all .15s}
+.note-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.note-vis{font-size:10px;color:var(--text-light);margin-bottom:6px;font-weight:500}
+.note-area{width:100%;min-height:70px;border:1.5px solid var(--border);border-radius:8px;padding:10px;font-size:12px;font-family:inherit;resize:vertical;color:var(--text)}
+.note-area:focus{outline:none;border-color:var(--gold)}
 
-/* Prep dropdown */
-.prep-row { display:flex; align-items:center; gap:8px; padding:6px 16px 8px; font-size:12px; }
-.prep-row label { color:var(--text-light); font-weight:500; }
-.prep-row select { font-size:12px; padding:4px 8px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--text); font-weight:600; font-family:inherit; }
+/* Photos */
+.photo-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.photo-thumb{width:64px;height:64px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:20px}
 
-/* Add buttons inside groups */
-.add-row { display:flex; align-items:center; justify-content:center; gap:4px; padding:10px 16px; font-size:12px; font-weight:600; color:var(--gold); cursor:pointer; background:var(--card); border-radius:0 0 var(--radius) var(--radius); border-top:1px dashed var(--border); }
-.add-row:active { background:#faf8f2; }
-
-/* COLLAPSIBLE MINI SECTIONS */
-.mini-section { background:var(--card); border-radius:var(--radius); box-shadow:0 1px 4px rgba(0,0,0,.07); margin-bottom:12px; overflow:hidden; }
-.mini-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; cursor:pointer; font-size:13px; font-weight:600; user-select:none; }
-.mini-header .badge-count { font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:1px 7px; border-radius:10px; margin-left:6px; }
-.mini-arrow { font-size:10px; color:var(--text-light); transition:transform .2s; }
-.mini-arrow.open { transform:rotate(90deg); }
-.mini-body { border-top:1px solid var(--border); padding:12px 16px; display:none; }
-.mini-body.open { display:block; }
-
-/* Color swatches */
-.color-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.color-row:last-child { margin-bottom:0; }
-.color-swatch { width:28px; height:28px; border-radius:8px; border:1.5px solid var(--border); flex-shrink:0; }
-.color-info { font-size:12px; }
-.color-name { font-weight:600; }
-.color-code { color:var(--text-light); font-size:11px; }
-
-/* Notes tabs */
-.note-tabs { display:flex; gap:4px; margin-bottom:10px; }
-.note-tab { padding:5px 12px; border-radius:8px; font-size:11px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:all .15s; }
-.note-tab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
-.note-area { width:100%; min-height:70px; border:1.5px solid var(--border); border-radius:8px; padding:10px; font-size:12px; font-family:inherit; resize:vertical; color:var(--text); }
-.note-area:focus { outline:none; border-color:var(--gold); }
-
-/* Photos grid */
-.photo-grid { display:flex; gap:8px; flex-wrap:wrap; }
-.photo-thumb { width:64px; height:64px; border-radius:8px; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:20px; }
+/* Financing */
+.fin-option{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.fin-option:last-of-type{border-bottom:none}
+.fin-name{font-weight:600}
+.fin-desc{color:var(--text-light);font-size:11px}
+.fin-toggle-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;font-weight:600}
 
 /* FAB */
-.fab { position:fixed; bottom:170px; right:calc(50% - 195px); width:52px; height:52px; border-radius:50%; background:var(--navy); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:300; box-shadow:0 4px 16px rgba(0,0,0,.25); cursor:pointer; z-index:90; border:none; transition:transform .15s; }
-.fab:active { transform:scale(.9); }
-@media(max-width:430px){ .fab { right:16px; } }
+.fab{position:fixed;bottom:190px;right:calc(50% - 195px);width:52px;height:52px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:300;box-shadow:0 4px 16px rgba(0,0,0,.25);cursor:pointer;z-index:90;border:none;transition:transform .15s}
+.fab:active{transform:scale(.9)}
+@media(max-width:430px){.fab{right:16px}}
 
 /* BOTTOM BAR */
-.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-top:1px solid var(--border); padding:10px 16px 24px; z-index:100; box-shadow:0 -4px 20px rgba(0,0,0,.08); }
-.bottom-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
-.total-label { font-size:11px; color:var(--text-light); font-weight:500; }
-.total-amount { font-size:24px; font-weight:800; color:var(--navy); letter-spacing:-.5px; }
-.bottom-meta { display:flex; gap:8px; font-size:10px; color:var(--text-light); margin-bottom:10px; flex-wrap:wrap; align-items:center; }
-.meta-pill { display:inline-flex; align-items:center; gap:3px; padding:2px 7px; border-radius:5px; font-weight:600; font-size:10px; }
-.meta-green { background:var(--green-bg); color:#065F46; }
-.meta-gold { background:rgba(196,169,98,.15); color:#92400E; }
-.btn-proposal { width:100%; padding:14px; border-radius:var(--radius); font-size:14px; font-weight:700; text-align:center; cursor:pointer; border:none; background:var(--gold); color:var(--navy); font-family:inherit; transition:all .15s; box-shadow:0 2px 8px rgba(196,169,98,.3); }
-.btn-proposal:active { background:var(--gold-light); transform:scale(.98); }
+.bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--border);padding:10px 16px 24px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.bottom-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.total-label{font-size:11px;color:var(--text-light);font-weight:500}
+.total-amount{font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.5px}
+.bottom-meta{display:flex;gap:6px;font-size:10px;color:var(--text-light);margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.meta-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:5px;font-weight:600;font-size:10px}
+.meta-green{background:var(--green-bg);color:#065F46}
+.meta-gold{background:rgba(196,169,98,.15);color:#92400E}
+.meta-purple{background:rgba(139,92,246,.12);color:var(--purple)}
+.btn-proposal{width:100%;padding:14px;border-radius:var(--radius);font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;background:var(--gold);color:var(--navy);font-family:inherit;transition:all .15s;box-shadow:0 2px 8px rgba(196,169,98,.3)}
+.btn-proposal:active{background:var(--gold-light);transform:scale(.98)}
 
 /* OVERLAY & BOTTOM SHEET */
-.overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; display:none; opacity:0; transition:opacity .2s; }
-.overlay.show { display:block; opacity:1; }
-.bottom-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:100%; max-width:430px; background:var(--card); border-radius:16px 16px 0 0; z-index:201; transition:transform .3s ease; max-height:80vh; overflow-y:auto; }
-.bottom-sheet.show { transform:translateX(-50%) translateY(0); }
-.sheet-handle { width:36px; height:4px; border-radius:2px; background:var(--border); margin:10px auto 6px; }
-.sheet-title { font-size:16px; font-weight:700; padding:8px 20px 12px; color:var(--navy); }
-.sheet-item { display:flex; align-items:center; gap:12px; padding:14px 20px; border-top:1px solid #f3f4f6; cursor:pointer; transition:background .1s; }
-.sheet-item:active { background:#faf9f6; }
-.sheet-icon { font-size:20px; width:28px; text-align:center; flex-shrink:0; }
-.sheet-label { flex:1; font-size:14px; font-weight:500; }
-.sheet-count { font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:1px 8px; border-radius:10px; }
-.sheet-new-group { display:flex; align-items:center; gap:8px; padding:14px 20px; border-top:2px solid var(--border); cursor:pointer; font-size:14px; font-weight:600; color:var(--gold); }
-.sheet-new-group:active { background:#faf8f2; }
-.sheet-safe { height:env(safe-area-inset-bottom, 20px); }
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;opacity:0;transition:opacity .2s}
+.overlay.show{display:block;opacity:1}
+.bottom-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:var(--card);border-radius:16px 16px 0 0;z-index:201;transition:transform .3s ease;max-height:85vh;overflow-y:auto}
+.bottom-sheet.show{transform:translateX(-50%) translateY(0)}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:10px auto 6px}
+.sheet-title{font-size:16px;font-weight:700;padding:8px 20px 12px;color:var(--navy)}
+.sheet-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-top:1px solid #f3f4f6;cursor:pointer;transition:background .1s}
+.sheet-item:active{background:#faf9f6}
+.sheet-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
+.sheet-label{flex:1;font-size:14px;font-weight:500}
+.sheet-sublabel{font-size:11px;color:var(--text-light);font-weight:400}
+.sheet-count{font-size:11px;font-weight:700;color:#fff;background:var(--navy);padding:1px 8px;border-radius:10px}
+.sheet-new-group{display:flex;align-items:center;gap:8px;padding:14px 20px;border-top:2px solid var(--border);cursor:pointer;font-size:14px;font-weight:600;color:var(--gold)}
+.sheet-new-group:active{background:#faf8f2}
+.sheet-safe{height:env(safe-area-inset-bottom, 20px)}
+
+/* PROPOSAL CONFIG */
+.proposal-section{padding:0 20px 12px}
+.proposal-section h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;margin-top:12px}
+.radio-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer}
+.radio-item input[type="radio"]{accent-color:var(--gold);width:16px;height:16px}
+.check-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer}
+.check-item input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px}
+.proposal-exp{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px}
+.proposal-exp select{font-size:13px;padding:4px 8px;border-radius:8px;border:1px solid var(--border);font-family:inherit}
+.proposal-btns{padding:12px 20px 20px;display:flex;flex-direction:column;gap:8px}
+.btn-preview{width:100%;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:2px solid var(--navy);background:transparent;color:var(--navy);font-family:inherit}
+.btn-preview:active{background:var(--bg)}
+.btn-send{width:100%;padding:14px;border-radius:var(--radius);font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;background:var(--gold);color:var(--navy);font-family:inherit;box-shadow:0 2px 8px rgba(196,169,98,.3)}
+.btn-send:active{background:var(--gold-light)}
+
+/* GLOBAL ADJUST PANEL */
+.adjust-panel{padding:20px}
+.adjust-panel h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:12px}
+.adjust-slider-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.adjust-slider{flex:1;accent-color:var(--gold)}
+.adjust-val{font-size:20px;font-weight:800;color:var(--navy);min-width:60px;text-align:center}
+.adjust-preview{font-size:13px;color:var(--text-light);margin-bottom:16px;padding:10px;background:var(--bg);border-radius:8px}
+.adjust-note{font-size:11px;color:var(--text-light);margin-bottom:16px;font-style:italic}
+.adjust-btns{display:flex;gap:8px}
+.adjust-btns button{flex:1;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border:none}
+.btn-cancel{background:var(--bg);color:var(--text)}
+.btn-apply{background:var(--gold);color:var(--navy)}
+
+/* VOLUME POPUP */
+.volume-popup{padding:20px}
+.volume-popup h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.volume-popup .current{font-size:13px;color:var(--purple);font-weight:600;margin-bottom:14px}
+.zone-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.zone-row:last-child{border-bottom:none}
+.zone-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.zone-active{font-weight:700;color:var(--navy)}
+.volume-note{font-size:11px;color:var(--text-light);margin-top:12px;font-style:italic}
 
 /* TOAST */
-.toast { position:fixed; top:80px; left:50%; transform:translateX(-50%) translateY(-20px); background:var(--navy); color:#fff; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:300; opacity:0; transition:all .3s; pointer-events:none; max-width:350px; text-align:center; }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-
-/* Border radius cleanup for grouped cards */
-.type-group .instance-card:first-child { }
-.type-group .type-body > :last-child { border-radius:0 0 var(--radius) var(--radius); }
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:all .3s;pointer-events:none;max-width:350px;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -190,534 +258,845 @@ body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); col
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <a href="#" class="topbar-back" onclick="toast('Back to Estimates');return false">← Back to Estimates</a>
-  <h1>Johnson Residence</h1>
-  <div class="topbar-meta">
-    <span>456 Oak Ave, Nashville TN 37205</span>
-    <span>·</span>
-    <span>Larry</span>
-    <span class="status-pill">In Progress</span>
+  <div class="topbar-row">
+    <div class="topbar-left">
+      <a href="#" class="topbar-back" onclick="toast('Back to Estimates');return false">← Back to Estimates</a>
+      <h1>Carter Estate</h1>
+      <div class="topbar-meta">
+        <span>2200 Belle Meade Blvd, Nashville TN 37205</span>
+        <span>·</span>
+        <span>Larry</span>
+        <span class="status-pill" onclick="event.stopPropagation();openSheet('statusSheet')">In Progress</span>
+      </div>
+    </div>
+    <div class="topbar-menu" onclick="openSheet('topbarMenuSheet')">⋯</div>
   </div>
 </div>
 
 <!-- CONTROLS BAR -->
 <div class="controls-bar">
-  <span class="ctrl-badge ctrl-vol">📉 −2.3% Vol</span>
+  <span class="ctrl-badge ctrl-vol" onclick="openSheet('volumeSheet')">📉 −2.8% Vol</span>
   <span class="ctrl-badge ctrl-comm">🔒 Comm ✓</span>
-  <span class="ctrl-badge ctrl-gp">GP <span id="ctrl-gp-val">52%</span></span>
+  <span class="ctrl-badge ctrl-gp" id="ctrlGp">GP 48%</span>
+  <button class="ctrl-adjust" onclick="openSheet('adjustSheet')">⚙ Adjust</button>
 </div>
 
 <div class="content">
 
-<!-- ═══════════════ INTERIOR PAINTING ═══════════════ -->
-<div class="type-group" data-type="interior">
-  <div class="type-header" onclick="toggleGroup('interior')">
-    <div class="type-header-left">
-      <span class="type-icon">🏠</span>
-      <span class="type-name">Interior Painting</span>
-      <span class="type-count">×6</span>
+<!-- ═══════════ GROUP: MAIN HOUSE ═══════════ -->
+<div class="group-container" id="grp-main">
+  <div class="group-header" onclick="toggleGroup('main')">
+    <div class="group-header-left">
+      <span class="icon">📂</span>
+      <span class="name">Main House</span>
+      <span class="count">10</span>
     </div>
-    <div class="type-header-right">
-      <span class="type-subtotal" id="interior-subtotal">$5,890</span>
-      <span class="type-arrow" id="arrow-interior">▶</span>
+    <div class="group-header-right">
+      <span class="group-subtotal" id="grpMainTotal">$16,294</span>
+      <span class="group-menu" onclick="event.stopPropagation();openSheet('groupMenuSheet')">⋯</span>
+      <span class="group-arrow" id="grpArrow-main">▶</span>
     </div>
   </div>
-  <div class="type-body" id="body-interior">
-    <div class="pkg-row">
-      <span class="pkg-label">Package:</span>
-      <span class="chip" data-pkg="value" data-group="interior" onclick="setPkg('interior','value')">Value</span>
-      <span class="chip active" data-pkg="standard" data-group="interior" onclick="setPkg('interior','standard')">● Standard</span>
-      <span class="chip" data-pkg="premium" data-group="interior" onclick="setPkg('interior','premium')">Premium+</span>
-    </div>
+  <div class="group-body" id="grpBody-main" style="max-height:5000px">
+    <div class="group-inner">
 
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Master Bedroom</div>
-          <div class="inst-spec">14×16×9 · Walls/Ceil/Trim/2 Doors</div>
-        </div>
-        <div class="inst-price" data-base="1240">$1,240</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$744</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$248</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$248</div></div>
+      <!-- Interior Painting -->
+      <div class="type-group" id="tg-int">
+        <div class="type-header" onclick="toggleType('int')">
+          <div class="type-header-left">
+            <span class="type-icon">🏠</span>
+            <span class="type-name">Interior</span>
+            <span class="type-count">×6</span>
+          </div>
+          <div class="type-header-right">
+            <span class="type-subtotal" id="intSubtotal">$6,250</span>
+            <span class="type-arrow" id="typeArrow-int">▶</span>
           </div>
         </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Living Room</div>
-          <div class="inst-spec">16×20×9 · Walls/Ceil/Trim/Crown/4 Win</div>
-        </div>
-        <div class="inst-price" data-base="1580">$1,580</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$948</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$316</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$316</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Kitchen</div>
-          <div class="inst-spec">12×14×9 · Walls/Trim/2 Doors</div>
-        </div>
-        <div class="inst-price" data-base="890">$890</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$534</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$178</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$178</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Hallway + Stairs</div>
-          <div class="inst-spec">30 LF · Walls/Trim</div>
-        </div>
-        <div class="inst-price" data-base="620">$620</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$372</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$124</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$124</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Bedroom 2</div>
-          <div class="inst-spec">12×12×9 · Walls/Ceil/Trim/1 Door</div>
-        </div>
-        <div class="inst-price" data-base="780">$780</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$468</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$156</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$156</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Bedroom 3</div>
-          <div class="inst-spec">12×12×9 · Walls/Ceil/Trim/1 Door</div>
-        </div>
-        <div class="inst-price" data-base="780">$780</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$468</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$156</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$156</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="add-row" onclick="toast('Opening Interior Painting wizard…')">+ Add Room</div>
-  </div>
-</div>
-
-<!-- ═══════════════ EXTERIOR PAINTING ═══════════════ -->
-<div class="type-group" data-type="exterior">
-  <div class="type-header" onclick="toggleGroup('exterior')">
-    <div class="type-header-left">
-      <span class="type-icon">🏡</span>
-      <span class="type-name">Exterior Painting</span>
-      <span class="type-count">×1</span>
-    </div>
-    <div class="type-header-right">
-      <span class="type-subtotal" id="exterior-subtotal">$6,660</span>
-      <span class="type-arrow" id="arrow-exterior">▶</span>
-    </div>
-  </div>
-  <div class="type-body" id="body-exterior">
-    <div class="pkg-row">
-      <span class="pkg-label">Package:</span>
-      <span class="chip" data-pkg="value" data-group="exterior" onclick="setPkg('exterior','value')">Value</span>
-      <span class="chip active" data-pkg="standard" data-group="exterior" onclick="setPkg('exterior','standard')">● Standard</span>
-      <span class="chip" data-pkg="premium" data-group="exterior" onclick="setPkg('exterior','premium')">Premium+</span>
-    </div>
-
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Main House</div>
-          <div class="inst-spec">5 surfaces · Std prep · Pressure wash incl.</div>
-        </div>
-        <div class="inst-price" data-base="6660">$6,660</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="surface-line"><span><span class="surf-name">Siding (1-Story)</span> <span class="surf-meta">1,500 SF</span></span><span class="surf-price">$2,775</span></div>
-          <div class="surface-line"><span><span class="surf-name">Siding (2-Story)</span> <span class="surf-meta">800 SF · +54% height</span></span><span class="surf-price">$1,540</span></div>
-          <div class="surface-line"><span><span class="surf-name">Trim</span> <span class="surf-meta">350 LF</span></span><span class="surf-price">$875</span></div>
-          <div class="surface-line"><span><span class="surf-name">Windows</span> <span class="surf-meta">18 EA</span></span><span class="surf-price">$630</span></div>
-          <div class="surface-line"><span><span class="surf-name">Pressure Wash</span> <span class="surf-meta">(auto)</span></span><span class="surf-price">$840</span></div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-
-    <div class="prep-row">
-      <label>Prep level:</label>
-      <select onchange="toast('Prep level → ' + this.value)">
-        <option>Standard</option>
-        <option>Heavy</option>
-        <option>Light</option>
-      </select>
-    </div>
-
-    <div class="add-row" onclick="toast('Adding exterior surface…')">+ Add Surface</div>
-  </div>
-</div>
-
-<!-- ═══════════════ DECK STAINING ═══════════════ -->
-<div class="type-group" data-type="deck">
-  <div class="type-header" onclick="toggleGroup('deck')">
-    <div class="type-header-left">
-      <span class="type-icon">🪵</span>
-      <span class="type-name">Deck Staining</span>
-      <span class="type-count">×1</span>
-    </div>
-    <div class="type-header-right">
-      <span class="type-subtotal" id="deck-subtotal">$1,520</span>
-      <span class="type-arrow" id="arrow-deck">▶</span>
-    </div>
-  </div>
-  <div class="type-body" id="body-deck">
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Back Deck</div>
-          <div class="inst-spec">400 SF · Cedar · Semi-Trans · Good cond.</div>
-        </div>
-        <div class="inst-price" data-base="1520">$1,520</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="surface-line"><span class="surf-name">Deck surface 400 SF</span><span class="surf-price">$1,200</span></div>
-          <div class="surface-line"><span class="surf-name">Railing 80 LF</span><span class="surf-price">$320</span></div>
-        </div>
-      </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
-    <div class="add-row" onclick="toast('Opening Deck Staining wizard…')">+ Add Deck</div>
-  </div>
-</div>
-
-<!-- ═══════════════ WOOD DOOR ═══════════════ -->
-<div class="type-group" data-type="door">
-  <div class="type-header" onclick="toggleGroup('door')">
-    <div class="type-header-left">
-      <span class="type-icon">🚪</span>
-      <span class="type-name">Wood Door Stain/Seal</span>
-      <span class="type-count">×1</span>
-    </div>
-    <div class="type-header-right">
-      <span class="type-subtotal" id="door-subtotal">$802</span>
-      <span class="type-arrow" id="arrow-door">▶</span>
-    </div>
-  </div>
-  <div class="type-body" id="body-door">
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Front Entry</div>
-          <div class="inst-spec">Real Wood · Good · 1 main + 2 sidelights</div>
-        </div>
-        <div class="inst-price" data-base="802">$802</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="surface-line"><span class="surf-name">Main door</span><span class="surf-price">$575</span></div>
-          <div class="surface-line"><span class="surf-name">Sidelights ×2</span><span class="surf-price">$227</span></div>
-          <div style="padding:6px 0">
-            <div class="info-row" style="padding:0">
-              <span class="info-tag tag-green">✓ Trip charge: Bundled</span>
-              <span style="font-size:10px;color:var(--text-light)">$0 — crew on-site 13+ days</span>
+        <div class="type-body" id="typeBody-int" style="max-height:3000px">
+          <div class="type-controls">
+            <div class="pkg-row">
+              <span class="pkg-label">Pkg:</span>
+              <span class="chip" data-pkg="value" onclick="setPkg('int','value',this)">Value</span>
+              <span class="chip active" data-pkg="standard" onclick="setPkg('int','standard',this)">●Standard</span>
+              <span class="chip" data-pkg="premium" onclick="setPkg('int','premium',this)">Premium+</span>
             </div>
+            <span class="type-ctrl-sep"></span>
+            <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Standard ▼</option><option>Heavy</option><option>Restoration</option></select>
+            <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option><option>+15%</option><option>−5%</option><option>−10%</option></select>
           </div>
-          <div style="padding:4px 0">
-            <div class="info-row" style="padding:0">
-              <span class="info-tag tag-blue">🔄 Maintenance plan</span>
-              <span style="font-size:10px;color:var(--text-light)">$388/visit · 3 visits covered</span>
+
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏠 Master Bedroom</div>
+                <div class="inst-spec">14×16×9 · Walls/Ceil/Trim/2 Doors</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price" data-std="1480" data-val="1110" data-prem="1850">$1,480</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
             </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$888</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$296</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$296</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏠 Living Room</div>
+                <div class="inst-spec">16×20×9 · Walls/Ceil/Trim/Crown/4 Win</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price" data-std="1890" data-val="1418" data-prem="2363">$1,890</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$1,134</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$378</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$378</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏠 Kitchen</div>
+                <div class="inst-spec">12×14×9 · Walls/Trim/2 Doors</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price" data-std="1060" data-val="795" data-prem="1325">$1,060</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$636</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$212</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$212</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏠 Dining Room</div>
+                <div class="inst-spec">12×14×9 · Walls/Crown/Trim</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price" data-std="780" data-val="585" data-prem="975">$780</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$468</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$156</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$156</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏠 Hallway</div>
+                <div class="inst-spec">30 LF · Walls/Trim</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price" data-std="620" data-val="465" data-prem="775">$620</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$372</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$124</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$124</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏠 Powder Room</div>
+                <div class="inst-spec">6×8×9 · Walls/Ceil/Trim</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price" data-std="420" data-val="315" data-prem="525">$420</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$252</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$84</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$84</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
           </div>
         </div>
       </div>
-      <div class="swipe-hint">🗑</div>
+
+      <!-- Exterior Painting -->
+      <div class="type-group" id="tg-ext">
+        <div class="type-header" onclick="toggleType('ext')">
+          <div class="type-header-left">
+            <span class="type-icon">🏡</span>
+            <span class="type-name">Exterior</span>
+            <span class="type-count">×1</span>
+          </div>
+          <div class="type-header-right">
+            <span class="type-subtotal">$8,400</span>
+            <span class="type-arrow" id="typeArrow-ext">▶</span>
+          </div>
+        </div>
+        <div class="type-body" id="typeBody-ext" style="max-height:2000px">
+          <div class="type-controls">
+            <div class="pkg-row">
+              <span class="pkg-label">Pkg:</span>
+              <span class="chip" onclick="setPkg('ext','value',this)">Value</span>
+              <span class="chip active" onclick="setPkg('ext','standard',this)">●Standard</span>
+              <span class="chip" onclick="setPkg('ext','premium',this)">Premium+</span>
+            </div>
+            <span class="type-ctrl-sep"></span>
+            <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Heavy ▼</option><option>Standard</option><option>Restoration</option></select>
+            <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option><option>−5%</option></select>
+          </div>
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏡 Main House <span class="info-tag tag-orange" style="font-size:10px">Heavy +35%</span></div>
+                <div class="inst-spec">Siding, Trim, Windows, Doors, Pressure Wash</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price">$8,400</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$4,620</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$1,680</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$2,100</div></div>
+              </div>
+              <div style="margin-top:8px">
+                <div class="surface-line"><span class="surf-name">Siding (2,400 SF)</span><span class="surf-price">$4,200</span></div>
+                <div class="surface-line"><span class="surf-name">Trim & Fascia</span><span class="surf-price">$1,680</span></div>
+                <div class="surface-line"><span class="surf-name">Windows ×22</span><span class="surf-price">$1,320</span></div>
+                <div class="surface-line"><span class="surf-name">Doors ×3</span><span class="surf-price">$720</span></div>
+                <div class="surface-line"><span class="surf-name">Pressure Wash</span><span class="surf-price">$480</span></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wood Door -->
+      <div class="type-group" id="tg-door">
+        <div class="type-header" onclick="toggleType('door')">
+          <div class="type-header-left">
+            <span class="type-icon">🚪</span>
+            <span class="type-name">Wood Door</span>
+            <span class="type-count">×1</span>
+          </div>
+          <div class="type-header-right">
+            <span class="type-subtotal">$802</span>
+            <span class="type-arrow" id="typeArrow-door">▶</span>
+          </div>
+        </div>
+        <div class="type-body" id="typeBody-door" style="max-height:1000px">
+          <div class="type-controls">
+            <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Standard ▼</option><option>Heavy</option><option>Restoration</option></select>
+            <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option><option>−5%</option></select>
+          </div>
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🚪 Front Entry</div>
+                <div class="inst-spec">Wood · Good condition · 1 main + 2 sidelights</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price">$802</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$441</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$160</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$201</div></div>
+              </div>
+              <div class="info-row">
+                <span class="info-tag tag-green">✓ Trip Bundled</span>
+                <span class="info-tag tag-blue">🛡 Maintenance Plan Eligible</span>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carpentry -->
+      <div class="type-group" id="tg-carp">
+        <div class="type-header" onclick="toggleType('carp')">
+          <div class="type-header-left">
+            <span class="type-icon">🔨</span>
+            <span class="type-name">Carpentry</span>
+            <span class="type-count">×2</span>
+          </div>
+          <div class="type-header-right">
+            <span class="type-subtotal">$842</span>
+            <span class="type-arrow" id="typeArrow-carp">▶</span>
+          </div>
+        </div>
+        <div class="type-body" id="typeBody-carp" style="max-height:1500px">
+          <div class="type-controls">
+            <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option><option>−5%</option></select>
+          </div>
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🔨 Front Column <span class="override-badge">⚡ Override</span></div>
+                <div class="inst-spec">Column wrap · 8 LF · Rot repair</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price">$480</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$288</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$96</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$96</div></div>
+              </div>
+              <div class="info-row">
+                <span class="info-tag tag-blue">📷 3 photos</span>
+                <span class="info-tag tag-orange">⚡ Price overridden</span>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🔨 Fascia Left</div>
+                <div class="inst-spec">Fascia board · 16 LF · Replace</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price">$362</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$217</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$73</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$72</div></div>
+              </div>
+              <div class="info-row">
+                <span class="info-tag tag-blue">📷 2 photos</span>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="add-row" onclick="toast('Opening Wood Door wizard…')">+ Add Door</div>
   </div>
 </div>
 
-<!-- ═══════════════ CARPENTRY ═══════════════ -->
-<div class="type-group" data-type="carpentry">
-  <div class="type-header" onclick="toggleGroup('carpentry')">
-    <div class="type-header-left">
-      <span class="type-icon">🔨</span>
-      <span class="type-name">Carpentry & Repairs</span>
-      <span class="type-count">×2</span>
+<!-- ═══════════ GROUP: DETACHED GARAGE ═══════════ -->
+<div class="group-container" id="grp-garage">
+  <div class="group-header" onclick="toggleGroup('garage')">
+    <div class="group-header-left">
+      <span class="icon">📂</span>
+      <span class="name">Detached Garage</span>
+      <span class="count">2</span>
     </div>
-    <div class="type-header-right">
-      <span class="type-subtotal" id="carpentry-subtotal">$842</span>
-      <span class="type-arrow" id="arrow-carpentry">▶</span>
+    <div class="group-header-right">
+      <span class="group-subtotal" id="grpGarageTotal">$2,880</span>
+      <span class="group-menu" onclick="event.stopPropagation();openSheet('groupMenuSheet')">⋯</span>
+      <span class="group-arrow" id="grpArrow-garage">▶</span>
     </div>
   </div>
-  <div class="type-body" id="body-carpentry">
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Front Column Repair</div>
-          <div class="inst-spec">📸 2 photos · 3 items</div>
+  <div class="group-body" id="grpBody-garage" style="max-height:3000px">
+    <div class="group-inner">
+
+      <!-- Garage Exterior -->
+      <div class="type-group">
+        <div class="type-header" onclick="toggleType('gext')">
+          <div class="type-header-left">
+            <span class="type-icon">🏡</span>
+            <span class="type-name">Exterior</span>
+            <span class="type-count">×1</span>
+          </div>
+          <div class="type-header-right">
+            <span class="type-subtotal">$2,200</span>
+            <span class="type-arrow" id="typeArrow-gext">▶</span>
+          </div>
         </div>
-        <div class="inst-price" data-base="480">$480</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$288</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$96</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$96</div></div>
+        <div class="type-body" id="typeBody-gext" style="max-height:1500px">
+          <div class="type-controls">
+            <div class="pkg-row">
+              <span class="pkg-label">Pkg:</span>
+              <span class="chip" onclick="toast('Value selected')">Value</span>
+              <span class="chip active" onclick="toast('Standard selected')">●Standard</span>
+              <span class="chip" onclick="toast('Premium+ selected')">Premium+</span>
+            </div>
+            <span class="type-ctrl-sep"></span>
+            <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Standard ▼</option><option>Heavy</option></select>
+            <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option></select>
+          </div>
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🏡 Garage Exterior</div>
+                <div class="inst-spec">3 sides · 1 garage door · Siding/Trim</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price">$2,200</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$1,210</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$440</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$550</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
           </div>
         </div>
       </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
 
-    <div class="instance-card" onclick="toggleInstance(this)">
-      <div class="instance-main">
-        <div class="inst-left">
-          <div class="inst-label">Fascia — Left Side</div>
-          <div class="inst-spec">📸 1 photo · 1 item</div>
+      <!-- Deck -->
+      <div class="type-group">
+        <div class="type-header" onclick="toggleType('deck')">
+          <div class="type-header-left">
+            <span class="type-icon">🪵</span>
+            <span class="type-name">Deck</span>
+            <span class="type-count">×1</span>
+          </div>
+          <div class="type-header-right">
+            <span class="type-subtotal">$680</span>
+            <span class="type-arrow" id="typeArrow-deck">▶</span>
+          </div>
         </div>
-        <div class="inst-price" data-base="362">$362</div>
-      </div>
-      <div class="inst-detail">
-        <div class="inst-detail-inner">
-          <div class="detail-grid">
-            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$217</div></div>
-            <div class="detail-box"><div class="lbl">Material</div><div class="val">$73</div></div>
-            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$72</div></div>
+        <div class="type-body" id="typeBody-deck" style="max-height:1000px">
+          <div class="type-controls">
+            <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option></select>
+          </div>
+          <div class="instance-card" onclick="toggleInstance(this)">
+            <div class="instance-main">
+              <div class="inst-left">
+                <div class="inst-label">🪵 Garage Side Deck</div>
+                <div class="inst-spec">200 SF · Good condition · Stain</div>
+              </div>
+              <div class="inst-right">
+                <span class="inst-price">$680</span>
+                <span class="inst-dots" onclick="event.stopPropagation();openSheet('instanceMenuSheet')">⋯</span>
+              </div>
+            </div>
+            <div class="inst-detail"><div class="inst-detail-inner">
+              <div class="detail-grid">
+                <div class="detail-box"><div class="lbl">Labor</div><div class="val">$374</div></div>
+                <div class="detail-box"><div class="lbl">Material</div><div class="val">$136</div></div>
+                <div class="detail-box"><div class="lbl">Margin</div><div class="val">$170</div></div>
+              </div>
+              <button class="btn-edit-wizard" onclick="event.stopPropagation();toast('Opening wizard…')">Edit in Wizard</button>
+            </div></div>
+            <div class="swipe-hint">🗑</div>
           </div>
         </div>
       </div>
-      <div class="swipe-hint">🗑</div>
-    </div>
 
-    <div class="add-row" onclick="toast('Opening Carpentry wizard…')">+ Add Repair</div>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════ COLORS ═══════════════ -->
+<!-- ═══════════ OPTIONAL ADD-ONS ═══════════ -->
+<div class="optional-section">
+  <div class="optional-divider">Optional Add-Ons</div>
+  <div class="optional-card">
+    <div class="optional-header">
+      <div class="optional-left">
+        <span class="optional-icon">🗄️</span>
+        <div class="optional-info">
+          <div class="opt-title">Cabinet Refinishing <span class="opt-badge">OPTIONAL</span></div>
+          <div class="opt-sub">Kitchen Cabinets · Premium+</div>
+        </div>
+      </div>
+      <span class="opt-price" id="cabPrice">$4,200</span>
+      <div class="toggle" id="cabToggle" onclick="toggleOptional()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+    <div class="opt-savings">💰 Save 9% vs. scheduling separately — bundle price $3,822</div>
+  </div>
+</div>
+
+<!-- ═══════════ COLORS ═══════════ -->
 <div class="mini-section">
   <div class="mini-header" onclick="toggleMini(this)">
-    <span>🎨 Colors</span>
-    <span class="mini-arrow">▶</span>
+    <span>🎨 Colors <span class="badge-count">4</span></span>
+    <span class="mini-arrow open">▶</span>
   </div>
-  <div class="mini-body">
+  <div class="mini-body open">
+    <div style="font-size:11px;color:var(--text-light);margin-bottom:10px;font-weight:500">4 colors · 2 brands</div>
     <div class="color-row">
-      <div class="color-swatch" style="background:#F5F0E7"></div>
-      <div class="color-info"><div class="color-name">BM Chantilly Lace</div><div class="color-code">OC-65 · Interior walls</div></div>
+      <div class="color-swatch" style="background:#F5F0E8"></div>
+      <div class="color-info"><div class="color-name">Alabaster SW-7008</div><div class="color-code">Sherwin-Williams · Interior Walls</div></div>
     </div>
     <div class="color-row">
-      <div class="color-swatch" style="background:#D5CEC4"></div>
-      <div class="color-info"><div class="color-name">SW Agreeable Gray</div><div class="color-code">SW 7029 · Living/Kitchen</div></div>
+      <div class="color-swatch" style="background:#E8E0D0"></div>
+      <div class="color-info"><div class="color-name">Accessible Beige SW-7036</div><div class="color-code">Sherwin-Williams · Interior Trim</div></div>
     </div>
     <div class="color-row">
-      <div class="color-swatch" style="background:#3B4A3F"></div>
-      <div class="color-info"><div class="color-name">BM Wrought Iron</div><div class="color-code">2124-10 · Ext. siding</div></div>
+      <div class="color-swatch" style="background:#4A5568"></div>
+      <div class="color-info"><div class="color-name">Wrought Iron 2124-10</div><div class="color-code">Benjamin Moore · Exterior Body</div></div>
     </div>
     <div class="color-row">
-      <div class="color-swatch" style="background:#F2EDE3"></div>
-      <div class="color-info"><div class="color-name">SW Alabaster</div><div class="color-code">SW 7008 · Ext. trim</div></div>
+      <div class="color-swatch" style="background:#F7F4EF"></div>
+      <div class="color-info"><div class="color-name">Chantilly Lace OC-65</div><div class="color-code">Benjamin Moore · Exterior Trim</div></div>
     </div>
+    <div class="color-surcharge">⚠️ Interior: 2 extra colors × $75 = $150 surcharge</div>
+    <button class="btn-add" onclick="toast('Add color…')">+ Add Color</button>
   </div>
 </div>
 
-<!-- ═══════════════ NOTES ═══════════════ -->
+<!-- ═══════════ NOTES ═══════════ -->
 <div class="mini-section">
   <div class="mini-header" onclick="toggleMini(this)">
-    <span>📝 Notes</span>
-    <span class="mini-arrow">▶</span>
+    <span>📝 Notes <span class="badge-count">3</span></span>
+    <span class="mini-arrow open">▶</span>
   </div>
-  <div class="mini-body" id="notes-body">
+  <div class="mini-body open">
     <div class="note-tabs">
-      <span class="note-tab active" onclick="switchNoteTab(this,'est')">Estimate</span>
+      <span class="note-tab active" onclick="switchNoteTab(this,'estimate')">Estimate</span>
       <span class="note-tab" onclick="switchNoteTab(this,'crew')">Crew</span>
       <span class="note-tab" onclick="switchNoteTab(this,'internal')">Internal</span>
     </div>
-    <textarea class="note-area" id="note-est" placeholder="Notes for the estimate / proposal…">Customer prefers low-VOC paints. Has two dogs — coordinate entry. HOA requires pre-approval for exterior colors (submitted 2/20).</textarea>
-    <textarea class="note-area" id="note-crew" style="display:none" placeholder="Notes for the crew…">Park on street, not driveway. Use side door for interior access. Alarm code: ask customer each morning.</textarea>
-    <textarea class="note-area" id="note-internal" style="display:none" placeholder="Internal notes…">Referred by Thompson job. High likelihood of cabinet refinish add-on after interior complete. Husband is decision-maker.</textarea>
+    <div class="note-vis" id="noteVis">👁 Client sees this</div>
+    <textarea class="note-area" id="noteArea">Beautiful Belle Meade estate. Homeowner prefers Sherwin-Williams for interior, Benjamin Moore for exterior. Two coats on all surfaces. Working around landscaping schedule — coordinate with crew on north side access. Gate code: #4521.</textarea>
   </div>
 </div>
 
-<!-- ═══════════════ PHOTOS ═══════════════ -->
+<!-- ═══════════ PHOTOS ═══════════ -->
 <div class="mini-section">
   <div class="mini-header" onclick="toggleMini(this)">
-    <span>📸 Photos <span class="badge-count">6</span></span>
+    <span>📷 Photos <span class="badge-count">8</span></span>
     <span class="mini-arrow">▶</span>
   </div>
   <div class="mini-body">
+    <div style="font-size:11px;color:var(--text-light);margin-bottom:8px">8 photos across 5 instances</div>
     <div class="photo-grid">
       <div class="photo-thumb">🏠</div>
+      <div class="photo-thumb">🏡</div>
       <div class="photo-thumb">🚪</div>
-      <div class="photo-thumb">🪵</div>
       <div class="photo-thumb">🔨</div>
       <div class="photo-thumb">🔨</div>
       <div class="photo-thumb">🏡</div>
+      <div class="photo-thumb">🪵</div>
+      <div class="photo-thumb">🗄️</div>
     </div>
-    <div style="margin-top:8px;font-size:11px;color:var(--text-light)">6 photos across 4 service types</div>
+    <button class="btn-add" onclick="toast('Add photos…')" style="margin-top:10px">📷 Add Photos</button>
   </div>
 </div>
 
-</div><!-- /content -->
+<!-- ═══════════ FINANCING ═══════════ -->
+<div class="mini-section">
+  <div class="mini-header" onclick="toggleMini(this)">
+    <span>💳 Financing Options</span>
+    <span class="mini-arrow">▶</span>
+  </div>
+  <div class="mini-body">
+    <div class="fin-option">
+      <div><div class="fin-name">Acorn</div><div class="fin-desc">0% for 12 months (free tier)</div></div>
+      <span class="info-tag tag-green">Free</span>
+    </div>
+    <div class="fin-option">
+      <div><div class="fin-name">EnerBank Tier 1</div><div class="fin-desc">0% for 18 months</div></div>
+      <span class="info-tag tag-blue">Popular</span>
+    </div>
+    <div class="fin-option">
+      <div><div class="fin-name">EnerBank Tier 2</div><div class="fin-desc">4.99% for 60 months</div></div>
+    </div>
+    <div class="fin-toggle-row">
+      <span>Include financing options on proposal</span>
+      <div class="toggle on" onclick="this.classList.toggle('on');toast(this.classList.contains('on')?'Financing included':'Financing excluded')">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .content -->
+</div><!-- .shell -->
 
 <!-- FAB -->
-<button class="fab" onclick="openSheet()">+</button>
+<button class="fab" onclick="openSheet('fabSheet')">+</button>
 
 <!-- BOTTOM BAR -->
 <div class="bottom-bar">
   <div class="bottom-top">
     <span class="total-label">Estimate Total</span>
-    <span class="total-amount" id="grand-total">$15,714</span>
+    <span class="total-amount" id="totalAmount">$19,174</span>
   </div>
   <div class="bottom-meta">
-    <span class="meta-pill meta-green">GP 52% ✓</span>
-    <span style="color:var(--text-light)">Est. 15.2 crew-days</span>
-    <span class="meta-pill meta-gold">−2.3% vol</span>
-    <span class="meta-pill meta-green">🔒 Comm ✓</span>
+    <span class="meta-pill meta-green">GP 48%</span>
+    <span class="meta-pill meta-gold">~4.5 crew-days</span>
+    <span class="meta-pill meta-purple">−2.8% vol</span>
+    <span class="meta-pill meta-green">🔒 Comm</span>
   </div>
-  <button class="btn-proposal" onclick="toast('Generating proposal…')">Generate Proposal →</button>
+  <button class="btn-proposal" onclick="openSheet('proposalSheet')">Generate Proposal →</button>
 </div>
 
-<!-- OVERLAY + BOTTOM SHEET -->
-<div class="overlay" id="overlay" onclick="closeSheet()"></div>
-<div class="bottom-sheet" id="sheet">
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeAllSheets()"></div>
+
+<!-- SHEET: Status Transitions -->
+<div class="bottom-sheet" id="statusSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Update Status</div>
+  <div class="sheet-item" onclick="toast('Status → Ready for Review');closeAllSheets()"><span class="sheet-icon">📋</span><span class="sheet-label">Ready for Review</span></div>
+  <div class="sheet-item" onclick="toast('Status → Send Proposal');closeAllSheets()"><span class="sheet-icon">📨</span><span class="sheet-label">Send Proposal</span></div>
+  <div class="sheet-item" onclick="toast('Status → Draft');closeAllSheets()"><span class="sheet-icon">📝</span><span class="sheet-label">Mark as Draft</span></div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: Topbar Menu -->
+<div class="bottom-sheet" id="topbarMenuSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Estimate Actions</div>
+  <div class="sheet-item" onclick="openSheet('adjustSheet')"><span class="sheet-icon">⚙️</span><span class="sheet-label">Adjust Estimate (global %)</span></div>
+  <div class="sheet-item" onclick="toast('Advanced Detail View');closeAllSheets()"><span class="sheet-icon">📊</span><span class="sheet-label">Advanced Detail View</span></div>
+  <div class="sheet-item" onclick="toast('Estimate duplicated');closeAllSheets()"><span class="sheet-icon">📋</span><span class="sheet-label">Duplicate Estimate</span></div>
+  <div class="sheet-item" onclick="toast('Change history');closeAllSheets()"><span class="sheet-icon">🔄</span><span class="sheet-label">View Change History</span></div>
+  <div class="sheet-item" onclick="toast('Print / Share');closeAllSheets()"><span class="sheet-icon">🖨️</span><span class="sheet-label">Print / Share</span></div>
+  <div class="sheet-item" onclick="toast('Delete estimate?');closeAllSheets()" style="color:var(--red)"><span class="sheet-icon">🗑️</span><span class="sheet-label" style="color:var(--red)">Delete Estimate</span></div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: Group Menu -->
+<div class="bottom-sheet" id="groupMenuSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Group Actions</div>
+  <div class="sheet-item" onclick="toast('Rename group');closeAllSheets()"><span class="sheet-icon">✏️</span><span class="sheet-label">Rename Group</span></div>
+  <div class="sheet-item" onclick="toast('Delete group');closeAllSheets()"><span class="sheet-icon">🗑️</span><span class="sheet-label">Delete Group</span></div>
+  <div class="sheet-item" onclick="toast('Add service to group');closeAllSheets()"><span class="sheet-icon">➕</span><span class="sheet-label">Add Service to Group</span></div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: Instance Menu -->
+<div class="bottom-sheet" id="instanceMenuSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Instance Actions</div>
+  <div class="sheet-item" onclick="toast('Edit in Wizard');closeAllSheets()"><span class="sheet-icon">✏️</span><span class="sheet-label">Edit in Wizard</span></div>
+  <div class="sheet-item" onclick="toast('Rename');closeAllSheets()"><span class="sheet-icon">📝</span><span class="sheet-label">Rename</span></div>
+  <div class="sheet-item" onclick="toast('Duplicated');closeAllSheets()"><span class="sheet-icon">📋</span><span class="sheet-label">Duplicate</span></div>
+  <div class="sheet-item" onclick="toast('Move to Group…');closeAllSheets()"><span class="sheet-icon">📂</span><span class="sheet-label">Move to Group…</span></div>
+  <div class="sheet-item" onclick="toast('Override Price');closeAllSheets()"><span class="sheet-icon">⚡</span><span class="sheet-label">Override Price</span></div>
+  <div class="sheet-item" onclick="toast('Marked as optional');closeAllSheets()"><span class="sheet-icon">🔘</span><span class="sheet-label">Mark as Optional</span></div>
+  <div class="sheet-item" onclick="toast('Deleted');closeAllSheets()" style="color:var(--red)"><span class="sheet-icon">🗑️</span><span class="sheet-label" style="color:var(--red)">Delete</span></div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: FAB Add Service -->
+<div class="bottom-sheet" id="fabSheet">
   <div class="sheet-handle"></div>
   <div class="sheet-title">Add Service</div>
-  <div class="sheet-item" onclick="addService('Interior Painting')"><span class="sheet-icon">🏠</span><span class="sheet-label">Interior Painting</span><span class="sheet-count">×6</span></div>
-  <div class="sheet-item" onclick="addService('Exterior Painting')"><span class="sheet-icon">🏡</span><span class="sheet-label">Exterior Painting</span><span class="sheet-count">×1</span></div>
-  <div class="sheet-item" onclick="addService('Cabinet Refinishing')"><span class="sheet-icon">🗄️</span><span class="sheet-label">Cabinet Refinishing</span></div>
-  <div class="sheet-item" onclick="addService('Deck Staining')"><span class="sheet-icon">🪵</span><span class="sheet-label">Deck Staining</span><span class="sheet-count">×1</span></div>
-  <div class="sheet-item" onclick="addService('Fence Staining')"><span class="sheet-icon">🪵</span><span class="sheet-label">Fence Staining</span></div>
-  <div class="sheet-item" onclick="addService('Carpentry & Repairs')"><span class="sheet-icon">🔨</span><span class="sheet-label">Carpentry & Repairs</span><span class="sheet-count">×2</span></div>
-  <div class="sheet-item" onclick="addService('Wood Door Stain/Seal')"><span class="sheet-icon">🚪</span><span class="sheet-label">Wood Door Stain/Seal</span><span class="sheet-count">×1</span></div>
-  <div class="sheet-item" onclick="addService('Drywall Repairs')"><span class="sheet-icon">🧱</span><span class="sheet-label">Drywall Repairs</span></div>
-  <div class="sheet-item" onclick="addService('Popcorn Removal')"><span class="sheet-icon">🍿</span><span class="sheet-label">Popcorn Removal</span></div>
-  <div class="sheet-item" onclick="addService('Floor Coatings')"><span class="sheet-icon">🏗️</span><span class="sheet-label">Floor Coatings</span></div>
-  <div class="sheet-item" onclick="addService('Screen Replacement')"><span class="sheet-icon">🏗️</span><span class="sheet-label">Screen Replacement</span></div>
-  <div class="sheet-item" onclick="addService('T&M Hourly Work')"><span class="sheet-icon">⏱️</span><span class="sheet-label">T&M Hourly Work</span></div>
-  <div class="sheet-new-group" onclick="addService('New Group')">📂 New Group</div>
+  <div style="padding:0 20px 8px;font-size:12px;color:var(--text-light)">
+    <select style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--border);font-family:inherit;font-weight:600">
+      <option>📂 Add to: Main House</option>
+      <option>📂 Add to: Detached Garage</option>
+      <option>📂 Ungrouped</option>
+    </select>
+  </div>
+  <div class="sheet-item" onclick="toast('Add Interior');closeAllSheets()"><span class="sheet-icon">🏠</span><span class="sheet-label">Interior Painting</span><span class="sheet-count">6</span></div>
+  <div class="sheet-item" onclick="toast('Add Exterior');closeAllSheets()"><span class="sheet-icon">🏡</span><span class="sheet-label">Exterior Painting</span><span class="sheet-count">2</span></div>
+  <div class="sheet-item" onclick="toast('Add Wood Door');closeAllSheets()"><span class="sheet-icon">🚪</span><span class="sheet-label">Wood Door</span><span class="sheet-count">1</span></div>
+  <div class="sheet-item" onclick="toast('Add Carpentry');closeAllSheets()"><span class="sheet-icon">🔨</span><span class="sheet-label">Carpentry</span><span class="sheet-count">2</span></div>
+  <div class="sheet-item" onclick="toast('Add Deck');closeAllSheets()"><span class="sheet-icon">🪵</span><span class="sheet-label">Deck / Fence</span><span class="sheet-count">1</span></div>
+  <div class="sheet-item" onclick="toast('Add Cabinets');closeAllSheets()"><span class="sheet-icon">🗄️</span><span class="sheet-label">Cabinet Refinishing</span><span class="sheet-count">1</span></div>
+  <div class="sheet-item" onclick="toast('Add Wallpaper');closeAllSheets()"><span class="sheet-icon">🎨</span><span class="sheet-label">Wallpaper</span></div>
+  <div class="sheet-item" onclick="toast('Add Popcorn Ceiling');closeAllSheets()"><span class="sheet-icon">⬜</span><span class="sheet-label">Popcorn Ceiling Removal</span></div>
+  <div class="sheet-item" onclick="toast('Add Drywall');closeAllSheets()"><span class="sheet-icon">🧱</span><span class="sheet-label">Drywall Repair</span></div>
+  <div class="sheet-item" onclick="toast('Add Power Wash');closeAllSheets()"><span class="sheet-icon">💦</span><span class="sheet-label">Power Washing</span></div>
+  <div class="sheet-item" onclick="toast('Add Staining');closeAllSheets()"><span class="sheet-icon">🪵</span><span class="sheet-label">Staining</span></div>
+  <div class="sheet-item" onclick="toast('Add Epoxy');closeAllSheets()"><span class="sheet-icon">🏗️</span><span class="sheet-label">Epoxy / Garage Floor</span></div>
+  <div class="sheet-new-group" onclick="toast('New group created');closeAllSheets()">📂 New Group</div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: Volume Detail -->
+<div class="bottom-sheet" id="volumeSheet">
+  <div class="sheet-handle"></div>
+  <div class="volume-popup">
+    <h3>Volume Pricing</h3>
+    <div class="current">Current zone: Standard Volume (−2.8%)</div>
+    <div class="zone-row"><span class="zone-dot" style="background:var(--red)"></span><span>Flat Floor / Minimum</span><span style="margin-left:auto;color:var(--text-light)">+5% to +15%</span></div>
+    <div class="zone-row"><span class="zone-dot" style="background:var(--orange)"></span><span>Log Surcharge</span><span style="margin-left:auto;color:var(--text-light)">+3% to +8%</span></div>
+    <div class="zone-row"><span class="zone-dot" style="background:var(--border)"></span><span>Neutral</span><span style="margin-left:auto;color:var(--text-light)">0%</span></div>
+    <div class="zone-row zone-active"><span class="zone-dot" style="background:var(--purple)"></span><span class="zone-active">● Volume Discount</span><span style="margin-left:auto;font-weight:700;color:var(--purple)">−2.8%</span></div>
+    <div class="volume-note">Calculated on full estimate scope. Frozen when proposal is generated.</div>
+  </div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: Global Adjustment -->
+<div class="bottom-sheet" id="adjustSheet">
+  <div class="sheet-handle"></div>
+  <div class="adjust-panel">
+    <h3>Global Estimate Adjustment</h3>
+    <div class="adjust-slider-row">
+      <input type="range" class="adjust-slider" id="adjustSlider" min="-10" max="25" value="0" oninput="updateAdjust()">
+      <span class="adjust-val" id="adjustVal">0%</span>
+    </div>
+    <div class="adjust-preview" id="adjustPreview">No adjustment — Total: $19,174</div>
+    <div class="adjust-note">This adjusts the entire estimate. For per-section adjustments, use the section headers.</div>
+    <div class="adjust-btns">
+      <button class="btn-cancel" onclick="closeAllSheets()">Cancel</button>
+      <button class="btn-apply" onclick="toast('Adjustment applied');closeAllSheets()">Apply</button>
+    </div>
+  </div>
+  <div class="sheet-safe"></div>
+</div>
+
+<!-- SHEET: Proposal Config -->
+<div class="bottom-sheet" id="proposalSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Generate Proposal</div>
+  <div class="proposal-section">
+    <h3>Package Presentation</h3>
+    <label class="radio-item"><input type="radio" name="pkgPres" checked> Premium only <span style="color:var(--text-light);font-size:11px">(clean, no options)</span></label>
+    <label class="radio-item"><input type="radio" name="pkgPres"> Premium + Premium Plus <span style="color:var(--text-light);font-size:11px">(upsell)</span></label>
+    <label class="radio-item"><input type="radio" name="pkgPres"> Value + Premium <span style="color:var(--text-light);font-size:11px">(budget option)</span></label>
+    <label class="radio-item"><input type="radio" name="pkgPres"> All three packages <span style="color:var(--text-light);font-size:11px">(full configurator)</span></label>
+    <label class="radio-item"><input type="radio" name="pkgPres"> Locked — [Premium] <span style="color:var(--text-light);font-size:11px">(no switching)</span></label>
+
+    <h3>Detail Level</h3>
+    <label class="radio-item"><input type="radio" name="detLvl" checked> Summary — price by room</label>
+    <label class="radio-item"><input type="radio" name="detLvl"> Expanded — price by surface type</label>
+
+    <h3>Scope Selector</h3>
+    <label class="check-item"><input type="checkbox" checked> Allow customer to toggle scope on/off</label>
+    <label class="check-item"><input type="checkbox" checked> Show optional add-ons with bundle pricing</label>
+
+    <h3>Proposal Includes</h3>
+    <label class="check-item"><input type="checkbox" checked> Color selections</label>
+    <label class="check-item"><input type="checkbox" checked> Project details & process docs</label>
+    <label class="check-item"><input type="checkbox" checked> Warranty information</label>
+    <label class="check-item"><input type="checkbox" checked> Payment terms</label>
+    <label class="check-item"><input type="checkbox" checked> Financing options</label>
+
+    <div class="proposal-exp">
+      <span>Expiration:</span>
+      <select><option>30 days</option><option>15 days</option><option>45 days</option><option>60 days</option><option>90 days</option></select>
+    </div>
+  </div>
+  <div class="proposal-btns">
+    <button class="btn-preview" onclick="toast('Preview generating…');closeAllSheets()">Preview Proposal</button>
+    <button class="btn-send" onclick="toast('Proposal sent to customer!');closeAllSheets()">Send to Customer →</button>
+  </div>
   <div class="sheet-safe"></div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast-el"></div>
-
-</div><!-- /shell -->
+<div class="toast" id="toast"></div>
 
 <script>
-// Package multipliers
-const PKG_MULT = { value: 0.60, standard: 1.0, premium: 2.10 };
-const currentPkg = { interior: 'standard', exterior: 'standard' };
+const BASE_TOTAL = 19174;
+const CAB_PRICE = 4200;
+const CAB_BUNDLE = 3822;
+let cabOn = false;
 
-// Base totals for non-package groups
-const fixedTotals = { deck: 1520, door: 802, carpentry: 842 };
-const baseTotals = { interior: 5890, exterior: 6660 };
-
-function fmt(n) { return '$' + n.toLocaleString(); }
-
-function recalcAll() {
-  let grand = 0;
-  // Package groups
-  ['interior','exterior'].forEach(g => {
-    const mult = PKG_MULT[currentPkg[g]];
-    const base = baseTotals[g];
-    const newTotal = Math.round(base * mult);
-    document.getElementById(g + '-subtotal').textContent = fmt(newTotal);
-    // Update individual prices
-    document.querySelectorAll(`[data-type="${g}"] .inst-price`).forEach(el => {
-      const b = parseInt(el.dataset.base);
-      el.textContent = fmt(Math.round(b * mult));
-    });
-    grand += newTotal;
-  });
-  // Fixed groups
-  Object.values(fixedTotals).forEach(v => grand += v);
-  document.getElementById('grand-total').textContent = fmt(grand);
+// Toast
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-function setPkg(group, pkg) {
-  currentPkg[group] = pkg;
-  // Update chips
-  document.querySelectorAll(`[data-group="${group}"]`).forEach(c => {
-    c.classList.toggle('active', c.dataset.pkg === pkg);
-    c.textContent = c.dataset.pkg === pkg
-      ? '● ' + c.dataset.pkg.charAt(0).toUpperCase() + c.dataset.pkg.slice(1) + (pkg === 'premium' ? '+' : '')
-      : c.dataset.pkg.charAt(0).toUpperCase() + c.dataset.pkg.slice(1) + (c.dataset.pkg === 'premium' ? '+' : '');
-  });
-  recalcAll();
-  toast(`${group === 'interior' ? 'Interior' : 'Exterior'} → ${pkg.charAt(0).toUpperCase() + pkg.slice(1)}${pkg === 'premium' ? '+' : ''} package`);
+// Sheets
+function openSheet(id) {
+  closeAllSheets();
+  setTimeout(() => {
+    document.getElementById('overlay').classList.add('show');
+    document.getElementById(id).classList.add('show');
+  }, 10);
+}
+function closeAllSheets() {
+  document.getElementById('overlay').classList.remove('show');
+  document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('show'));
 }
 
-function toggleGroup(type) {
-  const body = document.getElementById('body-' + type);
-  const arrow = document.getElementById('arrow-' + type);
+// Group collapse
+function toggleGroup(id) {
+  const body = document.getElementById('grpBody-' + id);
+  const arrow = document.getElementById('grpArrow-' + id);
   if (body.style.maxHeight && body.style.maxHeight !== '0px') {
     body.style.maxHeight = '0px';
-    body.style.overflow = 'hidden';
     arrow.classList.add('collapsed');
   } else {
-    body.style.maxHeight = body.scrollHeight + 'px';
-    body.style.overflow = 'visible';
+    body.style.maxHeight = '5000px';
     arrow.classList.remove('collapsed');
   }
 }
 
-function toggleInstance(card) {
-  const detail = card.querySelector('.inst-detail');
-  if (detail) detail.classList.toggle('open');
+// Type collapse
+function toggleType(id) {
+  const body = document.getElementById('typeBody-' + id);
+  const arrow = document.getElementById('typeArrow-' + id);
+  if (body.style.maxHeight && body.style.maxHeight !== '0px') {
+    body.style.maxHeight = '0px';
+    arrow.classList.add('collapsed');
+  } else {
+    body.style.maxHeight = '3000px';
+    arrow.classList.remove('collapsed');
+  }
 }
 
+// Instance expand
+function toggleInstance(card) {
+  const detail = card.querySelector('.inst-detail');
+  detail.classList.toggle('open');
+}
+
+// Mini section
 function toggleMini(header) {
   const body = header.nextElementSibling;
   const arrow = header.querySelector('.mini-arrow');
@@ -725,44 +1104,77 @@ function toggleMini(header) {
   arrow.classList.toggle('open');
 }
 
+// Package switching
+function setPkg(group, pkg, el) {
+  // Update chips
+  const parent = el.closest('.type-controls') || el.closest('.pkg-row').parentElement;
+  parent.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  // Update prices for interior group
+  if (group === 'int') {
+    const multipliers = { value: 0.75, standard: 1, premium: 1.25 };
+    const m = multipliers[pkg];
+    const basePrices = [1480, 1890, 1060, 780, 620, 420];
+    let sum = 0;
+    const cards = document.querySelectorAll('#typeBody-int .instance-card .inst-price');
+    cards.forEach((p, i) => {
+      if (i < basePrices.length) {
+        const v = Math.round(basePrices[i] * m);
+        p.textContent = '$' + v.toLocaleString();
+        sum += v;
+      }
+    });
+    document.getElementById('intSubtotal').textContent = '$' + sum.toLocaleString();
+    updateTotal(sum);
+  }
+  toast(pkg.charAt(0).toUpperCase() + pkg.slice(1) + ' package selected');
+}
+
+function updateTotal(intSum) {
+  // Main house: interior + ext 8400 + door 802 + carp 842 = base non-int 10044
+  const mainNonInt = 10044;
+  const garageTotal = 2880;
+  const total = intSum + mainNonInt + garageTotal;
+  const cabExtra = cabOn ? CAB_BUNDLE : 0;
+  document.getElementById('totalAmount').textContent = '$' + (total + cabExtra).toLocaleString();
+  document.getElementById('grpMainTotal').textContent = '$' + (intSum + mainNonInt).toLocaleString();
+}
+
+// Optional toggle
+function toggleOptional() {
+  const tog = document.getElementById('cabToggle');
+  cabOn = !cabOn;
+  tog.classList.toggle('on', cabOn);
+  document.getElementById('cabPrice').textContent = cabOn ? '$3,822' : '$4,200';
+  // Recalc total
+  const curInt = parseInt(document.getElementById('intSubtotal').textContent.replace(/[$,]/g, ''));
+  updateTotal(curInt);
+  toast(cabOn ? 'Cabinets added — $3,822 (9% bundle)' : 'Cabinets removed from total');
+}
+
 // Notes tabs
-function switchNoteTab(tab, id) {
-  document.querySelectorAll('.note-tab').forEach(t => t.classList.remove('active'));
+const noteData = {
+  estimate: { vis: '👁 Client sees this', text: 'Beautiful Belle Meade estate. Homeowner prefers Sherwin-Williams for interior, Benjamin Moore for exterior. Two coats on all surfaces. Working around landscaping schedule — coordinate with crew on north side access. Gate code: #4521.' },
+  crew: { vis: '👷 Crew sees this', text: 'Park on street, not in driveway. Dogs will be inside during work hours. North side needs ladder work — bring 32ft extension. Homeowner works from home office on 2nd floor, keep noise down before 9am.' },
+  internal: { vis: '🔒 Admin only', text: 'High-value client referred by Thompson project. Potential for ongoing maintenance contract. Husband makes decisions, wife picks colors. Competitive bid from CertaPro — we\'re ~8% higher but they want quality.' }
+};
+function switchNoteTab(tab, key) {
+  tab.parentElement.querySelectorAll('.note-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
-  ['est','crew','internal'].forEach(n => {
-    document.getElementById('note-' + n).style.display = n === id ? 'block' : 'none';
-  });
+  document.getElementById('noteVis').textContent = noteData[key].vis;
+  document.getElementById('noteArea').value = noteData[key].text;
 }
 
-// Bottom sheet
-function openSheet() {
-  document.getElementById('overlay').classList.add('show');
-  document.getElementById('sheet').classList.add('show');
+// Adjustment slider
+function updateAdjust() {
+  const v = parseInt(document.getElementById('adjustSlider').value);
+  document.getElementById('adjustVal').textContent = (v >= 0 ? '+' : '') + v + '%';
+  const adj = Math.round(BASE_TOTAL * (1 + v / 100));
+  document.getElementById('adjustPreview').textContent = v === 0
+    ? 'No adjustment — Total: $' + BASE_TOTAL.toLocaleString()
+    : 'Adjusting by ' + (v >= 0 ? '+' : '') + v + '% → Total becomes $' + adj.toLocaleString();
 }
-function closeSheet() {
-  document.getElementById('overlay').classList.remove('show');
-  document.getElementById('sheet').classList.remove('show');
-}
-function addService(name) {
-  closeSheet();
-  toast('Opening ' + name + ' wizard…');
-}
-
-// Toast
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast-el');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
-}
-
-// Init: expand all groups
-document.querySelectorAll('.type-body').forEach(b => {
-  b.style.maxHeight = b.scrollHeight + 'px';
-  b.style.overflow = 'visible';
-});
 </script>
 </body>
 </html>
