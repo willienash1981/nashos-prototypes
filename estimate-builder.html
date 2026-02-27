@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NashOS — Estimate Builder</title>
 <style>
 :root {
@@ -18,688 +18,751 @@
   --green-bg: #ECFDF5;
   --red: #EF4444;
   --red-bg: #FEF2F2;
-  --blue: #3B82F6;
   --orange: #F59E0B;
+  --orange-bg: #FFFBEB;
+  --blue: #3B82F6;
+  --blue-bg: #EFF6FF;
   --purple: #8B5CF6;
   --border: #E5E7EB;
   --radius: 12px;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); max-width:430px; margin:0 auto; padding-bottom:140px; min-height:100vh; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:160px; overflow-x:hidden; }
+
+/* TOP BAR */
 .topbar { background:var(--navy); color:#fff; padding:12px 16px 14px; position:sticky; top:0; z-index:100; }
-.topbar-back { color:var(--gold); font-size:14px; text-decoration:none; display:flex; align-items:center; gap:4px; margin-bottom:6px; }
-.topbar h1 { font-size:18px; font-weight:700; }
-.topbar-meta { display:flex; align-items:center; gap:8px; margin-top:4px; font-size:12px; color:rgba(255,255,255,.7); }
-.pill { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:600; }
-.pill-gold { background:var(--gold); color:var(--navy); }
-.content { padding:12px; }
-/* Package chips */
-.pkg-section { margin-bottom:6px; }
-.pkg-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px; }
-.pkg-label { color:var(--text-light); min-width:56px; font-weight:500; }
-.pkg-chips { display:flex; gap:4px; }
-.chip { padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:.15s; }
+.topbar-back { color:var(--gold); font-size:13px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px; font-weight:500; }
+.topbar-back:active { opacity:.7; }
+.topbar h1 { font-size:18px; font-weight:700; line-height:1.2; }
+.topbar-meta { display:flex; align-items:center; gap:8px; margin-top:4px; font-size:12px; color:rgba(255,255,255,.65); flex-wrap:wrap; }
+.status-pill { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; background:var(--gold); color:var(--navy); }
+
+/* CONTROLS BAR */
+.controls-bar { position:sticky; top:0; z-index:99; background:var(--navy-light); color:#fff; padding:7px 16px; display:flex; align-items:center; gap:12px; font-size:11px; flex-wrap:wrap; }
+.ctrl-badge { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:6px; font-weight:600; }
+.ctrl-vol { background:rgba(196,169,98,.2); color:var(--gold-light); }
+.ctrl-comm { background:rgba(16,185,129,.15); color:#6ee7b7; }
+.ctrl-gp { background:rgba(16,185,129,.15); color:#6ee7b7; font-weight:700; }
+
+/* CONTENT */
+.content { padding:12px 12px 0; }
+
+/* TYPE GROUP */
+.type-group { margin-bottom:16px; }
+.type-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--card); border-radius:var(--radius) var(--radius) 0 0; border-bottom:2px solid var(--gold); cursor:pointer; user-select:none; }
+.type-header-left { display:flex; align-items:center; gap:8px; }
+.type-icon { font-size:18px; }
+.type-name { font-size:14px; font-weight:700; color:var(--navy); }
+.type-count { font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:1px 7px; border-radius:10px; }
+.type-header-right { display:flex; align-items:center; gap:8px; }
+.type-subtotal { font-size:15px; font-weight:800; color:var(--navy); }
+.type-arrow { font-size:10px; color:var(--text-light); transition:transform .2s; }
+.type-arrow.collapsed { transform:rotate(-90deg); }
+.type-body { overflow:hidden; transition:max-height .3s ease; }
+
+/* PACKAGE CHIPS ROW — inside type header area */
+.pkg-row { display:flex; align-items:center; gap:4px; padding:6px 14px 8px; background:var(--card); border-bottom:1px solid var(--border); }
+.pkg-label { font-size:11px; color:var(--text-light); font-weight:500; margin-right:4px; }
+.chip { padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:all .15s; }
+.chip:active { transform:scale(.95); }
 .chip.active { background:var(--gold); color:var(--navy); border-color:var(--gold); }
-/* Prep level */
-.prep-bar { display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--card); border-radius:var(--radius); margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); font-size:12px; }
-.prep-bar select { font-size:12px; padding:3px 6px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--text); font-weight:600; }
-/* Section cards */
-.section-card { background:var(--card); border-radius:var(--radius); box-shadow:0 1px 4px rgba(0,0,0,.07); margin-bottom:12px; overflow:hidden; }
-.section-header { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; cursor:pointer; user-select:none; }
-.section-header h2 { font-size:14px; font-weight:700; display:flex; align-items:center; gap:6px; }
-.section-header .arrow { font-size:10px; color:var(--text-light); transition:transform .2s; }
-.section-header .arrow.open { transform:rotate(90deg); }
-.section-subtotal { font-size:14px; font-weight:700; color:var(--navy); }
-.section-body { border-top:1px solid var(--border); }
-.line-item { padding:12px 16px; border-bottom:1px solid var(--border); cursor:pointer; position:relative; overflow:hidden; transition:background .15s; }
-.line-item:last-child { border-bottom:none; }
-.line-item:active { background:#f9f8f6; }
-.li-top { display:flex; justify-content:space-between; align-items:flex-start; }
-.li-loc { font-size:11px; color:var(--gold); font-weight:600; text-transform:uppercase; }
-.li-name { font-size:13px; font-weight:600; margin-top:1px; }
-.li-spec { font-size:11px; color:var(--text-light); margin-top:2px; }
-.li-price { font-size:14px; font-weight:700; color:var(--navy); white-space:nowrap; }
-.li-detail { max-height:0; overflow:hidden; transition:max-height .25s ease; }
-.li-detail.open { max-height:120px; }
-.li-detail-inner { padding:8px 16px 12px; display:flex; gap:16px; font-size:11px; color:var(--text-light); background:#fafaf8; }
-.li-detail-inner span { display:flex; flex-direction:column; }
-.li-detail-inner .lbl { font-size:10px; text-transform:uppercase; letter-spacing:.5px; }
-.li-detail-inner .val { font-weight:600; color:var(--text); margin-top:1px; }
-.add-btn { display:flex; align-items:center; justify-content:center; gap:4px; padding:10px; font-size:13px; font-weight:600; color:var(--gold); cursor:pointer; border-top:1px solid var(--border); }
-.add-btn:active { background:#faf8f2; }
-/* Colors & Notes sections */
+
+/* INSTANCE CARD */
+.instance-card { background:var(--card); border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+.instance-card:last-child { border-bottom:none; }
+.instance-main { padding:12px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; transition:background .1s; position:relative; }
+.instance-main:active { background:#faf9f6; }
+.inst-left { flex:1; min-width:0; }
+.inst-label { font-size:13px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px; }
+.inst-spec { font-size:11px; color:var(--text-light); margin-top:2px; line-height:1.4; }
+.inst-price { font-size:15px; font-weight:800; color:var(--navy); white-space:nowrap; flex-shrink:0; }
+
+/* Swipe delete hint */
+.swipe-hint { position:absolute; right:0; top:0; bottom:0; width:60px; background:var(--red); display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; transform:translateX(54px); transition:transform .2s; pointer-events:none; }
+.instance-card:hover .swipe-hint { transform:translateX(0); }
+
+/* Instance expand detail */
+.inst-detail { max-height:0; overflow:hidden; transition:max-height .3s ease; }
+.inst-detail.open { max-height:500px; }
+.inst-detail-inner { padding:0 16px 12px; }
+.detail-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:4px; }
+.detail-box { background:#f9f8f5; border-radius:8px; padding:8px; text-align:center; }
+.detail-box .lbl { font-size:9px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-light); font-weight:600; }
+.detail-box .val { font-size:14px; font-weight:700; color:var(--navy); margin-top:2px; }
+
+/* Exterior surface lines */
+.surface-line { display:flex; justify-content:space-between; align-items:center; padding:6px 16px; font-size:12px; border-bottom:1px solid #f3f4f6; }
+.surface-line:last-child { border-bottom:none; }
+.surf-name { color:var(--text); font-weight:500; }
+.surf-meta { color:var(--text-light); font-size:11px; }
+.surf-price { font-weight:700; color:var(--navy); }
+
+/* Trip charge / maintenance */
+.info-row { display:flex; align-items:center; gap:6px; padding:4px 16px 6px; font-size:11px; }
+.info-tag { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:6px; font-weight:600; font-size:11px; }
+.tag-green { background:var(--green-bg); color:#065F46; }
+.tag-blue { background:var(--blue-bg); color:#1E40AF; }
+.tag-orange { background:var(--orange-bg); color:#92400E; }
+
+/* Prep dropdown */
+.prep-row { display:flex; align-items:center; gap:8px; padding:6px 16px 8px; font-size:12px; }
+.prep-row label { color:var(--text-light); font-weight:500; }
+.prep-row select { font-size:12px; padding:4px 8px; border-radius:6px; border:1px solid var(--border); background:var(--card); color:var(--text); font-weight:600; font-family:inherit; }
+
+/* Add buttons inside groups */
+.add-row { display:flex; align-items:center; justify-content:center; gap:4px; padding:10px 16px; font-size:12px; font-weight:600; color:var(--gold); cursor:pointer; background:var(--card); border-radius:0 0 var(--radius) var(--radius); border-top:1px dashed var(--border); }
+.add-row:active { background:#faf8f2; }
+
+/* COLLAPSIBLE MINI SECTIONS */
 .mini-section { background:var(--card); border-radius:var(--radius); box-shadow:0 1px 4px rgba(0,0,0,.07); margin-bottom:12px; overflow:hidden; }
-.mini-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; cursor:pointer; font-size:13px; font-weight:600; }
-.mini-header .arrow { font-size:10px; color:var(--text-light); transition:transform .2s; }
-.mini-header .arrow.open { transform:rotate(90deg); }
-.mini-body { border-top:1px solid var(--border); padding:12px 16px; font-size:12px; color:var(--text-light); display:none; }
+.mini-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; cursor:pointer; font-size:13px; font-weight:600; user-select:none; }
+.mini-header .badge-count { font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:1px 7px; border-radius:10px; margin-left:6px; }
+.mini-arrow { font-size:10px; color:var(--text-light); transition:transform .2s; }
+.mini-arrow.open { transform:rotate(90deg); }
+.mini-body { border-top:1px solid var(--border); padding:12px 16px; display:none; }
 .mini-body.open { display:block; }
-.color-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-.color-swatch { width:24px; height:24px; border-radius:6px; border:1px solid var(--border); flex-shrink:0; }
+
+/* Color swatches */
+.color-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.color-row:last-child { margin-bottom:0; }
+.color-swatch { width:28px; height:28px; border-radius:8px; border:1.5px solid var(--border); flex-shrink:0; }
+.color-info { font-size:12px; }
+.color-name { font-weight:600; }
+.color-code { color:var(--text-light); font-size:11px; }
+
+/* Notes tabs */
 .note-tabs { display:flex; gap:4px; margin-bottom:10px; }
-.note-tab { padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; border:1px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; }
+.note-tab { padding:5px 12px; border-radius:8px; font-size:11px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:all .15s; }
 .note-tab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
-.note-area { width:100%; min-height:60px; border:1px solid var(--border); border-radius:8px; padding:8px; font-size:12px; font-family:inherit; resize:vertical; }
-/* Sticky bottom */
-.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-top:1px solid var(--border); padding:10px 16px 20px; z-index:100; box-shadow:0 -2px 10px rgba(0,0,0,.08); }
-.bottom-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
-.total-label { font-size:12px; color:var(--text-light); }
-.total-amount { font-size:22px; font-weight:800; color:var(--navy); }
-.bottom-meta { display:flex; gap:12px; font-size:11px; color:var(--text-light); margin-bottom:8px; flex-wrap:wrap; }
-.gp-good { color:var(--green); font-weight:700; }
-.gp-bad { color:var(--red); font-weight:700; }
-.bottom-actions { display:flex; gap:8px; }
-.btn { flex:1; padding:12px; border-radius:var(--radius); font-size:13px; font-weight:700; text-align:center; cursor:pointer; border:none; transition:.15s; }
-.btn-gold { background:var(--gold); color:var(--navy); }
-.btn-gold:active { background:var(--gold-light); }
-.btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--text); }
+.note-area { width:100%; min-height:70px; border:1.5px solid var(--border); border-radius:8px; padding:10px; font-size:12px; font-family:inherit; resize:vertical; color:var(--text); }
+.note-area:focus { outline:none; border-color:var(--gold); }
+
+/* Photos grid */
+.photo-grid { display:flex; gap:8px; flex-wrap:wrap; }
+.photo-thumb { width:64px; height:64px; border-radius:8px; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:20px; }
+
 /* FAB */
-.fab { position:fixed; bottom:130px; right:calc(50% - 200px); width:48px; height:48px; border-radius:50%; background:var(--navy); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 4px 12px rgba(0,0,0,.2); cursor:pointer; z-index:90; border:none; }
+.fab { position:fixed; bottom:170px; right:calc(50% - 195px); width:52px; height:52px; border-radius:50%; background:var(--navy); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:300; box-shadow:0 4px 16px rgba(0,0,0,.25); cursor:pointer; z-index:90; border:none; transition:transform .15s; }
+.fab:active { transform:scale(.9); }
 @media(max-width:430px){ .fab { right:16px; } }
-/* Bottom sheet / overlay */
-.overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; display:none; opacity:0; transition:opacity .2s; }
+
+/* BOTTOM BAR */
+.bottom-bar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-top:1px solid var(--border); padding:10px 16px 24px; z-index:100; box-shadow:0 -4px 20px rgba(0,0,0,.08); }
+.bottom-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.total-label { font-size:11px; color:var(--text-light); font-weight:500; }
+.total-amount { font-size:24px; font-weight:800; color:var(--navy); letter-spacing:-.5px; }
+.bottom-meta { display:flex; gap:8px; font-size:10px; color:var(--text-light); margin-bottom:10px; flex-wrap:wrap; align-items:center; }
+.meta-pill { display:inline-flex; align-items:center; gap:3px; padding:2px 7px; border-radius:5px; font-weight:600; font-size:10px; }
+.meta-green { background:var(--green-bg); color:#065F46; }
+.meta-gold { background:rgba(196,169,98,.15); color:#92400E; }
+.btn-proposal { width:100%; padding:14px; border-radius:var(--radius); font-size:14px; font-weight:700; text-align:center; cursor:pointer; border:none; background:var(--gold); color:var(--navy); font-family:inherit; transition:all .15s; box-shadow:0 2px 8px rgba(196,169,98,.3); }
+.btn-proposal:active { background:var(--gold-light); transform:scale(.98); }
+
+/* OVERLAY & BOTTOM SHEET */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200; display:none; opacity:0; transition:opacity .2s; }
 .overlay.show { display:block; opacity:1; }
-.sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-radius:var(--radius) var(--radius) 0 0; z-index:201; transform:translateX(-50%) translateY(100%); transition:transform .3s ease; padding:16px 16px 32px; }
-.sheet.show { transform:translateX(-50%) translateY(0); }
-.sheet-handle { width:40px; height:4px; border-radius:4px; background:var(--border); margin:0 auto 16px; }
-.sheet h3 { font-size:16px; font-weight:700; margin-bottom:12px; }
-.sheet-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.sheet-item { display:flex; align-items:center; gap:10px; padding:12px; border-radius:var(--radius); border:1.5px solid var(--border); cursor:pointer; font-size:13px; font-weight:600; transition:.15s; }
-.sheet-item:active { border-color:var(--gold); background:#faf8f2; }
-.sheet-icon { font-size:20px; }
-/* Room search typeahead */
-.room-search-input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:var(--radius); font-size:15px; font-family:inherit; outline:none; transition:border-color .15s; }
-.room-search-input:focus { border-color:var(--gold); }
-.room-suggest-box { position:absolute; top:100%; left:0; right:0; background:var(--card); border:1px solid var(--border); border-radius:0 0 var(--radius) var(--radius); box-shadow:0 4px 12px rgba(0,0,0,.1); max-height:260px; overflow-y:auto; display:none; z-index:10; }
-.room-suggest-box.open { display:block; }
-.room-sug-item { padding:10px 14px; cursor:pointer; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; transition:background .1s; }
-.room-sug-item:active,.room-sug-item:hover { background:#faf8f2; }
-.room-sug-name { font-size:14px; font-weight:600; }
-.room-sug-name .match { color:var(--gold); }
-.room-sug-sub { font-size:11px; color:var(--text-light); }
-.room-sug-used { font-size:10px; color:var(--green); font-weight:600; }
-.room-prefix-chip { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; border:1.5px solid var(--border); background:var(--card); color:var(--text-light); cursor:pointer; transition:.15s; }
-.room-prefix-chip.active { background:var(--gold); color:var(--navy); border-color:var(--gold); }
-.room-prefix-custom { padding:6px 10px; border-radius:20px; font-size:12px; border:1.5px solid var(--border); background:var(--card); color:var(--text); width:90px; outline:none; font-family:inherit; }
-.room-prefix-custom:focus { border-color:var(--gold); }
-/* Swipe delete */
-.swipe-delete { position:absolute; right:0; top:0; bottom:0; width:80px; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; transform:translateX(80px); transition:transform .2s; border-bottom:1px solid rgba(255,255,255,.2); }
+.bottom-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:100%; max-width:430px; background:var(--card); border-radius:16px 16px 0 0; z-index:201; transition:transform .3s ease; max-height:80vh; overflow-y:auto; }
+.bottom-sheet.show { transform:translateX(-50%) translateY(0); }
+.sheet-handle { width:36px; height:4px; border-radius:2px; background:var(--border); margin:10px auto 6px; }
+.sheet-title { font-size:16px; font-weight:700; padding:8px 20px 12px; color:var(--navy); }
+.sheet-item { display:flex; align-items:center; gap:12px; padding:14px 20px; border-top:1px solid #f3f4f6; cursor:pointer; transition:background .1s; }
+.sheet-item:active { background:#faf9f6; }
+.sheet-icon { font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+.sheet-label { flex:1; font-size:14px; font-weight:500; }
+.sheet-count { font-size:11px; font-weight:700; color:#fff; background:var(--navy); padding:1px 8px; border-radius:10px; }
+.sheet-new-group { display:flex; align-items:center; gap:8px; padding:14px 20px; border-top:2px solid var(--border); cursor:pointer; font-size:14px; font-weight:600; color:var(--gold); }
+.sheet-new-group:active { background:#faf8f2; }
+.sheet-safe { height:env(safe-area-inset-bottom, 20px); }
+
+/* TOAST */
+.toast { position:fixed; top:80px; left:50%; transform:translateX(-50%) translateY(-20px); background:var(--navy); color:#fff; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:300; opacity:0; transition:all .3s; pointer-events:none; max-width:350px; text-align:center; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Border radius cleanup for grouped cards */
+.type-group .instance-card:first-child { }
+.type-group .type-body > :last-child { border-radius:0 0 var(--radius) var(--radius); }
 </style>
 </head>
 <body>
+<div class="shell">
 
+<!-- TOP BAR -->
 <div class="topbar">
-  <a class="topbar-back" href="#">← Back to Estimates</a>
+  <a href="#" class="topbar-back" onclick="toast('Back to Estimates');return false">← Back to Estimates</a>
   <h1>Johnson Residence</h1>
   <div class="topbar-meta">
     <span>456 Oak Ave, Nashville TN 37205</span>
-    <span class="pill pill-gold">In Progress</span>
-    <span>• Larry</span>
+    <span>·</span>
+    <span>Larry</span>
+    <span class="status-pill">In Progress</span>
   </div>
+</div>
+
+<!-- CONTROLS BAR -->
+<div class="controls-bar">
+  <span class="ctrl-badge ctrl-vol">📉 −2.3% Vol</span>
+  <span class="ctrl-badge ctrl-comm">🔒 Comm ✓</span>
+  <span class="ctrl-badge ctrl-gp">GP <span id="ctrl-gp-val">52%</span></span>
 </div>
 
 <div class="content">
-  <!-- Package Selector -->
-  <div class="pkg-section" style="background:var(--card);border-radius:var(--radius);padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+
+<!-- ═══════════════ INTERIOR PAINTING ═══════════════ -->
+<div class="type-group" data-type="interior">
+  <div class="type-header" onclick="toggleGroup('interior')">
+    <div class="type-header-left">
+      <span class="type-icon">🏠</span>
+      <span class="type-name">Interior Painting</span>
+      <span class="type-count">×6</span>
+    </div>
+    <div class="type-header-right">
+      <span class="type-subtotal" id="interior-subtotal">$5,890</span>
+      <span class="type-arrow" id="arrow-interior">▶</span>
+    </div>
+  </div>
+  <div class="type-body" id="body-interior">
     <div class="pkg-row">
-      <span class="pkg-label">Interior</span>
-      <div class="pkg-chips" data-section="interior">
-        <div class="chip" data-mult="0.60">Value</div>
-        <div class="chip active" data-mult="1.00">Standard</div>
-        <div class="chip" data-mult="2.10">Premium+</div>
-      </div>
+      <span class="pkg-label">Package:</span>
+      <span class="chip" data-pkg="value" data-group="interior" onclick="setPkg('interior','value')">Value</span>
+      <span class="chip active" data-pkg="standard" data-group="interior" onclick="setPkg('interior','standard')">● Standard</span>
+      <span class="chip" data-pkg="premium" data-group="interior" onclick="setPkg('interior','premium')">Premium+</span>
     </div>
-    <div class="pkg-row">
-      <span class="pkg-label">Exterior</span>
-      <div class="pkg-chips" data-section="exterior">
-        <div class="chip" data-mult="0.60">Value</div>
-        <div class="chip active" data-mult="1.00">Standard</div>
-        <div class="chip" data-mult="2.10">Premium+</div>
-      </div>
-    </div>
-    <div class="pkg-row" style="margin-bottom:0;">
-      <span class="pkg-label">Deck</span>
-      <span style="font-size:11px;color:var(--text-light);font-style:italic;">Condition-based pricing</span>
-    </div>
-  </div>
 
-  <!-- Prep Level -->
-  <div class="prep-bar">
-    <span style="color:var(--text-light);">Prep Level:</span>
-    <select id="prepLevel">
-      <option value="0.85">Light (0.85×)</option>
-      <option value="1.00" selected>Standard (1.0×)</option>
-      <option value="1.25">Heavy (1.25×)</option>
-      <option value="1.50">Restoration (1.50×)</option>
-    </select>
-  </div>
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Master Bedroom</div>
+          <div class="inst-spec">14×16×9 · Walls/Ceil/Trim/2 Doors</div>
+        </div>
+        <div class="inst-price" data-base="1240">$1,240</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$744</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$248</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$248</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
 
-  <!-- INTERIOR PAINTING -->
-  <div class="section-card" data-section="interior">
-    <div class="section-header" onclick="toggleSection(this)">
-      <h2><span class="arrow open">▶</span> 🏠 Interior Painting</h2>
-      <span class="section-subtotal" data-subtotal="interior">$5,890</span>
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Living Room</div>
+          <div class="inst-spec">16×20×9 · Walls/Ceil/Trim/Crown/4 Win</div>
+        </div>
+        <div class="inst-price" data-base="1580">$1,580</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$948</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$316</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$316</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
     </div>
-    <div class="section-body" id="interior-body">
-      <div class="line-item" data-base="1240" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Main</div><div class="li-name">Master Bedroom</div><div class="li-spec">14×16×9 · Walls, Ceiling, Trim, 2 Doors</div></div>
-          <div class="li-price">$1,240</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$744</span></span><span><span class="lbl">Material</span><span class="val">$248</span></span><span><span class="lbl">Margin</span><span class="val">$248</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="1580" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Main</div><div class="li-name">Living Room</div><div class="li-spec">16×20×9 · Walls, Ceiling, Trim, Crown, 4 Win</div></div>
-          <div class="li-price">$1,580</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$948</span></span><span><span class="lbl">Material</span><span class="val">$316</span></span><span><span class="lbl">Margin</span><span class="val">$316</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="890" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Main</div><div class="li-name">Kitchen</div><div class="li-spec">12×14×9 · Walls, Trim, 2 Doors</div></div>
-          <div class="li-price">$890</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$534</span></span><span><span class="lbl">Material</span><span class="val">$178</span></span><span><span class="lbl">Margin</span><span class="val">$178</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="620" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Upstairs</div><div class="li-name">Hallway + Stairs</div><div class="li-spec">30 LF · Walls, Trim</div></div>
-          <div class="li-price">$620</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$372</span></span><span><span class="lbl">Material</span><span class="val">$124</span></span><span><span class="lbl">Margin</span><span class="val">$124</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="780" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Upstairs</div><div class="li-name">Bedroom 2</div><div class="li-spec">12×12×9 · Walls, Ceiling, Trim, 1 Door</div></div>
-          <div class="li-price">$780</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$468</span></span><span><span class="lbl">Material</span><span class="val">$156</span></span><span><span class="lbl">Margin</span><span class="val">$156</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="780" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Upstairs</div><div class="li-name">Bedroom 3</div><div class="li-spec">12×12×9 · Walls, Ceiling, Trim, 1 Door</div></div>
-          <div class="li-price">$780</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$468</span></span><span><span class="lbl">Material</span><span class="val">$156</span></span><span><span class="lbl">Margin</span><span class="val">$156</span></span></div></div>
-      </div>
-      <div class="add-btn" onclick="showSheet('room')">+ Add Room</div>
-    </div>
-  </div>
 
-  <!-- EXTERIOR PAINTING -->
-  <div class="section-card" data-section="exterior">
-    <div class="section-header" onclick="toggleSection(this)">
-      <h2><span class="arrow open">▶</span> 🏡 Exterior Painting</h2>
-      <span class="section-subtotal" data-subtotal="exterior">$6,000</span>
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Kitchen</div>
+          <div class="inst-spec">12×14×9 · Walls/Trim/2 Doors</div>
+        </div>
+        <div class="inst-price" data-base="890">$890</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$534</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$178</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$178</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
     </div>
-    <div class="section-body" id="exterior-body">
-      <div class="line-item" data-base="2180" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Front</div><div class="li-name">Front Elevation (2-Story)</div><div class="li-spec">Siding 800 SF, Trim 120 LF, 6 Windows</div></div>
-          <div class="li-price">$2,180</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$1,308</span></span><span><span class="lbl">Material</span><span class="val">$436</span></span><span><span class="lbl">Margin</span><span class="val">$436</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="980" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Left</div><div class="li-name">Left Side (1-Story)</div><div class="li-spec">Siding 400 SF, Trim 60 LF, 3 Windows</div></div>
-          <div class="li-price">$980</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$588</span></span><span><span class="lbl">Material</span><span class="val">$196</span></span><span><span class="lbl">Margin</span><span class="val">$196</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="1640" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Right</div><div class="li-name">Right Side (2-Story)</div><div class="li-spec">Siding 600 SF, Trim 80 LF, 4 Windows</div></div>
-          <div class="li-price">$1,640</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$984</span></span><span><span class="lbl">Material</span><span class="val">$328</span></span><span><span class="lbl">Margin</span><span class="val">$328</span></span></div></div>
-      </div>
-      <div class="line-item" data-base="1200" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Rear</div><div class="li-name">Rear (1-Story)</div><div class="li-spec">Siding 500 SF, Trim 90 LF, 5 Win, 1 Door</div></div>
-          <div class="li-price">$1,200</div>
-        </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$720</span></span><span><span class="lbl">Material</span><span class="val">$240</span></span><span><span class="lbl">Margin</span><span class="val">$240</span></span></div></div>
-      </div>
-      <div class="add-btn" onclick="showSheet('section')">+ Add Section</div>
-    </div>
-  </div>
 
-  <!-- DECK STAINING -->
-  <div class="section-card" data-section="deck">
-    <div class="section-header" onclick="toggleSection(this)">
-      <h2><span class="arrow open">▶</span> 🪵 Deck Staining</h2>
-      <span class="section-subtotal" data-subtotal="deck">$1,520</span>
-    </div>
-    <div class="section-body" id="deck-body">
-      <div class="line-item" data-base="1200" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Rear</div><div class="li-name">Rear Deck</div><div class="li-spec">400 SF · Cedar · Semi-Transparent · Good Cond.</div></div>
-          <div class="li-price">$1,200</div>
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Hallway + Stairs</div>
+          <div class="inst-spec">30 LF · Walls/Trim</div>
         </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$720</span></span><span><span class="lbl">Material</span><span class="val">$240</span></span><span><span class="lbl">Margin</span><span class="val">$240</span></span></div></div>
+        <div class="inst-price" data-base="620">$620</div>
       </div>
-      <div class="line-item" data-base="320" onclick="toggleDetail(this)">
-        <div class="li-top">
-          <div><div class="li-loc">Rear</div><div class="li-name">Deck Railing</div><div class="li-spec">80 LF</div></div>
-          <div class="li-price">$320</div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$372</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$124</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$124</div></div>
+          </div>
         </div>
-        <div class="li-detail"><div class="li-detail-inner"><span><span class="lbl">Labor</span><span class="val">$192</span></span><span><span class="lbl">Material</span><span class="val">$64</span></span><span><span class="lbl">Margin</span><span class="val">$64</span></span></div></div>
       </div>
-      <div class="add-btn" onclick="showSheet('item')">+ Add Item</div>
+      <div class="swipe-hint">🗑</div>
     </div>
-  </div>
 
-  <!-- Colors -->
-  <div class="mini-section">
-    <div class="mini-header" onclick="toggleMini(this)"><span><span class="arrow">▶</span> 🎨 Colors</span></div>
-    <div class="mini-body">
-      <div class="color-row"><div class="color-swatch" style="background:#F5F0E7;"></div><div><div style="font-weight:600;color:var(--text);font-size:12px;">Interior — BM Chantilly Lace OC-65</div><div style="font-size:11px;">Walls & Ceilings</div></div></div>
-      <div class="color-row"><div class="color-swatch" style="background:#C8BFB0;"></div><div><div style="font-weight:600;color:var(--text);font-size:12px;">Exterior — SW Agreeable Gray SW 7029</div><div style="font-size:11px;">Siding</div></div></div>
-      <div class="color-row"><div class="color-swatch" style="background:#F8F4EF;"></div><div><div style="font-weight:600;color:var(--text);font-size:12px;">Trim — BM Simply White OC-117</div><div style="font-size:11px;">All trim & doors</div></div></div>
-    </div>
-  </div>
-
-  <!-- Notes -->
-  <div class="mini-section">
-    <div class="mini-header" onclick="toggleMini(this)"><span><span class="arrow">▶</span> 📝 Notes</span></div>
-    <div class="mini-body">
-      <div class="note-tabs">
-        <div class="note-tab active" onclick="switchTab(this,'estimate')">Estimate</div>
-        <div class="note-tab" onclick="switchTab(this,'crew')">Crew</div>
-        <div class="note-tab" onclick="switchTab(this,'internal')">Internal</div>
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Bedroom 2</div>
+          <div class="inst-spec">12×12×9 · Walls/Ceil/Trim/1 Door</div>
+        </div>
+        <div class="inst-price" data-base="780">$780</div>
       </div>
-      <textarea class="note-area" id="note-estimate" placeholder="Estimate notes...">Customer prefers low-VOC paint. Dog in backyard — coordinate with homeowner for exterior work. Garage not included in scope.</textarea>
-      <textarea class="note-area" id="note-crew" style="display:none;" placeholder="Crew notes...">2-story front requires 24' extension ladder. Park in driveway — street parking restricted.</textarea>
-      <textarea class="note-area" id="note-internal" style="display:none;" placeholder="Internal notes...">Referred by Thompson job. Potential for cabinet refinishing add-on Q2.</textarea>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$468</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$156</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$156</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
     </div>
-  </div>
 
-  <!-- Action buttons -->
-  <div style="display:flex;gap:8px;margin-top:4px;margin-bottom:8px;">
-    <button class="btn btn-outline" style="font-size:12px;" onclick="alert('Advanced Detail view coming soon')">📊 Advanced Detail</button>
-    <button class="btn btn-outline" style="font-size:12px;" onclick="alert('Saved!')">💾 Save & Close</button>
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Bedroom 3</div>
+          <div class="inst-spec">12×12×9 · Walls/Ceil/Trim/1 Door</div>
+        </div>
+        <div class="inst-price" data-base="780">$780</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$468</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$156</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$156</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
+
+    <div class="add-row" onclick="toast('Opening Interior Painting wizard…')">+ Add Room</div>
   </div>
 </div>
+
+<!-- ═══════════════ EXTERIOR PAINTING ═══════════════ -->
+<div class="type-group" data-type="exterior">
+  <div class="type-header" onclick="toggleGroup('exterior')">
+    <div class="type-header-left">
+      <span class="type-icon">🏡</span>
+      <span class="type-name">Exterior Painting</span>
+      <span class="type-count">×1</span>
+    </div>
+    <div class="type-header-right">
+      <span class="type-subtotal" id="exterior-subtotal">$6,660</span>
+      <span class="type-arrow" id="arrow-exterior">▶</span>
+    </div>
+  </div>
+  <div class="type-body" id="body-exterior">
+    <div class="pkg-row">
+      <span class="pkg-label">Package:</span>
+      <span class="chip" data-pkg="value" data-group="exterior" onclick="setPkg('exterior','value')">Value</span>
+      <span class="chip active" data-pkg="standard" data-group="exterior" onclick="setPkg('exterior','standard')">● Standard</span>
+      <span class="chip" data-pkg="premium" data-group="exterior" onclick="setPkg('exterior','premium')">Premium+</span>
+    </div>
+
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Main House</div>
+          <div class="inst-spec">5 surfaces · Std prep · Pressure wash incl.</div>
+        </div>
+        <div class="inst-price" data-base="6660">$6,660</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="surface-line"><span><span class="surf-name">Siding (1-Story)</span> <span class="surf-meta">1,500 SF</span></span><span class="surf-price">$2,775</span></div>
+          <div class="surface-line"><span><span class="surf-name">Siding (2-Story)</span> <span class="surf-meta">800 SF · +54% height</span></span><span class="surf-price">$1,540</span></div>
+          <div class="surface-line"><span><span class="surf-name">Trim</span> <span class="surf-meta">350 LF</span></span><span class="surf-price">$875</span></div>
+          <div class="surface-line"><span><span class="surf-name">Windows</span> <span class="surf-meta">18 EA</span></span><span class="surf-price">$630</span></div>
+          <div class="surface-line"><span><span class="surf-name">Pressure Wash</span> <span class="surf-meta">(auto)</span></span><span class="surf-price">$840</span></div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
+
+    <div class="prep-row">
+      <label>Prep level:</label>
+      <select onchange="toast('Prep level → ' + this.value)">
+        <option>Standard</option>
+        <option>Heavy</option>
+        <option>Light</option>
+      </select>
+    </div>
+
+    <div class="add-row" onclick="toast('Adding exterior surface…')">+ Add Surface</div>
+  </div>
+</div>
+
+<!-- ═══════════════ DECK STAINING ═══════════════ -->
+<div class="type-group" data-type="deck">
+  <div class="type-header" onclick="toggleGroup('deck')">
+    <div class="type-header-left">
+      <span class="type-icon">🪵</span>
+      <span class="type-name">Deck Staining</span>
+      <span class="type-count">×1</span>
+    </div>
+    <div class="type-header-right">
+      <span class="type-subtotal" id="deck-subtotal">$1,520</span>
+      <span class="type-arrow" id="arrow-deck">▶</span>
+    </div>
+  </div>
+  <div class="type-body" id="body-deck">
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Back Deck</div>
+          <div class="inst-spec">400 SF · Cedar · Semi-Trans · Good cond.</div>
+        </div>
+        <div class="inst-price" data-base="1520">$1,520</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="surface-line"><span class="surf-name">Deck surface 400 SF</span><span class="surf-price">$1,200</span></div>
+          <div class="surface-line"><span class="surf-name">Railing 80 LF</span><span class="surf-price">$320</span></div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
+    <div class="add-row" onclick="toast('Opening Deck Staining wizard…')">+ Add Deck</div>
+  </div>
+</div>
+
+<!-- ═══════════════ WOOD DOOR ═══════════════ -->
+<div class="type-group" data-type="door">
+  <div class="type-header" onclick="toggleGroup('door')">
+    <div class="type-header-left">
+      <span class="type-icon">🚪</span>
+      <span class="type-name">Wood Door Stain/Seal</span>
+      <span class="type-count">×1</span>
+    </div>
+    <div class="type-header-right">
+      <span class="type-subtotal" id="door-subtotal">$802</span>
+      <span class="type-arrow" id="arrow-door">▶</span>
+    </div>
+  </div>
+  <div class="type-body" id="body-door">
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Front Entry</div>
+          <div class="inst-spec">Real Wood · Good · 1 main + 2 sidelights</div>
+        </div>
+        <div class="inst-price" data-base="802">$802</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="surface-line"><span class="surf-name">Main door</span><span class="surf-price">$575</span></div>
+          <div class="surface-line"><span class="surf-name">Sidelights ×2</span><span class="surf-price">$227</span></div>
+          <div style="padding:6px 0">
+            <div class="info-row" style="padding:0">
+              <span class="info-tag tag-green">✓ Trip charge: Bundled</span>
+              <span style="font-size:10px;color:var(--text-light)">$0 — crew on-site 13+ days</span>
+            </div>
+          </div>
+          <div style="padding:4px 0">
+            <div class="info-row" style="padding:0">
+              <span class="info-tag tag-blue">🔄 Maintenance plan</span>
+              <span style="font-size:10px;color:var(--text-light)">$388/visit · 3 visits covered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
+    <div class="add-row" onclick="toast('Opening Wood Door wizard…')">+ Add Door</div>
+  </div>
+</div>
+
+<!-- ═══════════════ CARPENTRY ═══════════════ -->
+<div class="type-group" data-type="carpentry">
+  <div class="type-header" onclick="toggleGroup('carpentry')">
+    <div class="type-header-left">
+      <span class="type-icon">🔨</span>
+      <span class="type-name">Carpentry & Repairs</span>
+      <span class="type-count">×2</span>
+    </div>
+    <div class="type-header-right">
+      <span class="type-subtotal" id="carpentry-subtotal">$842</span>
+      <span class="type-arrow" id="arrow-carpentry">▶</span>
+    </div>
+  </div>
+  <div class="type-body" id="body-carpentry">
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Front Column Repair</div>
+          <div class="inst-spec">📸 2 photos · 3 items</div>
+        </div>
+        <div class="inst-price" data-base="480">$480</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$288</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$96</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$96</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
+
+    <div class="instance-card" onclick="toggleInstance(this)">
+      <div class="instance-main">
+        <div class="inst-left">
+          <div class="inst-label">Fascia — Left Side</div>
+          <div class="inst-spec">📸 1 photo · 1 item</div>
+        </div>
+        <div class="inst-price" data-base="362">$362</div>
+      </div>
+      <div class="inst-detail">
+        <div class="inst-detail-inner">
+          <div class="detail-grid">
+            <div class="detail-box"><div class="lbl">Labor</div><div class="val">$217</div></div>
+            <div class="detail-box"><div class="lbl">Material</div><div class="val">$73</div></div>
+            <div class="detail-box"><div class="lbl">Margin</div><div class="val">$72</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">🗑</div>
+    </div>
+
+    <div class="add-row" onclick="toast('Opening Carpentry wizard…')">+ Add Repair</div>
+  </div>
+</div>
+
+<!-- ═══════════════ COLORS ═══════════════ -->
+<div class="mini-section">
+  <div class="mini-header" onclick="toggleMini(this)">
+    <span>🎨 Colors</span>
+    <span class="mini-arrow">▶</span>
+  </div>
+  <div class="mini-body">
+    <div class="color-row">
+      <div class="color-swatch" style="background:#F5F0E7"></div>
+      <div class="color-info"><div class="color-name">BM Chantilly Lace</div><div class="color-code">OC-65 · Interior walls</div></div>
+    </div>
+    <div class="color-row">
+      <div class="color-swatch" style="background:#D5CEC4"></div>
+      <div class="color-info"><div class="color-name">SW Agreeable Gray</div><div class="color-code">SW 7029 · Living/Kitchen</div></div>
+    </div>
+    <div class="color-row">
+      <div class="color-swatch" style="background:#3B4A3F"></div>
+      <div class="color-info"><div class="color-name">BM Wrought Iron</div><div class="color-code">2124-10 · Ext. siding</div></div>
+    </div>
+    <div class="color-row">
+      <div class="color-swatch" style="background:#F2EDE3"></div>
+      <div class="color-info"><div class="color-name">SW Alabaster</div><div class="color-code">SW 7008 · Ext. trim</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ NOTES ═══════════════ -->
+<div class="mini-section">
+  <div class="mini-header" onclick="toggleMini(this)">
+    <span>📝 Notes</span>
+    <span class="mini-arrow">▶</span>
+  </div>
+  <div class="mini-body" id="notes-body">
+    <div class="note-tabs">
+      <span class="note-tab active" onclick="switchNoteTab(this,'est')">Estimate</span>
+      <span class="note-tab" onclick="switchNoteTab(this,'crew')">Crew</span>
+      <span class="note-tab" onclick="switchNoteTab(this,'internal')">Internal</span>
+    </div>
+    <textarea class="note-area" id="note-est" placeholder="Notes for the estimate / proposal…">Customer prefers low-VOC paints. Has two dogs — coordinate entry. HOA requires pre-approval for exterior colors (submitted 2/20).</textarea>
+    <textarea class="note-area" id="note-crew" style="display:none" placeholder="Notes for the crew…">Park on street, not driveway. Use side door for interior access. Alarm code: ask customer each morning.</textarea>
+    <textarea class="note-area" id="note-internal" style="display:none" placeholder="Internal notes…">Referred by Thompson job. High likelihood of cabinet refinish add-on after interior complete. Husband is decision-maker.</textarea>
+  </div>
+</div>
+
+<!-- ═══════════════ PHOTOS ═══════════════ -->
+<div class="mini-section">
+  <div class="mini-header" onclick="toggleMini(this)">
+    <span>📸 Photos <span class="badge-count">6</span></span>
+    <span class="mini-arrow">▶</span>
+  </div>
+  <div class="mini-body">
+    <div class="photo-grid">
+      <div class="photo-thumb">🏠</div>
+      <div class="photo-thumb">🚪</div>
+      <div class="photo-thumb">🪵</div>
+      <div class="photo-thumb">🔨</div>
+      <div class="photo-thumb">🔨</div>
+      <div class="photo-thumb">🏡</div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text-light)">6 photos across 4 service types</div>
+  </div>
+</div>
+
+</div><!-- /content -->
 
 <!-- FAB -->
-<button class="fab" onclick="showSheet('service')">+</button>
+<button class="fab" onclick="openSheet()">+</button>
 
-<!-- Bottom Bar -->
+<!-- BOTTOM BAR -->
 <div class="bottom-bar">
-  <div class="bottom-row">
-    <div>
-      <div class="total-label">Estimate Total</div>
-      <div class="total-amount" id="grandTotal">$13,410</div>
-    </div>
-    <div style="text-align:right;">
-      <div id="volumeBadge" style="font-size:10px;color:var(--purple);font-weight:600;">Volume: −2.3%</div>
-      <div id="commissionBadge" style="font-size:10px;color:var(--green);font-weight:600;">🔒 ✓ Commission eligible</div>
-    </div>
+  <div class="bottom-top">
+    <span class="total-label">Estimate Total</span>
+    <span class="total-amount" id="grand-total">$15,714</span>
   </div>
   <div class="bottom-meta">
-    <span>GP: <span id="gpPct" class="gp-good">52% ✓</span></span>
-    <span>Est. <span id="crewDays">12.4</span> crew-days</span>
+    <span class="meta-pill meta-green">GP 52% ✓</span>
+    <span style="color:var(--text-light)">Est. 15.2 crew-days</span>
+    <span class="meta-pill meta-gold">−2.3% vol</span>
+    <span class="meta-pill meta-green">🔒 Comm ✓</span>
   </div>
-  <div class="bottom-actions">
-    <button class="btn btn-gold" onclick="alert('Generating proposal...')">Generate Proposal →</button>
-  </div>
+  <button class="btn-proposal" onclick="toast('Generating proposal…')">Generate Proposal →</button>
 </div>
 
-<!-- Overlay + Sheets -->
-<div class="overlay" id="overlay" onclick="hideSheet()"></div>
-
-<div class="sheet" id="sheet-service">
+<!-- OVERLAY + BOTTOM SHEET -->
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="sheet">
   <div class="sheet-handle"></div>
-  <h3>Add Service</h3>
-  <div class="sheet-grid">
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏠</span>Interior Painting</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏡</span>Exterior Painting</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🗄️</span>Cabinets</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🪵</span>Deck / Fence</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🔨</span>Carpentry</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🧱</span>Drywall</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🍿</span>Popcorn Removal</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏗️</span>Floor Coatings</div>
-  </div>
+  <div class="sheet-title">Add Service</div>
+  <div class="sheet-item" onclick="addService('Interior Painting')"><span class="sheet-icon">🏠</span><span class="sheet-label">Interior Painting</span><span class="sheet-count">×6</span></div>
+  <div class="sheet-item" onclick="addService('Exterior Painting')"><span class="sheet-icon">🏡</span><span class="sheet-label">Exterior Painting</span><span class="sheet-count">×1</span></div>
+  <div class="sheet-item" onclick="addService('Cabinet Refinishing')"><span class="sheet-icon">🗄️</span><span class="sheet-label">Cabinet Refinishing</span></div>
+  <div class="sheet-item" onclick="addService('Deck Staining')"><span class="sheet-icon">🪵</span><span class="sheet-label">Deck Staining</span><span class="sheet-count">×1</span></div>
+  <div class="sheet-item" onclick="addService('Fence Staining')"><span class="sheet-icon">🪵</span><span class="sheet-label">Fence Staining</span></div>
+  <div class="sheet-item" onclick="addService('Carpentry & Repairs')"><span class="sheet-icon">🔨</span><span class="sheet-label">Carpentry & Repairs</span><span class="sheet-count">×2</span></div>
+  <div class="sheet-item" onclick="addService('Wood Door Stain/Seal')"><span class="sheet-icon">🚪</span><span class="sheet-label">Wood Door Stain/Seal</span><span class="sheet-count">×1</span></div>
+  <div class="sheet-item" onclick="addService('Drywall Repairs')"><span class="sheet-icon">🧱</span><span class="sheet-label">Drywall Repairs</span></div>
+  <div class="sheet-item" onclick="addService('Popcorn Removal')"><span class="sheet-icon">🍿</span><span class="sheet-label">Popcorn Removal</span></div>
+  <div class="sheet-item" onclick="addService('Floor Coatings')"><span class="sheet-icon">🏗️</span><span class="sheet-label">Floor Coatings</span></div>
+  <div class="sheet-item" onclick="addService('Screen Replacement')"><span class="sheet-icon">🏗️</span><span class="sheet-label">Screen Replacement</span></div>
+  <div class="sheet-item" onclick="addService('T&M Hourly Work')"><span class="sheet-icon">⏱️</span><span class="sheet-label">T&M Hourly Work</span></div>
+  <div class="sheet-new-group" onclick="addService('New Group')">📂 New Group</div>
+  <div class="sheet-safe"></div>
 </div>
 
-<div class="sheet" id="sheet-room">
-  <div class="sheet-handle"></div>
-  <h3>Add Room</h3>
-  <!-- Location prefix chips -->
-  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
-    <div class="room-prefix-chip active" onclick="setRoomPrefix(this)">Main</div>
-    <div class="room-prefix-chip" onclick="setRoomPrefix(this)">Upstairs</div>
-    <div class="room-prefix-chip" onclick="setRoomPrefix(this)">Basement</div>
-    <input class="room-prefix-custom" id="room-prefix-custom" placeholder="Custom..." oninput="setCustomRoomPrefix(this)">
-  </div>
-  <!-- Type-ahead room name input -->
-  <div style="position:relative;margin-bottom:8px">
-    <input type="text" id="room-search" class="room-search-input" placeholder="Start typing room name..." autocomplete="off" oninput="filterRoomSuggest()" onfocus="filterRoomSuggest()">
-    <div class="room-suggest-box" id="room-suggest-box"></div>
-  </div>
-  <div style="font-size:11px;color:var(--text-light);margin-bottom:8px" id="room-preview-line">Main Floor — <span style="color:var(--gold)">select a room</span></div>
-</div>
+<!-- TOAST -->
+<div class="toast" id="toast-el"></div>
 
-<div class="sheet" id="sheet-section">
-  <div class="sheet-handle"></div>
-  <h3>Add Exterior Section</h3>
-  <div class="sheet-grid">
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏠</span>Elevation</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🚪</span>Entry / Porch</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏗️</span>Garage</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🪟</span>Windows Only</div>
-  </div>
-</div>
-
-<div class="sheet" id="sheet-item">
-  <div class="sheet-handle"></div>
-  <h3>Add Deck Item</h3>
-  <div class="sheet-grid">
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🪵</span>Deck Surface</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏗️</span>Railing</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🪜</span>Stairs</div>
-    <div class="sheet-item" onclick="hideSheet()"><span class="sheet-icon">🏡</span>Pergola</div>
-  </div>
-</div>
+</div><!-- /shell -->
 
 <script>
-// State
-const pkgMults = { interior: 1.0, exterior: 1.0 };
-let prepMult = 1.0;
+// Package multipliers
+const PKG_MULT = { value: 0.60, standard: 1.0, premium: 2.10 };
+const currentPkg = { interior: 'standard', exterior: 'standard' };
 
-function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+// Base totals for non-package groups
+const fixedTotals = { deck: 1520, door: 802, carpentry: 842 };
+const baseTotals = { interior: 5890, exterior: 6660 };
+
+function fmt(n) { return '$' + n.toLocaleString(); }
 
 function recalcAll() {
-  prepMult = parseFloat(document.getElementById('prepLevel').value);
   let grand = 0;
-  document.querySelectorAll('.section-card').forEach(card => {
-    const sec = card.dataset.section;
-    const mult = (pkgMults[sec] || 1.0) * prepMult;
-    let sub = 0;
-    card.querySelectorAll('.line-item').forEach(li => {
-      const base = parseInt(li.dataset.base);
-      const price = Math.round(base * mult);
-      sub += price;
-      li.querySelector('.li-price').textContent = fmt(price);
-      // Update detail breakdown
-      const detail = li.querySelector('.li-detail-inner');
-      if (detail) {
-        const vals = detail.querySelectorAll('.val');
-        const labor = Math.round(price * 0.6);
-        const material = Math.round(price * 0.2);
-        const margin = price - labor - material;
-        if (vals[0]) vals[0].textContent = fmt(labor);
-        if (vals[1]) vals[1].textContent = fmt(material);
-        if (vals[2]) vals[2].textContent = fmt(margin);
-      }
+  // Package groups
+  ['interior','exterior'].forEach(g => {
+    const mult = PKG_MULT[currentPkg[g]];
+    const base = baseTotals[g];
+    const newTotal = Math.round(base * mult);
+    document.getElementById(g + '-subtotal').textContent = fmt(newTotal);
+    // Update individual prices
+    document.querySelectorAll(`[data-type="${g}"] .inst-price`).forEach(el => {
+      const b = parseInt(el.dataset.base);
+      el.textContent = fmt(Math.round(b * mult));
     });
-    const subEl = card.querySelector('.section-subtotal');
-    if (subEl) subEl.textContent = fmt(sub);
-    grand += sub;
+    grand += newTotal;
   });
-  // Volume discount
-  const vol = grand > 10000 ? 0.023 : grand > 7000 ? 0.015 : 0;
-  const discount = Math.round(grand * vol);
-  const total = grand - discount;
-  document.getElementById('grandTotal').textContent = fmt(total);
-  document.getElementById('volumeBadge').textContent = vol > 0 ? `Volume: −${(vol*100).toFixed(1)}%` : '';
-  // GP & commission
-  const gp = 52; // simplified
-  const gpEl = document.getElementById('gpPct');
-  gpEl.textContent = gp + '% ✓';
-  gpEl.className = gp >= 40 ? 'gp-good' : 'gp-bad';
-  document.getElementById('commissionBadge').textContent = gp >= 40 ? '🔒 ✓ Commission eligible' : '⚠️ Below commission threshold';
-  // Crew days
-  document.getElementById('crewDays').textContent = (total / 1080).toFixed(1);
+  // Fixed groups
+  Object.values(fixedTotals).forEach(v => grand += v);
+  document.getElementById('grand-total').textContent = fmt(grand);
 }
 
-// Package chips
-document.querySelectorAll('.pkg-chips').forEach(group => {
-  group.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      pkgMults[group.dataset.section] = parseFloat(chip.dataset.mult);
-      recalcAll();
-    });
+function setPkg(group, pkg) {
+  currentPkg[group] = pkg;
+  // Update chips
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(c => {
+    c.classList.toggle('active', c.dataset.pkg === pkg);
+    c.textContent = c.dataset.pkg === pkg
+      ? '● ' + c.dataset.pkg.charAt(0).toUpperCase() + c.dataset.pkg.slice(1) + (pkg === 'premium' ? '+' : '')
+      : c.dataset.pkg.charAt(0).toUpperCase() + c.dataset.pkg.slice(1) + (c.dataset.pkg === 'premium' ? '+' : '');
   });
-});
+  recalcAll();
+  toast(`${group === 'interior' ? 'Interior' : 'Exterior'} → ${pkg.charAt(0).toUpperCase() + pkg.slice(1)}${pkg === 'premium' ? '+' : ''} package`);
+}
 
-document.getElementById('prepLevel').addEventListener('change', recalcAll);
-
-// Section collapse
-function toggleSection(header) {
-  const body = header.nextElementSibling;
-  const arrow = header.querySelector('.arrow');
-  if (body.style.display === 'none') {
-    body.style.display = '';
-    arrow.classList.add('open');
+function toggleGroup(type) {
+  const body = document.getElementById('body-' + type);
+  const arrow = document.getElementById('arrow-' + type);
+  if (body.style.maxHeight && body.style.maxHeight !== '0px') {
+    body.style.maxHeight = '0px';
+    body.style.overflow = 'hidden';
+    arrow.classList.add('collapsed');
   } else {
-    body.style.display = 'none';
-    arrow.classList.remove('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    body.style.overflow = 'visible';
+    arrow.classList.remove('collapsed');
   }
 }
 
-// Line item detail expand
-function toggleDetail(li) {
-  const detail = li.querySelector('.li-detail');
+function toggleInstance(card) {
+  const detail = card.querySelector('.inst-detail');
   if (detail) detail.classList.toggle('open');
 }
 
-// Mini sections
 function toggleMini(header) {
   const body = header.nextElementSibling;
-  const arrow = header.querySelector('.arrow');
+  const arrow = header.querySelector('.mini-arrow');
   body.classList.toggle('open');
   arrow.classList.toggle('open');
 }
 
-// Note tabs
-function switchTab(tab, name) {
-  tab.parentElement.querySelectorAll('.note-tab').forEach(t => t.classList.remove('active'));
+// Notes tabs
+function switchNoteTab(tab, id) {
+  document.querySelectorAll('.note-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
-  document.querySelectorAll('.note-area').forEach(a => a.style.display = 'none');
-  document.getElementById('note-' + name).style.display = '';
+  ['est','crew','internal'].forEach(n => {
+    document.getElementById('note-' + n).style.display = n === id ? 'block' : 'none';
+  });
 }
 
-// Bottom sheets
-let activeSheet = null;
-function showSheet(type) {
-  hideSheet();
-  const overlay = document.getElementById('overlay');
-  const sheet = document.getElementById('sheet-' + type);
-  overlay.classList.add('show');
-  requestAnimationFrame(() => sheet.classList.add('show'));
-  activeSheet = sheet;
+// Bottom sheet
+function openSheet() {
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('sheet').classList.add('show');
 }
-function hideSheet() {
+function closeSheet() {
   document.getElementById('overlay').classList.remove('show');
-  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('show'));
-  activeSheet = null;
+  document.getElementById('sheet').classList.remove('show');
+}
+function addService(name) {
+  closeSheet();
+  toast('Opening ' + name + ' wizard…');
 }
 
-// Swipe to delete (simple touch handling)
-let touchStartX = 0;
-document.querySelectorAll('.line-item').forEach(li => {
-  // Add delete element
-  const del = document.createElement('div');
-  del.className = 'swipe-delete';
-  del.textContent = 'Delete';
-  del.onclick = (e) => { e.stopPropagation(); li.style.height = li.offsetHeight + 'px'; requestAnimationFrame(() => { li.style.height = '0'; li.style.overflow = 'hidden'; li.style.padding = '0 16px'; li.style.transition = 'all .25s'; }); setTimeout(() => { li.remove(); recalcAll(); }, 300); };
-  li.appendChild(del);
+// Toast
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast-el');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
 
-  li.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  li.addEventListener('touchmove', (e) => {
-    const dx = e.touches[0].clientX - touchStartX;
-    if (dx < -20) {
-      del.style.transform = `translateX(${Math.max(dx + 80, 0)}px)`;
-    } else {
-      del.style.transform = 'translateX(80px)';
-    }
-  }, { passive: true });
-  li.addEventListener('touchend', () => {
-    // snap
-    const cur = parseFloat(del.style.transform.replace(/[^0-9.-]/g,'')) || 80;
-    del.style.transform = cur < 40 ? 'translateX(0)' : 'translateX(80px)';
-  });
+// Init: expand all groups
+document.querySelectorAll('.type-body').forEach(b => {
+  b.style.maxHeight = b.scrollHeight + 'px';
+  b.style.overflow = 'visible';
 });
-
-recalcAll();
-
-// ===== Room Type-Ahead (matches Room Wizard pattern) =====
-const ROOM_LIST = [
-  {name:'Master Bedroom', sub:'Most common first room'},
-  {name:'Bedroom 2', sub:''},
-  {name:'Bedroom 3', sub:''},
-  {name:'Bedroom 4', sub:''},
-  {name:'Living Room', sub:''},
-  {name:'Dining Room', sub:''},
-  {name:'Kitchen', sub:'Different product defaults'},
-  {name:'Family Room', sub:''},
-  {name:'Great Room', sub:''},
-  {name:'Office / Study', sub:''},
-  {name:'Hallway', sub:'Narrow — consider L×W'},
-  {name:'Stairwell', sub:'Tall walls — check height'},
-  {name:'Foyer / Entry', sub:''},
-  {name:'Laundry Room', sub:''},
-  {name:'Mudroom', sub:''},
-  {name:'Master Bathroom', sub:'Moisture-rated products'},
-  {name:'Bathroom 2', sub:'Moisture-rated products'},
-  {name:'Bathroom 3', sub:'Moisture-rated products'},
-  {name:'Powder Room', sub:'Half bath'},
-  {name:'Garage', sub:''},
-  {name:'Bonus Room', sub:''},
-  {name:'Sunroom', sub:''},
-  {name:'Pantry', sub:'Small — quick entry'},
-  {name:'Nursery', sub:''},
-];
-
-// Track rooms already on this estimate
-const usedRoomNames = ['Master Bedroom','Living Room','Kitchen','Hallway','Bedroom 2','Bedroom 3'];
-let currentRoomPrefix = 'Main';
-
-function setRoomPrefix(chip) {
-  document.querySelectorAll('.room-prefix-chip').forEach(c => c.classList.remove('active'));
-  chip.classList.add('active');
-  currentRoomPrefix = chip.textContent.trim();
-  document.getElementById('room-prefix-custom').value = '';
-  updateRoomPreviewLine();
-}
-
-function setCustomRoomPrefix(input) {
-  if (input.value.trim()) {
-    document.querySelectorAll('.room-prefix-chip').forEach(c => c.classList.remove('active'));
-    currentRoomPrefix = input.value.trim();
-    updateRoomPreviewLine();
-  }
-}
-
-function updateRoomPreviewLine() {
-  const roomVal = document.getElementById('room-search').value.trim();
-  const prefixMap = {'Main':'Main Floor','Upstairs':'Upstairs','Basement':'Basement'};
-  const prefix = prefixMap[currentRoomPrefix] || currentRoomPrefix;
-  const el = document.getElementById('room-preview-line');
-  if (roomVal) {
-    el.innerHTML = prefix + ' — <strong style="color:var(--navy)">' + roomVal + '</strong>';
-  } else {
-    el.innerHTML = prefix + ' — <span style="color:var(--gold)">select a room</span>';
-  }
-}
-
-function filterRoomSuggest() {
-  const q = (document.getElementById('room-search').value || '').toLowerCase();
-  const box = document.getElementById('room-suggest-box');
-
-  // Sort: unused first, then alphabetical
-  const sorted = [...ROOM_LIST].sort((a, b) => {
-    const aUsed = usedRoomNames.includes(a.name) ? 1 : 0;
-    const bUsed = usedRoomNames.includes(b.name) ? 1 : 0;
-    return aUsed - bUsed;
-  });
-
-  const filtered = q.length > 0 ? sorted.filter(r => r.name.toLowerCase().includes(q)) : sorted;
-
-  let html = '';
-
-  if (filtered.length === 0 && q.length > 0) {
-    // Custom room name option
-    html = '<div class="room-sug-item" onclick="selectRoomSug(\'' + q.replace(/'/g,"\\'") + '\')"><div><div class="room-sug-name">' + q + '</div><div class="room-sug-sub">Custom room name</div></div></div>';
-  } else {
-    html = filtered.slice(0, 10).map(r => {
-      const idx = r.name.toLowerCase().indexOf(q);
-      let display = r.name;
-      if (q.length > 0 && idx >= 0) {
-        display = r.name.slice(0, idx) + '<span class="match">' + r.name.slice(idx, idx + q.length) + '</span>' + r.name.slice(idx + q.length);
-      }
-      const usedBadge = usedRoomNames.includes(r.name) ? '<span class="room-sug-used">✓ used</span>' : '';
-      const subLine = r.sub ? '<div class="room-sug-sub">' + r.sub + '</div>' : '';
-      return '<div class="room-sug-item" onclick="selectRoomSug(\'' + r.name.replace(/'/g,"\\'") + '\')"><div><div class="room-sug-name">' + display + '</div>' + subLine + '</div>' + usedBadge + '</div>';
-    }).join('');
-
-    // Always add custom option at bottom if user is typing
-    if (q.length > 0) {
-      html += '<div class="room-sug-item" onclick="selectRoomSug(\'' + q.replace(/'/g,"\\'") + '\')" style="border-top:2px solid var(--border)"><div><div class="room-sug-name">"' + q + '"</div><div class="room-sug-sub">Use as custom room name</div></div></div>';
-    }
-  }
-
-  box.innerHTML = html;
-  box.classList.add('open');
-}
-
-function selectRoomSug(name) {
-  document.getElementById('room-search').value = name;
-  document.getElementById('room-suggest-box').classList.remove('open');
-  updateRoomPreviewLine();
-
-  // Brief confirmation, then simulate opening wizard
-  const prefixMap = {'Main':'Main Floor','Upstairs':'Upstairs','Basement':'Basement'};
-  const prefix = prefixMap[currentRoomPrefix] || currentRoomPrefix;
-  const fullName = prefix + ' — ' + name;
-
-  // Show toast and close sheet after a beat
-  setTimeout(() => {
-    hideSheet();
-    showToast('Opening Room Wizard for "' + fullName + '"');
-    document.getElementById('room-search').value = '';
-    document.getElementById('room-suggest-box').classList.remove('open');
-    updateRoomPreviewLine();
-  }, 300);
-}
-
-// Close suggest box when clicking outside
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#sheet-room')) {
-    document.getElementById('room-suggest-box').classList.remove('open');
-  }
-});
-
-// Reset room search when sheet opens
-const origShowSheet = showSheet;
-showSheet = function(type) {
-  origShowSheet(type);
-  if (type === 'room') {
-    document.getElementById('room-search').value = '';
-    updateRoomPreviewLine();
-    setTimeout(() => document.getElementById('room-search').focus(), 350);
-  }
-};
-
-// Toast notification
-function showToast(msg) {
-  let toast = document.getElementById('toast-msg');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast-msg';
-    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center;';
-    document.body.appendChild(toast);
-  }
-  toast.textContent = msg;
-  toast.style.opacity = '1';
-  setTimeout(() => { toast.style.opacity = '0'; }, 2000);
-}
 </script>
 </body>
 </html>
