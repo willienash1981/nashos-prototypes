@@ -322,7 +322,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <span class="ctrl-badge ctrl-vol" onclick="openSheet('volumeSheet')">📉 −2.8% Vol</span>
   <span class="ctrl-badge ctrl-comm">🔒 Comm ✓</span>
   <span class="ctrl-badge ctrl-gp" id="ctrlGp">GP 48%</span>
-  <span class="ctrl-badge ctrl-disc" id="ctrlDisc" onclick="openSheet('discountSheet')">🏷 Discount</span>
+  <span class="ctrl-badge ctrl-disc" id="ctrlDisc" onclick="openSheet('discountSheet')">🎁 Specials</span>
   <button class="ctrl-adjust" onclick="openSheet('adjustSheet')">⚙ Adjust</button>
 </div>
 
@@ -1039,10 +1039,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <div class="sheet-safe"></div>
 </div>
 
-<!-- SHEET: Discount & Promotions -->
+<!-- SHEET: Specials & Promotions -->
 <div class="bottom-sheet" id="discountSheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-title">Apply Discount</div>
+  <div class="sheet-title">Specials & Promotions</div>
+  <div style="padding:0 20px 10px;font-size:12px;color:var(--text-light)">Select one promotion to apply. Financing options are offered at Nash's cost — no discount to revenue.</div>
   <div class="disc-list">
 
     <!-- Repeat Customer -->
@@ -1055,14 +1056,24 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="disc-desc">Last job: Oct 2024 — Interior, Master + Guest Bedrooms ($8,400)</div>
     </div>
 
-    <!-- Winter Interior Special -->
+    <!-- Winter Interior Special — Choice -->
     <div class="disc-card" id="disc-winter" onclick="selectDiscount('winter')">
       <div class="disc-check">✓</div>
       <div class="disc-top">
         <div class="disc-name">❄️ Winter Interior Special</div>
-        <div class="disc-pct">−10%</div>
+        <div class="disc-pct">Customer's choice</div>
       </div>
-      <div class="disc-desc">Schedule interior work Dec 15 – Jan 31. Customer chooses 10% discount or special 0% financing (18 mo).</div>
+      <div class="disc-desc">Schedule interior work Dec 15 – Jan 31. Customer picks one:</div>
+      <div style="margin:8px 0 4px">
+        <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:var(--card);margin-bottom:4px;font-size:12px;cursor:pointer;border:1.5px solid var(--border)" onclick="event.stopPropagation()">
+          <input type="radio" name="winterChoice" value="discount" checked onchange="updateWinterChoice()" style="accent-color:var(--gold)">
+          <span><strong>10% off</strong> — Save $1,864 on interior scope</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:var(--card);font-size:12px;cursor:pointer;border:1.5px solid var(--border)" onclick="event.stopPropagation()">
+          <input type="radio" name="winterChoice" value="financing" onchange="updateWinterChoice()" style="accent-color:var(--gold)">
+          <span><strong>0% interest for 18 months</strong> — EnerBank (Nash cost: 11.75%)</span>
+        </label>
+      </div>
       <div class="disc-schedule">📅 Scheduling window: Dec 15, 2026 – Jan 31, 2027</div>
       <div class="disc-pipeline">
         <div class="disc-pipeline-label"><span>Pipeline: $127K / $200K</span><span>63%</span></div>
@@ -1070,7 +1081,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       </div>
     </div>
 
-    <!-- Monthly Special -->
+    <!-- Monthly Special — Pipeline Full -->
     <div class="disc-card unavailable" id="disc-monthly">
       <div class="disc-top">
         <div class="disc-name">📋 March Special — Exterior</div>
@@ -1094,6 +1105,31 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       <div class="disc-desc">Customer was referred by an existing Nash Painting client.</div>
     </div>
 
+    <!-- Promotional Financing (standalone) -->
+    <div class="disc-card" id="disc-financing" onclick="selectDiscount('financing')">
+      <div class="disc-check">✓</div>
+      <div class="disc-top">
+        <div class="disc-name">💳 Promotional Financing</div>
+        <div class="disc-pct" style="color:var(--blue)">$0 off</div>
+      </div>
+      <div class="disc-desc">Offer enhanced financing to close the deal. Full price preserved — Nash absorbs the financing fee.</div>
+      <div style="margin:8px 0 0">
+        <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);margin-bottom:3px;font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
+          <input type="radio" name="finChoice" value="sac12" checked style="accent-color:var(--gold)">
+          <span>12-Mo Same-As-Cash — Nash cost: 6.50%</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);margin-bottom:3px;font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
+          <input type="radio" name="finChoice" value="sac18" style="accent-color:var(--gold)">
+          <span>18-Mo Same-As-Cash — Nash cost: 11.75%</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
+          <input type="radio" name="finChoice" value="zi120" style="accent-color:var(--gold)">
+          <span>120-Mo 7.99% Zero-Interest Loan — Nash cost: 15.35%</span>
+        </label>
+      </div>
+      <div style="font-size:10px;color:var(--text-light);margin-top:6px;font-style:italic">💡 "Never discount — finance instead." Acorn (free) is always offered first. These are escalation tiers.</div>
+    </div>
+
   </div>
 
   <!-- Impact Preview -->
@@ -1107,7 +1143,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
   <div class="disc-btns">
     <button class="btn-cancel" onclick="clearDiscount();closeAllSheets()">Remove</button>
-    <button class="btn-apply" id="discApplyBtn" onclick="applyDiscount();closeAllSheets()" disabled style="opacity:.5">Apply Discount</button>
+    <button class="btn-apply" id="discApplyBtn" onclick="applyDiscount();closeAllSheets()" disabled style="opacity:.5">Apply</button>
   </div>
   <div class="sheet-safe"></div>
 </div>
@@ -1313,86 +1349,117 @@ function closeCustomerPreview() {
   document.body.style.overflow = '';
 }
 
-// ═══ Discount System ═══
+// ═══ Specials & Promotions ═══
 let activeDiscount = null;
-const DISCOUNTS = {
-  repeat:   { name: 'Repeat Customer', pct: 5 },
-  winter:   { name: 'Winter Interior', pct: 10 },
-  referral: { name: 'Referral', pct: 5 }
+let winterChoice = 'discount'; // 'discount' or 'financing'
+
+const SPECIALS = {
+  repeat:    { name: 'Repeat Customer', pct: 5, type: 'discount' },
+  winter:    { name: 'Winter Interior', pct: 10, type: 'choice' }, // discount OR financing
+  referral:  { name: 'Referral', pct: 5, type: 'discount' },
+  financing: { name: 'Promo Financing', pct: 0, type: 'financing' }
 };
 
+const FIN_TIERS = {
+  sac12: { label: '12-Mo Same-As-Cash', nashCost: 6.50 },
+  sac18: { label: '18-Mo Same-As-Cash', nashCost: 11.75 },
+  zi120: { label: '120-Mo 7.99% ZIL', nashCost: 15.35 }
+};
+
+function updateWinterChoice() {
+  winterChoice = document.querySelector('input[name="winterChoice"]:checked')?.value || 'discount';
+  if (activeDiscount === 'winter') selectDiscount('winter'); // refresh impact
+}
+
+function getSelectedFinTier() {
+  return document.querySelector('input[name="finChoice"]:checked')?.value || 'sac12';
+}
+
 function selectDiscount(id) {
-  // Toggle selection
-  if (activeDiscount === id) {
-    activeDiscount = null;
-  } else {
-    activeDiscount = id;
-  }
+  if (activeDiscount === id) { activeDiscount = null; } else { activeDiscount = id; }
 
-  // Update card visuals
   document.querySelectorAll('.disc-card:not(.unavailable)').forEach(c => c.classList.remove('selected'));
-  if (activeDiscount) {
-    document.getElementById('disc-' + activeDiscount).classList.add('selected');
-  }
+  if (activeDiscount) document.getElementById('disc-' + activeDiscount).classList.add('selected');
 
-  // Update impact preview
   const impact = document.getElementById('discImpact');
   const btn = document.getElementById('discApplyBtn');
   if (!activeDiscount) {
     impact.style.display = 'none';
-    btn.disabled = true;
-    btn.style.opacity = '.5';
+    btn.disabled = true; btn.style.opacity = '.5';
     return;
   }
 
-  const d = DISCOUNTS[activeDiscount];
-  const afterVol = Math.round(BASE_TOTAL * 0.972); // after -2.8% volume
-  const discAmt = Math.round(afterVol * d.pct / 100);
-  const finalPrice = afterVol - discAmt;
-  const gpPct = Math.round((1 - 0.52 * (BASE_TOTAL / finalPrice)) * 100); // rough GP model
+  const s = SPECIALS[activeDiscount];
+  const afterVol = Math.round(BASE_TOTAL * 0.972);
+  let isFinancing = s.type === 'financing' || (s.type === 'choice' && winterChoice === 'financing');
+  let pct = isFinancing ? 0 : s.pct;
+  let discAmt = Math.round(afterVol * pct / 100);
+  let finalPrice = afterVol - discAmt;
 
-  document.getElementById('discImpactLabel').textContent = d.name + ' (−' + d.pct + '%)';
-  document.getElementById('discImpactAmt').textContent = '−$' + discAmt.toLocaleString();
-  document.getElementById('discImpactTotal').textContent = '$' + finalPrice.toLocaleString();
-
+  const label = document.getElementById('discImpactLabel');
+  const amt = document.getElementById('discImpactAmt');
+  const total = document.getElementById('discImpactTotal');
   const gpNote = document.getElementById('discGpNote');
-  if (gpPct >= 40) {
-    gpNote.textContent = 'GP after discount: ' + gpPct + '% ✅ Commission eligible';
-    gpNote.style.color = 'var(--text-light)';
+
+  if (isFinancing) {
+    const tier = (activeDiscount === 'financing') ? getSelectedFinTier() : 'sac18';
+    const fin = FIN_TIERS[tier];
+    const nashCostAmt = Math.round(afterVol * fin.nashCost / 100);
+    label.textContent = fin.label + ' (Nash cost: ' + fin.nashCost + '%)';
+    amt.textContent = '$0 off';
+    total.textContent = '$' + afterVol.toLocaleString();
+    gpNote.textContent = 'Full price preserved. Nash financing cost: $' + nashCostAmt.toLocaleString() + ' — GP reduced but revenue intact';
+    gpNote.style.color = 'var(--blue)';
   } else {
-    gpNote.textContent = 'GP after discount: ' + gpPct + '% ⚠️ Below 40% — no commission';
-    gpNote.style.color = 'var(--red)';
+    const gpPct = Math.round((1 - 0.52 * (BASE_TOTAL / finalPrice)) * 100);
+    label.textContent = s.name + ' (−' + pct + '%)';
+    amt.textContent = '−$' + discAmt.toLocaleString();
+    total.textContent = '$' + finalPrice.toLocaleString();
+    if (gpPct >= 40) {
+      gpNote.textContent = 'GP after discount: ' + gpPct + '% ✅ Commission eligible';
+      gpNote.style.color = 'var(--text-light)';
+    } else {
+      gpNote.textContent = 'GP after discount: ' + gpPct + '% ⚠️ Below 40% — no commission';
+      gpNote.style.color = 'var(--red)';
+    }
   }
 
   impact.style.display = 'block';
-  btn.disabled = false;
-  btn.style.opacity = '1';
+  btn.disabled = false; btn.style.opacity = '1';
 }
 
 function applyDiscount() {
   if (!activeDiscount) return;
-  const d = DISCOUNTS[activeDiscount];
+  const s = SPECIALS[activeDiscount];
   const badge = document.getElementById('ctrlDisc');
-  badge.textContent = '🏷 −' + d.pct + '% ' + d.name;
-  badge.classList.add('active');
-
-  // Update bottom bar total
   const afterVol = Math.round(BASE_TOTAL * 0.972);
-  const discAmt = Math.round(afterVol * d.pct / 100);
-  const finalPrice = afterVol - discAmt;
-  document.getElementById('totalAmount').textContent = '$' + finalPrice.toLocaleString();
+  let isFinancing = s.type === 'financing' || (s.type === 'choice' && winterChoice === 'financing');
 
-  // Add discount pill to bottom meta
-  let pill = document.getElementById('discountPill');
-  if (!pill) {
-    pill = document.createElement('span');
-    pill.id = 'discountPill';
+  if (isFinancing) {
+    const tier = (activeDiscount === 'financing') ? getSelectedFinTier() : 'sac18';
+    const fin = FIN_TIERS[tier];
+    badge.textContent = '💳 ' + fin.label;
+    badge.classList.add('active');
+    document.getElementById('totalAmount').textContent = '$' + afterVol.toLocaleString();
+
+    let pill = document.getElementById('discountPill');
+    if (!pill) { pill = document.createElement('span'); pill.id = 'discountPill'; pill.className = 'meta-pill'; document.querySelector('.bottom-meta').appendChild(pill); }
+    pill.className = 'meta-pill meta-purple';
+    pill.textContent = '💳 ' + fin.label;
+    toast(fin.label + ' financing applied — Nash cost: ' + fin.nashCost + '%');
+  } else {
+    const discAmt = Math.round(afterVol * s.pct / 100);
+    const finalPrice = afterVol - discAmt;
+    badge.textContent = '🎁 −' + s.pct + '% ' + s.name;
+    badge.classList.add('active');
+    document.getElementById('totalAmount').textContent = '$' + finalPrice.toLocaleString();
+
+    let pill = document.getElementById('discountPill');
+    if (!pill) { pill = document.createElement('span'); pill.id = 'discountPill'; pill.className = 'meta-pill'; document.querySelector('.bottom-meta').appendChild(pill); }
     pill.className = 'meta-pill meta-green';
-    document.querySelector('.bottom-meta').appendChild(pill);
+    pill.textContent = '🎁 ' + s.name + ' −' + s.pct + '%';
+    toast(s.name + ' applied — saving $' + discAmt.toLocaleString());
   }
-  pill.textContent = '🏷 ' + d.name + ' −' + d.pct + '%';
-
-  toast(d.name + ' discount applied — saving $' + discAmt.toLocaleString());
 }
 
 function clearDiscount() {
@@ -1403,17 +1470,15 @@ function clearDiscount() {
   document.getElementById('discApplyBtn').style.opacity = '.5';
 
   const badge = document.getElementById('ctrlDisc');
-  badge.textContent = '🏷 Discount';
+  badge.textContent = '🎁 Specials';
   badge.classList.remove('active');
 
-  // Remove pill + restore total
   const pill = document.getElementById('discountPill');
   if (pill) pill.remove();
 
   const curInt = parseInt(document.getElementById('intSubtotal').textContent.replace(/[$,]/g, ''));
   updateTotal(curInt);
-
-  toast('Discount removed');
+  toast('Promotion removed');
 }
 
 // Adjustment slider
