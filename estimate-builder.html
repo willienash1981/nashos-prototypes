@@ -222,8 +222,86 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .proposal-btns{padding:12px 20px 20px;display:flex;flex-direction:column;gap:8px}
 .btn-preview{width:100%;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:2px solid var(--navy);background:transparent;color:var(--navy);font-family:inherit}
 .btn-preview:active{background:var(--bg)}
+.btn-customer-preview{width:100%;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:2px solid var(--gold);background:rgba(196,169,98,.08);color:var(--navy);font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-customer-preview:active{background:rgba(196,169,98,.18)}
 .btn-send{width:100%;padding:14px;border-radius:var(--radius);font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;background:var(--gold);color:var(--navy);font-family:inherit;box-shadow:0 2px 8px rgba(196,169,98,.3)}
 .btn-send:active{background:var(--gold-light)}
+
+/* CUSTOMER PREVIEW OVERLAY */
+.preview-overlay{position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;display:none;animation:previewSlide .3s ease}
+.preview-overlay.show{display:block}
+@keyframes previewSlide{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.preview-shell{max-width:430px;margin:0 auto;padding-bottom:100px}
+.preview-topbar{background:var(--navy);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:501;display:flex;justify-content:space-between;align-items:center}
+.preview-topbar .close-btn{color:var(--gold);font-size:14px;font-weight:600;cursor:pointer;padding:4px 10px;border:1.5px solid rgba(196,169,98,.4);border-radius:8px}
+.preview-topbar .close-btn:active{opacity:.7}
+.preview-topbar .mode-label{font-size:11px;background:var(--orange);color:#fff;padding:2px 10px;border-radius:20px;font-weight:700}
+.preview-brand{text-align:center;padding:24px 16px 16px}
+.preview-brand h2{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+.preview-brand .tagline{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px}
+.preview-brand .client-info{margin-top:12px;font-size:13px;color:var(--text-light);line-height:1.6}
+.preview-brand .client-name{font-size:16px;font-weight:700;color:var(--text)}
+.preview-brand .valid{font-size:11px;color:var(--orange);font-weight:600;margin-top:6px}
+.preview-group{margin:12px 12px 16px;background:var(--card);border-radius:var(--radius);box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden}
+.preview-group-header{padding:12px 16px;background:var(--navy);color:#fff;font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.preview-group-header .grp-total{color:var(--gold);font-weight:800}
+.preview-type-header{padding:8px 16px;background:#f7f6f3;font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.preview-type-header .pkg-tag{font-size:10px;font-weight:600;color:var(--text-light);text-transform:none;letter-spacing:0}
+.preview-line{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid #f3f4f6;font-size:13px}
+.preview-line:last-child{border-bottom:none}
+.preview-line .pl-name{font-weight:500;color:var(--text)}
+.preview-line .pl-price{font-weight:700;color:var(--navy)}
+.preview-line.unchecked .pl-name,.preview-line.unchecked .pl-price{text-decoration:line-through;opacity:.4}
+.preview-scope-check{width:18px;height:18px;accent-color:var(--gold);margin-right:8px;flex-shrink:0;cursor:pointer}
+.preview-note{padding:6px 16px 10px;font-size:11px;color:var(--text-light);line-height:1.4}
+.preview-note .bundled{color:var(--green);font-weight:600}
+.preview-note .trip-warn{color:var(--orange);font-weight:600}
+.preview-optional{margin:0 12px 16px;border:2px dashed var(--orange);border-radius:var(--radius);background:var(--card);overflow:hidden}
+.preview-optional-header{padding:10px 16px;background:var(--orange-bg);font-size:13px;font-weight:700;color:#92400E;display:flex;align-items:center;gap:6px}
+.preview-opt-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.preview-opt-left{flex:1}
+.preview-opt-name{font-size:13px;font-weight:600}
+.preview-opt-desc{font-size:11px;color:var(--text-light)}
+.preview-opt-prices{text-align:right;margin-right:10px}
+.preview-opt-orig{font-size:11px;color:var(--text-light);text-decoration:line-through}
+.preview-opt-disc{font-size:14px;font-weight:700;color:var(--green)}
+.preview-opt-save{font-size:10px;color:var(--green);font-weight:600}
+.preview-toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.preview-toggle.on{background:var(--green)}
+.preview-toggle .knob{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.preview-toggle.on .knob{left:22px}
+.preview-details{margin:0 12px 12px}
+.preview-detail-card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:8px;overflow:hidden}
+.preview-detail-header{padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.preview-detail-body{padding:0 16px 12px;font-size:12px;color:var(--text-light);line-height:1.6;display:none}
+.preview-detail-body.open{display:block}
+.preview-colors{margin:0 12px 12px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.preview-colors h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.preview-color-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.preview-color-row:last-child{margin-bottom:0}
+.preview-swatch{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);flex-shrink:0}
+.preview-color-name{font-size:13px;font-weight:600}
+.preview-color-use{font-size:11px;color:var(--text-light)}
+.preview-warranty{margin:0 12px 12px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.preview-warranty h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.preview-warranty-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.preview-warranty-row .wr-type{color:var(--text-light)}
+.preview-warranty-row .wr-dur{font-weight:600;color:var(--text)}
+.preview-financing{margin:0 12px 12px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.preview-financing h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.preview-fin-opt{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer}
+.preview-fin-opt input[type="radio"]{accent-color:var(--gold);width:16px;height:16px}
+.preview-fin-monthly{font-size:11px;color:var(--text-light);margin-left:24px;margin-top:-4px;margin-bottom:4px}
+.preview-terms{margin:0 12px 12px;background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.preview-terms h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.preview-terms p{font-size:12px;color:var(--text-light);line-height:1.5}
+.preview-bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--border);padding:12px 16px 24px;z-index:502;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.preview-bottom-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.preview-bottom-label{font-size:11px;color:var(--text-light)}
+.preview-bottom-total{font-size:24px;font-weight:800;color:var(--navy)}
+.preview-bottom-scope{font-size:11px;color:var(--text-light);margin-bottom:10px}
+.btn-accept{width:100%;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:700;text-align:center;cursor:pointer;border:none;background:var(--green);color:#fff;font-family:inherit;box-shadow:0 2px 8px rgba(16,185,129,.3)}
+.btn-accept:active{background:#059669}
 
 /* GLOBAL ADJUST PANEL */
 .adjust-panel{padding:20px}
@@ -1027,7 +1105,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
   </div>
   <div class="proposal-btns">
-    <button class="btn-preview" onclick="toast('Preview generating…');closeAllSheets()">Preview Proposal</button>
+    <button class="btn-customer-preview" onclick="openCustomerPreview()">👁 Preview as Customer</button>
+    <button class="btn-preview" onclick="toast('PDF preview generating…');closeAllSheets()">📄 Preview PDF</button>
     <button class="btn-send" onclick="toast('Proposal sent to customer!');closeAllSheets()">Send to Customer →</button>
   </div>
   <div class="sheet-safe"></div>
@@ -1035,6 +1114,259 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CUSTOMER PREVIEW OVERLAY (full-screen, slides up)      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="preview-overlay" id="customerPreview">
+<div class="preview-shell">
+  <div class="preview-topbar">
+    <span class="mode-label">PREVIEW MODE</span>
+    <span style="font-size:14px;font-weight:600">Customer View</span>
+    <span class="close-btn" onclick="closeCustomerPreview()">✕ Close</span>
+  </div>
+
+  <!-- Brand Header -->
+  <div class="preview-brand">
+    <h2>Nash Painting</h2>
+    <div class="tagline">Nashville's Premier Painting Company</div>
+    <div class="client-info">
+      <div class="client-name">Proposal for: Carter Estate</div>
+      2200 Belle Meade Blvd, Nashville TN 37205<br>
+      Prepared by Larry · February 26, 2026
+    </div>
+    <div class="valid">⏳ Valid through March 28, 2026</div>
+  </div>
+
+  <!-- ═══ Main House Group ═══ -->
+  <div class="preview-group">
+    <div class="preview-group-header">
+      <span>📂 Main House</span>
+      <span class="grp-total" id="pvMainTotal">$16,294</span>
+    </div>
+
+    <!-- Interior -->
+    <div class="preview-type-header">
+      <span>🏠 Interior Painting</span>
+      <span class="pkg-tag">Standard Package</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="1480">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Master Bedroom</span>
+      <span class="pl-price">$1,480</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="1890">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Living Room</span>
+      <span class="pl-price">$1,890</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="1060">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Kitchen</span>
+      <span class="pl-price">$1,060</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="780">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Dining Room</span>
+      <span class="pl-price">$780</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="620">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Hallway</span>
+      <span class="pl-price">$620</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="420">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Powder Room</span>
+      <span class="pl-price">$420</span>
+    </div>
+
+    <!-- Exterior -->
+    <div class="preview-type-header">
+      <span>🏡 Exterior Painting</span>
+      <span class="pkg-tag">Standard · Heavy Prep</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="8400">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Main House Exterior</span>
+      <span class="pl-price">$8,400</span>
+    </div>
+
+    <!-- Wood Door -->
+    <div class="preview-type-header">
+      <span>🚪 Wood Door Refinishing</span>
+      <span class="pkg-tag">Stain / Seal</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="802" data-pv-door="true">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Front Entry · 1 door + 2 sidelights</span>
+      <span class="pl-price">$802</span>
+    </div>
+    <div class="preview-note" id="pvDoorNote">
+      <span class="bundled">✓ 3 site visits bundled with your paint project at no extra charge.</span><br>
+      🛡️ Maintenance plan available: $388/visit
+    </div>
+
+    <!-- Carpentry -->
+    <div class="preview-type-header">
+      <span>🔨 Carpentry & Repairs</span>
+      <span class="pkg-tag">All-in pricing</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="480">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Front Column Repair</span>
+      <span class="pl-price">$480</span>
+    </div>
+    <div class="preview-line" data-pv-group="main" data-pv-base="362">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Fascia — Left Side</span>
+      <span class="pl-price">$362</span>
+    </div>
+  </div>
+
+  <!-- ═══ Detached Garage Group ═══ -->
+  <div class="preview-group">
+    <div class="preview-group-header">
+      <span>📂 Detached Garage</span>
+      <span class="grp-total" id="pvGarageTotal">$2,880</span>
+    </div>
+    <div class="preview-type-header">
+      <span>🏡 Exterior Painting</span>
+      <span class="pkg-tag">Standard Package</span>
+    </div>
+    <div class="preview-line" data-pv-group="garage" data-pv-base="2200">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Garage Exterior</span>
+      <span class="pl-price">$2,200</span>
+    </div>
+    <div class="preview-type-header">
+      <span>🪵 Deck Staining</span>
+      <span class="pkg-tag">Condition-based</span>
+    </div>
+    <div class="preview-line" data-pv-group="garage" data-pv-base="680">
+      <input type="checkbox" class="preview-scope-check" checked onchange="pvRecalc()">
+      <span class="pl-name" style="flex:1">Garage Side Deck · 200 SF</span>
+      <span class="pl-price">$680</span>
+    </div>
+  </div>
+
+  <!-- ═══ Optional Add-Ons ═══ -->
+  <div class="preview-optional">
+    <div class="preview-optional-header">💰 WHILE WE'RE THERE — Add now & save</div>
+    <div class="preview-opt-row">
+      <div class="preview-opt-left">
+        <div class="preview-opt-name">🗄️ Kitchen Cabinet Refinishing</div>
+        <div class="preview-opt-desc">Premium Plus · Full sand, prime, 2 coats</div>
+      </div>
+      <div class="preview-opt-prices">
+        <div class="preview-opt-orig">$4,200</div>
+        <div class="preview-opt-disc">$3,822</div>
+        <div class="preview-opt-save">Save 9%</div>
+      </div>
+      <div class="preview-toggle" id="pvCabToggle" onclick="pvToggleCab()"><div class="knob"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ Door Trip Charge Warning ═══ -->
+  <div class="preview-note" id="pvTripWarn" style="margin:0 12px 12px;background:var(--card);border-radius:var(--radius);padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:none">
+    <span class="trip-warn">⚠️ Reducing project scope may result in additional site visit fees for wood door refinishing (up to $450).</span>
+  </div>
+
+  <!-- ═══ Project Details ═══ -->
+  <div class="preview-details">
+    <div class="preview-detail-card">
+      <div class="preview-detail-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span>🏠 Interior Painting Details</span><span style="color:var(--text-light);font-size:11px">▼</span>
+      </div>
+      <div class="preview-detail-body">
+        <strong>Included:</strong> Minor drywall repairs (nail pops, cracks), spot priming, caulking between trim and walls, 2 coats on walls, 1 coat on ceilings and trim.<br><br>
+        <strong>Paints:</strong> SW Cashmere or BM Ultra Spec 500 (walls), BM Advance (trim), BM Ceiling White (ceilings).<br><br>
+        📄 <a href="#" style="color:var(--gold)" onclick="event.preventDefault()">Interior Painting Process</a> · 📄 <a href="#" style="color:var(--gold)" onclick="event.preventDefault()">Caulking Policy</a>
+      </div>
+    </div>
+    <div class="preview-detail-card">
+      <div class="preview-detail-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span>🏡 Exterior Painting Details</span><span style="color:var(--text-light);font-size:11px">▼</span>
+      </div>
+      <div class="preview-detail-body">
+        <strong>Included:</strong> 3700 PSI pressure wash, scraping, spot priming, caulking, 2 coats spray + backroll.<br><br>
+        <strong>Heavy Prep:</strong> Additional sanding, extensive scraping, and surface repair. Recommended for the age and condition of this home.<br><br>
+        📄 <a href="#" style="color:var(--gold)" onclick="event.preventDefault()">Exterior Painting Process</a> · 📄 <a href="#" style="color:var(--gold)" onclick="event.preventDefault()">Spray vs Brush Policy</a>
+      </div>
+    </div>
+    <div class="preview-detail-card">
+      <div class="preview-detail-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span>🚪 Wood Door Refinishing Details</span><span style="color:var(--text-light);font-size:11px">▼</span>
+      </div>
+      <div class="preview-detail-body">
+        <strong>Product:</strong> PROLUXE® Door & Window Wood Finish.<br>
+        <strong>Process:</strong> 3 visits spaced 24 hours apart for proper curing. Light sanding, stain coat, 3 coats finish.<br>
+        <strong>Access:</strong> Door must remain ajar ~2 hours after each visit.<br><br>
+        📄 <a href="#" style="color:var(--gold)" onclick="event.preventDefault()">Wood Door Refinishing Process</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Colors ═══ -->
+  <div class="preview-colors">
+    <h3>🎨 Your Color Selections</h3>
+    <div class="preview-color-row">
+      <div class="preview-swatch" style="background:#F5F0E7"></div>
+      <div><div class="preview-color-name">BM Chantilly Lace OC-65</div><div class="preview-color-use">Interior walls · Eggshell</div></div>
+    </div>
+    <div class="preview-color-row">
+      <div class="preview-swatch" style="background:#D5CEC4"></div>
+      <div><div class="preview-color-name">SW Agreeable Gray SW 7029</div><div class="preview-color-use">Living room & kitchen accent · Eggshell</div></div>
+    </div>
+    <div class="preview-color-row">
+      <div class="preview-swatch" style="background:#3B4A3F"></div>
+      <div><div class="preview-color-name">BM Wrought Iron 2124-10</div><div class="preview-color-use">Exterior siding · Satin</div></div>
+    </div>
+    <div class="preview-color-row">
+      <div class="preview-swatch" style="background:#F2EDE3"></div>
+      <div><div class="preview-color-name">SW Alabaster SW 7008</div><div class="preview-color-use">Exterior trim · Semi-gloss</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ Warranty ═══ -->
+  <div class="preview-warranty">
+    <h3>🛡️ Warranty</h3>
+    <div class="preview-warranty-row"><span class="wr-type">Interior Painting</span><span class="wr-dur">10 Years</span></div>
+    <div class="preview-warranty-row"><span class="wr-type">Exterior Painting</span><span class="wr-dur">10 Years</span></div>
+    <div class="preview-warranty-row"><span class="wr-type">Wood Door Refinishing</span><span class="wr-dur">1 Year</span></div>
+    <div class="preview-warranty-row"><span class="wr-type">Carpentry Repairs</span><span class="wr-dur">10 Years</span></div>
+    <div class="preview-warranty-row"><span class="wr-type">Deck Staining</span><span class="wr-dur">1 Year</span></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text-light)">📄 <a href="#" style="color:var(--gold)" onclick="event.preventDefault()">Full Warranty Policy</a></div>
+  </div>
+
+  <!-- ═══ Financing ═══ -->
+  <div class="preview-financing">
+    <h3>💳 Flexible Payment Options</h3>
+    <label class="preview-fin-opt"><input type="radio" name="pvFin" checked> Pay in full</label>
+    <label class="preview-fin-opt"><input type="radio" name="pvFin"> 0% for 12 months <span style="color:var(--text-light);font-size:11px;margin-left:4px">(Acorn Finance)</span></label>
+    <label class="preview-fin-opt"><input type="radio" name="pvFin"> 0% for 18 months <span style="color:var(--text-light);font-size:11px;margin-left:4px">(EnerBank)</span></label>
+    <label class="preview-fin-opt"><input type="radio" name="pvFin"> 4.99% for 60 months <span style="color:var(--text-light);font-size:11px;margin-left:4px">(EnerBank)</span></label>
+    <div class="preview-fin-monthly">→ ~$362/month for 60 months</div>
+  </div>
+
+  <!-- ═══ Payment Terms ═══ -->
+  <div class="preview-terms">
+    <h3>💰 Payment Terms</h3>
+    <p>50% due at signing · 50% due at completion<br>Credit card payments subject to 3% processing fee.<br>ACH and check accepted at no additional fee.</p>
+  </div>
+
+</div><!-- /preview-shell -->
+
+<!-- Preview Bottom Bar -->
+<div class="preview-bottom" id="pvBottomBar">
+  <div class="preview-bottom-top">
+    <span class="preview-bottom-label">Your Project</span>
+    <span class="preview-bottom-total" id="pvTotal">$19,174</span>
+  </div>
+  <div class="preview-bottom-scope" id="pvScopeLabel">Full scope · Standard Package</div>
+  <button class="btn-accept" onclick="toast('✅ Proposal accepted! (preview mode)');closeCustomerPreview()">Accept This Proposal →</button>
+</div>
+</div><!-- /preview-overlay -->
 
 <script>
 const BASE_TOTAL = 19174;
@@ -1164,6 +1496,96 @@ function switchNoteTab(tab, key) {
   tab.classList.add('active');
   document.getElementById('noteVis').textContent = noteData[key].vis;
   document.getElementById('noteArea').value = noteData[key].text;
+}
+
+// ═══ Customer Preview ═══
+let pvCabOn = false;
+
+function openCustomerPreview() {
+  closeAllSheets();
+  // Reset state
+  pvCabOn = false;
+  document.getElementById('pvCabToggle').classList.remove('on');
+  document.querySelectorAll('.preview-scope-check').forEach(c => c.checked = true);
+  document.querySelectorAll('.preview-line').forEach(l => l.classList.remove('unchecked'));
+  pvRecalc();
+  document.getElementById('customerPreview').classList.add('show');
+  document.getElementById('customerPreview').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCustomerPreview() {
+  document.getElementById('customerPreview').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function pvToggleCab() {
+  pvCabOn = !pvCabOn;
+  document.getElementById('pvCabToggle').classList.toggle('on', pvCabOn);
+  pvRecalc();
+}
+
+function pvRecalc() {
+  let mainTotal = 0;
+  let garageTotal = 0;
+  let nonDoorTotal = 0; // for trip charge calc
+
+  document.querySelectorAll('.preview-line').forEach(line => {
+    const cb = line.querySelector('.preview-scope-check');
+    const base = parseInt(line.dataset.pvBase);
+    const group = line.dataset.pvGroup;
+    const isDoor = line.dataset.pvDoor === 'true';
+
+    if (cb.checked) {
+      line.classList.remove('unchecked');
+      if (group === 'main') mainTotal += base;
+      if (group === 'garage') garageTotal += base;
+      if (!isDoor) nonDoorTotal += base;
+    } else {
+      line.classList.add('unchecked');
+    }
+  });
+
+  const cabExtra = pvCabOn ? 3822 : 0;
+  const grandTotal = mainTotal + garageTotal + cabExtra;
+
+  document.getElementById('pvMainTotal').textContent = '$' + mainTotal.toLocaleString();
+  document.getElementById('pvGarageTotal').textContent = '$' + garageTotal.toLocaleString();
+  document.getElementById('pvTotal').textContent = '$' + grandTotal.toLocaleString();
+
+  // Scope label
+  const totalChecked = document.querySelectorAll('.preview-scope-check:checked').length;
+  const totalLines = document.querySelectorAll('.preview-scope-check').length;
+  const scopeText = totalChecked === totalLines ? 'Full scope' : totalChecked + ' of ' + totalLines + ' items selected';
+  document.getElementById('pvScopeLabel').textContent = scopeText + ' · Standard Package' + (pvCabOn ? ' + Cabinets' : '');
+
+  // Intelligent trip charge on door
+  const doorChecked = document.querySelector('[data-pv-door="true"] .preview-scope-check')?.checked;
+  const noteEl = document.getElementById('pvDoorNote');
+  const warnEl = document.getElementById('pvTripWarn');
+
+  if (doorChecked) {
+    const onSiteDays = Math.floor(nonDoorTotal / 1000);
+    const extraTrips = Math.max(0, 3 - onSiteDays);
+
+    if (extraTrips === 0) {
+      noteEl.innerHTML = '<span class="bundled">✓ 3 site visits bundled with your paint project at no extra charge.</span><br>🛡️ Maintenance plan available: $388/visit';
+      noteEl.style.display = '';
+      warnEl.style.display = 'none';
+    } else if (extraTrips < 3) {
+      const tripCost = extraTrips * 150;
+      noteEl.innerHTML = '<span class="trip-warn">⚠️ ' + (3 - extraTrips) + ' visit' + (3-extraTrips!==1?'s':'') + ' bundled · ' + extraTrips + ' extra trip' + (extraTrips!==1?'s':'') + ' × $150 = $' + tripCost + '</span><br>🛡️ Maintenance plan available: $388/visit';
+      noteEl.style.display = '';
+      warnEl.style.display = 'block';
+    } else {
+      noteEl.innerHTML = '<span class="trip-warn">⚠️ 3 standalone site visits × $150 = $450</span><br>🛡️ Maintenance plan available: $388/visit';
+      noteEl.style.display = '';
+      warnEl.style.display = 'block';
+    }
+  } else {
+    noteEl.style.display = 'none';
+    warnEl.style.display = 'none';
+  }
 }
 
 // Adjustment slider
