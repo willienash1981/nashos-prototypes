@@ -763,9 +763,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- ════════════════════════════════════════════ -->
-<!-- PERMISSION MATRIX (visible in all views) -->
+<!-- PERMISSION MATRIX (admin only) -->
 <!-- ════════════════════════════════════════════ -->
-<div class="gf">
+<div class="gf" data-r="admin">
   <div class="card" id="perm-card">
     <div class="card-h"><div class="card-t">🔐 Permission Matrix — <span id="perm-role-name">Admin</span></div><a class="card-a" onclick="document.getElementById('perm-body').classList.toggle('hidden')">Show / Hide</a></div>
     <div class="card-b hidden" id="perm-body">
