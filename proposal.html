@@ -156,6 +156,63 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .bot-saved{font-size:11px;color:var(--green);font-weight:600}
 .btn-accept{width:100%;padding:14px;background:var(--navy);color:white;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px}
 .btn-accept:active{background:#0f1722;transform:scale(.99)}
+
+/* Acceptance Flow Overlay */
+.accept-overlay{position:fixed;inset:0;background:white;z-index:300;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;max-width:430px;margin:0 auto}
+.accept-overlay.open{transform:translateY(0)}
+.accept-top{background:var(--navy);color:white;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:301}
+.accept-x{font-size:22px;cursor:pointer;opacity:.7;padding:0 4px;line-height:1}.accept-x:active{opacity:1}
+.accept-ttl{font-size:14px;font-weight:600;flex:1}
+.step-dots{display:flex;align-items:center}.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(255,255,255,.12);color:rgba(255,255,255,.4);transition:all .2s}
+.step-dot.on{background:var(--gold);color:var(--navy)}.step-dot.ok{background:var(--green);color:white}
+.step-bar{width:14px;height:2px;background:rgba(255,255,255,.12);margin:0 2px}.step-bar.ok{background:var(--green)}
+.ap{padding:20px 16px 100px;display:none}.ap.on{display:block}
+.ap-icon{text-align:center;font-size:32px;margin-bottom:6px}
+.ap-h{font-size:18px;font-weight:700;color:var(--navy);text-align:center;margin-bottom:4px}
+.ap-sub{font-size:12px;color:var(--g600);text-align:center;margin-bottom:16px;line-height:1.4}
+.terms-scroll{background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:12px 14px;font-size:11px;color:var(--g700);line-height:1.6;max-height:260px;overflow-y:auto;margin-bottom:14px}
+.terms-scroll h4{font-size:11px;font-weight:700;color:var(--navy);margin:10px 0 4px}.terms-scroll h4:first-child{margin-top:0}
+.terms-scroll ul{padding-left:16px;margin:4px 0}.terms-scroll li{margin:2px 0}
+.agree-row{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--g50);border:2px solid var(--g200);border-radius:var(--rs);cursor:pointer;margin-bottom:14px;transition:all .15s}
+.agree-row.checked{border-color:var(--navy);background:rgba(26,35,50,.02)}
+.agree-row input{width:20px;height:20px;flex-shrink:0;accent-color:var(--navy);margin-top:1px}.agree-row span{font-size:12px;color:var(--g700);line-height:1.4}
+.pay-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.pay-c{border:2px solid var(--g200);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:10px;position:relative}
+.pay-c:active{transform:scale(.99)}.pay-c.sel{border-color:var(--navy);background:rgba(26,35,50,.02)}
+.pay-c.rec{border-color:var(--green)}.pay-c.rec.sel{border-color:var(--green);background:rgba(52,168,83,.04)}
+.pay-badge{position:absolute;top:-9px;right:12px;background:var(--green);color:white;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.3px}
+.pay-r{width:20px;height:20px;border:2px solid var(--g300);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s}
+.pay-c.sel .pay-r{border-color:var(--navy);background:var(--navy)}.pay-c.rec.sel .pay-r{border-color:var(--green);background:var(--green)}
+.pay-r-dot{width:8px;height:8px;border-radius:50%;background:white;display:none}.pay-c.sel .pay-r-dot{display:block}
+.pay-i{font-size:20px;flex-shrink:0;margin-top:-1px}.pay-nfo{flex:1;min-width:0}
+.pay-n{font-size:13px;font-weight:700;color:var(--g900)}.pay-d{font-size:11px;color:var(--g600);margin-top:2px;line-height:1.4}
+.pay-f{font-size:10px;color:var(--orange);font-weight:600;margin-top:3px}
+.pay-terms{background:#FFF8E1;border:1px solid #FFE082;border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;font-size:11px;line-height:1.5;color:var(--g700)}
+.pay-terms strong{color:var(--g900)}.pay-terms-h{font-weight:700;color:#8B6914;margin-bottom:4px;font-size:12px}
+.sig-f{margin-bottom:12px}.sig-l{font-size:11px;font-weight:600;color:var(--g600);margin-bottom:4px;display:block}
+.sig-in{width:100%;padding:12px;border:2px solid var(--g200);border-radius:var(--rs);font-size:16px;outline:none;transition:border-color .15s;font-family:inherit;box-sizing:border-box}.sig-in:focus{border-color:var(--navy)}
+.sig-prev{background:var(--g50);border:2px solid var(--g200);border-radius:var(--rs);padding:20px;text-align:center;margin-bottom:14px;min-height:80px}
+.sig-cursive{font-family:'Brush Script MT','Segoe Script',cursive;font-size:32px;color:var(--navy)}.sig-meta{font-size:11px;color:var(--g500);margin-top:6px}
+.sig-summary{background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:12px;margin-bottom:14px;font-size:12px}
+.sig-sum-row{display:flex;justify-content:space-between;padding:2px 0;color:var(--g600)}
+.sig-sum-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--navy);border-top:2px solid var(--navy);padding-top:6px;margin-top:6px}
+.welcome-emoji{text-align:center;font-size:56px;margin:24px 0 8px}.welcome-msg{text-align:center;font-size:13px;color:var(--g600);margin-bottom:20px;line-height:1.5}
+.ob-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.ob-prog{background:var(--g100);border-radius:8px;height:6px;overflow:hidden;margin-bottom:16px}.ob-prog-bar{height:100%;background:var(--green);border-radius:8px;width:33%}
+.ob-card{border:2px solid var(--g200);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.ob-card:active{transform:scale(.99);background:var(--g50)}.ob-card.done{border-color:var(--green);background:rgba(52,168,83,.03);cursor:default}
+.ob-card.done:active{transform:none;background:rgba(52,168,83,.03)}
+.ob-card-icon{font-size:24px;flex-shrink:0}.ob-card-info{flex:1}
+.ob-card-name{font-size:14px;font-weight:700;color:var(--navy)}.ob-card-desc{font-size:11px;color:var(--g600);margin-top:2px;line-height:1.3}
+.ob-card-time{font-size:10px;color:var(--g500);margin-top:2px}.ob-card-arr{font-size:18px;color:var(--g400)}
+.ob-card-chk{width:24px;height:24px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.ob-help{text-align:center;font-size:12px;color:var(--g600);margin-top:20px;padding:12px;background:var(--g50);border-radius:var(--rs)}
+.ob-help a{color:var(--blue);font-weight:600;text-decoration:none}
+.accept-bottom{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:white;border-top:1px solid var(--g200);padding:10px 16px 14px;z-index:302}
+.accept-btn{width:100%;padding:14px;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:all .15s}
+.accept-btn:active:not(:disabled){transform:scale(.99)}.accept-btn-navy{background:var(--navy);color:white}
+.accept-btn-navy:disabled{background:var(--g300);color:var(--g500);cursor:not-allowed;transform:none}
+.accept-btn-green{background:var(--green);color:white}
 </style>
 </head>
 <body>
@@ -269,6 +326,192 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div style="display:flex;gap:8px">
     <button class="btn-pdf" onclick="showPdfToast()" style="padding:14px 16px;background:white;color:var(--navy);border:2px solid var(--navy);border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">📄 PDF</button>
     <button class="btn-accept" id="btnAccept" style="flex:1">Accept This Proposal</button>
+  </div>
+</div>
+
+<!-- Acceptance Flow Overlay -->
+<div class="accept-overlay" id="acceptOverlay">
+  <div class="accept-top">
+    <div class="accept-x" onclick="closeAcceptance()">✕</div>
+    <div class="accept-ttl">Contract Terms</div>
+    <div class="step-dots">
+      <div class="step-dot on" id="sd1">1</div>
+      <div class="step-bar" id="sb1"></div>
+      <div class="step-dot" id="sd2">2</div>
+      <div class="step-bar" id="sb2"></div>
+      <div class="step-dot" id="sd3">3</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Contract Terms -->
+  <div class="ap on" id="ap1">
+    <div class="ap-icon">📄</div>
+    <div class="ap-h">Contract Terms</div>
+    <div class="ap-sub">Please review our terms and conditions</div>
+    <div class="terms-scroll">
+      <h4>Payment</h4>
+      <ul>
+        <li>0% deposit — we earn your trust before taking payment</li>
+        <li>100% due upon project completion</li>
+        <li>ACH, check, or credit card (+3% processing fee)</li>
+      </ul>
+      <h4>Scope of Work</h4>
+      <p>As detailed in the proposal. Includes labor, materials, tools, and supervision by Nash Painting, LLC.</p>
+      <h4>Color Selection Disclaimer</h4>
+      <p>For best results, we recommend using a Color Muse tool to verify colors match your expectations. Colors may vary slightly from digital swatches. By accepting, you acknowledge this disclaimer.</p>
+      <h4>Change Orders</h4>
+      <p>No changes to work, design, or schedule without your written approval. Additional work discovered during the project will be documented with photos and submitted for approval before proceeding.</p>
+      <h4>Warranty</h4>
+      <p>Workmanship warranted per package selected. See warranty documentation for full details.</p>
+      <h4>Licensing &amp; Insurance</h4>
+      <p>Nash Painting, LLC is a licensed Tennessee contractor (License #78623) with $2M liability insurance and workers' compensation.</p>
+      <h4>Subcontractors</h4>
+      <p>Nash Painting may use vetted, insured subcontractors. We remain responsible for all work quality.</p>
+      <h4>Right to Cancel</h4>
+      <p>You may cancel within 3 business days of signing by written notice, per Tennessee law.</p>
+      <h4>Dispute Resolution</h4>
+      <p>Disputes resolved via binding arbitration per Construction Dispute Resolution Services, LLC rules.</p>
+    </div>
+    <label class="agree-row" id="termsAgree">
+      <input type="checkbox" id="termsCheck" onchange="toggleAgreeRow(this);updateAcceptBtn()">
+      <span>I have read and agree to the contract terms above</span>
+    </label>
+  </div>
+
+  <!-- Step 2: Payment Commitment -->
+  <div class="ap" id="ap2">
+    <div class="ap-icon">💳</div>
+    <div class="ap-h">Payment Commitment</div>
+    <div class="ap-sub">How would you like to pay when your project is complete?<br><em style="color:var(--green)">No payment is collected today.</em></div>
+
+    <div class="pay-cards">
+      <div class="pay-c rec" onclick="selectPay('ach')" id="pay-ach">
+        <div class="pay-badge">⭐ RECOMMENDED</div>
+        <div class="pay-r"><div class="pay-r-dot"></div></div>
+        <div class="pay-i">🏦</div>
+        <div class="pay-nfo">
+          <div class="pay-n">Online ACH Payment</div>
+          <div class="pay-d">Pay securely through our online portal. Fastest processing, no fees. We'll send you a payment link on your final day.</div>
+        </div>
+      </div>
+      <div class="pay-c" onclick="selectPay('check-hand')" id="pay-check-hand">
+        <div class="pay-r"><div class="pay-r-dot"></div></div>
+        <div class="pay-i">💵</div>
+        <div class="pay-nfo">
+          <div class="pay-n">Check to Field Supervisor</div>
+          <div class="pay-d">Hand a check to our crew supervisor on the final day of your project.</div>
+        </div>
+      </div>
+      <div class="pay-c" onclick="selectPay('check-photo')" id="pay-check-photo">
+        <div class="pay-r"><div class="pay-r-dot"></div></div>
+        <div class="pay-i">📸</div>
+        <div class="pay-nfo">
+          <div class="pay-n">Check Photo via Text or Email</div>
+          <div class="pay-d">Snap a photo of your check and text or email it to our office for same-day processing.</div>
+        </div>
+      </div>
+      <div class="pay-c" onclick="selectPay('cc')" id="pay-cc">
+        <div class="pay-r"><div class="pay-r-dot"></div></div>
+        <div class="pay-i">💳</div>
+        <div class="pay-nfo">
+          <div class="pay-n">Credit Card</div>
+          <div class="pay-d">Pay by phone with your credit or debit card.</div>
+          <div class="pay-f">+3% processing fee</div>
+        </div>
+      </div>
+      <div class="pay-c" onclick="selectPay('mail')" id="pay-mail">
+        <div class="pay-r"><div class="pay-r-dot"></div></div>
+        <div class="pay-i">✉️</div>
+        <div class="pay-nfo">
+          <div class="pay-n">Mail Check (7+ days before completion)</div>
+          <div class="pay-d">Mail your check at least 7 days before your project finishes. We hold it until work is complete.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-terms">
+      <div class="pay-terms-h">⏱ Payment Terms</div>
+      <strong>Full payment is due upon project completion.</strong><br>
+      We offer a 1 business day grace period. After that:<br>
+      &bull; $50 late fee for checks mailed or bill-pay initiated on completion day<br>
+      &bull; 2% monthly fee on balances past the grace period
+    </div>
+
+    <label class="agree-row" id="payAgree">
+      <input type="checkbox" id="payCheck" onchange="toggleAgreeRow(this);updateAcceptBtn()">
+      <span>I agree to the payment terms and have selected my preferred payment method</span>
+    </label>
+  </div>
+
+  <!-- Step 3: Digital Signature -->
+  <div class="ap" id="ap3">
+    <div class="ap-icon">✍️</div>
+    <div class="ap-h">Digital Signature</div>
+    <div class="ap-sub">Sign to accept the proposal, contract terms, and payment commitment</div>
+
+    <div class="sig-summary">
+      <div class="sig-sum-row"><span>Package</span><span id="sigPkg">Standard</span></div>
+      <div class="sig-sum-row"><span>Services</span><span id="sigSvcs">4 service types</span></div>
+      <div class="sig-sum-row"><span>Payment method</span><span id="sigPay">ACH</span></div>
+      <div class="sig-sum-total"><span>Total</span><span id="sigTotal">$0</span></div>
+    </div>
+
+    <div class="sig-f">
+      <label class="sig-l">Full Legal Name</label>
+      <input class="sig-in" id="sigName" placeholder="Type your full name" oninput="updateSigPreview()">
+    </div>
+
+    <div class="sig-prev" id="sigPreview">
+      <div class="sig-cursive" id="sigCursive">&nbsp;</div>
+      <div class="sig-meta" id="sigDate"></div>
+    </div>
+  </div>
+
+  <!-- Step 4: Welcome / Onboarding Dashboard -->
+  <div class="ap" id="ap4">
+    <div class="welcome-emoji">🎉</div>
+    <div class="ap-h">Welcome to Nash Painting!</div>
+    <div class="welcome-msg">You're officially on board. Here's what we need from you to get scheduled.</div>
+
+    <div class="ob-prog"><div class="ob-prog-bar"></div></div>
+    <div class="ob-title">Your Next Steps</div>
+
+    <div class="ob-card done">
+      <div class="ob-card-chk">✓</div>
+      <div class="ob-card-info">
+        <div class="ob-card-name">Payment Method</div>
+        <div class="ob-card-desc" id="obPayDesc">ACH selected — due upon completion</div>
+      </div>
+    </div>
+
+    <div class="ob-card" onclick="window.open('pre-project-checklist.html','_self')">
+      <div class="ob-card-icon">📋</div>
+      <div class="ob-card-info">
+        <div class="ob-card-name">Pre-Project Checklist</div>
+        <div class="ob-card-desc">Access codes, parking, crew logistics, and your preferences</div>
+        <div class="ob-card-time">⏱ About 2 minutes</div>
+      </div>
+      <div class="ob-card-arr">›</div>
+    </div>
+
+    <div class="ob-card" onclick="window.open('color-submission.html','_self')">
+      <div class="ob-card-icon">🎨</div>
+      <div class="ob-card-info">
+        <div class="ob-card-name">Color Selections</div>
+        <div class="ob-card-desc">Choose your paint colors for each room and surface</div>
+        <div class="ob-card-time">Take your time — many clients discuss with their spouse first</div>
+      </div>
+      <div class="ob-card-arr">›</div>
+    </div>
+
+    <div class="ob-help">
+      Questions? Call <a href="tel:6158296858">615-829-6858</a> or email <a href="mailto:paint@nashpainting.com">paint@nashpainting.com</a>
+    </div>
+  </div>
+
+  <!-- Fixed bottom button -->
+  <div class="accept-bottom" id="acceptBottom">
+    <button class="accept-btn accept-btn-navy" id="acceptStepBtn" onclick="nextAcceptStep()" disabled>Continue</button>
   </div>
 </div>
 
@@ -688,11 +931,118 @@ function togAcc(el){
   arrow.classList.toggle('open');
 }
 
+// ─── ACCEPTANCE FLOW ───
+let acceptStep = 1;
+let selectedPay = null;
+
 document.getElementById('btnAccept').addEventListener('click', function(){
-  this.textContent = '✓ Accepted!';
-  this.style.background = 'var(--green)';
-  setTimeout(() => { this.textContent = 'Accept This Proposal'; this.style.background = 'var(--navy)'; }, 2000);
+  acceptStep = 1;
+  selectedPay = null;
+  document.getElementById('termsCheck').checked = false;
+  document.getElementById('payCheck').checked = false;
+  document.getElementById('sigName').value = '';
+  document.getElementById('sigCursive').innerHTML = '&nbsp;';
+  document.querySelectorAll('.agree-row').forEach(r => r.classList.remove('checked'));
+  document.querySelectorAll('.pay-c').forEach(c => c.classList.remove('sel'));
+  renderAcceptStep();
+  document.getElementById('acceptOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 });
+
+function closeAcceptance(){
+  document.getElementById('acceptOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderAcceptStep(){
+  for(let i=1;i<=3;i++){
+    const dot=document.getElementById('sd'+i);
+    dot.className='step-dot';
+    if(i<acceptStep) dot.classList.add('ok');
+    else if(i===acceptStep || (acceptStep===4 && i===3)) dot.classList.add('ok');
+    if(i===acceptStep && acceptStep<=3) dot.classList.add('on');
+    if(i<3){const bar=document.getElementById('sb'+i);bar.className='step-bar';if(i<acceptStep)bar.classList.add('ok');}
+  }
+  for(let i=1;i<=4;i++){
+    document.getElementById('ap'+i).className='ap'+(i===acceptStep?' on':'');
+  }
+  const btn=document.getElementById('acceptStepBtn');
+  const bottom=document.getElementById('acceptBottom');
+  if(acceptStep===4){
+    bottom.style.display='none';
+    document.querySelector('.accept-ttl').textContent='Welcome';
+    // Hide step dots on welcome
+    document.querySelector('.step-dots').style.display='none';
+  } else {
+    bottom.style.display='block';
+    document.querySelector('.step-dots').style.display='flex';
+    if(acceptStep===3){
+      btn.textContent='Sign & Accept Proposal';
+      btn.className='accept-btn accept-btn-green';
+    } else {
+      btn.textContent='Continue';
+      btn.className='accept-btn accept-btn-navy';
+    }
+    updateAcceptBtn();
+  }
+  const titles={1:'Contract Terms',2:'Payment',3:'Sign'};
+  if(acceptStep<=3) document.querySelector('.accept-ttl').textContent=titles[acceptStep];
+  document.getElementById('acceptOverlay').scrollTop=0;
+}
+
+function updateAcceptBtn(){
+  const btn=document.getElementById('acceptStepBtn');
+  if(acceptStep===1) btn.disabled=!document.getElementById('termsCheck').checked;
+  else if(acceptStep===2) btn.disabled=!selectedPay||!document.getElementById('payCheck').checked;
+  else if(acceptStep===3) btn.disabled=!document.getElementById('sigName').value.trim();
+}
+
+function toggleAgreeRow(cb){
+  cb.closest('.agree-row').classList.toggle('checked',cb.checked);
+}
+
+function selectPay(method){
+  selectedPay=method;
+  document.querySelectorAll('.pay-c').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('pay-'+method).classList.add('sel');
+  updateAcceptBtn();
+}
+
+function updateSigPreview(){
+  const name=document.getElementById('sigName').value.trim();
+  document.getElementById('sigCursive').textContent=name||'\u00A0';
+  updateAcceptBtn();
+}
+
+function nextAcceptStep(){
+  if(acceptStep===1&&!document.getElementById('termsCheck').checked) return;
+  if(acceptStep===2&&(!selectedPay||!document.getElementById('payCheck').checked)) return;
+  if(acceptStep===3&&!document.getElementById('sigName').value.trim()) return;
+
+  // Populate next step data
+  if(acceptStep===2){
+    const pkName={value:'Value',standard:'Standard',premium:'Premium Plus'}[pkg];
+    const payLabels={'ach':'ACH (no fees)','check-hand':'Check to supervisor','check-photo':'Check photo','cc':'Credit card (+3%)','mail':'Mailed check'};
+    document.getElementById('sigPkg').textContent=pkName;
+    const onSecs=SECTIONS.filter(s=>s.on).length;
+    const optOn=OPTIONALS.filter(o=>o.on).length;
+    let svcs=onSecs+' service'+(onSecs!==1?'s':'');
+    if(optOn) svcs+=' + '+optOn+' add-on'+(optOn>1?'s':'');
+    document.getElementById('sigSvcs').textContent=svcs;
+    document.getElementById('sigPay').textContent=payLabels[selectedPay]||selectedPay;
+    const total=Math.round(totalLabor())+totalMat();
+    document.getElementById('sigTotal').textContent=fmt(total);
+    const now=new Date();
+    document.getElementById('sigDate').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  }
+  if(acceptStep===3){
+    const payLabels={'ach':'ACH','check-hand':'Check to supervisor','check-photo':'Check photo','cc':'Credit card','mail':'Mailed check'};
+    document.getElementById('obPayDesc').textContent=(payLabels[selectedPay]||'Selected')+' — due upon completion';
+  }
+
+  acceptStep++;
+  renderAcceptStep();
+}
 
 function showPdfToast(){
   // In production: generates PDF server-side via @react-pdf/renderer or Puppeteer
@@ -841,7 +1191,7 @@ function renderProjDetails(){
         <li>Choose 1 color. Add more starting at $75 per color. ${lnk(PB+'Additional-Colors-Policy-3.pdf','📄 Deck Color Policy')}</li>
       </ul>
       <h4>Paints Used</h4>
-      <ul><li>Benjamin Moore Woodluxe or Sherwin Williams Deckscapes</li></ul>
+      <ul><li>Benjamin Moore Woodluxe or Sherwin Williams SuperDeck</li></ul>
       <h4>Customer Prep for Arrival</h4>
       <p>${lnk(PB+'Client-Responsibilities-Checklist.pdf','📄 Deck Client Checklist')}</p>
       <h4>Warranty</h4>

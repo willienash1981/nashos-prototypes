@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>NashOS — Pre-Project Checklist</title>
+<style>
+:root{--navy:#1a2332;--gold:#c8a85c;--green:#34a853;--green-bg:#e6f4ea;--blue:#4285f4;--blue-light:#e8f0fe;--orange:#e65100;--red:#d93025;--g50:#f8f9fa;--g100:#f1f3f4;--g200:#e8eaed;--g300:#dadce0;--g400:#bdc1c6;--g500:#9aa0a6;--g600:#80868b;--g700:#5f6368;--g800:#3c4043;--g900:#202124;--r:10px;--rs:6px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g50);color:var(--g900);-webkit-font-smoothing:antialiased;font-size:14px;max-width:430px;margin:0 auto;padding-bottom:90px}
+@media(min-width:431px){body{box-shadow:0 0 40px rgba(0,0,0,.1);min-height:100vh;border-left:1px solid var(--g200);border-right:1px solid var(--g200)}html{background:#e0e0e0}}
+
+.topbar{background:var(--navy);color:white;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.topbar-back{font-size:20px;cursor:pointer;padding:2px 4px}
+.topbar-logo{width:28px;height:28px;background:var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--navy);flex-shrink:0}
+.topbar-title{font-size:14px;font-weight:600;flex:1}
+
+.header{background:white;padding:14px 16px;border-bottom:1px solid var(--g200)}
+.header-name{font-size:18px;font-weight:700;color:var(--navy)}
+.header-addr{font-size:12px;color:var(--g600);margin-top:2px}
+.header-scope{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.scope-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;background:var(--blue-light);color:var(--blue)}
+
+.intro{padding:14px 16px;font-size:12px;color:var(--g600);line-height:1.5}
+.intro strong{color:var(--navy)}
+
+.progress-wrap{padding:0 16px;margin-bottom:4px}
+.progress-bar-bg{background:var(--g200);border-radius:8px;height:6px;overflow:hidden}
+.progress-bar-fill{background:var(--green);height:100%;border-radius:8px;transition:width .4s ease;width:0}
+.progress-text{font-size:10px;color:var(--g500);margin-top:4px;text-align:right}
+
+.section{background:white;margin:8px 10px;border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.06);overflow:hidden}
+.section-header{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--g100)}
+.section-icon{font-size:18px}
+.section-title{font-size:13px;font-weight:700;color:var(--navy)}
+.section-body{padding:10px 14px}
+
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:4px}
+.field-label{font-size:12px;font-weight:600;color:var(--g800);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.field-label .opt{font-size:10px;color:var(--g500);font-weight:400}
+.field-hint{font-size:10px;color:var(--g500);margin-bottom:4px;line-height:1.3}
+.field-input{width:100%;padding:10px 12px;border:2px solid var(--g200);border-radius:var(--rs);font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;background:white}
+.field-input:focus{border-color:var(--navy)}
+textarea.field-input{resize:vertical;min-height:60px}
+input[type="date"].field-input{-webkit-appearance:none}
+
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-card{flex:1;min-width:80px;border:2px solid var(--g200);border-radius:var(--rs);padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;font-size:12px;font-weight:600;color:var(--g600)}
+.radio-card:active{transform:scale(.97)}
+.radio-card.sel{border-color:var(--navy);background:rgba(26,35,50,.03);color:var(--navy)}
+.radio-card .rc-icon{font-size:16px;display:block;margin-bottom:2px}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.toggle-label{font-size:12px;font-weight:600;color:var(--g800);flex:1}
+.toggle-sub{font-size:10px;color:var(--g500);font-weight:400}
+
+.yn-pills{display:flex;gap:6px}
+.yn-pill{padding:6px 16px;border:2px solid var(--g200);border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--g500)}
+.yn-pill:active{transform:scale(.95)}
+.yn-pill.sel-y{border-color:var(--green);background:rgba(52,168,83,.06);color:var(--green)}
+.yn-pill.sel-n{border-color:var(--red);background:rgba(217,48,37,.04);color:var(--red)}
+.yn-pill.sel-np{border-color:var(--navy);background:rgba(26,35,50,.03);color:var(--navy)}
+
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:white;border-top:1px solid var(--g200);padding:10px 16px 14px;z-index:100}
+.submit-btn{width:100%;padding:14px;background:var(--navy);color:white;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:all .15s}
+.submit-btn:active{transform:scale(.99);background:#0f1722}
+.submit-btn:disabled{background:var(--g300);color:var(--g500);cursor:not-allowed;transform:none}
+.submit-btn.done{background:var(--green)}
+
+.success-overlay{position:fixed;inset:0;background:white;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;max-width:430px;margin:0 auto}
+.success-overlay.show{display:flex}
+.success-emoji{font-size:56px;margin-bottom:12px}
+.success-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.success-sub{font-size:13px;color:var(--g600);line-height:1.5;margin-bottom:24px}
+.success-btn{padding:14px 32px;background:var(--navy);color:white;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-back" onclick="history.back()">‹</div>
+  <div class="topbar-logo">N</div>
+  <div class="topbar-title">Pre-Project Checklist</div>
+</div>
+
+<div class="header">
+  <div class="header-name">Thompson Residence</div>
+  <div class="header-addr">2841 Tyne Blvd, Nashville, TN 37215</div>
+  <div class="header-scope">
+    <span class="scope-tag">🏠 Interior</span>
+    <span class="scope-tag">🏡 Exterior</span>
+    <span class="scope-tag">🪵 Cabinets</span>
+    <span class="scope-tag">🔨 Carpentry</span>
+  </div>
+</div>
+
+<div class="intro">
+  This helps us prepare for your project — parking, access, crew preferences. <strong>Takes about 2 minutes.</strong> Only the first two dates are required; fill in everything else that applies.
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar"></div></div>
+  <div class="progress-text" id="progText">0 of 5 sections</div>
+</div>
+
+<!-- Section 1: Scheduling -->
+<div class="section" id="sec-schedule">
+  <div class="section-header">
+    <div class="section-icon">📅</div>
+    <div class="section-title">Scheduling</div>
+  </div>
+  <div class="section-body">
+    <div class="field">
+      <label class="field-label">Earliest we can start <span style="color:var(--red)">*</span></label>
+      <div class="field-hint">After we receive your color selections</div>
+      <input type="date" class="field-input" id="startDate" onchange="updateProgress()">
+    </div>
+    <div class="field">
+      <label class="field-label">Must be finished by <span style="color:var(--red)">*</span></label>
+      <div class="field-hint">Latest date that works without causing any stress</div>
+      <input type="date" class="field-input" id="endDate" onchange="updateProgress()">
+    </div>
+  </div>
+</div>
+
+<!-- Section 2: Property Access -->
+<div class="section" id="sec-access">
+  <div class="section-header">
+    <div class="section-icon">🔑</div>
+    <div class="section-title">Property Access</div>
+  </div>
+  <div class="section-body">
+    <div class="field">
+      <label class="field-label">Gate code <span class="opt">(if applicable)</span></label>
+      <input type="text" class="field-input" id="gateCode" placeholder="e.g. #1234" oninput="updateProgress()">
+    </div>
+    <div class="field">
+      <label class="field-label">Door access code <span class="opt">(if applicable)</span></label>
+      <input type="text" class="field-input" id="doorCode" placeholder="e.g. keypad code" oninput="updateProgress()">
+    </div>
+    <div class="field">
+      <label class="field-label">🅿️ Where should the crew park?</label>
+      <div class="field-hint">For downtown, please give detailed instructions, limitations, etc.</div>
+      <textarea class="field-input" id="parking" placeholder="e.g. Driveway is fine, street parking available" oninput="updateProgress()"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- Section 3: Crew Logistics -->
+<div class="section" id="sec-logistics">
+  <div class="section-header">
+    <div class="section-icon">🧹</div>
+    <div class="section-title">Crew Logistics</div>
+  </div>
+  <div class="section-body">
+    <div class="field">
+      <label class="field-label">Where should we clean brushes and tools?</label>
+      <textarea class="field-input" id="cleaning" placeholder="e.g. Utility sink in garage, outdoor spigot on left side" oninput="updateProgress()"></textarea>
+    </div>
+    <div class="field">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">🚻 Can the crew use your restroom?</div>
+        </div>
+        <div class="yn-pills" id="restroomPills">
+          <div class="yn-pill" onclick="setPill('restroom','yes',this)">Yes</div>
+          <div class="yn-pill" onclick="setPill('restroom','no',this)">No</div>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">🗑️ Can we leave garbage bags at your home?</div>
+          <div class="toggle-sub">Black construction bags with project debris</div>
+        </div>
+      </div>
+      <div class="radio-group" style="margin-top:8px" id="garbagePills">
+        <div class="radio-card" onclick="setRadio('garbage','leave',this)">
+          <span class="rc-icon">✅</span>
+          Yes, leave them
+        </div>
+        <div class="radio-card" onclick="setRadio('garbage','haul',this)">
+          <span class="rc-icon">🚛</span>
+          Please haul away
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 4: Preferences -->
+<div class="section" id="sec-preferences">
+  <div class="section-header">
+    <div class="section-icon">🎵</div>
+    <div class="section-title">Preferences</div>
+  </div>
+  <div class="section-body">
+    <div class="field">
+      <div class="toggle-row">
+        <div class="toggle-label">Can the crew play music at a reasonable volume?</div>
+      </div>
+      <div class="yn-pills" id="musicPills" style="margin-top:6px">
+        <div class="yn-pill" onclick="setPill('music','yes',this)">Yes</div>
+        <div class="yn-pill" onclick="setPill('music','no',this)">No</div>
+        <div class="yn-pill" onclick="setPill('music','np',this)">No Preference</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">⏰ Time requirements outside 8:00–4:30?</label>
+      <div class="field-hint">Our typical hours are 8:00 AM – 4:30 PM</div>
+      <textarea class="field-input" id="timeReqs" placeholder="e.g. No work before 9 AM — I work nights" oninput="updateProgress()"></textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">🐾 Any pet or child safety considerations?</label>
+      <textarea class="field-input" id="petSafety" placeholder="e.g. Dog in backyard — please keep gate closed" oninput="updateProgress()"></textarea>
+    </div>
+    <div class="field">
+      <label class="field-label">📝 Any other special requests for the crew?</label>
+      <textarea class="field-input" id="specialReqs" placeholder="e.g. Please use the side entrance" oninput="updateProgress()"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- Section 5: Permissions -->
+<div class="section" id="sec-permissions">
+  <div class="section-header">
+    <div class="section-icon">📍</div>
+    <div class="section-title">Permissions</div>
+  </div>
+  <div class="section-body">
+    <div class="field">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Can we place a Nash Painting yard sign?</div>
+          <div class="toggle-sub">Front yard, for the duration of the project</div>
+        </div>
+        <div class="yn-pills" id="yardSignPills">
+          <div class="yn-pill" onclick="setPill('yardSign','yes',this)">Yes</div>
+          <div class="yn-pill" onclick="setPill('yardSign','no',this)">No</div>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">🎬 Can we film for marketing purposes?</div>
+          <div class="toggle-sub">Short video of the project at your property</div>
+        </div>
+        <div class="yn-pills" id="videoPills">
+          <div class="yn-pill" onclick="setPill('video','yes',this)">Yes</div>
+          <div class="yn-pill" onclick="setPill('video','no',this)">No</div>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">📊 Willing to do a follow-up survey?</div>
+          <div class="toggle-sub">Helps us improve our crews and procedures</div>
+        </div>
+        <div class="yn-pills" id="surveyPills">
+          <div class="yn-pill" onclick="setPill('survey','yes',this)">Yes</div>
+          <div class="yn-pill" onclick="setPill('survey','no',this)">No</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom submit bar -->
+<div class="bottom-bar">
+  <button class="submit-btn" id="submitBtn" onclick="submitChecklist()">Submit Checklist</button>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-emoji">✅</div>
+  <div class="success-title">Checklist Complete!</div>
+  <div class="success-sub">Thanks! We have everything we need to prepare for your project. We'll reach out once your colors are in and scheduling is confirmed.</div>
+  <button class="success-btn" onclick="window.open('color-submission.html','_self')">Next: Choose Your Colors →</button>
+  <div style="margin-top:12px;font-size:12px;color:var(--g500)">or <a href="proposal.html" style="color:var(--blue);font-weight:600;text-decoration:none">return to your proposal</a></div>
+</div>
+
+<script>
+// State
+const state = {
+  restroom: null,
+  garbage: null,
+  music: null,
+  yardSign: null,
+  video: null,
+  survey: null
+};
+
+function setPill(field, value, el) {
+  state[field] = value;
+  const pills = el.parentElement.querySelectorAll('.yn-pill');
+  pills.forEach(p => p.className = 'yn-pill');
+  if (value === 'yes') el.classList.add('sel-y');
+  else if (value === 'no') el.classList.add('sel-n');
+  else el.classList.add('sel-np');
+  updateProgress();
+}
+
+function setRadio(field, value, el) {
+  state[field] = value;
+  const cards = el.parentElement.querySelectorAll('.radio-card');
+  cards.forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  updateProgress();
+}
+
+function updateProgress() {
+  // Count filled sections
+  let filled = 0;
+
+  // 1: Scheduling — both dates filled
+  if (document.getElementById('startDate').value && document.getElementById('endDate').value) filled++;
+
+  // 2: Access — at least parking filled
+  if (document.getElementById('parking').value.trim()) filled++;
+
+  // 3: Logistics — restroom answered
+  if (state.restroom !== null) filled++;
+
+  // 4: Preferences — at least music answered
+  if (state.music !== null) filled++;
+
+  // 5: Permissions — at least one answered
+  if (state.yardSign !== null || state.video !== null || state.survey !== null) filled++;
+
+  const pct = Math.round((filled / 5) * 100);
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progText').textContent = filled + ' of 5 sections';
+}
+
+function submitChecklist() {
+  // Validate required fields
+  const start = document.getElementById('startDate').value;
+  const end = document.getElementById('endDate').value;
+
+  if (!start || !end) {
+    // Scroll to scheduling section
+    document.getElementById('sec-schedule').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Highlight empty fields
+    if (!start) document.getElementById('startDate').style.borderColor = 'var(--red)';
+    if (!end) document.getElementById('endDate').style.borderColor = 'var(--red)';
+    return;
+  }
+
+  // Show success
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = '✓ Submitted!';
+  btn.classList.add('done');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    document.getElementById('successOverlay').classList.add('show');
+  }, 400);
+}
+
+// Set min dates to today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('startDate').min = today;
+document.getElementById('endDate').min = today;
+
+// Start date → end date min
+document.getElementById('startDate').addEventListener('change', function() {
+  document.getElementById('endDate').min = this.value || today;
+  this.style.borderColor = '';
+});
+document.getElementById('endDate').addEventListener('change', function() {
+  this.style.borderColor = '';
+});
+
+updateProgress();
+</script>
+</body>
+</html>
