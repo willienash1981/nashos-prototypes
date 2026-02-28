@@ -574,8 +574,8 @@ body {
 </div>
 
 <!-- Bottom Sheet Overlay -->
-<div class="bottom-sheet-overlay" id="bsOverlay" onclick="closeBottomSheet()"></div>
-<div class="bottom-sheet" id="bottomSheet">
+<div class="bottom-sheet-overlay" id="bsOverlay" onclick="handleBsOverlayClick(event)"></div>
+<div class="bottom-sheet" id="bottomSheet" onclick="event.stopPropagation()">
   <div class="bs-handle"></div>
   <div class="bs-swatch-header" id="bsSwatch"></div>
   <div class="bs-color-info">
@@ -593,7 +593,7 @@ body {
   </div>
   <div id="applyTargets"></div>
   <div id="applySpecific"></div>
-  <button class="apply-btn" id="applyBtn" onclick="applyColor()">Apply Color</button>
+  <button class="apply-btn" id="applyBtn" ontouchend="event.preventDefault();applyColor()" onclick="applyColor()">Apply Color</button>
 </div>
 
 <!-- Toast -->
@@ -605,11 +605,11 @@ body {
     <div class="modal-title">💡 Quick Guide: What is Sheen?</div>
     <div class="modal-text">
       Sheen is how shiny the paint finish looks — it's separate from color. The same color can look very different depending on the sheen.<br><br>
-      🎨 <strong>Flat</strong> — No shine at all. Hides wall imperfections and dings. Easy to touch up. Best for ceilings and rooms where you want a soft look.<br><br>
-      🥚 <strong>Eggshell</strong> — A soft, warm shimmer. The most popular choice for living rooms, bedrooms, and hallways. Touch-ups may show slightly.<br><br>
-      🧈 <strong>Satin</strong> — Smooth and easy to wipe clean. Great for kitchens, bathrooms, and high-traffic areas. Touch-ups will be more noticeable.<br><br>
-      ✨ <strong>Semi-Gloss</strong> — Noticeable shine. Very durable and easy to clean. The go-to for trim, doors, cabinets, and baseboards.<br><br>
-      ⚠️ Higher sheen makes wall imperfections more visible. We recommend Flat or Eggshell for most walls.<br><br>
+      🎨 <strong>Flat</strong> — No shine. Hides imperfections and dings. <strong>Easy to touch up</strong> — small scuffs disappear. Our top choice for walls and ceilings.<br><br>
+      🥚 <strong>Eggshell</strong> — A soft, light shimmer. Gives a warm glow but <strong>touch-ups may show</strong>. Nice if you want just a hint of sheen on your walls.<br><br>
+      🧈 <strong>Satin</strong> — Smooth and <strong>easy to wipe clean</strong>. The modern standard for trim, doors, cabinets, kitchens, and bathrooms. Touch-ups will be visible.<br><br>
+      ✨ <strong>Semi-Gloss</strong> — Noticeable shine. Very durable. A traditional choice for trim and doors — <strong>touch-ups will show</strong>. Some clients prefer this classic look.<br><br>
+      ⚠️ Higher sheen = more visible imperfections and harder touch-ups. We recommend Flat for most walls — it's the easiest to maintain.<br><br>
       📖 <a href="https://www.nashpainting.com/blog/understanding-paint-flashing-sheen-color-and-ceiling-considerations" target="_blank">Learn More</a>
     </div>
     <button class="modal-btn" onclick="dismissSheenModal()">Got it!</button>
@@ -872,13 +872,13 @@ const POPULAR = ["Agreeable Gray","Repose Gray","Alabaster","Extra White","Pure 
 // ========== DATA MODEL ==========
 const SHEENS = ['Flat','Eggshell','Satin','Semi-Gloss'];
 const SHEEN_INFO = {
-  'Flat': {short:'No shine',sub:'Easy touch-up',desc:'No shine. Easiest to touch up later — small wall dings disappear. Best for ceilings and low-traffic areas.'},
-  'Eggshell': {short:'Soft',sub:'shimmer · Popular',desc:'A soft, light shimmer. The most popular choice for walls. Touch-ups may show slightly, but it gives a beautiful warm finish.'},
-  'Satin': {short:'Washable',sub:'No touch up',desc:'Smooth and easy to wipe clean. Great for kitchens, bathrooms, and kids\' rooms. Touch-ups will be visible.'},
-  'Semi-Gloss': {short:'Durable',sub:'Trim & doors',desc:'Noticeable shine. Very durable and easy to clean. The standard choice for trim, doors, baseboards, and cabinets.'}
+  'Flat': {short:'No shine',sub:'Easy touch-up',desc:'No shine at all. The easiest to touch up — small dings and scuffs disappear. Our most popular choice for walls and ceilings.'},
+  'Eggshell': {short:'Soft',sub:'shimmer',desc:'A soft, light shimmer. Gives a beautiful warm glow but touch-ups may show. A nice choice if you want just a hint of sheen.'},
+  'Satin': {short:'Washable',sub:'Modern finish',desc:'Smooth and easy to wipe clean. The modern standard for trim, doors, cabinets, and high-traffic areas like kitchens and bathrooms. Touch-ups will be visible.'},
+  'Semi-Gloss': {short:'High shine',sub:'Traditional',desc:'Noticeable shine. Very durable and easy to clean. A traditional choice for trim and doors — some clients prefer the classic look. Touch-ups will be visible.'}
 };
 
-const SURFACE_DEFAULT_SHEEN = {walls:'Eggshell',accent:'Eggshell',trim:'Semi-Gloss',ceiling:'Flat',doors:'Semi-Gloss'};
+const SURFACE_DEFAULT_SHEEN = {walls:'Flat',accent:'Flat',trim:'Satin',ceiling:'Flat',doors:'Satin'};
 
 // Surface display names
 const SURFACE_LABELS = {walls:'Walls',accent:'Accent Wall ✨',trim:'Trim',ceiling:'Ceiling',doors:'Doors'};
@@ -895,18 +895,18 @@ const ROOMS = [
 
 const EXT_SURFACES = [
   {key:'siding', name:'Siding (Body)', defaultSheen:'Flat'},
-  {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Semi-Gloss'},
-  {key:'front_door', name:'Front Door', defaultSheen:'Semi-Gloss'},
-  {key:'shutters', name:'Shutters', defaultSheen:'Semi-Gloss'},
+  {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Satin'},
+  {key:'front_door', name:'Front Door', defaultSheen:'Satin'},
+  {key:'shutters', name:'Shutters', defaultSheen:'Satin'},
 ];
 
 // State
 let state = {
   main: {
-    walls: {color:null, sheen:'Eggshell'},
-    trim: {color:findColor('Extra White','SW'), sheen:'Semi-Gloss'},
+    walls: {color:null, sheen:'Flat'},
+    trim: {color:findColor('Extra White','SW'), sheen:'Satin'},
     ceiling: {color:findColor('Ceiling Bright White','SW'), sheen:'Flat'},
-    doors: {color:null, sheen:'Semi-Gloss', linked:true},
+    doors: {color:null, sheen:'Satin', linked:true},
   },
   rooms: {},
   exterior: {},
@@ -1254,7 +1254,7 @@ function filterColors() {
   } else {
     noRes.style.display = 'none';
     grid.innerHTML = filtered.map((c,i) =>
-      `<div class="color-card" onclick="selectColor(COLORS[${COLORS.indexOf(c)}])">
+      `<div class="color-card" onclick="event.stopPropagation();selectColor(COLORS[${COLORS.indexOf(c)}])">
         <div class="color-card-swatch" style="background:${c.hex}"></div>
         <div class="color-card-name">${c.name}</div>
         <div class="color-card-code">${c.brand} ${c.code}</div>
@@ -1288,6 +1288,11 @@ function openBottomSheet(color) {
 function closeBottomSheet() {
   document.getElementById('bsOverlay').classList.remove('open');
   document.getElementById('bottomSheet').classList.remove('open');
+}
+
+function handleBsOverlayClick(e) {
+  // Only close if they tapped the dark overlay itself, not the sheet content
+  if (e.target.id === 'bsOverlay') closeBottomSheet();
 }
 
 function renderBsSheenCards() {
