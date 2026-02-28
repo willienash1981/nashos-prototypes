@@ -559,14 +559,14 @@ body {
 .bottom-sheet-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   z-index: 250; background: rgba(0,0,0,0.4);
-  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
 }
 .bottom-sheet-overlay.open { opacity: 1; pointer-events: auto; }
 .bottom-sheet {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 260;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 270;
   background: var(--white); border-radius: 16px 16px 0 0;
   max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
   padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 .bottom-sheet.open { transform: translateY(0); }
@@ -631,6 +631,7 @@ body {
   background: var(--gold); color: #fff; font-size: 16px; font-weight: 700;
   width: calc(100% - 32px); cursor: pointer; font-family: inherit;
   -webkit-tap-highlight-color: transparent; transition: background 0.15s;
+  position: relative; z-index: 270; touch-action: manipulation;
 }
 .apply-btn:active { background: var(--gold-light); }
 
@@ -808,8 +809,8 @@ body {
 </div>
 
 <!-- Bottom Sheet Overlay -->
-<div class="bottom-sheet-overlay" id="bsOverlay" onclick="handleBsOverlayClick(event)"></div>
-<div class="bottom-sheet" id="bottomSheet" onclick="event.stopPropagation()">
+<div class="bottom-sheet-overlay" id="bsOverlay" onpointerup="handleBsOverlayClick(event)"></div>
+<div class="bottom-sheet" id="bottomSheet" onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="event.stopPropagation()">
   <div class="bs-handle"></div>
   <div class="bs-swatch-header" id="bsSwatch"></div>
   <div class="bs-color-info">
@@ -827,7 +828,7 @@ body {
   </div>
   <div id="applyTargets"></div>
   <div id="applySpecific"></div>
-  <button class="apply-btn" id="applyBtn" ontouchend="event.preventDefault();applyColor()" onclick="applyColor()">Apply Color</button>
+  <button class="apply-btn" id="applyBtn" onpointerup="event.preventDefault();event.stopPropagation();applyColor()" onclick="event.preventDefault()">Apply Color</button>
 </div>
 
 <!-- Stain Bottom Sheet -->
@@ -2020,10 +2021,12 @@ function filterColors() {
   }
 }
 
+let _applyDebounce = false;
 function selectColor(color) {
   selectedBrowserColor = color;
   openBottomSheet(color);
 }
+
 
 function openBottomSheet(color) {
   document.getElementById('bsSwatch').style.background = color.hex;
@@ -2134,7 +2137,10 @@ function toggleSpecific(key) {
 }
 
 function applyColor() {
+  if (_applyDebounce) return;
   if (!selectedBrowserColor) return;
+  _applyDebounce = true;
+  setTimeout(() => { _applyDebounce = false; }, 500);
   const color = selectedBrowserColor;
   const sheen = selectedBrowserSheen;
 
