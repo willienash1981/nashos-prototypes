@@ -280,6 +280,10 @@ input[type="date"].field-input{-webkit-appearance:none}
   <div class="success-title">Checklist Complete!</div>
   <div class="success-sub">Thanks! We have everything we need to prepare for your project. We'll reach out once your colors are in and scheduling is confirmed.</div>
   <button class="success-btn" onclick="window.open('color-submission.html','_self')">Next: Choose Your Colors →</button>
+  <button id="sendLinkBtn" onclick="showSendLink()" style="margin-top:12px;padding:12px 32px;background:white;color:var(--navy);border:2px solid var(--g300);border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;width:100%;max-width:320px">I'm not ready — send me a link later</button>
+  <div id="sendLinkConfirm" style="display:none;margin-top:12px;padding:12px 16px;background:#e6f4ea;border-radius:6px;font-size:12px;color:#34a853;max-width:320px;line-height:1.4;text-align:center">
+    ✅ We'll text and email you a link to your color form. Take your time!
+  </div>
   <div style="margin-top:12px;font-size:12px;color:var(--g500)">or <a href="proposal.html" style="color:var(--blue);font-weight:600;text-decoration:none">return to your proposal</a></div>
 </div>
 
@@ -376,6 +380,11 @@ document.getElementById('endDate').addEventListener('change', function() {
 });
 
 updateProgress();
+
+function showSendLink() {
+  document.getElementById('sendLinkBtn').style.display = 'none';
+  document.getElementById('sendLinkConfirm').style.display = 'block';
+}
 </script>
 </body>
 </html>
