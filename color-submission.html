@@ -413,39 +413,27 @@ body {
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
   transition: transform 0.15s; position: relative; overflow: hidden;
 }
-/* Semi-transparent stains: wood base + stain color overlay + grain lines */
+/* Semi-transparent stains: SVG wood texture base + stain tint overlay
+   Production build will use real CompanyCam photos of Nash decks matched to stain color */
 .stain-card-swatch.grain {
-  background: #C8A87C !important; /* natural wood base — overrides inline bg */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cfilter id='w' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.15' numOctaves='6' seed='3' result='noise'/%3E%3CfeColorMatrix in='noise' type='saturate' values='0' result='gray'/%3E%3CfeComponentTransfer in='gray' result='wood'%3E%3CfeFuncR type='linear' slope='0.45' intercept='0.45'/%3E%3CfeFuncG type='linear' slope='0.35' intercept='0.32'/%3E%3CfeFuncB type='linear' slope='0.22' intercept='0.18'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3C/defs%3E%3Crect width='200' height='200' filter='url(%23w)'/%3E%3C/svg%3E") center/cover !important;
+  border-radius: 10px;
 }
 .stain-card-swatch.grain::before {
   content: ''; position: absolute; inset: 0;
   background: var(--stain);
-  opacity: 0.55;
+  opacity: 0.6;
   border-radius: 10px;
+  mix-blend-mode: multiply;
   pointer-events: none;
 }
 .stain-card-swatch.grain::after {
   content: ''; position: absolute; inset: 0;
-  background:
-    /* knot / darker grain band */
-    radial-gradient(ellipse 60% 8% at 30% 35%, rgba(80,50,20,0.18) 0%, transparent 100%),
-    radial-gradient(ellipse 40% 5% at 70% 72%, rgba(80,50,20,0.12) 0%, transparent 100%),
-    /* prominent grain lines */
-    repeating-linear-gradient(
-      178deg,
-      transparent 0px, transparent 2px,
-      rgba(60,30,5,0.14) 2px, rgba(60,30,5,0.14) 3px,
-      transparent 3px, transparent 5px,
-      rgba(60,30,5,0.08) 5px, rgba(60,30,5,0.08) 5.5px,
-      transparent 5.5px, transparent 9px,
-      rgba(60,30,5,0.12) 9px, rgba(60,30,5,0.12) 10px,
-      transparent 10px, transparent 11px,
-      rgba(60,30,5,0.06) 11px, rgba(60,30,5,0.06) 11.5px,
-      transparent 11.5px, transparent 16px,
-      rgba(60,30,5,0.15) 16px, rgba(60,30,5,0.15) 17px,
-      transparent 17px, transparent 22px
-    );
-  border-radius: 10px; pointer-events: none;
+  background: var(--stain);
+  opacity: 0.25;
+  border-radius: 10px;
+  mix-blend-mode: color;
+  pointer-events: none;
 }
 .stain-card:active .stain-card-swatch { transform: scale(0.94); }
 .stain-card-name { font-size: 10px; font-weight: 600; color: var(--text); margin-top: 4px; line-height: 1.2; }
