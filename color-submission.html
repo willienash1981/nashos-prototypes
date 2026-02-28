@@ -205,6 +205,17 @@ body {
   font-size: 12px; color: var(--gold); font-weight: 600; cursor: pointer;
   padding: 6px 10px; border-radius: 8px; -webkit-tap-highlight-color: transparent;
 }
+/* Accent wall surfaces */
+.accent-surface {
+  background: linear-gradient(135deg, #faf6ec 0%, #fff 100%);
+  border-left: 3px solid var(--gold);
+}
+.accent-empty {
+  background: linear-gradient(135deg, #faf6ec 25%, #f5f0e3 25%, #f5f0e3 50%, #faf6ec 50%, #faf6ec 75%, #f5f0e3 75%) !important;
+  background-size: 12px 12px !important;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--gold);
+}
 .dark-warning {
   font-size: 11px; color: #856404; background: #fff3cd;
   padding: 6px 10px; border-radius: 6px; margin: 4px 16px 8px;
@@ -867,13 +878,18 @@ const SHEEN_INFO = {
   'Semi-Gloss': {short:'Durable',sub:'Trim & doors',desc:'Noticeable shine. Very durable and easy to clean. The standard choice for trim, doors, baseboards, and cabinets.'}
 };
 
-const SURFACE_DEFAULT_SHEEN = {walls:'Eggshell',trim:'Semi-Gloss',ceiling:'Flat',doors:'Semi-Gloss'};
+const SURFACE_DEFAULT_SHEEN = {walls:'Eggshell',accent:'Eggshell',trim:'Semi-Gloss',ceiling:'Flat',doors:'Semi-Gloss'};
+
+// Surface display names
+const SURFACE_LABELS = {walls:'Walls',accent:'Accent Wall ✨',trim:'Trim',ceiling:'Ceiling',doors:'Doors'};
+// Surfaces that DON'T inherit from global main colors
+const NO_INHERIT = ['accent'];
 
 const ROOMS = [
-  {name:'Living Room', surfaces:['walls','trim','ceiling','doors']},
+  {name:'Living Room', surfaces:['walls','accent','trim','ceiling','doors']},
   {name:'Master Bedroom', surfaces:['walls','trim','ceiling']},
   {name:'Kitchen', surfaces:['walls','trim','ceiling']},
-  {name:'Guest Bathroom', surfaces:['walls','trim','ceiling']},
+  {name:'Guest Bathroom', surfaces:['walls','accent','trim','ceiling']},
   {name:'Hallway', surfaces:['walls','trim','ceiling']},
 ];
 
@@ -930,6 +946,8 @@ function render() {
 function getEffective(room, surface) {
   const override = state.rooms[room]?.[surface];
   if (override) return override;
+  // Accent walls never inherit — they must be picked individually
+  if (NO_INHERIT.includes(surface)) return {color: null, sheen: SURFACE_DEFAULT_SHEEN[surface] || 'Eggshell'};
   if (surface === 'doors' && state.main.doors.linked) {
     return {color: state.main.trim.color, sheen: state.main.trim.sheen};
   }
@@ -1066,7 +1084,8 @@ function renderRoomCards() {
       const e = getEffective(r.name, s);
       const name = e.color ? e.color.name : '—';
       const hex = e.color ? e.color.hex : '#ddd';
-      return `<span class="room-summary-swatch" style="background:${hex}"></span>${capitalFirst(s)}: ${name}`;
+      const label = s==='accent' ? 'Accent' : capitalFirst(s);
+      return `<span class="room-summary-swatch" style="background:${hex}"></span>${label}: ${name}`;
     }).join(' · ');
     return `<div class="room-card" id="room-${i}">
       <div class="room-header" onclick="toggleRoom(${i})">
@@ -1080,15 +1099,18 @@ function renderRoomCards() {
           const e = getEffective(r.name, s);
           const custom = isCustom(r.name, s);
           const hex = e.color ? e.color.hex : '#eee';
-          const cname = e.color ? e.color.name : 'Not set';
-          return `<div class="surface-row">
-            <div class="surface-swatch" style="background:${hex}"></div>
+          const cname = e.color ? e.color.name : (s==='accent' ? 'Pick a different color!' : 'Not set');
+          const isAccent = s === 'accent';
+          const label = SURFACE_LABELS[s] || capitalFirst(s);
+          return `<div class="surface-row${isAccent ? ' accent-surface' : ''}">
+            <div class="surface-swatch${!e.color && isAccent ? ' empty accent-empty' : ''}" style="${e.color ? 'background:'+hex : ''}">${!e.color && isAccent ? '✨' : ''}</div>
             <div class="surface-info">
-              <div class="surface-name">${capitalFirst(s)} ${custom?'<span class="surface-custom">Custom</span>':''}</div>
+              <div class="surface-name">${label} ${custom && !isAccent?'<span class="surface-custom">Custom</span>':''}</div>
               <div class="surface-color">${cname}</div>
               <div class="surface-sheen">${e.sheen}</div>
+              ${isAccent && !e.color ? '<div style="font-size:10px;color:var(--gold);margin-top:2px">This is your feature wall — pick something bold!</div>' : ''}
             </div>
-            <div class="surface-change" onclick="openBrowserFor('room','${s}','${r.name}')">Change</div>
+            <div class="surface-change" onclick="openBrowserFor('room','${s}','${r.name}')">${e.color ? 'Change' : 'Pick'}</div>
           </div>
           ${e.color && e.color.lrv<15 ? `<div class="dark-warning">⚠️ Dark color — may need primer. Your estimator will confirm if there's any price impact.</div>` : ''}
           ${s==='ceiling' && e.color && e.color.lrv<30 ? `<div class="dark-warning">⚠️ Dark ceiling color — imperfections may be more visible. We recommend Flat sheen.</div>` : ''}`;
@@ -1293,7 +1315,18 @@ function renderApplyTargets() {
       </div>`;
     });
   } else {
-    const surfaceTypes = [{key:'walls',icon:'🏠',label:'All Walls (5 rooms)'},{key:'trim',icon:'✂️',label:'All Trim (5 rooms)'},{key:'ceiling',icon:'⬆',label:'All Ceilings (5 rooms)'},{key:'doors',icon:'🚪',label:'All Doors (1 room)'}];
+    const accentRooms = ROOMS.filter(r => r.surfaces.includes('accent'));
+    const wallRoomCount = ROOMS.filter(r => r.surfaces.includes('walls')).length;
+    const trimRoomCount = ROOMS.filter(r => r.surfaces.includes('trim')).length;
+    const ceilRoomCount = ROOMS.filter(r => r.surfaces.includes('ceiling')).length;
+    const doorRoomCount = ROOMS.filter(r => r.surfaces.includes('doors')).length;
+    const surfaceTypes = [
+      {key:'walls',icon:'🏠',label:`All Walls (${wallRoomCount} rooms)`},
+      ...(accentRooms.length > 0 ? [{key:'accent',icon:'✨',label:`All Accent Walls (${accentRooms.length})`}] : []),
+      {key:'trim',icon:'✂️',label:`All Trim (${trimRoomCount} rooms)`},
+      {key:'ceiling',icon:'⬆',label:`All Ceilings (${ceilRoomCount} rooms)`},
+      {key:'doors',icon:'🚪',label:`All Doors (${doorRoomCount} room${doorRoomCount>1?'s':''})`},
+    ];
     surfaceTypes.forEach(st => {
       const k = 'all_'+st.key;
       const checked = applyTargets.has(k);
@@ -1360,11 +1393,21 @@ function applyColor() {
       if (surface==='trim' && state.main.doors.linked) {
         // Doors follow trim
       }
-      // Clear room overrides for this surface
+      // Clear room overrides for this surface (but NOT accent walls — those are independent)
       ROOMS.forEach(r => { if(r.surfaces.includes(surface)) state.rooms[r.name][surface] = null; });
       appliedTo.push('all '+surface);
     }
   });
+
+  // Accent walls — applied as room overrides since they don't have a global main
+  if (applyTargets.has('all_accent')) {
+    ROOMS.forEach(r => {
+      if (r.surfaces.includes('accent')) {
+        state.rooms[r.name].accent = {color, sheen};
+      }
+    });
+    appliedTo.push('all accent walls');
+  }
 
   // Exterior
   EXT_SURFACES.forEach(e => {
