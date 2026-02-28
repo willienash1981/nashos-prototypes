@@ -205,6 +205,42 @@ body {
   font-size: 12px; color: var(--gold); font-weight: 600; cursor: pointer;
   padding: 6px 10px; border-radius: 8px; -webkit-tap-highlight-color: transparent;
 }
+/* Trim expand toggle */
+.trim-expand-toggle {
+  margin-top: 8px; padding: 8px 0 0;
+  border-top: 1px solid #f0f0f0;
+  font-size: 12px; font-weight: 600; color: var(--navy);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.trim-subtypes-panel {
+  background: var(--white); border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow); margin: -4px 0 12px; overflow: hidden;
+  border: 1.5px solid var(--gold-bg);
+}
+.trim-sub-header {
+  padding: 10px 14px 6px; font-size: 11px; color: var(--text-light); line-height: 1.4;
+  background: var(--gold-bg);
+}
+.trim-sub-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  border-top: 1px solid #f5f0e3; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: background 0.1s;
+}
+.trim-sub-row:active { background: #faf8f4; }
+.trim-sub-icon { font-size: 16px; flex-shrink: 0; width: 24px; text-align: center; }
+.trim-sub-swatch {
+  width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+.trim-sub-info { flex: 1; min-width: 0; }
+.trim-sub-name { font-size: 13px; font-weight: 600; }
+.trim-sub-color { font-size: 11px; color: var(--text-light); }
+.trim-sub-reset {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: #fee; color: var(--red); font-size: 12px;
+  cursor: pointer; flex-shrink: 0;
+}
+
 /* Color consultation card */
 .consult-card {
   display: flex; align-items: center; gap: 12px;
@@ -985,8 +1021,16 @@ const SURFACE_DEFAULT_SHEEN = {walls:'Flat',accent:'Flat',trim:'Satin',ceiling:'
 
 // Surface display names
 const SURFACE_LABELS = {walls:'Walls',accent:'Accent Wall ✨',trim:'Trim',ceiling:'Ceiling',doors:'Doors'};
-// Surfaces that DON'T inherit from global main colors
-const NO_INHERIT = ['accent'];
+
+// Trim sub-types — expandable from the global Trim card
+const TRIM_SUBTYPES = [
+  {key:'doors', name:'Doors', icon:'🚪'},
+  {key:'doorFrames', name:'Door Frames', icon:'🚪'},
+  {key:'windowTrim', name:'Window Trim', icon:'🪟'},
+  {key:'baseboards', name:'Baseboards', icon:'▬'},
+  {key:'crownMolding', name:'Crown Molding', icon:'👑'},
+  {key:'chairRail', name:'Chair Rail', icon:'━'},
+];
 
 const ROOMS = [
   {name:'Living Room', surfaces:['walls','accent','trim','ceiling','doors']},
@@ -1009,8 +1053,14 @@ let state = {
     walls: {color:null, sheen:'Flat'},
     trim: {color:findColor('Extra White','SW'), sheen:'Satin'},
     ceiling: {color:findColor('Ceiling Bright White','SW'), sheen:'Flat'},
-    doors: {color:null, sheen:'Satin', linked:true},
+    accent: {color:null, sheen:'Flat'},
   },
+  // Trim sub-type overrides — null means inherit from main.trim
+  trimSubs: {
+    doors:null, doorFrames:null, windowTrim:null,
+    baseboards:null, crownMolding:null, chairRail:null,
+  },
+  trimExpanded: false,
   rooms: {},
   exterior: {},
   recentColors: [],
@@ -1023,7 +1073,7 @@ ROOMS.forEach(r => { state.rooms[r.name] = {}; r.surfaces.forEach(s => state.roo
 EXT_SURFACES.forEach(e => { state.exterior[e.key] = {color:null, sheen:e.defaultSheen}; });
 
 // Browser state
-let browserTarget = null; // {type:'main',surface:'walls'} or {type:'room',room:'Kitchen',surface:'walls'} or {type:'ext',key:'siding'}
+let browserTarget = null;
 let selectedBrowserColor = null;
 let selectedBrowserSheen = null;
 let activeFamily = 'all';
@@ -1049,12 +1099,17 @@ function render() {
 function getEffective(room, surface) {
   const override = state.rooms[room]?.[surface];
   if (override) return override;
-  // Accent walls never inherit — they must be picked individually
-  if (NO_INHERIT.includes(surface)) return {color: null, sheen: SURFACE_DEFAULT_SHEEN[surface] || 'Eggshell'};
-  if (surface === 'doors' && state.main.doors.linked) {
+  // Accent walls inherit from global accent
+  if (surface === 'accent') return {color: state.main.accent.color, sheen: state.main.accent.sheen};
+  // Doors cascade: room override → trim subtype "doors" → global trim
+  if (surface === 'doors') {
+    const sub = state.trimSubs.doors;
+    if (sub) return sub;
     return {color: state.main.trim.color, sheen: state.main.trim.sheen};
   }
-  if (surface === 'doors') return {color: state.main.doors.color, sheen: state.main.doors.sheen};
+  // Trim at room level = baseboards/general trim → inherit from global trim
+  if (surface === 'trim') return {color: state.main.trim.color, sheen: state.main.trim.sheen};
+  // Walls, ceiling — straight from main
   return {color: state.main[surface]?.color, sheen: state.main[surface]?.sheen};
 }
 
@@ -1068,59 +1123,104 @@ function isCustom(room, surface) {
 
 function renderMainCards() {
   const el = document.getElementById('mainColorCards');
-  const cards = [
-    {key:'walls', label:'Walls', icon:'🏠', hint:'Start here! Pick your wall color.', highlight:true, applies:'Applies to all 5 rooms'},
-    {key:'trim', label:'Trim', icon:'✂️', hint:'💡 Suggested — tap to change', highlight:false, applies:'Applies to all 5 rooms'},
-    {key:'ceiling', label:'Ceiling', icon:'⬆', hint:'💡 Suggested — tap to change', highlight:false, applies:'Applies to all 5 rooms'},
-    {key:'doors', label:'Doors', icon:'🚪', hint:null, highlight:false, applies:'Applies to 1 room (Living Room)'},
-  ];
-  el.innerHTML = cards.map(c => {
-    const d = c.key==='doors' && state.main.doors.linked
-      ? {color: state.main.trim.color, sheen: state.main.trim.sheen}
-      : state.main[c.key];
-    const col = d.color;
-    const hasColor = !!col;
-    const swatchStyle = hasColor ? `background:${col.hex}` : '';
-    const linked = c.key==='doors' && state.main.doors.linked;
-    return `<div class="main-color-card${c.highlight?' highlight':''}" onclick="openBrowserFor('main','${c.key}')">
-      <div class="mcc-header">
-        <div class="mcc-label">${c.icon} ${c.label}</div>
-        ${!hasColor ? '<div class="mcc-badge">Required</div>' : ''}
-      </div>
-      ${!hasColor && c.hint ? `<div class="mcc-hint">${c.hint}</div>` : ''}
-      <div class="mcc-swatch-row">
-        <div class="mcc-swatch${hasColor?'':' empty'}" style="${swatchStyle}">${hasColor?'':'+'}</div>
-        ${hasColor ? `<div class="mcc-color-info">
-          <div class="mcc-color-name">${col.name}</div>
-          <div class="mcc-color-code">${col.brand} ${col.code}</div>
-          ${col.lrv<15?'<div style="font-size:11px;color:#856404;margin-top:2px">⚠️ Dark — may need primer</div>':''}
-        </div>` : `<div class="mcc-color-info"><div class="mcc-color-name" style="color:var(--text-muted)">Tap to choose color</div></div>`}
-      </div>
-      ${linked ? `<div class="mcc-link-badge">🔗 Linked to Trim</div>
-        <div class="mcc-unlink" onclick="event.stopPropagation();unlinkDoors()">Use Different Color</div>` : ''}
-      <div class="mcc-applies">${c.applies}</div>
-      <div class="sheen-pills" onclick="event.stopPropagation()">
-        ${SHEENS.map(s => `<div class="sheen-pill${d.sheen===s?' active':''}" onclick="setMainSheen('${c.key}','${s}',this)">${s}</div>`).join('')}
-        <div class="sheen-info-link" onclick="showSheenModal()">ℹ️</div>
-      </div>
-    </div>`;
-  }).join('');
-}
+  const hasAccentRooms = ROOMS.some(r => r.surfaces.includes('accent'));
+  const accentCount = ROOMS.filter(r => r.surfaces.includes('accent')).length;
+  const trimSubCount = Object.values(state.trimSubs).filter(v => v !== null).length;
 
-function setMainSheen(surface, sheen, el) {
-  maybeSheenEducation();
-  if (surface==='doors' && state.main.doors.linked) {
-    // Don't set sheen independently when linked
-    return;
+  // Build cards array: Walls, Trim, Ceiling, Accent (if applicable)
+  let html = '';
+
+  // === WALLS ===
+  html += renderSimpleMainCard('walls', '🏠', 'Walls', 'Start here! Pick your wall color.', true, 'Applies to all 5 rooms');
+
+  // === TRIM (with expandable sub-types) ===
+  const trimCol = state.main.trim.color;
+  const hasTrim = !!trimCol;
+  html += `<div class="main-color-card" onclick="openBrowserFor('main','trim')">
+    <div class="mcc-header">
+      <div class="mcc-label">✂️ All Trim</div>
+      ${!hasTrim ? '<div class="mcc-badge">Required</div>' : ''}
+    </div>
+    <div class="mcc-hint">Baseboards, doors, frames, windows, crown, chair rail</div>
+    <div class="mcc-swatch-row">
+      <div class="mcc-swatch${hasTrim?'':' empty'}" style="${hasTrim?'background:'+trimCol.hex:''}">${hasTrim?'':'+'}</div>
+      ${hasTrim ? `<div class="mcc-color-info">
+        <div class="mcc-color-name">${trimCol.name}</div>
+        <div class="mcc-color-code">${trimCol.brand} ${trimCol.code}</div>
+      </div>` : `<div class="mcc-color-info"><div class="mcc-color-name" style="color:var(--text-muted)">Tap to choose color</div></div>`}
+    </div>
+    <div class="mcc-applies">Applies to all 5 rooms${trimSubCount > 0 ? ' · <span style="color:var(--gold)">'+trimSubCount+' customized</span>' : ''}</div>
+    <div class="sheen-pills" onclick="event.stopPropagation()">
+      ${SHEENS.map(s => `<div class="sheen-pill${state.main.trim.sheen===s?' active':''}" onclick="setMainSheen('trim','${s}')">${s}</div>`).join('')}
+      <div class="sheen-info-link" onclick="showSheenModal()">ℹ️</div>
+    </div>
+    <div class="trim-expand-toggle" onclick="event.stopPropagation();state.trimExpanded=!state.trimExpanded;render()">
+      ${state.trimExpanded ? '▾ Hide trim details' : '▸ Customize by type'} <span style="font-weight:400;color:var(--text-muted)">(doors, windows, etc.)</span>
+    </div>
+  </div>`;
+
+  // Trim sub-type expansion
+  if (state.trimExpanded) {
+    html += '<div class="trim-subtypes-panel">';
+    html += '<div class="trim-sub-header">Each trim type defaults to your main trim color. Override any that should be different.</div>';
+    TRIM_SUBTYPES.forEach(st => {
+      const sub = state.trimSubs[st.key];
+      const effective = sub || {color: state.main.trim.color, sheen: state.main.trim.sheen};
+      const isCustom = !!sub;
+      const col = effective.color;
+      html += `<div class="trim-sub-row" onclick="openBrowserFor('trimSub','${st.key}')">
+        <div class="trim-sub-icon">${st.icon}</div>
+        <div class="trim-sub-swatch" style="background:${col ? col.hex : '#eee'}"></div>
+        <div class="trim-sub-info">
+          <div class="trim-sub-name">${st.name} ${isCustom ? '<span class="surface-custom">Custom</span>' : ''}</div>
+          <div class="trim-sub-color">${col ? col.name + ' · ' + effective.sheen : 'Same as trim'}</div>
+        </div>
+        ${isCustom ? `<div class="trim-sub-reset" onclick="event.stopPropagation();state.trimSubs['${st.key}']=null;render()">✕</div>` : '<div class="surface-change">Change</div>'}
+      </div>`;
+    });
+    html += '</div>';
   }
-  state.main[surface].sheen = sheen;
-  render();
+
+  // === CEILING ===
+  html += renderSimpleMainCard('ceiling', '⬆', 'Ceiling', '💡 Suggested — tap to change', false, 'Applies to all 5 rooms');
+
+  // === ACCENT WALLS (only if estimate has them) ===
+  if (hasAccentRooms) {
+    html += renderSimpleMainCard('accent', '✨', 'Accent Walls', 'Pick your feature wall color', state.main.accent.color === null, 'Applies to ' + accentCount + ' room' + (accentCount > 1 ? 's' : ''));
+  }
+
+  el.innerHTML = html;
 }
 
-function unlinkDoors() {
-  state.main.doors.linked = false;
-  state.main.doors.color = state.main.trim.color;
-  state.main.doors.sheen = state.main.trim.sheen;
+function renderSimpleMainCard(key, icon, label, hint, highlight, applies) {
+  const d = state.main[key];
+  const col = d.color;
+  const hasColor = !!col;
+  return `<div class="main-color-card${highlight && !hasColor?' highlight':''}" onclick="openBrowserFor('main','${key}')">
+    <div class="mcc-header">
+      <div class="mcc-label">${icon} ${label}</div>
+      ${!hasColor && key !== 'ceiling' ? '<div class="mcc-badge">Required</div>' : ''}
+    </div>
+    ${!hasColor && hint ? `<div class="mcc-hint">${hint}</div>` : ''}
+    <div class="mcc-swatch-row">
+      <div class="mcc-swatch${hasColor?'':' empty'}" style="${hasColor?'background:'+col.hex:''}">${hasColor?'':'+'}</div>
+      ${hasColor ? `<div class="mcc-color-info">
+        <div class="mcc-color-name">${col.name}</div>
+        <div class="mcc-color-code">${col.brand} ${col.code}</div>
+        ${col.lrv<15?'<div style="font-size:11px;color:#856404;margin-top:2px">⚠️ Dark — may need primer</div>':''}
+      </div>` : `<div class="mcc-color-info"><div class="mcc-color-name" style="color:var(--text-muted)">Tap to choose color</div></div>`}
+    </div>
+    <div class="mcc-applies">${applies}</div>
+    <div class="sheen-pills" onclick="event.stopPropagation()">
+      ${SHEENS.map(s => `<div class="sheen-pill${d.sheen===s?' active':''}" onclick="setMainSheen('${key}','${s}')">${s}</div>`).join('')}
+      <div class="sheen-info-link" onclick="showSheenModal()">ℹ️</div>
+    </div>
+  </div>`;
+}
+
+function setMainSheen(surface, sheen) {
+  maybeSheenEducation();
+  state.main[surface].sheen = sheen;
   render();
 }
 
@@ -1131,6 +1231,10 @@ function countUniqueColors() {
       const e = getEffective(r.name, s);
       if (e.color) set.add(e.color.name+'|'+e.color.brand);
     });
+  });
+  // Also count trim sub-type overrides
+  Object.values(state.trimSubs).forEach(sub => {
+    if (sub && sub.color) set.add(sub.color.name+'|'+sub.color.brand);
   });
   return set.size;
 }
@@ -1277,6 +1381,8 @@ function openBrowserFor(type, surface, room) {
   // Smart defaults for apply-to
   if (type === 'main') {
     applyTargets.add('all_'+surface);
+  } else if (type === 'trimSub') {
+    applyTargets.add('trimsub_'+surface);
   } else if (type === 'room') {
     specificOpen = true;
     specificTargets.add(room+'|'+surface);
@@ -1285,8 +1391,14 @@ function openBrowserFor(type, surface, room) {
   }
 
   // Default sheen
-  selectedBrowserSheen = SURFACE_DEFAULT_SHEEN[surface] || 'Eggshell';
-  if (type === 'ext') selectedBrowserSheen = state.exterior[surface].sheen;
+  if (type === 'trimSub') {
+    const sub = state.trimSubs[surface];
+    selectedBrowserSheen = sub ? sub.sheen : state.main.trim.sheen;
+  } else if (type === 'ext') {
+    selectedBrowserSheen = state.exterior[surface].sheen;
+  } else {
+    selectedBrowserSheen = state.main[surface]?.sheen || SURFACE_DEFAULT_SHEEN[surface] || 'Satin';
+  }
   selectedBrowserColor = null;
 
   document.getElementById('searchInput').value = '';
@@ -1425,16 +1537,21 @@ function renderApplyTargets() {
   } else {
     const accentRooms = ROOMS.filter(r => r.surfaces.includes('accent'));
     const wallRoomCount = ROOMS.filter(r => r.surfaces.includes('walls')).length;
-    const trimRoomCount = ROOMS.filter(r => r.surfaces.includes('trim')).length;
     const ceilRoomCount = ROOMS.filter(r => r.surfaces.includes('ceiling')).length;
-    const doorRoomCount = ROOMS.filter(r => r.surfaces.includes('doors')).length;
-    const surfaceTypes = [
-      {key:'walls',icon:'🏠',label:`All Walls (${wallRoomCount} rooms)`},
-      ...(accentRooms.length > 0 ? [{key:'accent',icon:'✨',label:`All Accent Walls (${accentRooms.length})`}] : []),
-      {key:'trim',icon:'✂️',label:`All Trim (${trimRoomCount} rooms)`},
-      {key:'ceiling',icon:'⬆',label:`All Ceilings (${ceilRoomCount} rooms)`},
-      {key:'doors',icon:'🚪',label:`All Doors (${doorRoomCount} room${doorRoomCount>1?'s':''})`},
-    ];
+    const isTrimsub = browserTarget.type === 'trimSub';
+
+    let surfaceTypes;
+    if (isTrimsub) {
+      // When opened from a trim sub-type, show all sub-types as targets
+      surfaceTypes = TRIM_SUBTYPES.map(st => ({key:'trimsub_'+st.key, icon:st.icon, label:st.name}));
+    } else {
+      surfaceTypes = [
+        {key:'walls',icon:'🏠',label:`All Walls (${wallRoomCount} rooms)`},
+        {key:'trim',icon:'✂️',label:`All Trim (everything)`},
+        {key:'ceiling',icon:'⬆',label:`All Ceilings (${ceilRoomCount} rooms)`},
+        ...(accentRooms.length > 0 ? [{key:'accent',icon:'✨',label:`All Accent Walls (${accentRooms.length})`}] : []),
+      ];
+    }
     surfaceTypes.forEach(st => {
       const k = 'all_'+st.key;
       const checked = applyTargets.has(k);
@@ -1493,29 +1610,27 @@ function applyColor() {
   let appliedTo = [];
 
   // Apply to "all" targets
-  ['walls','trim','ceiling','doors'].forEach(surface => {
+  ['walls','trim','ceiling','accent'].forEach(surface => {
     if (applyTargets.has('all_'+surface)) {
       state.main[surface].color = color;
       state.main[surface].sheen = sheen;
-      if (surface==='doors') state.main.doors.linked = false;
-      if (surface==='trim' && state.main.doors.linked) {
-        // Doors follow trim
+      if (surface === 'trim') {
+        // Clear all trim sub-type overrides when setting global trim
+        Object.keys(state.trimSubs).forEach(k => state.trimSubs[k] = null);
       }
-      // Clear room overrides for this surface (but NOT accent walls — those are independent)
+      // Clear room overrides for this surface
       ROOMS.forEach(r => { if(r.surfaces.includes(surface)) state.rooms[r.name][surface] = null; });
       appliedTo.push('all '+surface);
     }
   });
 
-  // Accent walls — applied as room overrides since they don't have a global main
-  if (applyTargets.has('all_accent')) {
-    ROOMS.forEach(r => {
-      if (r.surfaces.includes('accent')) {
-        state.rooms[r.name].accent = {color, sheen};
-      }
-    });
-    appliedTo.push('all accent walls');
-  }
+  // Trim sub-type targets
+  TRIM_SUBTYPES.forEach(st => {
+    if (applyTargets.has('trimsub_'+st.key)) {
+      state.trimSubs[st.key] = {color, sheen};
+      appliedTo.push(st.name);
+    }
+  });
 
   // Exterior
   EXT_SURFACES.forEach(e => {
