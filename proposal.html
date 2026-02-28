@@ -381,17 +381,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <!-- Step 2: Payment Commitment -->
   <div class="ap" id="ap2">
     <div class="ap-icon">💳</div>
-    <div class="ap-h">Payment Commitment</div>
-    <div class="ap-sub">How would you like to pay when your project is complete?<br><em style="color:var(--green)">No payment is collected today.</em></div>
+    <div class="ap-h">How Will You Pay?</div>
+    <div class="ap-sub">We don't collect anything upfront — <strong style="color:var(--navy)">full payment is due on your project's final day.</strong><br><br>Choose now so there are no surprises at completion.</div>
 
     <div class="pay-cards">
       <div class="pay-c rec" onclick="selectPay('ach')" id="pay-ach">
-        <div class="pay-badge">⭐ RECOMMENDED</div>
+        <div class="pay-badge">⭐ EASIEST</div>
         <div class="pay-r"><div class="pay-r-dot"></div></div>
         <div class="pay-i">🏦</div>
         <div class="pay-nfo">
           <div class="pay-n">Online ACH Payment</div>
-          <div class="pay-d">Pay securely through our online portal. Fastest processing, no fees. We'll send you a payment link on your final day.</div>
+          <div class="pay-d">We send you a secure payment link on your final day. Click, pay, done. No fees.</div>
         </div>
       </div>
       <div class="pay-c" onclick="selectPay('check-hand')" id="pay-check-hand">
@@ -399,7 +399,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="pay-i">💵</div>
         <div class="pay-nfo">
           <div class="pay-n">Check to Field Supervisor</div>
-          <div class="pay-d">Hand a check to our crew supervisor on the final day of your project.</div>
+          <div class="pay-d">Hand a check directly to our crew supervisor on the final day.</div>
         </div>
       </div>
       <div class="pay-c" onclick="selectPay('check-photo')" id="pay-check-photo">
@@ -407,15 +407,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="pay-i">📸</div>
         <div class="pay-nfo">
           <div class="pay-n">Check Photo via Text or Email</div>
-          <div class="pay-d">Snap a photo of your check and text or email it to our office for same-day processing.</div>
+          <div class="pay-d">Snap a photo of your check and send it to our office. Processed same day.</div>
         </div>
       </div>
       <div class="pay-c" onclick="selectPay('cc')" id="pay-cc">
         <div class="pay-r"><div class="pay-r-dot"></div></div>
         <div class="pay-i">💳</div>
         <div class="pay-nfo">
-          <div class="pay-n">Credit Card</div>
-          <div class="pay-d">Pay by phone with your credit or debit card.</div>
+          <div class="pay-n">Credit or Debit Card</div>
+          <div class="pay-d">Pay by phone on your final day.</div>
           <div class="pay-f">+3% processing fee</div>
         </div>
       </div>
@@ -423,23 +423,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="pay-r"><div class="pay-r-dot"></div></div>
         <div class="pay-i">✉️</div>
         <div class="pay-nfo">
-          <div class="pay-n">Mail Check (7+ days before completion)</div>
-          <div class="pay-d">Mail your check at least 7 days before your project finishes. We hold it until work is complete.</div>
+          <div class="pay-n">Mail Check Early</div>
+          <div class="pay-d">Mail your check at least 7 days before your project finishes. We hold it until work is complete. <em>Mailing after completion is not accepted.</em></div>
         </div>
       </div>
     </div>
 
-    <div class="pay-terms">
-      <div class="pay-terms-h">⏱ Payment Terms</div>
-      <strong>Full payment is due upon project completion.</strong><br>
-      We offer a 1 business day grace period. After that:<br>
-      &bull; $50 late fee for checks mailed or bill-pay initiated on completion day<br>
-      &bull; 2% monthly fee on balances past the grace period
+    <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--g700);line-height:1.5">
+      <strong style="color:var(--navy)">Why do we ask?</strong> We're a small, family-owned company and don't require a deposit — so timely payment on completion day keeps our crews paid and our business running. Mailing a check after the job is done delays payment 7–10 days, which is why it's not an option. We appreciate your understanding!
+    </div>
+
+    <div style="font-size:10px;color:var(--g500);margin-bottom:14px;padding:0 4px;line-height:1.5">
+      <strong>Late payment policy:</strong> 1 business day grace period after completion. $50 fee for checks mailed or online bill-pay initiated on completion day. 2% monthly fee on overdue balances.
     </div>
 
     <label class="agree-row" id="payAgree">
       <input type="checkbox" id="payCheck" onchange="toggleAgreeRow(this);updateAcceptBtn()">
-      <span>I agree to the payment terms and have selected my preferred payment method</span>
+      <span>I understand payment is due upon completion and have selected how I'll pay</span>
     </label>
   </div>
 
