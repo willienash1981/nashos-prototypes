@@ -205,6 +205,61 @@ body {
   font-size: 12px; color: var(--gold); font-weight: 600; cursor: pointer;
   padding: 6px 10px; border-radius: 8px; -webkit-tap-highlight-color: transparent;
 }
+/* Color consultation card */
+.consult-card {
+  display: flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #eef2f7 0%, #f5f8fc 100%);
+  border: 1.5px solid #d0dae8; border-radius: 10px;
+  padding: 14px; margin-top: 10px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+}
+.consult-card:active { transform: scale(0.98); border-color: var(--navy); }
+.consult-icon { font-size: 28px; flex-shrink: 0; }
+.consult-info { flex: 1; min-width: 0; }
+.consult-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+.consult-desc { font-size: 12px; color: var(--text-light); margin-top: 2px; line-height: 1.4; }
+.consult-arrow { font-size: 22px; color: var(--text-muted); flex-shrink: 0; font-weight: 300; }
+
+/* Consultation modal */
+.consult-modal { padding: 24px; }
+.consult-modal-title { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.consult-modal-sub { font-size: 13px; color: var(--text-light); margin-bottom: 16px; line-height: 1.5; }
+.consult-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.consult-option {
+  display: flex; align-items: center; gap: 12px; padding: 14px;
+  border: 1.5px solid #ddd; border-radius: 10px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+}
+.consult-option:active { transform: scale(0.98); }
+.consult-option.selected { border-color: var(--navy); background: #eef2f7; }
+.consult-option-icon { font-size: 22px; flex-shrink: 0; }
+.consult-option-label { font-size: 14px; font-weight: 600; color: var(--text); }
+.consult-option-desc { font-size: 11px; color: var(--text-light); }
+.consult-option-check {
+  width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0; margin-left: auto; transition: all 0.15s;
+}
+.consult-option.selected .consult-option-check { background: var(--navy); border-color: var(--navy); color: #fff; }
+.consult-textarea {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #ddd;
+  border-radius: 10px; font-size: 14px; font-family: inherit;
+  resize: vertical; min-height: 70px; outline: none; transition: border-color 0.2s;
+}
+.consult-textarea:focus { border-color: var(--gold); }
+.consult-textarea::placeholder { color: var(--text-muted); }
+.consult-note { font-size: 11px; color: var(--text-light); margin-top: 8px; line-height: 1.4; }
+.consult-actions { display: flex; gap: 10px; margin-top: 16px; }
+.consult-btn {
+  flex: 1; padding: 14px; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+}
+.consult-btn.primary { background: var(--navy); color: #fff; }
+.consult-btn.primary:active { background: var(--navy-light); }
+.consult-btn.secondary { background: #eee; color: var(--text); }
+.consult-btn.secondary:active { background: #ddd; }
+
 /* Accent wall surfaces */
 .accent-surface {
   background: linear-gradient(135deg, #faf6ec 0%, #fff 100%);
@@ -517,6 +572,14 @@ body {
           <li>Our most popular color is <strong>SW Agreeable Gray</strong></li>
           <li><a href="https://www.nashpainting.com/blog" target="_blank">Browse our color blog →</a></li>
         </ul>
+        <div class="consult-card" onclick="openConsultModal()">
+          <div class="consult-icon">🗓️</div>
+          <div class="consult-info">
+            <div class="consult-title">Schedule a Color Consultation</div>
+            <div class="consult-desc">Not sure where to start? Your estimator can walk you through color options in person or over the phone.</div>
+          </div>
+          <div class="consult-arrow">›</div>
+        </div>
       </div>
     </div>
 
@@ -613,6 +676,46 @@ body {
       📖 <a href="https://www.nashpainting.com/blog/understanding-paint-flashing-sheen-color-and-ceiling-considerations" target="_blank">Learn More</a>
     </div>
     <button class="modal-btn" onclick="dismissSheenModal()">Got it!</button>
+  </div>
+</div>
+
+<!-- Consultation Modal -->
+<div class="modal-overlay" id="consultModal">
+  <div class="modal consult-modal">
+    <div class="consult-modal-title">🗓️ Color Consultation</div>
+    <div class="consult-modal-sub">No worries — picking colors is the hardest part! Your estimator can help you choose the perfect palette.</div>
+    <div class="consult-options">
+      <div class="consult-option selected" onclick="selectConsultType(this, 'phone')">
+        <div class="consult-option-icon">📱</div>
+        <div>
+          <div class="consult-option-label">Phone / Video Call</div>
+          <div class="consult-option-desc">Quick call to discuss options</div>
+        </div>
+        <div class="consult-option-check">✓</div>
+      </div>
+      <div class="consult-option" onclick="selectConsultType(this, 'inperson')">
+        <div class="consult-option-icon">🏠</div>
+        <div>
+          <div class="consult-option-label">In-Person at Your Home</div>
+          <div class="consult-option-desc">We'll bring color samples to you</div>
+        </div>
+        <div class="consult-option-check"></div>
+      </div>
+      <div class="consult-option" onclick="selectConsultType(this, 'store')">
+        <div class="consult-option-icon">🎨</div>
+        <div>
+          <div class="consult-option-label">Meet at Paint Store</div>
+          <div class="consult-option-desc">See full color displays together</div>
+        </div>
+        <div class="consult-option-check"></div>
+      </div>
+    </div>
+    <textarea class="consult-textarea" id="consultNote" placeholder="Any details? (e.g. preferred times, colors you're considering, rooms you're unsure about...)"></textarea>
+    <div class="consult-note">💡 You can still fill in colors you're sure about now and get help with the rest during your consultation.</div>
+    <div class="consult-actions">
+      <button class="consult-btn secondary" onclick="closeConsultModal()">Cancel</button>
+      <button class="consult-btn primary" onclick="sendConsultRequest()">Send Request</button>
+    </div>
   </div>
 </div>
 
@@ -1469,6 +1572,37 @@ function submitColors() {
   if (filled < total) return;
   document.getElementById('successScreen').classList.add('show');
   document.getElementById('submitBar').style.display = 'none';
+}
+
+// ========== COLOR CONSULTATION ==========
+let consultType = 'phone';
+
+function openConsultModal() {
+  document.getElementById('consultModal').classList.add('show');
+}
+
+function closeConsultModal() {
+  document.getElementById('consultModal').classList.remove('show');
+}
+
+function selectConsultType(el, type) {
+  consultType = type;
+  document.querySelectorAll('.consult-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('.consult-option-check').textContent = '';
+  });
+  el.classList.add('selected');
+  el.querySelector('.consult-option-check').textContent = '✓';
+}
+
+function sendConsultRequest() {
+  const note = document.getElementById('consultNote').value;
+  const labels = {phone:'Phone/Video Call', inperson:'In-Person at Home', store:'Meet at Paint Store'};
+  closeConsultModal();
+  showToast('Consultation request sent to your estimator! ✓');
+  // In production: POST to NashOS API → creates task for estimator
+  // { estimateId, customerId, type: consultType, note, timestamp }
+  console.log('Consultation request:', {type: consultType, label: labels[consultType], note});
 }
 
 // Init
