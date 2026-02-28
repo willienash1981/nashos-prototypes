@@ -1174,20 +1174,21 @@ const COLORS = [
 const POPULAR = ["Agreeable Gray","Repose Gray","Alabaster","Extra White","Pure White","Snowbound","Accessible Beige","Sea Salt","Naval","Tricorn Black","Simply White","White Dove","Chantilly Lace","Revere Pewter","Hale Navy","Classic Gray","Edgecomb Gray","Palladian Blue","Evergreen Fog","Peppercorn","Iron Ore","Urbane Bronze","Swiss Coffee","Balboa Mist","Gray Owl","Aegean Teal","Chelsea Gray","Kendall Charcoal","Mindful Gray","Worldly Gray"];
 
 // ========== STAIN COLOR DATABASE ==========
-// Nash Painting stain products — TWP (semi-transparent) + SW SuperDeck (solid)
-// Only colors Nash actually stocks and uses. No BM stain swatches — they don't
-// represent real finished appearance on wood.
+// Nash Painting stain products — Deckscapes (SW semi-transparent) + Woodluxe (BM semi-transparent) + SuperDeck (SW solid)
+// Full catalog available in production; prototype shows representative colors.
 const STAIN_COLORS = [
-  // TWP 1500 Series — Semi-Transparent (Nash's go-to semi-trans)
-  {name:'Natural', code:'1500', brand:'TWP', hex:'#D4B07A', type:'semi-transparent', depth:'light', desc:'Lightest option. Enhances natural wood tone.'},
-  {name:'Cedartone Natural', code:'1530', brand:'TWP', hex:'#C4994F', type:'semi-transparent', depth:'light', desc:'Warm golden cedar. Very popular.'},
-  {name:'Honeytone', code:'1503', brand:'TWP', hex:'#C49A5C', type:'semi-transparent', depth:'light', desc:'Warm honey amber. Natural look.'},
-  {name:'Cedartone', code:'1501', brand:'TWP', hex:'#B8864E', type:'semi-transparent', depth:'medium', desc:'Classic cedar. Nash\'s most popular semi-trans.'},
-  {name:'Rustic Oak', code:'1516', brand:'TWP', hex:'#7D5A3A', type:'semi-transparent', depth:'medium', desc:'Rich oak tone. Good middle ground.'},
-  {name:'Pecan', code:'1515', brand:'TWP', hex:'#8B6936', type:'semi-transparent', depth:'medium', desc:'Warm brown with reddish undertone.'},
-  {name:'California Redwood', code:'1540', brand:'TWP', hex:'#8B4C32', type:'semi-transparent', depth:'medium', desc:'Deep reddish brown. Bold.'},
-  {name:'Dark Oak', code:'1510', brand:'TWP', hex:'#6B4A2E', type:'semi-transparent', depth:'dark', desc:'Dark brown. Hides more imperfections.'},
-  {name:'Black Walnut', code:'1520', brand:'TWP', hex:'#4A3222', type:'semi-transparent', depth:'dark', desc:'Darkest semi-trans. Maximum imperfection hiding.'},
+  // SW Deckscapes — Semi-Transparent (Nash's go-to SW semi-trans)
+  {name:'Natural', code:'DS-3500', brand:'Deckscapes', hex:'#D4B07A', type:'semi-transparent', depth:'light', desc:'Lightest option. Enhances natural wood tone.'},
+  {name:'Cedartone', code:'DS-3501', brand:'Deckscapes', hex:'#B8864E', type:'semi-transparent', depth:'medium', desc:'Classic cedar. Nash\'s most popular semi-trans.'},
+  {name:'Rustic', code:'DS-3502', brand:'Deckscapes', hex:'#7D5A3A', type:'semi-transparent', depth:'medium', desc:'Rich rustic tone. Good middle ground.'},
+  {name:'Redwood', code:'DS-3505', brand:'Deckscapes', hex:'#8B4C32', type:'semi-transparent', depth:'medium', desc:'Deep reddish brown. Bold.'},
+  {name:'Teak', code:'DS-3503', brand:'Deckscapes', hex:'#C49A5C', type:'semi-transparent', depth:'light', desc:'Warm honey teak. Natural look.'},
+  {name:'Dark Oak', code:'DS-3508', brand:'Deckscapes', hex:'#6B4A2E', type:'semi-transparent', depth:'dark', desc:'Dark brown. Hides more imperfections.'},
+  // BM Woodluxe — Semi-Transparent
+  {name:'Natural Cedartone', code:'ES-45', brand:'Woodluxe', hex:'#C4994F', type:'semi-transparent', depth:'light', desc:'Warm neutral light brown. Very popular.'},
+  {name:'Mahogany', code:'ES-60', brand:'Woodluxe', hex:'#8B4C36', type:'semi-transparent', depth:'medium', desc:'Earthy brown with rich hint of red.'},
+  {name:'Oxford Brown', code:'ES-67', brand:'Woodluxe', hex:'#5A4030', type:'semi-transparent', depth:'dark', desc:'Classic brown with warm espresso undertones.'},
+  {name:'Cordovan Brown', code:'ES-62', brand:'Woodluxe', hex:'#4A3222', type:'semi-transparent', depth:'dark', desc:'Grounding brown-black. Maximum coverage.'},
   // SW SuperDeck Solid Color Stain (Nash's go-to solid)
   {name:'Driftwood', code:'SC-3504', brand:'SuperDeck', hex:'#9E8E7A', type:'solid', depth:'light', desc:'Light weathered gray-brown. Modern look.'},
   {name:'Cape Cod Gray', code:'SC-3507', brand:'SuperDeck', hex:'#8A8A82', type:'solid', depth:'light', desc:'Cool gray. Contemporary feel.'},
@@ -1274,7 +1275,7 @@ const ESTIMATE = {
       overallCondition: 'moderate',
       currentStainType: 'semi-transparent',
       currentColorDepth: 'medium',
-      currentColorMatch: 'TWP 1501 Cedartone',
+      currentColorMatch: 'Deckscapes Cedartone',
       recommendedProduct: 'solid',
       recommendedReason: 'Deck has moderate weathering with some fading and patchy areas. Solid stain will provide uniform coverage.',
       semiTransAllowed: true,
@@ -1818,7 +1819,7 @@ function renderDeckSection() {
 
     // Note about other brands
     html += `<div style="font-size:11px;color:var(--text-light);padding:8px 4px;line-height:1.5;border-top:1px solid #eee;margin-top:4px">
-      <strong>Why these brands?</strong> Nash Painting uses TWP and Sherwin-Williams SuperDeck exclusively — they're the products we trust and warranty. Other brands (Benjamin Moore, Cabot, etc.) are available by request, but stain color swatches from those brands don't accurately represent the finished look on real wood. If you're interested in another brand, your estimator can show you photos of completed projects.
+      <strong>Why these brands?</strong> Nash Painting uses Sherwin-Williams Deckscapes and Benjamin Moore Woodluxe for semi-transparent stains, and SW SuperDeck for solid stains — they're the products we trust and warranty. Other brands (Cabot, etc.) are available by request, but stain color swatches from those brands don't accurately represent the finished look on real wood. If you're interested in another brand, your estimator can show you photos of completed projects.
       <div style="margin-top:6px"><span style="color:var(--gold);font-weight:600;cursor:pointer" onclick="openConsultModal()">📱 Ask your estimator about other options →</span></div>
     </div>`;
   }
