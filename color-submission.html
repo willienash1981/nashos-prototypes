@@ -411,7 +411,22 @@ body {
 .stain-card-swatch {
   width: 100%; aspect-ratio: 1; border-radius: 10px;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
-  transition: transform 0.15s;
+  transition: transform 0.15s; position: relative; overflow: hidden;
+}
+/* Wood grain overlay for semi-transparent stains */
+.stain-card-swatch.grain::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px,
+    transparent 4px, transparent 8px,
+    rgba(0,0,0,0.04) 8px, rgba(0,0,0,0.04) 9px,
+    transparent 9px, transparent 14px,
+    rgba(0,0,0,0.07) 14px, rgba(0,0,0,0.07) 15px,
+    transparent 15px, transparent 20px
+  );
+  border-radius: 10px; pointer-events: none;
 }
 .stain-card:active .stain-card-swatch { transform: scale(0.94); }
 .stain-card-name { font-size: 10px; font-weight: 600; color: var(--text); margin-top: 4px; line-height: 1.2; }
@@ -1159,34 +1174,37 @@ const COLORS = [
 const POPULAR = ["Agreeable Gray","Repose Gray","Alabaster","Extra White","Pure White","Snowbound","Accessible Beige","Sea Salt","Naval","Tricorn Black","Simply White","White Dove","Chantilly Lace","Revere Pewter","Hale Navy","Classic Gray","Edgecomb Gray","Palladian Blue","Evergreen Fog","Peppercorn","Iron Ore","Urbane Bronze","Swiss Coffee","Balboa Mist","Gray Owl","Aegean Teal","Chelsea Gray","Kendall Charcoal","Mindful Gray","Worldly Gray"];
 
 // ========== STAIN COLOR DATABASE ==========
+// Nash Painting stain products — TWP (semi-transparent) + SW SuperDeck (solid)
+// Only colors Nash actually stocks and uses. No BM stain swatches — they don't
+// represent real finished appearance on wood.
 const STAIN_COLORS = [
-  {name:'Cedartone', code:'1501', brand:'TWP', hex:'#B8864E', type:'semi-transparent', depth:'medium'},
-  {name:'Cedartone Natural', code:'1530', brand:'TWP', hex:'#C4994F', type:'semi-transparent', depth:'light'},
-  {name:'Honeytone', code:'1503', brand:'TWP', hex:'#C49A5C', type:'semi-transparent', depth:'light'},
-  {name:'Pecan', code:'1515', brand:'TWP', hex:'#8B6936', type:'semi-transparent', depth:'medium'},
-  {name:'Dark Oak', code:'1510', brand:'TWP', hex:'#6B4A2E', type:'semi-transparent', depth:'dark'},
-  {name:'Rustic Oak', code:'1516', brand:'TWP', hex:'#7D5A3A', type:'semi-transparent', depth:'medium'},
-  {name:'Black Walnut', code:'1520', brand:'TWP', hex:'#4A3222', type:'semi-transparent', depth:'dark'},
-  {name:'California Redwood', code:'1540', brand:'TWP', hex:'#8B4C32', type:'semi-transparent', depth:'medium'},
-  {name:'Natural', code:'1500', brand:'TWP', hex:'#D4B07A', type:'semi-transparent', depth:'light'},
-  {name:'Autumn Brown', code:'SD-1', brand:'SuperDeck', hex:'#6B4A32', type:'solid', depth:'dark'},
-  {name:'Canyon Brown', code:'SD-2', brand:'SuperDeck', hex:'#7A5C40', type:'solid', depth:'medium'},
-  {name:'Redwood', code:'SD-3', brand:'SuperDeck', hex:'#8B4C36', type:'solid', depth:'medium'},
-  {name:'Cedar', code:'SD-4', brand:'SuperDeck', hex:'#A07046', type:'solid', depth:'medium'},
-  {name:'Driftwood', code:'SD-5', brand:'SuperDeck', hex:'#9E8E7A', type:'solid', depth:'light'},
-  {name:'Cape Cod Gray', code:'SD-6', brand:'SuperDeck', hex:'#8A8A82', type:'solid', depth:'light'},
-  {name:'Bark', code:'SD-7', brand:'SuperDeck', hex:'#5A4030', type:'solid', depth:'dark'},
-  {name:'Oxford Brown', code:'SD-8', brand:'SuperDeck', hex:'#4E362A', type:'solid', depth:'dark'},
-  {name:'Weathered Oak', code:'SD-9', brand:'SuperDeck', hex:'#A8906E', type:'solid', depth:'medium'},
-  {name:'Navajo Red', code:'SD-10', brand:'SuperDeck', hex:'#9B5040', type:'solid', depth:'medium'},
-  {name:'Cordovan Brown', code:'C-1', brand:'Cabot', hex:'#5C3A28', type:'solid', depth:'dark'},
-  {name:'New Redwood', code:'C-2', brand:'Cabot', hex:'#924C36', type:'solid', depth:'medium'},
-  {name:'Medium Base', code:'C-3', brand:'Cabot', hex:'#8A7A60', type:'solid', depth:'medium'},
-  {name:'Driftwood Gray', code:'C-4', brand:'Cabot', hex:'#908878', type:'solid', depth:'light'},
-  {name:'New Cedar', code:'C-ST1', brand:'Cabot', hex:'#BA8A52', type:'semi-transparent', depth:'medium'},
-  {name:'Heartwood', code:'C-ST2', brand:'Cabot', hex:'#8B5E38', type:'semi-transparent', depth:'medium'},
-  {name:'Pacific Redwood', code:'C-ST3', brand:'Cabot', hex:'#7A4430', type:'semi-transparent', depth:'dark'},
-  {name:'Burnt Hickory', code:'C-ST4', brand:'Cabot', hex:'#6E4A2E', type:'semi-transparent', depth:'dark'},
+  // TWP 1500 Series — Semi-Transparent (Nash's go-to semi-trans)
+  {name:'Natural', code:'1500', brand:'TWP', hex:'#D4B07A', type:'semi-transparent', depth:'light', desc:'Lightest option. Enhances natural wood tone.'},
+  {name:'Cedartone Natural', code:'1530', brand:'TWP', hex:'#C4994F', type:'semi-transparent', depth:'light', desc:'Warm golden cedar. Very popular.'},
+  {name:'Honeytone', code:'1503', brand:'TWP', hex:'#C49A5C', type:'semi-transparent', depth:'light', desc:'Warm honey amber. Natural look.'},
+  {name:'Cedartone', code:'1501', brand:'TWP', hex:'#B8864E', type:'semi-transparent', depth:'medium', desc:'Classic cedar. Nash\'s most popular semi-trans.'},
+  {name:'Rustic Oak', code:'1516', brand:'TWP', hex:'#7D5A3A', type:'semi-transparent', depth:'medium', desc:'Rich oak tone. Good middle ground.'},
+  {name:'Pecan', code:'1515', brand:'TWP', hex:'#8B6936', type:'semi-transparent', depth:'medium', desc:'Warm brown with reddish undertone.'},
+  {name:'California Redwood', code:'1540', brand:'TWP', hex:'#8B4C32', type:'semi-transparent', depth:'medium', desc:'Deep reddish brown. Bold.'},
+  {name:'Dark Oak', code:'1510', brand:'TWP', hex:'#6B4A2E', type:'semi-transparent', depth:'dark', desc:'Dark brown. Hides more imperfections.'},
+  {name:'Black Walnut', code:'1520', brand:'TWP', hex:'#4A3222', type:'semi-transparent', depth:'dark', desc:'Darkest semi-trans. Maximum imperfection hiding.'},
+  // SW SuperDeck Solid Color Stain (Nash's go-to solid)
+  {name:'Driftwood', code:'SC-3504', brand:'SuperDeck', hex:'#9E8E7A', type:'solid', depth:'light', desc:'Light weathered gray-brown. Modern look.'},
+  {name:'Cape Cod Gray', code:'SC-3507', brand:'SuperDeck', hex:'#8A8A82', type:'solid', depth:'light', desc:'Cool gray. Contemporary feel.'},
+  {name:'Weathered Oak', code:'SC-3506', brand:'SuperDeck', hex:'#A8906E', type:'solid', depth:'medium', desc:'Warm natural oak. Popular choice.'},
+  {name:'Cedar', code:'SC-3501', brand:'SuperDeck', hex:'#A07046', type:'solid', depth:'medium', desc:'Classic cedar. Warm and inviting.'},
+  {name:'Canyon Brown', code:'SC-3503', brand:'SuperDeck', hex:'#7A5C40', type:'solid', depth:'medium', desc:'Rich brown. Great all-around choice.'},
+  {name:'Redwood', code:'SC-3502', brand:'SuperDeck', hex:'#8B4C36', type:'solid', depth:'medium', desc:'Deep reddish brown. Traditional.'},
+  {name:'Navajo Red', code:'SC-3509', brand:'SuperDeck', hex:'#9B5040', type:'solid', depth:'medium', desc:'Warm terra cotta tone.'},
+  {name:'Autumn Brown', code:'SC-3505', brand:'SuperDeck', hex:'#6B4A32', type:'solid', depth:'dark', desc:'Dark warm brown. Hides imperfections well.'},
+  {name:'Bark', code:'SC-3508', brand:'SuperDeck', hex:'#5A4030', type:'solid', depth:'dark', desc:'Very dark brown. Maximum coverage.'},
+  {name:'Oxford Brown', code:'SC-3510', brand:'SuperDeck', hex:'#4E362A', type:'solid', depth:'dark', desc:'Darkest solid. Near-black brown.'},
+  // SW SuperDeck Self-Priming Solid (for worst-condition decks)
+  {name:'Canyon Brown SP', code:'SP-3503', brand:'SuperDeck', hex:'#7A5C40', type:'superdeck', depth:'medium', desc:'Self-priming. Adheres over anything.'},
+  {name:'Autumn Brown SP', code:'SP-3505', brand:'SuperDeck', hex:'#6B4A32', type:'superdeck', depth:'dark', desc:'Self-priming. Maximum adhesion + coverage.'},
+  {name:'Bark SP', code:'SP-3508', brand:'SuperDeck', hex:'#5A4030', type:'superdeck', depth:'dark', desc:'Self-priming. Darkest. One-way door.'},
+  {name:'Redwood SP', code:'SP-3502', brand:'SuperDeck', hex:'#8B4C36', type:'superdeck', depth:'medium', desc:'Self-priming. Rich reddish brown.'},
+  {name:'Cape Cod Gray SP', code:'SP-3507', brand:'SuperDeck', hex:'#8A8A82', type:'superdeck', depth:'light', desc:'Self-priming. Contemporary gray.'},
 ];
 
 // ========== ESTIMATE DATA (from estimator) ==========
@@ -1779,7 +1797,7 @@ function renderDeckSection() {
     } else if (state.deckActiveFilter === 'semi-transparent') {
       filteredStains = STAIN_COLORS.filter(c => c.type === 'semi-transparent');
     } else if (state.deckActiveFilter === 'superdeck') {
-      filteredStains = STAIN_COLORS.filter(c => c.brand === 'SuperDeck');
+      filteredStains = STAIN_COLORS.filter(c => c.type === 'superdeck');
     }
 
     // Sort by depth: dark first
@@ -1788,14 +1806,21 @@ function renderDeckSection() {
     html += `<div class="stain-grid">`;
     filteredStains.forEach((sc, idx) => {
       const di = getDepthIndicator(sc.depth);
+      const grainClass = sc.type === 'semi-transparent' ? ' grain' : '';
       html += `<div class="stain-card" onclick="openStainBottomSheet(${idx}, '${state.deckActiveFilter}')">
-        <div class="stain-card-swatch" style="background:${sc.hex}"></div>
+        <div class="stain-card-swatch${grainClass}" style="background:${sc.hex}"></div>
         <div class="stain-depth-dot" style="background:${di.dot}"></div>
         <div class="stain-card-name">${sc.name}</div>
         <div class="stain-card-code">${sc.brand} ${sc.code}</div>
       </div>`;
     });
     html += `</div>`;
+
+    // Note about other brands
+    html += `<div style="font-size:11px;color:var(--text-light);padding:8px 4px;line-height:1.5;border-top:1px solid #eee;margin-top:4px">
+      <strong>Why these brands?</strong> Nash Painting uses TWP and Sherwin-Williams SuperDeck exclusively — they're the products we trust and warranty. Other brands (Benjamin Moore, Cabot, etc.) are available by request, but stain color swatches from those brands don't accurately represent the finished look on real wood. If you're interested in another brand, your estimator can show you photos of completed projects.
+      <div style="margin-top:6px"><span style="color:var(--gold);font-weight:600;cursor:pointer" onclick="openConsultModal()">📱 Ask your estimator about other options →</span></div>
+    </div>`;
   }
 
   // Selected stain display
@@ -1844,7 +1869,7 @@ function openStainBottomSheet(idx, filterKey) {
   } else if (filterKey === 'semi-transparent') {
     filteredStains = STAIN_COLORS.filter(c => c.type === 'semi-transparent');
   } else if (filterKey === 'superdeck') {
-    filteredStains = STAIN_COLORS.filter(c => c.brand === 'SuperDeck');
+    filteredStains = STAIN_COLORS.filter(c => c.type === 'superdeck');
   }
   filteredStains.sort((a,b) => (DEPTH_ORDER[b.depth]||0) - (DEPTH_ORDER[a.depth]||0));
   selectedStainColor = filteredStains[idx];
@@ -1858,9 +1883,18 @@ function openStainBottomSheet(idx, filterKey) {
   else if (target === current) depthNote = '<div style="font-size:12px;color:#856404;background:#fff3cd;padding:6px 10px;border-radius:6px;margin-top:6px">🟡 Similar depth — good results</div>';
   else depthNote = '<div style="font-size:12px;color:#856404;background:#fff3cd;padding:6px 10px;border-radius:6px;margin-top:6px">🔴 Lighter than current — existing wear may show through ⚠️</div>';
 
-  document.getElementById('stainBsSwatch').style.background = sc.hex;
+  const swatchEl = document.getElementById('stainBsSwatch');
+  swatchEl.style.background = sc.hex;
+  // Add grain lines for semi-transparent
+  if (sc.type === 'semi-transparent') {
+    swatchEl.style.backgroundImage = `repeating-linear-gradient(180deg,transparent 0px,transparent 4px,rgba(0,0,0,0.05) 4px,rgba(0,0,0,0.05) 5px,transparent 5px,transparent 10px,rgba(0,0,0,0.03) 10px,rgba(0,0,0,0.03) 11px,transparent 11px,transparent 18px)`;
+    swatchEl.style.backgroundBlendMode = 'multiply';
+  } else {
+    swatchEl.style.backgroundImage = 'none';
+  }
   document.getElementById('stainBsName').textContent = sc.name;
-  document.getElementById('stainBsMeta').textContent = `${sc.brand} ${sc.code} · ${sc.type === 'semi-transparent' ? 'Semi-Transparent' : 'Solid'} · ${sc.depth} depth`;
+  const typeLabel = sc.type === 'semi-transparent' ? 'Semi-Transparent' : sc.type === 'superdeck' ? 'SuperDeck Self-Priming' : 'Solid';
+  document.getElementById('stainBsMeta').innerHTML = `${sc.brand} ${sc.code} · ${typeLabel}<br><span style="color:var(--text)">${sc.desc || ''}</span>`;
   document.getElementById('stainBsDepthNote').innerHTML = depthNote;
 
   // Check for railing options
