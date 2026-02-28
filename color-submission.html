@@ -184,7 +184,7 @@ body {
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
 }
 .room-detail { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-.room-card.expanded .room-detail { max-height: 600px; }
+.room-card.expanded .room-detail { max-height: 800px; }
 .surface-row {
   padding: 10px 16px; display: flex; align-items: center; gap: 10px;
   border-top: 1px solid #f0f0f0;
@@ -205,6 +205,12 @@ body {
   font-size: 12px; color: var(--gold); font-weight: 600; cursor: pointer;
   padding: 6px 10px; border-radius: 8px; -webkit-tap-highlight-color: transparent;
 }
+.trim-divider {
+  padding: 4px 16px; font-size: 10px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px; border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
 /* Trim expand toggle */
 .trim-expand-toggle {
   margin-top: 8px; padding: 8px 0 0;
@@ -240,6 +246,7 @@ body {
   border-radius: 50%; background: #fee; color: var(--red); font-size: 12px;
   cursor: pointer; flex-shrink: 0;
 }
+.trim-sub-count { font-size: 10px; color: var(--text-muted); }
 
 /* Color consultation card */
 .consult-card {
@@ -329,6 +336,132 @@ body {
 }
 .ext-warn-ok { background: var(--gold); color: #fff; }
 .ext-warn-change { background: #eee; color: var(--text); }
+
+/* Deck section */
+.deck-section { margin-top: 12px; }
+.deck-assessment-card {
+  background: linear-gradient(135deg, #f8f4eb 0%, #fff 100%);
+  border: 1.5px solid #e0d5c0; border-radius: var(--card-radius);
+  padding: 16px; margin-bottom: 12px;
+}
+.deck-assessment-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.deck-finding { font-size: 13px; color: var(--text); line-height: 1.8; }
+.deck-finding strong { color: var(--navy); }
+.deck-recommendation {
+  background: var(--navy); color: #fff; border-radius: 10px;
+  padding: 14px; margin-top: 12px;
+}
+.deck-recommendation .rec-label { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.deck-recommendation .rec-type { font-size: 18px; font-weight: 700; margin: 4px 0; }
+.deck-recommendation .rec-reason { font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+.opacity-guide-toggle {
+  font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer;
+  padding: 10px 0; -webkit-tap-highlight-color: transparent;
+}
+.opacity-guide { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.opacity-guide.open { max-height: 500px; }
+.opacity-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 12px; }
+.opacity-card {
+  border: 2px solid #e0e0e0; border-radius: 10px; padding: 12px; text-align: center;
+  position: relative; transition: all 0.15s;
+}
+.opacity-card.recommended { border-color: var(--gold); background: var(--gold-bg); }
+.opacity-card.blocked { opacity: 0.5; }
+.opacity-card .rec-badge {
+  position: absolute; top: -8px; right: 8px;
+  background: var(--gold); color: #fff; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 8px;
+}
+.opacity-card .lock-badge {
+  position: absolute; top: -8px; right: 8px;
+  background: #999; color: #fff; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 8px;
+}
+.opacity-card-name { font-size: 13px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+.opacity-card-desc { font-size: 10px; color: var(--text-light); line-height: 1.4; margin-top: 4px; }
+.opacity-card-visual { font-size: 24px; height: 36px; display: flex; align-items: center; justify-content: center; color: #8B6936; }
+
+/* Stain color direction */
+.stain-direction {
+  background: #f0f7ff; border: 1px solid #d0e0f0; border-radius: 10px;
+  padding: 12px; margin-bottom: 12px; font-size: 12px; line-height: 1.6;
+}
+.stain-direction .tip { color: var(--navy); font-weight: 600; }
+.depth-legend { display: flex; gap: 12px; margin-top: 6px; font-size: 11px; }
+.depth-legend span { display: flex; align-items: center; gap: 4px; }
+
+/* Stain filter tabs */
+.stain-filter-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.stain-filter-pill {
+  padding: 6px 12px; border-radius: 16px; font-size: 12px;
+  border: 1.5px solid #ddd; color: var(--text-light); cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+  background: var(--white);
+}
+.stain-filter-pill.active { border-color: var(--navy); color: var(--navy); font-weight: 600; background: #eef2f7; }
+.stain-filter-pill.blocked { opacity: 0.5; cursor: not-allowed; }
+
+/* Stain color grid */
+.stain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+.stain-card {
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  text-align: center; position: relative;
+}
+.stain-card-swatch {
+  width: 100%; aspect-ratio: 1; border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+  transition: transform 0.15s;
+}
+.stain-card:active .stain-card-swatch { transform: scale(0.94); }
+.stain-card-name { font-size: 10px; font-weight: 600; color: var(--text); margin-top: 4px; line-height: 1.2; }
+.stain-card-code { font-size: 9px; color: var(--text-muted); }
+.stain-depth-dot {
+  position: absolute; top: 4px; right: 4px; width: 12px; height: 12px;
+  border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Semi-trans disclaimer */
+.semi-trans-disclaimer {
+  background: #fff8e1; border: 1.5px solid #ffcc02; border-radius: 10px;
+  padding: 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.6;
+}
+.semi-trans-disclaimer h4 { color: #856404; margin-bottom: 8px; }
+.semi-trans-disclaimer ul { padding-left: 18px; margin: 8px 0; color: var(--text); }
+.semi-trans-disclaimer li { margin-bottom: 4px; }
+.semi-trans-checkbox {
+  display: flex; align-items: flex-start; gap: 10px; margin: 12px 0;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.semi-trans-checkbox .cb-box {
+  width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0; transition: all 0.15s;
+}
+.semi-trans-checkbox .cb-box.checked { background: var(--navy); border-color: var(--navy); color: #fff; }
+.semi-trans-checkbox .cb-label { font-size: 12px; color: var(--text); line-height: 1.5; }
+.semi-trans-continue {
+  width: 100%; padding: 12px; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+.semi-trans-continue.disabled { background: #ddd; color: #aaa; pointer-events: none; }
+.semi-trans-continue.enabled { background: var(--gold); color: #fff; }
+
+/* Deck selection summary */
+.deck-selected {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--white); border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow); padding: 14px 16px; margin-bottom: 10px;
+}
+.deck-selected-swatch {
+  width: 48px; height: 48px; border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+.deck-selected-info { flex: 1; }
+.deck-selected-name { font-size: 14px; font-weight: 600; }
+.deck-selected-meta { font-size: 11px; color: var(--text-light); }
+.deck-selected-change { font-size: 12px; color: var(--gold); font-weight: 600; cursor: pointer; }
 
 /* Color browser overlay */
 .overlay {
@@ -622,7 +755,6 @@ body {
     <!-- Main Colors -->
     <div class="section-header">Your Main Colors</div>
     <div class="section-sub">Set your defaults — applies to every room at once.</div>
-
     <div id="mainColorCards"></div>
 
     <!-- Color Allowance -->
@@ -639,6 +771,9 @@ body {
     <div id="extAllowance"></div>
     <div id="extWarn"></div>
     <div id="extCards"></div>
+
+    <!-- Deck Stain -->
+    <div id="deckSection"></div>
 
     <!-- Disclaimer -->
     <div class="disclaimer">
@@ -693,6 +828,20 @@ body {
   <div id="applyTargets"></div>
   <div id="applySpecific"></div>
   <button class="apply-btn" id="applyBtn" ontouchend="event.preventDefault();applyColor()" onclick="applyColor()">Apply Color</button>
+</div>
+
+<!-- Stain Bottom Sheet -->
+<div class="bottom-sheet-overlay" id="stainBsOverlay" onclick="closeStainBottomSheet()"></div>
+<div class="bottom-sheet" id="stainBottomSheet" onclick="event.stopPropagation()">
+  <div class="bs-handle"></div>
+  <div class="bs-swatch-header" id="stainBsSwatch"></div>
+  <div class="bs-color-info">
+    <div class="bs-color-name" id="stainBsName"></div>
+    <div class="bs-color-meta" id="stainBsMeta"></div>
+    <div id="stainBsDepthNote"></div>
+  </div>
+  <div id="stainBsApply"></div>
+  <button class="apply-btn" id="stainApplyBtn" onclick="applyStainColor()">Apply to Entire Deck</button>
 </div>
 
 <!-- Toast -->
@@ -1008,6 +1157,141 @@ const COLORS = [
 // Popular color names for "Popular" filter
 const POPULAR = ["Agreeable Gray","Repose Gray","Alabaster","Extra White","Pure White","Snowbound","Accessible Beige","Sea Salt","Naval","Tricorn Black","Simply White","White Dove","Chantilly Lace","Revere Pewter","Hale Navy","Classic Gray","Edgecomb Gray","Palladian Blue","Evergreen Fog","Peppercorn","Iron Ore","Urbane Bronze","Swiss Coffee","Balboa Mist","Gray Owl","Aegean Teal","Chelsea Gray","Kendall Charcoal","Mindful Gray","Worldly Gray"];
 
+// ========== STAIN COLOR DATABASE ==========
+const STAIN_COLORS = [
+  {name:'Cedartone', code:'1501', brand:'TWP', hex:'#B8864E', type:'semi-transparent', depth:'medium'},
+  {name:'Cedartone Natural', code:'1530', brand:'TWP', hex:'#C4994F', type:'semi-transparent', depth:'light'},
+  {name:'Honeytone', code:'1503', brand:'TWP', hex:'#C49A5C', type:'semi-transparent', depth:'light'},
+  {name:'Pecan', code:'1515', brand:'TWP', hex:'#8B6936', type:'semi-transparent', depth:'medium'},
+  {name:'Dark Oak', code:'1510', brand:'TWP', hex:'#6B4A2E', type:'semi-transparent', depth:'dark'},
+  {name:'Rustic Oak', code:'1516', brand:'TWP', hex:'#7D5A3A', type:'semi-transparent', depth:'medium'},
+  {name:'Black Walnut', code:'1520', brand:'TWP', hex:'#4A3222', type:'semi-transparent', depth:'dark'},
+  {name:'California Redwood', code:'1540', brand:'TWP', hex:'#8B4C32', type:'semi-transparent', depth:'medium'},
+  {name:'Natural', code:'1500', brand:'TWP', hex:'#D4B07A', type:'semi-transparent', depth:'light'},
+  {name:'Autumn Brown', code:'SD-1', brand:'SuperDeck', hex:'#6B4A32', type:'solid', depth:'dark'},
+  {name:'Canyon Brown', code:'SD-2', brand:'SuperDeck', hex:'#7A5C40', type:'solid', depth:'medium'},
+  {name:'Redwood', code:'SD-3', brand:'SuperDeck', hex:'#8B4C36', type:'solid', depth:'medium'},
+  {name:'Cedar', code:'SD-4', brand:'SuperDeck', hex:'#A07046', type:'solid', depth:'medium'},
+  {name:'Driftwood', code:'SD-5', brand:'SuperDeck', hex:'#9E8E7A', type:'solid', depth:'light'},
+  {name:'Cape Cod Gray', code:'SD-6', brand:'SuperDeck', hex:'#8A8A82', type:'solid', depth:'light'},
+  {name:'Bark', code:'SD-7', brand:'SuperDeck', hex:'#5A4030', type:'solid', depth:'dark'},
+  {name:'Oxford Brown', code:'SD-8', brand:'SuperDeck', hex:'#4E362A', type:'solid', depth:'dark'},
+  {name:'Weathered Oak', code:'SD-9', brand:'SuperDeck', hex:'#A8906E', type:'solid', depth:'medium'},
+  {name:'Navajo Red', code:'SD-10', brand:'SuperDeck', hex:'#9B5040', type:'solid', depth:'medium'},
+  {name:'Cordovan Brown', code:'C-1', brand:'Cabot', hex:'#5C3A28', type:'solid', depth:'dark'},
+  {name:'New Redwood', code:'C-2', brand:'Cabot', hex:'#924C36', type:'solid', depth:'medium'},
+  {name:'Medium Base', code:'C-3', brand:'Cabot', hex:'#8A7A60', type:'solid', depth:'medium'},
+  {name:'Driftwood Gray', code:'C-4', brand:'Cabot', hex:'#908878', type:'solid', depth:'light'},
+  {name:'New Cedar', code:'C-ST1', brand:'Cabot', hex:'#BA8A52', type:'semi-transparent', depth:'medium'},
+  {name:'Heartwood', code:'C-ST2', brand:'Cabot', hex:'#8B5E38', type:'semi-transparent', depth:'medium'},
+  {name:'Pacific Redwood', code:'C-ST3', brand:'Cabot', hex:'#7A4430', type:'semi-transparent', depth:'dark'},
+  {name:'Burnt Hickory', code:'C-ST4', brand:'Cabot', hex:'#6E4A2E', type:'semi-transparent', depth:'dark'},
+];
+
+// ========== ESTIMATE DATA (from estimator) ==========
+const ESTIMATE = {
+  id: 'EST-2026-0142',
+  customer: 'Johnson Residence',
+  total: 10330,
+  exteriorTotal: 4200,
+  rooms: [
+    {name:'Living Room', surfaces:[
+      {key:'walls', label:'Walls'},
+      {key:'accent', label:'Accent Wall ✨'},
+      {key:'ceiling', label:'Ceiling'},
+      {key:'baseboards', label:'Baseboards', trimType:true},
+      {key:'crownMolding', label:'Crown Molding', trimType:true},
+      {key:'doors', label:'Doors', trimType:true},
+      {key:'doorFrames', label:'Door Frames', trimType:true},
+      {key:'windowTrim', label:'Window Trim', trimType:true},
+    ]},
+    {name:'Master Bedroom', surfaces:[
+      {key:'walls', label:'Walls'},
+      {key:'ceiling', label:'Ceiling'},
+      {key:'baseboards', label:'Baseboards', trimType:true},
+      {key:'doors', label:'Doors', trimType:true},
+      {key:'doorFrames', label:'Door Frames', trimType:true},
+      {key:'windowTrim', label:'Window Trim', trimType:true},
+    ]},
+    {name:'Kitchen', surfaces:[
+      {key:'walls', label:'Walls'},
+      {key:'ceiling', label:'Ceiling'},
+      {key:'baseboards', label:'Baseboards', trimType:true},
+      {key:'windowTrim', label:'Window Trim', trimType:true},
+      {key:'chairRail', label:'Chair Rail', trimType:true},
+    ]},
+    {name:'Guest Bathroom', surfaces:[
+      {key:'walls', label:'Walls'},
+      {key:'accent', label:'Accent Wall ✨'},
+      {key:'ceiling', label:'Ceiling'},
+      {key:'baseboards', label:'Baseboards', trimType:true},
+      {key:'doorFrames', label:'Door Frames', trimType:true},
+    ]},
+    {name:'Hallway', surfaces:[
+      {key:'walls', label:'Walls'},
+      {key:'ceiling', label:'Ceiling'},
+      {key:'baseboards', label:'Baseboards', trimType:true},
+      {key:'crownMolding', label:'Crown Molding', trimType:true},
+    ]},
+  ],
+  exterior: [
+    {key:'siding', name:'Siding (Body)', defaultSheen:'Flat'},
+    {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Satin'},
+    {key:'front_door', name:'Front Door', defaultSheen:'Satin'},
+    {key:'shutters', name:'Shutters', defaultSheen:'Satin'},
+  ],
+  deck: {
+    included: true,
+    totalSF: 480,
+    sections: [
+      {name:'Main Deck', sf:350, hasRailing:true, railingLF:45},
+      {name:'Landing/Steps', sf:130, hasRailing:true, railingLF:20},
+    ],
+    assessment: {
+      waterBeading: false,
+      previousCoating: 'stained-weathered',
+      mixedMaterials: false,
+      woodType: 'standard',
+      overallCondition: 'moderate',
+      currentStainType: 'semi-transparent',
+      currentColorDepth: 'medium',
+      currentColorMatch: 'TWP 1501 Cedartone',
+      recommendedProduct: 'solid',
+      recommendedReason: 'Deck has moderate weathering with some fading and patchy areas. Solid stain will provide uniform coverage.',
+      semiTransAllowed: true,
+      superDeckRequired: false,
+    }
+  }
+};
+
+// ========== DERIVED DATA ==========
+// Dynamically determine which trim sub-types exist across all rooms
+const allTrimKeys = new Set();
+ESTIMATE.rooms.forEach(r => r.surfaces.filter(s => s.trimType).forEach(s => allTrimKeys.add(s.key)));
+
+const TRIM_SUBTYPE_META = {
+  baseboards: {icon:'▬', name:'Baseboards'},
+  crownMolding: {icon:'👑', name:'Crown Molding'},
+  doors: {icon:'🚪', name:'Doors'},
+  doorFrames: {icon:'🚪', name:'Door Frames'},
+  windowTrim: {icon:'🪟', name:'Window Trim'},
+  chairRail: {icon:'━', name:'Chair Rail'},
+};
+
+// Only sub-types that exist in at least one room
+const AVAILABLE_TRIM_SUBS = [];
+allTrimKeys.forEach(key => {
+  if (TRIM_SUBTYPE_META[key]) {
+    const roomCount = ESTIMATE.rooms.filter(r => r.surfaces.some(s => s.key === key)).length;
+    AVAILABLE_TRIM_SUBS.push({key, ...TRIM_SUBTYPE_META[key], roomCount});
+  }
+});
+
+// Check if any room has accent walls
+const hasAccentRooms = ESTIMATE.rooms.some(r => r.surfaces.some(s => s.key === 'accent'));
+const accentRoomCount = ESTIMATE.rooms.filter(r => r.surfaces.some(s => s.key === 'accent')).length;
+const roomCount = ESTIMATE.rooms.length;
+
 // ========== DATA MODEL ==========
 const SHEENS = ['Flat','Eggshell','Satin','Semi-Gloss'];
 const SHEEN_INFO = {
@@ -1017,35 +1301,8 @@ const SHEEN_INFO = {
   'Semi-Gloss': {short:'High shine',sub:'Traditional',desc:'Noticeable shine. Very durable and easy to clean. A traditional choice for trim and doors — some clients prefer the classic look. Touch-ups will be visible.'}
 };
 
-const SURFACE_DEFAULT_SHEEN = {walls:'Flat',accent:'Flat',trim:'Satin',ceiling:'Flat',doors:'Satin'};
-
-// Surface display names
-const SURFACE_LABELS = {walls:'Walls',accent:'Accent Wall ✨',trim:'Trim',ceiling:'Ceiling',doors:'Doors'};
-
-// Trim sub-types — expandable from the global Trim card
-const TRIM_SUBTYPES = [
-  {key:'doors', name:'Doors', icon:'🚪'},
-  {key:'doorFrames', name:'Door Frames', icon:'🚪'},
-  {key:'windowTrim', name:'Window Trim', icon:'🪟'},
-  {key:'baseboards', name:'Baseboards', icon:'▬'},
-  {key:'crownMolding', name:'Crown Molding', icon:'👑'},
-  {key:'chairRail', name:'Chair Rail', icon:'━'},
-];
-
-const ROOMS = [
-  {name:'Living Room', surfaces:['walls','accent','trim','ceiling','doors']},
-  {name:'Master Bedroom', surfaces:['walls','trim','ceiling']},
-  {name:'Kitchen', surfaces:['walls','trim','ceiling']},
-  {name:'Guest Bathroom', surfaces:['walls','accent','trim','ceiling']},
-  {name:'Hallway', surfaces:['walls','trim','ceiling']},
-];
-
-const EXT_SURFACES = [
-  {key:'siding', name:'Siding (Body)', defaultSheen:'Flat'},
-  {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Satin'},
-  {key:'front_door', name:'Front Door', defaultSheen:'Satin'},
-  {key:'shutters', name:'Shutters', defaultSheen:'Satin'},
-];
+// Default sheens
+const SURFACE_DEFAULT_SHEEN = {walls:'Flat', accent:'Flat', trim:'Satin', ceiling:'Flat'};
 
 // State
 let state = {
@@ -1055,22 +1312,33 @@ let state = {
     ceiling: {color:findColor('Ceiling Bright White','SW'), sheen:'Flat'},
     accent: {color:null, sheen:'Flat'},
   },
-  // Trim sub-type overrides — null means inherit from main.trim
-  trimSubs: {
-    doors:null, doorFrames:null, windowTrim:null,
-    baseboards:null, crownMolding:null, chairRail:null,
-  },
+  trimSubs: {},
   trimExpanded: false,
   rooms: {},
   exterior: {},
+  deck: {
+    color: null,
+    productType: null, // will be set from recommendation
+    semiTransAccepted: false,
+  },
   recentColors: [],
   sheenEducationSeen: localStorage.getItem('nashSheenEdu')==='1',
   extWarnAccepted: false,
+  deckOpacityOpen: false,
+  deckActiveFilter: 'recommended',
 };
 
-// Init room overrides (empty = use main)
-ROOMS.forEach(r => { state.rooms[r.name] = {}; r.surfaces.forEach(s => state.rooms[r.name][s] = null); });
-EXT_SURFACES.forEach(e => { state.exterior[e.key] = {color:null, sheen:e.defaultSheen}; });
+// Init trim subs — only for available keys
+AVAILABLE_TRIM_SUBS.forEach(st => { state.trimSubs[st.key] = null; });
+
+// Init room overrides
+ESTIMATE.rooms.forEach(r => {
+  state.rooms[r.name] = {};
+  r.surfaces.forEach(s => state.rooms[r.name][s.key] = null);
+});
+
+// Init exterior
+ESTIMATE.exterior.forEach(e => { state.exterior[e.key] = {color:null, sheen:e.defaultSheen}; });
 
 // Browser state
 let browserTarget = null;
@@ -1082,8 +1350,42 @@ let applyTargets = new Set();
 let specificTargets = new Set();
 let specificOpen = false;
 
+// Stain bottom sheet state
+let selectedStainColor = null;
+
 function findColor(name, brand) {
   return COLORS.find(c => c.name===name && (!brand || c.brand===brand)) || null;
+}
+
+// ========== INHERITANCE CASCADE ==========
+function getEffective(roomName, surfaceKey) {
+  const override = state.rooms[roomName]?.[surfaceKey];
+  if (override) return override;
+
+  // Find surface definition
+  const room = ESTIMATE.rooms.find(r => r.name === roomName);
+  const surfDef = room?.surfaces.find(s => s.key === surfaceKey);
+
+  if (surfaceKey === 'walls') return {color: state.main.walls.color, sheen: state.main.walls.sheen};
+  if (surfaceKey === 'ceiling') return {color: state.main.ceiling.color, sheen: state.main.ceiling.sheen};
+  if (surfaceKey === 'accent') return {color: state.main.accent.color, sheen: state.main.accent.sheen};
+
+  // Trim type surfaces: check sub-type override, then fall back to global trim
+  if (surfDef && surfDef.trimType) {
+    const sub = state.trimSubs[surfaceKey];
+    if (sub) return sub;
+    return {color: state.main.trim.color, sheen: state.main.trim.sheen};
+  }
+
+  return {color: null, sheen: 'Flat'};
+}
+
+function isCustom(roomName, surfaceKey) {
+  return !!state.rooms[roomName]?.[surfaceKey];
+}
+
+function isTrimSubCustom(key) {
+  return !!state.trimSubs[key];
 }
 
 // ========== RENDERING ==========
@@ -1093,45 +1395,17 @@ function render() {
   renderRoomCards();
   renderExtCards();
   renderExtAllowance();
+  renderDeckSection();
   renderSubmitBar();
-}
-
-function getEffective(room, surface) {
-  const override = state.rooms[room]?.[surface];
-  if (override) return override;
-  // Accent walls inherit from global accent
-  if (surface === 'accent') return {color: state.main.accent.color, sheen: state.main.accent.sheen};
-  // Doors cascade: room override → trim subtype "doors" → global trim
-  if (surface === 'doors') {
-    const sub = state.trimSubs.doors;
-    if (sub) return sub;
-    return {color: state.main.trim.color, sheen: state.main.trim.sheen};
-  }
-  // Trim at room level = baseboards/general trim → inherit from global trim
-  if (surface === 'trim') return {color: state.main.trim.color, sheen: state.main.trim.sheen};
-  // Walls, ceiling — straight from main
-  return {color: state.main[surface]?.color, sheen: state.main[surface]?.sheen};
-}
-
-function getExtEffective(key) {
-  return state.exterior[key];
-}
-
-function isCustom(room, surface) {
-  return !!state.rooms[room]?.[surface];
 }
 
 function renderMainCards() {
   const el = document.getElementById('mainColorCards');
-  const hasAccentRooms = ROOMS.some(r => r.surfaces.includes('accent'));
-  const accentCount = ROOMS.filter(r => r.surfaces.includes('accent')).length;
   const trimSubCount = Object.values(state.trimSubs).filter(v => v !== null).length;
-
-  // Build cards array: Walls, Trim, Ceiling, Accent (if applicable)
   let html = '';
 
   // === WALLS ===
-  html += renderSimpleMainCard('walls', '🏠', 'Walls', 'Start here! Pick your wall color.', true, 'Applies to all 5 rooms');
+  html += renderSimpleMainCard('walls', '🏠', 'Walls', 'Start here! Pick your wall color.', true, `Applies to all ${roomCount} rooms`);
 
   // === TRIM (with expandable sub-types) ===
   const trimCol = state.main.trim.color;
@@ -1141,7 +1415,7 @@ function renderMainCards() {
       <div class="mcc-label">✂️ All Trim</div>
       ${!hasTrim ? '<div class="mcc-badge">Required</div>' : ''}
     </div>
-    <div class="mcc-hint">Baseboards, doors, frames, windows, crown, chair rail</div>
+    <div class="mcc-hint">${AVAILABLE_TRIM_SUBS.map(s=>s.name.toLowerCase()).join(', ')}</div>
     <div class="mcc-swatch-row">
       <div class="mcc-swatch${hasTrim?'':' empty'}" style="${hasTrim?'background:'+trimCol.hex:''}">${hasTrim?'':'+'}</div>
       ${hasTrim ? `<div class="mcc-color-info">
@@ -1149,21 +1423,21 @@ function renderMainCards() {
         <div class="mcc-color-code">${trimCol.brand} ${trimCol.code}</div>
       </div>` : `<div class="mcc-color-info"><div class="mcc-color-name" style="color:var(--text-muted)">Tap to choose color</div></div>`}
     </div>
-    <div class="mcc-applies">Applies to all 5 rooms${trimSubCount > 0 ? ' · <span style="color:var(--gold)">'+trimSubCount+' customized</span>' : ''}</div>
+    <div class="mcc-applies">Applies to all ${roomCount} rooms${trimSubCount > 0 ? ' · <span style="color:var(--gold)">'+trimSubCount+' customized</span>' : ''}</div>
     <div class="sheen-pills" onclick="event.stopPropagation()">
       ${SHEENS.map(s => `<div class="sheen-pill${state.main.trim.sheen===s?' active':''}" onclick="setMainSheen('trim','${s}')">${s}</div>`).join('')}
       <div class="sheen-info-link" onclick="showSheenModal()">ℹ️</div>
     </div>
     <div class="trim-expand-toggle" onclick="event.stopPropagation();state.trimExpanded=!state.trimExpanded;render()">
-      ${state.trimExpanded ? '▾ Hide trim details' : '▸ Customize by type'} <span style="font-weight:400;color:var(--text-muted)">(doors, windows, etc.)</span>
+      ${state.trimExpanded ? '▾ Hide trim details' : '▸ Customize by type'} <span style="font-weight:400;color:var(--text-muted)">(${AVAILABLE_TRIM_SUBS.length} types)</span>
     </div>
   </div>`;
 
-  // Trim sub-type expansion
+  // Trim sub-type expansion — only available types
   if (state.trimExpanded) {
     html += '<div class="trim-subtypes-panel">';
     html += '<div class="trim-sub-header">Each trim type defaults to your main trim color. Override any that should be different.</div>';
-    TRIM_SUBTYPES.forEach(st => {
+    AVAILABLE_TRIM_SUBS.forEach(st => {
       const sub = state.trimSubs[st.key];
       const effective = sub || {color: state.main.trim.color, sheen: state.main.trim.sheen};
       const isCustom = !!sub;
@@ -1174,6 +1448,7 @@ function renderMainCards() {
         <div class="trim-sub-info">
           <div class="trim-sub-name">${st.name} ${isCustom ? '<span class="surface-custom">Custom</span>' : ''}</div>
           <div class="trim-sub-color">${col ? col.name + ' · ' + effective.sheen : 'Same as trim'}</div>
+          <div class="trim-sub-count">Applies to ${st.roomCount} room${st.roomCount>1?'s':''}</div>
         </div>
         ${isCustom ? `<div class="trim-sub-reset" onclick="event.stopPropagation();state.trimSubs['${st.key}']=null;render()">✕</div>` : '<div class="surface-change">Change</div>'}
       </div>`;
@@ -1182,11 +1457,11 @@ function renderMainCards() {
   }
 
   // === CEILING ===
-  html += renderSimpleMainCard('ceiling', '⬆', 'Ceiling', '💡 Suggested — tap to change', false, 'Applies to all 5 rooms');
+  html += renderSimpleMainCard('ceiling', '⬆', 'Ceiling', '💡 Suggested — tap to change', false, `Applies to all ${roomCount} rooms`);
 
   // === ACCENT WALLS (only if estimate has them) ===
   if (hasAccentRooms) {
-    html += renderSimpleMainCard('accent', '✨', 'Accent Walls', 'Pick your feature wall color', state.main.accent.color === null, 'Applies to ' + accentCount + ' room' + (accentCount > 1 ? 's' : ''));
+    html += renderSimpleMainCard('accent', '✨', 'Accent Walls', 'Pick your feature wall color', state.main.accent.color === null, `Applies to ${accentRoomCount} room${accentRoomCount>1?'s':''}`);
   }
 
   el.innerHTML = html;
@@ -1226,13 +1501,12 @@ function setMainSheen(surface, sheen) {
 
 function countUniqueColors() {
   const set = new Set();
-  ROOMS.forEach(r => {
+  ESTIMATE.rooms.forEach(r => {
     r.surfaces.forEach(s => {
-      const e = getEffective(r.name, s);
+      const e = getEffective(r.name, s.key);
       if (e.color) set.add(e.color.name+'|'+e.color.brand);
     });
   });
-  // Also count trim sub-type overrides
   Object.values(state.trimSubs).forEach(sub => {
     if (sub && sub.color) set.add(sub.color.name+'|'+sub.color.brand);
   });
@@ -1241,7 +1515,7 @@ function countUniqueColors() {
 
 function countUniqueExtColors() {
   const set = new Set();
-  EXT_SURFACES.forEach(e => {
+  ESTIMATE.exterior.forEach(e => {
     const d = state.exterior[e.key];
     if (d.color) set.add(d.color.name+'|'+d.color.brand);
   });
@@ -1271,7 +1545,6 @@ function renderExtAllowance() {
       <div class="allowance-track"><div class="allowance-fill ${cls}" style="width:${pct}%"></div></div>
     </div>
   `;
-  // Warning
   if (count > 3 && !state.extWarnAccepted) {
     document.getElementById('extWarn').innerHTML = `
       <div class="ext-warn">Adding a ${count}th exterior color increases your exterior price by 10% (+$420).
@@ -1285,15 +1558,19 @@ function renderExtAllowance() {
 
 function renderRoomCards() {
   const el = document.getElementById('roomCards');
-  el.innerHTML = ROOMS.map((r,i) => {
-    const allFilled = r.surfaces.every(s => getEffective(r.name,s).color);
-    const summary = r.surfaces.map(s => {
-      const e = getEffective(r.name, s);
+  el.innerHTML = ESTIMATE.rooms.map((r,i) => {
+    const paintSurfaces = r.surfaces.filter(s => !s.trimType);
+    const trimSurfaces = r.surfaces.filter(s => s.trimType);
+    const allFilled = r.surfaces.every(s => getEffective(r.name, s.key).color);
+
+    // Summary line
+    const summary = paintSurfaces.map(s => {
+      const e = getEffective(r.name, s.key);
       const name = e.color ? e.color.name : '—';
       const hex = e.color ? e.color.hex : '#ddd';
-      const label = s==='accent' ? 'Accent' : capitalFirst(s);
-      return `<span class="room-summary-swatch" style="background:${hex}"></span>${label}: ${name}`;
+      return `<span class="room-summary-swatch" style="background:${hex}"></span>${s.label.replace(' ✨','')}: ${name}`;
     }).join(' · ');
+
     return `<div class="room-card" id="room-${i}">
       <div class="room-header" onclick="toggleRoom(${i})">
         <span class="room-check">${allFilled?'✅':'⬜'}</span>
@@ -1302,29 +1579,38 @@ function renderRoomCards() {
       </div>
       <div class="room-summary" style="padding:0 16px 10px 46px;margin-top:-6px">${summary}</div>
       <div class="room-detail">
-        ${r.surfaces.map(s => {
-          const e = getEffective(r.name, s);
-          const custom = isCustom(r.name, s);
-          const hex = e.color ? e.color.hex : '#eee';
-          const cname = e.color ? e.color.name : (s==='accent' ? 'Pick a different color!' : 'Not set');
-          const isAccent = s === 'accent';
-          const label = SURFACE_LABELS[s] || capitalFirst(s);
-          return `<div class="surface-row${isAccent ? ' accent-surface' : ''}">
-            <div class="surface-swatch${!e.color && isAccent ? ' empty accent-empty' : ''}" style="${e.color ? 'background:'+hex : ''}">${!e.color && isAccent ? '✨' : ''}</div>
-            <div class="surface-info">
-              <div class="surface-name">${label} ${custom && !isAccent?'<span class="surface-custom">Custom</span>':''}</div>
-              <div class="surface-color">${cname}</div>
-              <div class="surface-sheen">${e.sheen}</div>
-              ${isAccent && !e.color ? '<div style="font-size:10px;color:var(--gold);margin-top:2px">This is your feature wall — pick something bold!</div>' : ''}
-            </div>
-            <div class="surface-change" onclick="openBrowserFor('room','${s}','${r.name}')">${e.color ? 'Change' : 'Pick'}</div>
-          </div>
-          ${e.color && e.color.lrv<15 ? `<div class="dark-warning">⚠️ Dark color — may need primer. Your estimator will confirm if there's any price impact.</div>` : ''}
-          ${s==='ceiling' && e.color && e.color.lrv<30 ? `<div class="dark-warning">⚠️ Dark ceiling color — imperfections may be more visible. We recommend Flat sheen.</div>` : ''}`;
-        }).join('')}
+        ${paintSurfaces.map(s => renderSurfaceRow(r.name, s)).join('')}
+        ${trimSurfaces.length > 0 ? '<div class="trim-divider">── Trim ──</div>' : ''}
+        ${trimSurfaces.map(s => renderSurfaceRow(r.name, s)).join('')}
       </div>
     </div>`;
   }).join('');
+}
+
+function renderSurfaceRow(roomName, surfDef) {
+  const e = getEffective(roomName, surfDef.key);
+  const custom = isCustom(roomName, surfDef.key);
+  const trimSubCustom = surfDef.trimType && isTrimSubCustom(surfDef.key) && !custom;
+  const hex = e.color ? e.color.hex : '#eee';
+  const cname = e.color ? e.color.name : (surfDef.key === 'accent' ? 'Pick a color!' : 'Not set');
+  const isAccent = surfDef.key === 'accent';
+
+  let customLabel = '';
+  if (custom) customLabel = '<span class="surface-custom">Custom</span>';
+  else if (trimSubCustom) customLabel = '<span class="surface-custom">Custom</span>';
+
+  return `<div class="surface-row${isAccent ? ' accent-surface' : ''}">
+    <div class="surface-swatch${!e.color && isAccent ? ' empty accent-empty' : ''}" style="${e.color ? 'background:'+hex : ''}">${!e.color && isAccent ? '✨' : ''}</div>
+    <div class="surface-info">
+      <div class="surface-name">${surfDef.label} ${customLabel}</div>
+      <div class="surface-color">${cname}</div>
+      <div class="surface-sheen">${e.sheen || ''}</div>
+      ${isAccent && !e.color ? '<div style="font-size:10px;color:var(--gold);margin-top:2px">This is your feature wall — pick something bold!</div>' : ''}
+    </div>
+    <div class="surface-change" onclick="openBrowserFor('room','${surfDef.key}','${roomName}')">${e.color ? 'Change' : 'Pick'}</div>
+  </div>
+  ${e.color && e.color.lrv<15 ? `<div class="dark-warning">⚠️ Dark color — may need primer. Your estimator will confirm if there's any price impact.</div>` : ''}
+  ${surfDef.key==='ceiling' && e.color && e.color.lrv<30 ? `<div class="dark-warning">⚠️ Dark ceiling color — imperfections may be more visible. We recommend Flat sheen.</div>` : ''}`;
 }
 
 function toggleRoom(i) {
@@ -1333,7 +1619,7 @@ function toggleRoom(i) {
 
 function renderExtCards() {
   const el = document.getElementById('extCards');
-  el.innerHTML = EXT_SURFACES.map(e => {
+  el.innerHTML = ESTIMATE.exterior.map(e => {
     const d = state.exterior[e.key];
     const col = d.color;
     const hex = col ? col.hex : '#eee';
@@ -1360,15 +1646,262 @@ function setExtSheen(key, sheen) {
   render();
 }
 
+// ========== DECK SECTION ==========
+function renderDeckSection() {
+  const el = document.getElementById('deckSection');
+  if (!ESTIMATE.deck || !ESTIMATE.deck.included) { el.innerHTML = ''; return; }
+
+  const deck = ESTIMATE.deck;
+  const a = deck.assessment;
+  const sectionNames = deck.sections.map(s => s.name).join(' + ');
+
+  const depthLabels = {light:'Light',medium:'Medium',dark:'Dark'};
+  const conditionLabels = {minimal:'Minimal',moderate:'Moderate',severe:'Severe'};
+  const productLabels = {'semi-transparent':'Semi-Transparent Stain', solid:'Solid Stain', superdeck:'SuperDeck'};
+
+  // Depth comparison helper
+  const DEPTH_ORDER = {light:0, medium:1, dark:2};
+
+  function getDepthIndicator(stainDepth) {
+    const current = DEPTH_ORDER[a.currentColorDepth] || 1;
+    const target = DEPTH_ORDER[stainDepth] || 1;
+    if (target > current) return {dot:'#2ecc71', label:'🟢 Darker than current ✅'};
+    if (target === current) return {dot:'#f39c12', label:'🟡 Similar depth — good results'};
+    return {dot:'#e74c3c', label:'🔴 Lighter — existing wear may show through'};
+  }
+
+  let html = `<div class="section-header">🪵 Deck Stain</div>
+    <div class="section-sub">${deck.totalSF} SF · ${sectionNames}</div>
+    <div class="deck-section">`;
+
+  // Assessment card
+  html += `<div class="deck-assessment-card">
+    <div class="deck-assessment-title">📋 Your Deck Assessment</div>
+    <div class="deck-finding">
+      Your estimator inspected your deck and found:<br>
+      <strong>Current stain:</strong> ${depthLabels[a.currentColorDepth]} depth, ${a.currentStainType}<br>
+      <strong>Closest match:</strong> ${a.currentColorMatch}<br>
+      <strong>Condition:</strong> ${conditionLabels[a.overallCondition]} — some fading and patchy areas
+    </div>
+    <div class="deck-recommendation">
+      <div class="rec-label">★ Recommended</div>
+      <div class="rec-type">${productLabels[a.recommendedProduct]}</div>
+      <div class="rec-reason">"${a.recommendedReason}"</div>
+    </div>
+  </div>`;
+
+  // Opacity guide (expandable)
+  html += `<div class="opacity-guide-toggle" onclick="state.deckOpacityOpen=!state.deckOpacityOpen;render()">
+    ${state.deckOpacityOpen ? '▾' : '▸'} Stain Opacity Guide
+  </div>
+  <div class="opacity-guide${state.deckOpacityOpen?' open':''}">
+    <div class="opacity-cards">
+      <div class="opacity-card${a.recommendedProduct==='semi-transparent'?' recommended':''}${!a.semiTransAllowed?' blocked':''}">
+        ${a.recommendedProduct==='semi-transparent'?'<div class="rec-badge">★ RECOMMENDED</div>':''}
+        ${!a.semiTransAllowed?'<div class="lock-badge">🔒 Blocked</div>':''}
+        <div class="opacity-card-visual">░░░░</div>
+        <div class="opacity-card-name">Semi-Trans</div>
+        <div class="opacity-card-desc">Shows grain<br>Shows wear<br>1–3 years</div>
+      </div>
+      <div class="opacity-card">
+        <div class="opacity-card-visual">▒▒▒▒</div>
+        <div class="opacity-card-name">Semi-Solid</div>
+        <div class="opacity-card-desc">Rich color<br>Some texture<br>3–5 years</div>
+      </div>
+      <div class="opacity-card${a.recommendedProduct==='solid'?' recommended':''}">
+        ${a.recommendedProduct==='solid'?'<div class="rec-badge">★ RECOMMENDED</div>':''}
+        <div class="opacity-card-visual">▓▓▓▓</div>
+        <div class="opacity-card-name">Solid</div>
+        <div class="opacity-card-desc">Hides all<br>No grain<br>4–6 years</div>
+      </div>
+      ${a.superDeckRequired ? `<div class="opacity-card${a.recommendedProduct==='superdeck'?' recommended':''}">
+        ${a.recommendedProduct==='superdeck'?'<div class="rec-badge">★ RECOMMENDED</div>':''}
+        <div class="opacity-card-visual">████</div>
+        <div class="opacity-card-name">SuperDeck</div>
+        <div class="opacity-card-desc">Max coverage<br>One-way door<br>4–6 years</div>
+      </div>` : ''}
+    </div>
+  </div>`;
+
+  // Color direction
+  html += `<div class="stain-direction">
+    <div>Your current stain: ~${a.currentColorMatch} (${a.currentColorDepth} depth)</div>
+    <div class="tip">💡 Color tip: Going darker hides more imperfections.</div>
+    <div class="depth-legend">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2ecc71"></span> Same/darker — best</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f39c12"></span> Similar — good</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e74c3c"></span> Lighter — risky</span>
+    </div>
+  </div>`;
+
+  // Filter tabs
+  const filters = [
+    {key:'recommended', label:'Recommended ★'},
+    {key:'all-solid', label:'All Solid'},
+    {key:'semi-transparent', label:'Semi-Transparent'},
+  ];
+  if (a.superDeckRequired) filters.push({key:'superdeck', label:'SuperDeck'});
+
+  html += `<div class="stain-filter-row">`;
+  filters.forEach(f => {
+    const isBlocked = f.key === 'semi-transparent' && !a.semiTransAllowed;
+    const isActive = state.deckActiveFilter === f.key;
+    html += `<div class="stain-filter-pill${isActive?' active':''}${isBlocked?' blocked':''}" onclick="${isBlocked ? '' : "state.deckActiveFilter='"+f.key+"';render()"}">${isBlocked?'🔒 ':''}${f.label}</div>`;
+  });
+  html += `</div>`;
+
+  // Semi-transparent disclaimer
+  if (state.deckActiveFilter === 'semi-transparent' && a.recommendedProduct !== 'semi-transparent' && !state.deck.semiTransAccepted) {
+    html += `<div class="semi-trans-disclaimer">
+      <h4>⚠️ Semi-Transparent Stain Notice</h4>
+      <p>Your deck has ${a.overallCondition} weathering. Semi-transparent stain will <strong>NOT</strong> hide existing imperfections:</p>
+      <ul>
+        <li>Faded areas and sun damage will be visible</li>
+        <li>Doormat shadows and plant stains will show</li>
+        <li>Previous coating patterns may bleed through</li>
+        <li>Color will NOT be uniform like the sample chip</li>
+      </ul>
+      <p>The darker you go, the more imperfections are hidden. Only solid stain provides truly uniform coverage.</p>
+      <div class="semi-trans-checkbox" onclick="toggleSemiTransAccept()">
+        <div class="cb-box" id="semiTransCb">${state.deck.semiTransAccepted?'✓':''}</div>
+        <div class="cb-label">I understand that semi-transparent stain will not fully hide my deck's existing imperfections and that the final appearance will vary from samples.</div>
+      </div>
+      <button class="semi-trans-continue disabled" id="semiTransBtn" onclick="state.deck.semiTransAccepted=true;render()">Continue with Semi-Transparent</button>
+    </div>`;
+  } else {
+    // Show stain colors
+    let filteredStains = [];
+    if (state.deckActiveFilter === 'recommended') {
+      filteredStains = STAIN_COLORS.filter(c => c.type === a.recommendedProduct || (a.recommendedProduct === 'solid' && c.type === 'solid'));
+    } else if (state.deckActiveFilter === 'all-solid') {
+      filteredStains = STAIN_COLORS.filter(c => c.type === 'solid');
+    } else if (state.deckActiveFilter === 'semi-transparent') {
+      filteredStains = STAIN_COLORS.filter(c => c.type === 'semi-transparent');
+    } else if (state.deckActiveFilter === 'superdeck') {
+      filteredStains = STAIN_COLORS.filter(c => c.brand === 'SuperDeck');
+    }
+
+    // Sort by depth: dark first
+    filteredStains.sort((a,b) => (DEPTH_ORDER[b.depth]||0) - (DEPTH_ORDER[a.depth]||0));
+
+    html += `<div class="stain-grid">`;
+    filteredStains.forEach((sc, idx) => {
+      const di = getDepthIndicator(sc.depth);
+      html += `<div class="stain-card" onclick="openStainBottomSheet(${idx}, '${state.deckActiveFilter}')">
+        <div class="stain-card-swatch" style="background:${sc.hex}"></div>
+        <div class="stain-depth-dot" style="background:${di.dot}"></div>
+        <div class="stain-card-name">${sc.name}</div>
+        <div class="stain-card-code">${sc.brand} ${sc.code}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Selected stain display
+  if (state.deck.color) {
+    const dc = state.deck.color;
+    const di = getDepthIndicator(dc.depth);
+    html += `<div class="deck-selected">
+      <div class="deck-selected-swatch" style="background:${dc.hex}"></div>
+      <div class="deck-selected-info">
+        <div class="deck-selected-name">${dc.name}</div>
+        <div class="deck-selected-meta">${dc.brand} ${dc.code} · ${dc.type === 'semi-transparent' ? 'Semi-Transparent' : dc.type === 'solid' ? 'Solid' : 'SuperDeck'}</div>
+        <div style="font-size:11px;margin-top:2px">${di.label}</div>
+        ${state.deck.semiTransAccepted && dc.type === 'semi-transparent' ? '<div style="font-size:10px;color:#856404;margin-top:2px">⚠️ Semi-transparent disclaimer accepted</div>' : ''}
+      </div>
+      <div class="deck-selected-change" onclick="state.deck.color=null;state.deck.productType=null;render()">✕</div>
+    </div>`;
+  }
+
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function toggleSemiTransAccept() {
+  // Toggle the visual checkbox but don't actually accept yet
+  const cb = document.getElementById('semiTransCb');
+  const btn = document.getElementById('semiTransBtn');
+  if (cb.textContent === '✓') {
+    cb.textContent = '';
+    cb.classList.remove('checked');
+    btn.className = 'semi-trans-continue disabled';
+  } else {
+    cb.textContent = '✓';
+    cb.classList.add('checked');
+    btn.className = 'semi-trans-continue enabled';
+  }
+}
+
+function openStainBottomSheet(idx, filterKey) {
+  let filteredStains = [];
+  const a = ESTIMATE.deck.assessment;
+  const DEPTH_ORDER = {light:0, medium:1, dark:2};
+  if (filterKey === 'recommended') {
+    filteredStains = STAIN_COLORS.filter(c => c.type === a.recommendedProduct);
+  } else if (filterKey === 'all-solid') {
+    filteredStains = STAIN_COLORS.filter(c => c.type === 'solid');
+  } else if (filterKey === 'semi-transparent') {
+    filteredStains = STAIN_COLORS.filter(c => c.type === 'semi-transparent');
+  } else if (filterKey === 'superdeck') {
+    filteredStains = STAIN_COLORS.filter(c => c.brand === 'SuperDeck');
+  }
+  filteredStains.sort((a,b) => (DEPTH_ORDER[b.depth]||0) - (DEPTH_ORDER[a.depth]||0));
+  selectedStainColor = filteredStains[idx];
+  if (!selectedStainColor) return;
+
+  const sc = selectedStainColor;
+  const current = DEPTH_ORDER[a.currentColorDepth] || 1;
+  const target = DEPTH_ORDER[sc.depth] || 1;
+  let depthNote = '';
+  if (target > current) depthNote = '<div style="font-size:12px;color:#2e7d32;background:#e8f5e9;padding:6px 10px;border-radius:6px;margin-top:6px">🟢 Darker than current — best results ✅</div>';
+  else if (target === current) depthNote = '<div style="font-size:12px;color:#856404;background:#fff3cd;padding:6px 10px;border-radius:6px;margin-top:6px">🟡 Similar depth — good results</div>';
+  else depthNote = '<div style="font-size:12px;color:#856404;background:#fff3cd;padding:6px 10px;border-radius:6px;margin-top:6px">🔴 Lighter than current — existing wear may show through ⚠️</div>';
+
+  document.getElementById('stainBsSwatch').style.background = sc.hex;
+  document.getElementById('stainBsName').textContent = sc.name;
+  document.getElementById('stainBsMeta').textContent = `${sc.brand} ${sc.code} · ${sc.type === 'semi-transparent' ? 'Semi-Transparent' : 'Solid'} · ${sc.depth} depth`;
+  document.getElementById('stainBsDepthNote').innerHTML = depthNote;
+
+  // Check for railing options
+  const hasRailing = ESTIMATE.deck.sections.some(s => s.hasRailing);
+  let applyHtml = '';
+  if (hasRailing) {
+    applyHtml = `<div style="padding:0 16px 8px;font-size:13px;color:var(--text-light)">
+      <div style="font-weight:600;color:var(--navy);margin-bottom:6px">Apply to:</div>
+      <div style="margin-bottom:4px">● Entire deck (floor + railings) — most common</div>
+    </div>`;
+  }
+  document.getElementById('stainBsApply').innerHTML = applyHtml;
+
+  document.getElementById('stainBsOverlay').classList.add('open');
+  document.getElementById('stainBottomSheet').classList.add('open');
+}
+
+function closeStainBottomSheet() {
+  document.getElementById('stainBsOverlay').classList.remove('open');
+  document.getElementById('stainBottomSheet').classList.remove('open');
+}
+
+function applyStainColor() {
+  if (!selectedStainColor) return;
+  state.deck.color = selectedStainColor;
+  state.deck.productType = selectedStainColor.type;
+  closeStainBottomSheet();
+  render();
+  showToast(`${selectedStainColor.name} applied to deck ✓`);
+}
+
+// ========== SUBMIT BAR ==========
 function renderSubmitBar() {
   let total = 0, filled = 0;
-  ROOMS.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s).color) filled++; }));
-  EXT_SURFACES.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
+  ESTIMATE.rooms.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s.key).color) filled++; }));
+  ESTIMATE.exterior.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
+  // Deck counts as 1 surface
+  if (ESTIMATE.deck && ESTIMATE.deck.included) { total++; if(state.deck.color) filled++; }
   const ready = filled === total;
   document.getElementById('submitProgress').textContent = ready ? 'Ready to submit!' : `${filled} of ${total} surfaces complete`;
   const btn = document.getElementById('submitBtn');
   btn.className = 'submit-btn ' + (ready ? 'active' : 'disabled');
-  btn.textContent = ready ? 'Submit Colors' : 'Submit Colors';
 }
 
 // ========== COLOR BROWSER ==========
@@ -1378,7 +1911,6 @@ function openBrowserFor(type, surface, room) {
   specificTargets = new Set();
   specificOpen = false;
 
-  // Smart defaults for apply-to
   if (type === 'main') {
     applyTargets.add('all_'+surface);
   } else if (type === 'trimSub') {
@@ -1390,12 +1922,22 @@ function openBrowserFor(type, surface, room) {
     applyTargets.add('ext_'+surface);
   }
 
-  // Default sheen
   if (type === 'trimSub') {
     const sub = state.trimSubs[surface];
     selectedBrowserSheen = sub ? sub.sheen : state.main.trim.sheen;
   } else if (type === 'ext') {
     selectedBrowserSheen = state.exterior[surface].sheen;
+  } else if (type === 'room') {
+    // Determine default sheen for this surface
+    const room_obj = ESTIMATE.rooms.find(r => r.name === room);
+    const surf = room_obj?.surfaces.find(s => s.key === surface);
+    if (surf && surf.trimType) {
+      selectedBrowserSheen = 'Satin';
+    } else if (surface === 'walls' || surface === 'ceiling' || surface === 'accent') {
+      selectedBrowserSheen = 'Flat';
+    } else {
+      selectedBrowserSheen = 'Flat';
+    }
   } else {
     selectedBrowserSheen = state.main[surface]?.sheen || SURFACE_DEFAULT_SHEEN[surface] || 'Satin';
   }
@@ -1506,7 +2048,6 @@ function closeBottomSheet() {
 }
 
 function handleBsOverlayClick(e) {
-  // Only close if they tapped the dark overlay itself, not the sheet content
   if (e.target.id === 'bsOverlay') closeBottomSheet();
 }
 
@@ -1526,7 +2067,7 @@ function renderApplyTargets() {
   const isExt = browserTarget.type === 'ext';
   let html = '';
   if (isExt) {
-    EXT_SURFACES.forEach(e => {
+    ESTIMATE.exterior.forEach(e => {
       const k = 'ext_'+e.key;
       const checked = applyTargets.has(k);
       html += `<div class="apply-row" onclick="toggleApply('${k}')">
@@ -1535,32 +2076,29 @@ function renderApplyTargets() {
       </div>`;
     });
   } else {
-    const accentRooms = ROOMS.filter(r => r.surfaces.includes('accent'));
-    const wallRoomCount = ROOMS.filter(r => r.surfaces.includes('walls')).length;
-    const ceilRoomCount = ROOMS.filter(r => r.surfaces.includes('ceiling')).length;
+    const wallRoomCount = ESTIMATE.rooms.filter(r => r.surfaces.some(s => s.key==='walls')).length;
+    const ceilRoomCount = ESTIMATE.rooms.filter(r => r.surfaces.some(s => s.key==='ceiling')).length;
     const isTrimsub = browserTarget.type === 'trimSub';
 
     let surfaceTypes;
     if (isTrimsub) {
-      // When opened from a trim sub-type, show all sub-types as targets
-      surfaceTypes = TRIM_SUBTYPES.map(st => ({key:'trimsub_'+st.key, icon:st.icon, label:st.name}));
+      surfaceTypes = AVAILABLE_TRIM_SUBS.map(st => ({key:'trimsub_'+st.key, icon:st.icon, label:`${st.name} (${st.roomCount} rooms)`}));
     } else {
       surfaceTypes = [
         {key:'walls',icon:'🏠',label:`All Walls (${wallRoomCount} rooms)`},
         {key:'trim',icon:'✂️',label:`All Trim (everything)`},
         {key:'ceiling',icon:'⬆',label:`All Ceilings (${ceilRoomCount} rooms)`},
-        ...(accentRooms.length > 0 ? [{key:'accent',icon:'✨',label:`All Accent Walls (${accentRooms.length})`}] : []),
+        ...(hasAccentRooms ? [{key:'accent',icon:'✨',label:`All Accent Walls (${accentRoomCount})`}] : []),
       ];
     }
     surfaceTypes.forEach(st => {
-      const k = 'all_'+st.key;
+      const k = isTrimsub ? st.key : 'all_'+st.key;
       const checked = applyTargets.has(k);
       html += `<div class="apply-row" onclick="toggleApply('${k}')">
         <div class="apply-check${checked?' checked':''}">${checked?'✓':''}</div>
         <div class="apply-label">${st.icon} ${st.label}</div>
       </div>`;
     });
-    // Specific room option
     html += `<div class="apply-row" onclick="specificOpen=!specificOpen;renderApplyTargets()">
       <div class="apply-check" style="border:none;font-size:16px">📍</div>
       <div class="apply-label">Specific room... ${specificOpen?'▾':'▸'}</div>
@@ -1569,16 +2107,15 @@ function renderApplyTargets() {
 
   document.getElementById('applyTargets').innerHTML = html;
 
-  // Specific rooms
   let specHtml = '';
   if (!isExt && specificOpen) {
-    ROOMS.forEach(r => {
+    ESTIMATE.rooms.forEach(r => {
       r.surfaces.forEach(s => {
-        const k = r.name+'|'+s;
+        const k = r.name+'|'+s.key;
         const checked = specificTargets.has(k);
         specHtml += `<div class="apply-specific-item" onclick="toggleSpecific('${k}')">
           <div class="apply-specific-check${checked?' checked':''}">${checked?'✓':''}</div>
-          <span>${r.name} — ${capitalFirst(s)}</span>
+          <span>${r.name} — ${s.label}</span>
         </div>`;
       });
     });
@@ -1601,7 +2138,6 @@ function applyColor() {
   const color = selectedBrowserColor;
   const sheen = selectedBrowserSheen;
 
-  // Add to recent
   if (!state.recentColors.find(c => c.name===color.name && c.brand===color.brand)) {
     state.recentColors.unshift(color);
     if (state.recentColors.length > 10) state.recentColors.pop();
@@ -1615,17 +2151,19 @@ function applyColor() {
       state.main[surface].color = color;
       state.main[surface].sheen = sheen;
       if (surface === 'trim') {
-        // Clear all trim sub-type overrides when setting global trim
         Object.keys(state.trimSubs).forEach(k => state.trimSubs[k] = null);
       }
-      // Clear room overrides for this surface
-      ROOMS.forEach(r => { if(r.surfaces.includes(surface)) state.rooms[r.name][surface] = null; });
+      ESTIMATE.rooms.forEach(r => {
+        if (r.surfaces.some(s => s.key === surface)) {
+          state.rooms[r.name][surface] = null;
+        }
+      });
       appliedTo.push('all '+surface);
     }
   });
 
   // Trim sub-type targets
-  TRIM_SUBTYPES.forEach(st => {
+  AVAILABLE_TRIM_SUBS.forEach(st => {
     if (applyTargets.has('trimsub_'+st.key)) {
       state.trimSubs[st.key] = {color, sheen};
       appliedTo.push(st.name);
@@ -1633,7 +2171,7 @@ function applyColor() {
   });
 
   // Exterior
-  EXT_SURFACES.forEach(e => {
+  ESTIMATE.exterior.forEach(e => {
     if (applyTargets.has('ext_'+e.key)) {
       state.exterior[e.key] = {color, sheen};
       appliedTo.push(e.name);
@@ -1651,7 +2189,7 @@ function applyColor() {
   closeOverlay();
   render();
 
-  showToast(`${color.name} applied${appliedTo.length?'' :''} ✓`);
+  showToast(`${color.name} applied ✓`);
 }
 
 // ========== UTILS ==========
@@ -1682,8 +2220,9 @@ function dismissSheenModal() {
 
 function submitColors() {
   let total = 0, filled = 0;
-  ROOMS.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s).color) filled++; }));
-  EXT_SURFACES.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
+  ESTIMATE.rooms.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s.key).color) filled++; }));
+  ESTIMATE.exterior.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
+  if (ESTIMATE.deck && ESTIMATE.deck.included) { total++; if(state.deck.color) filled++; }
   if (filled < total) return;
   document.getElementById('successScreen').classList.add('show');
   document.getElementById('submitBar').style.display = 'none';
@@ -1715,8 +2254,6 @@ function sendConsultRequest() {
   const labels = {phone:'Phone/Video Call', inperson:'In-Person at Home', store:'Meet at Paint Store'};
   closeConsultModal();
   showToast('Consultation request sent to your estimator! ✓');
-  // In production: POST to NashOS API → creates task for estimator
-  // { estimateId, customerId, type: consultType, note, timestamp }
   console.log('Consultation request:', {type: consultType, label: labels[consultType], note});
 }
 
