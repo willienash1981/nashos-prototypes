@@ -1181,36 +1181,40 @@ const COLORS = [
 const POPULAR = ["Agreeable Gray","Repose Gray","Alabaster","Extra White","Pure White","Snowbound","Accessible Beige","Sea Salt","Naval","Tricorn Black","Simply White","White Dove","Chantilly Lace","Revere Pewter","Hale Navy","Classic Gray","Edgecomb Gray","Palladian Blue","Evergreen Fog","Peppercorn","Iron Ore","Urbane Bronze","Swiss Coffee","Balboa Mist","Gray Owl","Aegean Teal","Chelsea Gray","Kendall Charcoal","Mindful Gray","Worldly Gray"];
 
 // ========== STAIN COLOR DATABASE ==========
-// Nash Painting stain products — Deckscapes (SW semi-transparent) + Woodluxe (BM semi-transparent) + SuperDeck (SW solid)
+// Nash Painting stain products — SuperDeck (SW semi-transparent & solid) + Woodluxe (BM semi-transparent)
 // Full catalog available in production; prototype shows representative colors.
 const STAIN_COLORS = [
-  // SW Deckscapes — Semi-Transparent (Nash's go-to SW semi-trans)
-  {name:'Natural', code:'DS-3500', brand:'Deckscapes', hex:'#D4B07A', type:'semi-transparent', depth:'light', desc:'Lightest option. Enhances natural wood tone.'},
-  {name:'Cedartone', code:'DS-3501', brand:'Deckscapes', hex:'#B8864E', type:'semi-transparent', depth:'medium', desc:'Classic cedar. Nash\'s most popular semi-trans.'},
-  {name:'Rustic', code:'DS-3502', brand:'Deckscapes', hex:'#7D5A3A', type:'semi-transparent', depth:'medium', desc:'Rich rustic tone. Good middle ground.'},
-  {name:'Redwood', code:'DS-3505', brand:'Deckscapes', hex:'#8B4C32', type:'semi-transparent', depth:'medium', desc:'Deep reddish brown. Bold.'},
-  {name:'Teak', code:'DS-3503', brand:'Deckscapes', hex:'#C49A5C', type:'semi-transparent', depth:'light', desc:'Warm honey teak. Natural look.'},
-  {name:'Dark Oak', code:'DS-3508', brand:'Deckscapes', hex:'#6B4A2E', type:'semi-transparent', depth:'dark', desc:'Dark brown. Hides more imperfections.'},
+  // SW SuperDeck Semi-Transparent Stain (Nash's go-to SW semi-trans)
+  {name:'White Pine', code:'DB2201', brand:'SuperDeck', hex:'#D6C49A', type:'semi-transparent', depth:'light', desc:'Lightest option. Pale golden tone, enhances natural wood.'},
+  {name:'Bamboo', code:'DB2203', brand:'SuperDeck', hex:'#C9A86C', type:'semi-transparent', depth:'light', desc:'Warm golden blonde. Natural sun-kissed look.'},
+  {name:'Cedar', code:'DB2200', brand:'SuperDeck', hex:'#B5804A', type:'semi-transparent', depth:'medium', desc:'Classic warm cedar. Nash\'s most popular semi-trans.'},
+  {name:'Hickory', code:'DB2205', brand:'SuperDeck', hex:'#A07850', type:'semi-transparent', depth:'medium', desc:'Warm medium brown. Great all-around choice.'},
+  {name:'Rich Maple', code:'DB2210', brand:'SuperDeck', hex:'#9A6838', type:'semi-transparent', depth:'medium', desc:'Deep amber-brown. Rich and inviting.'},
+  {name:'Teak', code:'DB2318', brand:'SuperDeck', hex:'#8E6E3C', type:'semi-transparent', depth:'medium', desc:'Golden-brown teak. Warm and natural.'},
+  {name:'Redwood', code:'DB2300', brand:'SuperDeck', hex:'#8B4C32', type:'semi-transparent', depth:'medium', desc:'Deep reddish brown. Bold statement.'},
+  {name:'Dark Cedar', code:'DB2208', brand:'SuperDeck', hex:'#7A5435', type:'semi-transparent', depth:'dark', desc:'Dark warm cedar. Hides more imperfections.'},
+  {name:'Mahogany', code:'DB2314', brand:'SuperDeck', hex:'#6E3B2A', type:'semi-transparent', depth:'dark', desc:'Rich dark reddish-brown. Classic.'},
+  {name:'English Walnut', code:'DB2319', brand:'SuperDeck', hex:'#5A3E28', type:'semi-transparent', depth:'dark', desc:'Darkest semi-trans. Deep walnut brown.'},
   // BM Woodluxe — Semi-Transparent
   {name:'Natural Cedartone', code:'ES-45', brand:'Woodluxe', hex:'#C4994F', type:'semi-transparent', depth:'light', desc:'Warm neutral light brown. Very popular.'},
   {name:'Mahogany', code:'ES-60', brand:'Woodluxe', hex:'#8B4C36', type:'semi-transparent', depth:'medium', desc:'Earthy brown with rich hint of red.'},
   {name:'Oxford Brown', code:'ES-67', brand:'Woodluxe', hex:'#5A4030', type:'semi-transparent', depth:'dark', desc:'Classic brown with warm espresso undertones.'},
   {name:'Cordovan Brown', code:'ES-62', brand:'Woodluxe', hex:'#4A3222', type:'semi-transparent', depth:'dark', desc:'Grounding brown-black. Maximum coverage.'},
   // SW SuperDeck Solid Color Stain (Nash's go-to solid)
-  {name:'Driftwood', code:'SC-3504', brand:'SuperDeck', hex:'#9E8E7A', type:'solid', depth:'light', desc:'Light weathered gray-brown. Modern look.'},
-  {name:'Cape Cod Gray', code:'SC-3507', brand:'SuperDeck', hex:'#8A8A82', type:'solid', depth:'light', desc:'Cool gray. Contemporary feel.'},
-  {name:'Weathered Oak', code:'SC-3506', brand:'SuperDeck', hex:'#A8906E', type:'solid', depth:'medium', desc:'Warm natural oak. Popular choice.'},
-  {name:'Cedar', code:'SC-3501', brand:'SuperDeck', hex:'#A07046', type:'solid', depth:'medium', desc:'Classic cedar. Warm and inviting.'},
-  {name:'Canyon Brown', code:'SC-3503', brand:'SuperDeck', hex:'#7A5C40', type:'solid', depth:'medium', desc:'Rich brown. Great all-around choice.'},
-  {name:'Redwood', code:'SC-3502', brand:'SuperDeck', hex:'#8B4C36', type:'solid', depth:'medium', desc:'Deep reddish brown. Traditional.'},
-  {name:'Navajo Red', code:'SC-3509', brand:'SuperDeck', hex:'#9B5040', type:'solid', depth:'medium', desc:'Warm terra cotta tone.'},
-  {name:'Autumn Brown', code:'SC-3505', brand:'SuperDeck', hex:'#6B4A32', type:'solid', depth:'dark', desc:'Dark warm brown. Hides imperfections well.'},
-  {name:'Bark', code:'SC-3508', brand:'SuperDeck', hex:'#5A4030', type:'solid', depth:'dark', desc:'Very dark brown. Maximum coverage.'},
-  {name:'Oxford Brown', code:'SC-3510', brand:'SuperDeck', hex:'#4E362A', type:'solid', depth:'dark', desc:'Darkest solid. Near-black brown.'},
+  {name:'Sand Castle', code:'SW3006', brand:'SuperDeck', hex:'#C4AE8E', type:'solid', depth:'light', desc:'Light sandy beige. Bright modern look.'},
+  {name:'Shagbark', code:'SW3001', brand:'SuperDeck', hex:'#B09A7A', type:'solid', depth:'light', desc:'Warm light tan. Natural weathered feel.'},
+  {name:'Driftwood', code:'SW3027', brand:'SuperDeck', hex:'#9E8E7A', type:'solid', depth:'light', desc:'Light weathered gray-brown. Modern look.'},
+  {name:'Caribou', code:'SW3025', brand:'SuperDeck', hex:'#8A8070', type:'solid', depth:'medium', desc:'Cool gray-brown. Contemporary feel.'},
+  {name:'Cedar', code:'SW3034', brand:'SuperDeck', hex:'#A07046', type:'solid', depth:'medium', desc:'Classic cedar. Warm and inviting.'},
+  {name:'Lodge Brown', code:'SW3007', brand:'SuperDeck', hex:'#7A5C40', type:'solid', depth:'medium', desc:'Rich brown. Great all-around choice.'},
+  {name:'Sequoia', code:'SW3015', brand:'SuperDeck', hex:'#8B4C36', type:'solid', depth:'medium', desc:'Deep reddish brown. Traditional.'},
+  {name:'Cabin Brown', code:'SW3031', brand:'SuperDeck', hex:'#6B4A32', type:'solid', depth:'dark', desc:'Dark warm brown. Hides imperfections well.'},
+  {name:'Espresso', code:'SW3064', brand:'SuperDeck', hex:'#4E362A', type:'solid', depth:'dark', desc:'Very dark brown. Near-black espresso.'},
+  {name:'Mission Brown', code:'SW3072', brand:'SuperDeck', hex:'#5A4030', type:'solid', depth:'dark', desc:'Dark classic brown. Maximum coverage.'},
   // SW SuperDeck Self-Priming Solid (for worst-condition decks)
-  {name:'Canyon Brown SP', code:'SP-3503', brand:'SuperDeck', hex:'#7A5C40', type:'superdeck', depth:'medium', desc:'Self-priming. Adheres over anything.'},
-  {name:'Autumn Brown SP', code:'SP-3505', brand:'SuperDeck', hex:'#6B4A32', type:'superdeck', depth:'dark', desc:'Self-priming. Maximum adhesion + coverage.'},
-  {name:'Bark SP', code:'SP-3508', brand:'SuperDeck', hex:'#5A4030', type:'superdeck', depth:'dark', desc:'Self-priming. Darkest. One-way door.'},
+  {name:'Lodge Brown SP', code:'SW3007-SP', brand:'SuperDeck', hex:'#7A5C40', type:'superdeck', depth:'medium', desc:'Self-priming. Adheres over anything.'},
+  {name:'Cabin Brown SP', code:'SW3031-SP', brand:'SuperDeck', hex:'#6B4A32', type:'superdeck', depth:'dark', desc:'Self-priming. Maximum adhesion + coverage.'},
+  {name:'Espresso SP', code:'SW3064-SP', brand:'SuperDeck', hex:'#4E362A', type:'superdeck', depth:'dark', desc:'Self-priming. Darkest. One-way door.'},
   {name:'Redwood SP', code:'SP-3502', brand:'SuperDeck', hex:'#8B4C36', type:'superdeck', depth:'medium', desc:'Self-priming. Rich reddish brown.'},
   {name:'Cape Cod Gray SP', code:'SP-3507', brand:'SuperDeck', hex:'#8A8A82', type:'superdeck', depth:'light', desc:'Self-priming. Contemporary gray.'},
 ];
@@ -1282,7 +1286,7 @@ const ESTIMATE = {
       overallCondition: 'moderate',
       currentStainType: 'semi-transparent',
       currentColorDepth: 'medium',
-      currentColorMatch: 'Deckscapes Cedartone',
+      currentColorMatch: 'SuperDeck Cedar',
       recommendedProduct: 'solid',
       recommendedReason: 'Deck has moderate weathering with some fading and patchy areas. Solid stain will provide uniform coverage.',
       semiTransAllowed: true,
@@ -1826,7 +1830,7 @@ function renderDeckSection() {
 
     // Note about other brands
     html += `<div style="font-size:11px;color:var(--text-light);padding:8px 4px;line-height:1.5;border-top:1px solid #eee;margin-top:4px">
-      <strong>Why these brands?</strong> Nash Painting uses Sherwin-Williams Deckscapes and Benjamin Moore Woodluxe for semi-transparent stains, and SW SuperDeck for solid stains — they're the products we trust and warranty. Other brands (Cabot, etc.) are available by request, but stain color swatches from those brands don't accurately represent the finished look on real wood. If you're interested in another brand, your estimator can show you photos of completed projects.
+      <strong>Why these brands?</strong> Nash Painting uses Sherwin-Williams SuperDeck and Benjamin Moore Woodluxe for semi-transparent stains, and SW SuperDeck for solid stains — they're the products we trust and warranty. Other brands (Cabot, etc.) are available by request, but stain color swatches from those brands don't accurately represent the finished look on real wood. If you're interested in another brand, your estimator can show you photos of completed projects.
       <div style="margin-top:6px"><span style="color:var(--gold);font-weight:600;cursor:pointer" onclick="openConsultModal()">📱 Ask your estimator about other options →</span></div>
     </div>`;
   }
