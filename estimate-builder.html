@@ -1043,38 +1043,57 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <div class="bottom-sheet" id="discountSheet">
   <div class="sheet-handle"></div>
   <div class="sheet-title">Specials & Promotions</div>
-  <div style="padding:0 20px 10px;font-size:12px;color:var(--text-light)">Select one promotion to apply. Financing options are offered at Nash's cost — no discount to revenue.</div>
+  <div style="padding:0 20px 10px;font-size:12px;color:var(--text-light)">Prepare a special for this estimate. You control when the customer sees it.</div>
+
   <div class="disc-list">
 
-    <!-- Repeat Customer -->
-    <div class="disc-card" id="disc-repeat" onclick="selectDiscount('repeat')">
-      <div class="disc-check">✓</div>
-      <div class="disc-top">
-        <div class="disc-name">🔄 Repeat Customer</div>
-        <div class="disc-pct">−5%</div>
-      </div>
-      <div class="disc-desc">Last job: Oct 2024 — Interior, Master + Guest Bedrooms ($8,400)</div>
+    <!-- Deployment Control -->
+    <div style="background:var(--card);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;border:1.5px solid var(--navy)">
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px">📬 Deployment</div>
+      <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;cursor:pointer">
+        <input type="radio" name="deployMode" value="hold" checked style="accent-color:var(--gold)">
+        <span><strong>Hold</strong> — send proposal at full price, deploy specials later if needed</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;cursor:pointer">
+        <input type="radio" name="deployMode" value="include" style="accent-color:var(--gold)">
+        <span><strong>Include on proposal</strong> — customer sees specials immediately</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;cursor:pointer">
+        <input type="radio" name="deployMode" value="auto" style="accent-color:var(--gold)">
+        <span><strong>Auto-deploy</strong> — send after <select style="font-size:11px;padding:1px 4px;border-radius:4px;border:1px solid var(--border);font-family:inherit" onclick="event.stopPropagation()"><option>7</option><option>10</option><option selected>14</option><option>21</option></select> quiet days</span>
+      </label>
     </div>
 
-    <!-- Winter Interior Special — Choice -->
-    <div class="disc-card" id="disc-winter" onclick="selectDiscount('winter')">
+    <!-- Section: Pick Your Perk (what customer sees) -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding:0 2px">Customer sees "Pick Your Perk"</div>
+
+    <!-- Winter Interior — Pick Your Perk -->
+    <div class="disc-card" id="disc-winter" onclick="selectDiscount('winter')" style="border-color:var(--navy)">
       <div class="disc-check">✓</div>
       <div class="disc-top">
         <div class="disc-name">❄️ Winter Interior Special</div>
-        <div class="disc-pct">Customer's choice</div>
+        <div class="disc-pct" style="font-size:11px;color:var(--purple)">4 options</div>
       </div>
-      <div class="disc-desc">Schedule interior work Dec 15 – Jan 31. Customer picks one:</div>
-      <div style="margin:8px 0 4px">
-        <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:var(--card);margin-bottom:4px;font-size:12px;cursor:pointer;border:1.5px solid var(--border)" onclick="event.stopPropagation()">
-          <input type="radio" name="winterChoice" value="discount" checked onchange="updateWinterChoice()" style="accent-color:var(--gold)">
-          <span><strong>10% off</strong> — Save $1,864 on interior scope</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:var(--card);font-size:12px;cursor:pointer;border:1.5px solid var(--border)" onclick="event.stopPropagation()">
-          <input type="radio" name="winterChoice" value="financing" onchange="updateWinterChoice()" style="accent-color:var(--gold)">
-          <span><strong>0% interest for 18 months</strong> — EnerBank (Nash cost: 11.75%)</span>
-        </label>
+      <div class="disc-desc">Schedule Dec 15 – Jan 31. Customer picks their perk:</div>
+      <div style="margin:8px 0 0;display:flex;flex-direction:column;gap:3px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:var(--card);font-size:12px;border:1px solid var(--border)">
+          <span>💰 <strong>10% off</strong> — $1,864 savings</span>
+          <span style="font-size:10px;color:var(--text-light)">Nash: 10%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:var(--card);font-size:12px;border:1px solid var(--border)">
+          <span>💳 <strong>0% interest 18 mo</strong></span>
+          <span style="font-size:10px;color:var(--text-light)">Nash: 11.75%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:var(--card);font-size:12px;border:1px solid var(--border)">
+          <span>✨ <strong>5% off + 12-mo SAC</strong></span>
+          <span style="font-size:10px;color:var(--text-light)">Nash: 11.5%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:8px;background:var(--card);font-size:12px;border:1px solid var(--border)">
+          <span>🎁 <strong>3-yr annual touch-up</strong></span>
+          <span style="font-size:10px;color:var(--text-light)">Nash: ~$800</span>
+        </div>
       </div>
-      <div class="disc-schedule">📅 Scheduling window: Dec 15, 2026 – Jan 31, 2027</div>
+      <div class="disc-schedule">📅 Dec 15, 2026 – Jan 31, 2027</div>
       <div class="disc-pipeline">
         <div class="disc-pipeline-label"><span>Pipeline: $127K / $200K</span><span>63%</span></div>
         <div class="disc-pipeline-bar"><div class="disc-pipeline-fill healthy" style="width:63%"></div></div>
@@ -1085,14 +1104,27 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div class="disc-card unavailable" id="disc-monthly">
       <div class="disc-top">
         <div class="disc-name">📋 March Special — Exterior</div>
-        <div class="disc-pct" style="color:var(--text-light)">−7%</div>
+        <div class="disc-pct" style="color:var(--text-light)">3 options</div>
       </div>
-      <div class="disc-desc">7% off exterior painting booked in March.</div>
+      <div class="disc-desc">7% off, financing, or 4% + 6-mo SAC.</div>
       <div class="disc-pipeline">
         <div class="disc-pipeline-label"><span>Pipeline: $50K / $50K</span><span>100%</span></div>
         <div class="disc-pipeline-bar"><div class="disc-pipeline-fill full" style="width:100%"></div></div>
       </div>
       <div class="disc-reason">⛔ Pipeline full — 8/8 jobs committed</div>
+    </div>
+
+    <!-- Section: Simple Specials (estimator applies directly, no customer choice) -->
+    <div style="font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px;padding:0 2px">Direct Specials (applied by estimator)</div>
+
+    <!-- Repeat Customer -->
+    <div class="disc-card" id="disc-repeat" onclick="selectDiscount('repeat')">
+      <div class="disc-check">✓</div>
+      <div class="disc-top">
+        <div class="disc-name">🔄 Repeat Customer</div>
+        <div class="disc-pct">−5%</div>
+      </div>
+      <div class="disc-desc">Last job: Oct 2024 — Interior ($8,400). Applied to estimate directly.</div>
     </div>
 
     <!-- Referral -->
@@ -1102,32 +1134,32 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <div class="disc-name">🤝 Referral</div>
         <div class="disc-pct">−5%</div>
       </div>
-      <div class="disc-desc">Customer was referred by an existing Nash Painting client.</div>
+      <div class="disc-desc">Referred by existing Nash customer. Applied to estimate directly.</div>
     </div>
 
-    <!-- Promotional Financing (standalone) -->
+    <!-- Promo Financing (standalone closer's tool) -->
     <div class="disc-card" id="disc-financing" onclick="selectDiscount('financing')">
       <div class="disc-check">✓</div>
       <div class="disc-top">
-        <div class="disc-name">💳 Promotional Financing</div>
-        <div class="disc-pct" style="color:var(--blue)">$0 off</div>
+        <div class="disc-name">💳 Promo Financing</div>
+        <div class="disc-pct" style="color:var(--blue)">Full price</div>
       </div>
-      <div class="disc-desc">Offer enhanced financing to close the deal. Full price preserved — Nash absorbs the financing fee.</div>
+      <div class="disc-desc">Enhanced financing to close. Full revenue preserved — Nash absorbs fee.</div>
       <div style="margin:8px 0 0">
         <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);margin-bottom:3px;font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
           <input type="radio" name="finChoice" value="sac12" checked style="accent-color:var(--gold)">
-          <span>12-Mo Same-As-Cash — Nash cost: 6.50%</span>
+          <span>12-Mo Same-As-Cash — Nash: 6.50%</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);margin-bottom:3px;font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
           <input type="radio" name="finChoice" value="sac18" style="accent-color:var(--gold)">
-          <span>18-Mo Same-As-Cash — Nash cost: 11.75%</span>
+          <span>18-Mo Same-As-Cash — Nash: 11.75%</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
           <input type="radio" name="finChoice" value="zi120" style="accent-color:var(--gold)">
-          <span>120-Mo 7.99% Zero-Interest Loan — Nash cost: 15.35%</span>
+          <span>120-Mo 7.99% ZIL — Nash: 15.35%</span>
         </label>
       </div>
-      <div style="font-size:10px;color:var(--text-light);margin-top:6px;font-style:italic">💡 "Never discount — finance instead." Acorn (free) is always offered first. These are escalation tiers.</div>
+      <div style="font-size:10px;color:var(--text-light);margin-top:6px;font-style:italic">💡 Acorn ($0 cost) always offered by default. These are escalation tiers.</div>
     </div>
 
   </div>
@@ -1351,13 +1383,12 @@ function closeCustomerPreview() {
 
 // ═══ Specials & Promotions ═══
 let activeDiscount = null;
-let winterChoice = 'discount'; // 'discount' or 'financing'
 
 const SPECIALS = {
-  repeat:    { name: 'Repeat Customer', pct: 5, type: 'discount' },
-  winter:    { name: 'Winter Interior', pct: 10, type: 'choice' }, // discount OR financing
-  referral:  { name: 'Referral', pct: 5, type: 'discount' },
-  financing: { name: 'Promo Financing', pct: 0, type: 'financing' }
+  repeat:    { name: 'Repeat Customer', pct: 5, type: 'discount', badge: '🔄' },
+  winter:    { name: 'Winter Interior', pct: 0, type: 'menu', badge: '❄️', menuLabel: 'Pick Your Perk (4 options)', maxCost: '~11.75%' },
+  referral:  { name: 'Referral', pct: 5, type: 'discount', badge: '🤝' },
+  financing: { name: 'Promo Financing', pct: 0, type: 'financing', badge: '💳' }
 };
 
 const FIN_TIERS = {
@@ -1366,13 +1397,12 @@ const FIN_TIERS = {
   zi120: { label: '120-Mo 7.99% ZIL', nashCost: 15.35 }
 };
 
-function updateWinterChoice() {
-  winterChoice = document.querySelector('input[name="winterChoice"]:checked')?.value || 'discount';
-  if (activeDiscount === 'winter') selectDiscount('winter'); // refresh impact
-}
-
 function getSelectedFinTier() {
   return document.querySelector('input[name="finChoice"]:checked')?.value || 'sac12';
+}
+
+function getDeployMode() {
+  return document.querySelector('input[name="deployMode"]:checked')?.value || 'hold';
 }
 
 function selectDiscount(id) {
@@ -1391,35 +1421,41 @@ function selectDiscount(id) {
 
   const s = SPECIALS[activeDiscount];
   const afterVol = Math.round(BASE_TOTAL * 0.972);
-  let isFinancing = s.type === 'financing' || (s.type === 'choice' && winterChoice === 'financing');
-  let pct = isFinancing ? 0 : s.pct;
-  let discAmt = Math.round(afterVol * pct / 100);
-  let finalPrice = afterVol - discAmt;
-
   const label = document.getElementById('discImpactLabel');
   const amt = document.getElementById('discImpactAmt');
   const total = document.getElementById('discImpactTotal');
   const gpNote = document.getElementById('discGpNote');
 
-  if (isFinancing) {
-    const tier = (activeDiscount === 'financing') ? getSelectedFinTier() : 'sac18';
+  if (s.type === 'menu') {
+    // Pick Your Perk — customer chooses, so show worst-case Nash cost
+    label.textContent = s.name + ' — customer picks option';
+    amt.textContent = 'up to −$' + Math.round(afterVol * 0.10).toLocaleString();
+    total.textContent = '$' + afterVol.toLocaleString() + ' (full price sent)';
+    const mode = getDeployMode();
+    const modeLabel = mode === 'hold' ? 'Held — deploy later when needed' : mode === 'include' ? 'Included on proposal' : 'Auto-deploy after quiet period';
+    gpNote.textContent = '📬 ' + modeLabel + '. Max Nash cost: ' + s.maxCost;
+    gpNote.style.color = 'var(--purple)';
+  } else if (s.type === 'financing') {
+    const tier = getSelectedFinTier();
     const fin = FIN_TIERS[tier];
     const nashCostAmt = Math.round(afterVol * fin.nashCost / 100);
-    label.textContent = fin.label + ' (Nash cost: ' + fin.nashCost + '%)';
+    label.textContent = fin.label + ' (Nash: ' + fin.nashCost + '%)';
     amt.textContent = '$0 off';
     total.textContent = '$' + afterVol.toLocaleString();
-    gpNote.textContent = 'Full price preserved. Nash financing cost: $' + nashCostAmt.toLocaleString() + ' — GP reduced but revenue intact';
+    gpNote.textContent = 'Full price. Nash financing cost: $' + nashCostAmt.toLocaleString();
     gpNote.style.color = 'var(--blue)';
   } else {
+    const discAmt = Math.round(afterVol * s.pct / 100);
+    const finalPrice = afterVol - discAmt;
     const gpPct = Math.round((1 - 0.52 * (BASE_TOTAL / finalPrice)) * 100);
-    label.textContent = s.name + ' (−' + pct + '%)';
+    label.textContent = s.name + ' (−' + s.pct + '%)';
     amt.textContent = '−$' + discAmt.toLocaleString();
     total.textContent = '$' + finalPrice.toLocaleString();
     if (gpPct >= 40) {
-      gpNote.textContent = 'GP after discount: ' + gpPct + '% ✅ Commission eligible';
+      gpNote.textContent = 'GP: ' + gpPct + '% ✅ Commission eligible';
       gpNote.style.color = 'var(--text-light)';
     } else {
-      gpNote.textContent = 'GP after discount: ' + gpPct + '% ⚠️ Below 40% — no commission';
+      gpNote.textContent = 'GP: ' + gpPct + '% ⚠️ Below 40% — no commission';
       gpNote.style.color = 'var(--red)';
     }
   }
@@ -1433,32 +1469,34 @@ function applyDiscount() {
   const s = SPECIALS[activeDiscount];
   const badge = document.getElementById('ctrlDisc');
   const afterVol = Math.round(BASE_TOTAL * 0.972);
-  let isFinancing = s.type === 'financing' || (s.type === 'choice' && winterChoice === 'financing');
+  const mode = getDeployMode();
 
-  if (isFinancing) {
-    const tier = (activeDiscount === 'financing') ? getSelectedFinTier() : 'sac18';
+  let pill = document.getElementById('discountPill');
+  if (!pill) { pill = document.createElement('span'); pill.id = 'discountPill'; pill.className = 'meta-pill'; document.querySelector('.bottom-meta').appendChild(pill); }
+
+  if (s.type === 'menu') {
+    badge.textContent = s.badge + ' ' + s.name + (mode === 'hold' ? ' (held)' : ' (ready)');
+    badge.classList.add('active');
+    pill.className = 'meta-pill meta-purple';
+    pill.textContent = s.badge + ' ' + s.name + (mode === 'hold' ? ' · held' : mode === 'include' ? ' · on proposal' : ' · auto-deploy');
+    toast(s.name + ' prepared — ' + (mode === 'hold' ? 'deploy when ready' : mode === 'include' ? 'included on proposal' : 'auto-deploy set'));
+  } else if (s.type === 'financing') {
+    const tier = getSelectedFinTier();
     const fin = FIN_TIERS[tier];
     badge.textContent = '💳 ' + fin.label;
     badge.classList.add('active');
-    document.getElementById('totalAmount').textContent = '$' + afterVol.toLocaleString();
-
-    let pill = document.getElementById('discountPill');
-    if (!pill) { pill = document.createElement('span'); pill.id = 'discountPill'; pill.className = 'meta-pill'; document.querySelector('.bottom-meta').appendChild(pill); }
     pill.className = 'meta-pill meta-purple';
     pill.textContent = '💳 ' + fin.label;
-    toast(fin.label + ' financing applied — Nash cost: ' + fin.nashCost + '%');
+    toast(fin.label + ' financing — Nash cost: ' + fin.nashCost + '%');
   } else {
     const discAmt = Math.round(afterVol * s.pct / 100);
     const finalPrice = afterVol - discAmt;
-    badge.textContent = '🎁 −' + s.pct + '% ' + s.name;
+    badge.textContent = s.badge + ' −' + s.pct + '% ' + s.name;
     badge.classList.add('active');
     document.getElementById('totalAmount').textContent = '$' + finalPrice.toLocaleString();
-
-    let pill = document.getElementById('discountPill');
-    if (!pill) { pill = document.createElement('span'); pill.id = 'discountPill'; pill.className = 'meta-pill'; document.querySelector('.bottom-meta').appendChild(pill); }
     pill.className = 'meta-pill meta-green';
-    pill.textContent = '🎁 ' + s.name + ' −' + s.pct + '%';
-    toast(s.name + ' applied — saving $' + discAmt.toLocaleString());
+    pill.textContent = s.badge + ' ' + s.name + ' −' + s.pct + '%';
+    toast(s.name + ' — saving $' + discAmt.toLocaleString());
   }
 }
 
@@ -1478,7 +1516,7 @@ function clearDiscount() {
 
   const curInt = parseInt(document.getElementById('intSubtotal').textContent.replace(/[$,]/g, ''));
   updateTotal(curInt);
-  toast('Promotion removed');
+  toast('Special removed');
 }
 
 // Adjustment slider
