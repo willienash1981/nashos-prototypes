@@ -870,11 +870,77 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
   </div>
   <div class="card" data-r="field" style="display:none">
-    <div class="card-h"><div class="card-t">📅 Upcoming Jobs</div></div>
+    <div class="card-h"><div class="card-t">📅 Upcoming Jobs</div><span style="font-size:11px;color:var(--text-sec)">1 of 3 approved</span></div>
     <div class="card-b" style="padding:0">
-      <div class="sch"><div class="sch-tm">Mon 3/2</div><div class="sch-d"><div class="sch-c">Davis Exterior — Roberto</div><div class="sch-adr">321 Pine Ave, Brentwood</div><div class="sch-tp">Start — 4 day estimate</div></div></div>
-      <div class="sch"><div class="sch-tm">Tue 3/3</div><div class="sch-d"><div class="sch-c">Thompson Interior — Javier</div><div class="sch-adr">410 Birch Rd, Nashville</div><div class="sch-tp">Start — 2 day estimate</div></div></div>
-      <div class="sch"><div class="sch-tm">Wed 3/4</div><div class="sch-d"><div class="sch-c">Walk-Through — New job</div><div class="sch-adr">220 Riverside Dr, Franklin</div><div class="sch-tp">Pre-job walk w/ crew · take before photos</div></div></div>
+
+      <!-- Job 1: Approved -->
+      <div style="padding:14px 18px;border-bottom:1px solid var(--bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Davis Exterior — Roberto (3 men)</div>
+            <div style="font-size:11px;color:var(--text-muted)">321 Pine Ave, Brentwood · Mon 3/2</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge b-g">✅ Approved</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec);margin-bottom:6px;flex-wrap:wrap">
+          <span>📋 Exterior paint — siding, trim, eaves, fascia</span>
+          <span>⏱ 4 day estimate</span>
+          <span>🎨 3 colors (SW Cityscape, Alabaster, Iron Ore)</span>
+        </div>
+        <div style="font-size:11px;color:var(--green)">Reviewed work order Feb 26 — scope looks clear, standard exterior job</div>
+      </div>
+
+      <!-- Job 2: Needs review -->
+      <div style="padding:14px 18px;border-bottom:1px solid var(--bg);background:var(--yellow-bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Thompson Interior — Javier (2 men)</div>
+            <div style="font-size:11px;color:var(--text-muted)">410 Birch Rd, Nashville · Tue 3/3</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge b-y">⏳ Needs Review</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec);margin-bottom:6px;flex-wrap:wrap">
+          <span>📋 Full interior — 6 rooms + hallway + 2 bathrooms</span>
+          <span>⏱ 2 day estimate</span>
+          <span>🎨 4 colors (multiple rooms)</span>
+        </div>
+        <div style="font-size:11px;color:var(--yellow);margin-bottom:8px">⚠️ 2 days seems tight for 6 rooms + 2 baths — review scope</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">✅ Approve</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📍 Schedule Site Visit</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">💬 Flag for Office</button>
+        </div>
+      </div>
+
+      <!-- Job 3: Needs review + site visit requested -->
+      <div style="padding:14px 18px;background:var(--blue-bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Henderson Whole House — TBD crew</div>
+            <div style="font-size:11px;color:var(--text-muted)">220 Riverside Dr, Franklin · Wed 3/4</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge b-b">📍 Site Visit Wed</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec);margin-bottom:6px;flex-wrap:wrap">
+          <span>📋 Interior + exterior + deck stain + carpentry repairs</span>
+          <span>⏱ 8 day estimate</span>
+          <span>🎨 6 colors</span>
+          <span>🔧 Carpentry: rot repair + screen replacement</span>
+        </div>
+        <div style="font-size:11px;color:var(--blue);margin-bottom:8px">Pre-job walk-through scheduled Wed 9:00 AM — large scope, need to verify carpentry extent before crew assignment</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📸 Take Before Photos</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
