@@ -7,695 +7,1424 @@
 <style>
 :root {
   --navy: #1B2A4A;
+  --navy-light: #2a3d66;
   --gold: #C8A85C;
-  --bg: #F5F3EF;
-  --card: #fff;
-  --text: #1B2A4A;
-  --text-light: #6b7280;
-  --border: #e5e7eb;
-  --radius: 12px;
-  --shadow: 0 2px 8px rgba(27,42,74,0.08);
-  --danger: #dc2626;
-  --success: #16a34a;
-  --warning: #f59e0b;
+  --gold-light: #d4bc7a;
+  --gold-bg: #faf6ec;
+  --bg: #f8f9fa;
+  --white: #ffffff;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --card-radius: 12px;
+  --green: #2ecc71;
+  --yellow: #f39c12;
+  --red: #e74c3c;
+  --amber: #f0ad4e;
+  --text: #333;
+  --text-light: #777;
+  --text-muted: #aaa;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: #e8e8e8;
   color: var(--text);
   line-height: 1.5;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: 100px;
 }
+.phone-frame {
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--bg);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+@media (min-width: 500px) {
+  body { padding: 20px 0; }
+  .phone-frame {
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+    min-height: calc(100vh - 40px);
+    overflow: hidden;
+  }
+}
+@media (max-width: 499px) {
+  body { background: var(--bg); }
+}
+
+/* Top Bar */
 .topbar {
   position: sticky; top: 0; z-index: 100;
   background: var(--navy);
-  padding: 12px 16px;
-  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
 }
-.logo {
-  width: 36px; height: 36px;
-  background: var(--gold);
-  border-radius: 8px;
+.topbar-logo {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: var(--gold); display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 18px; color: var(--navy); flex-shrink: 0;
+}
+.topbar-text { color: #fff; font-size: 16px; font-weight: 600; }
+
+/* Content area */
+.content { padding: 16px 16px 100px; }
+.section-header {
+  font-size: 20px; font-weight: 700; color: var(--navy); margin: 24px 0 4px;
+}
+.section-sub { font-size: 13px; color: var(--text-light); margin-bottom: 12px; }
+
+/* Cards */
+.card {
+  background: var(--white); border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow); padding: 16px; margin-bottom: 12px;
+  transition: box-shadow 0.2s;
+}
+.card:active { box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+
+/* Welcome */
+.welcome-title { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.welcome-sub { font-size: 14px; color: var(--text-light); margin-bottom: 4px; }
+.welcome-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+.help-toggle {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--gold); font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 8px; padding: 6px 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.help-content {
+  max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+}
+.help-content.open { max-height: 300px; }
+.help-content ul { padding: 8px 0 0 18px; font-size: 13px; color: var(--text-light); }
+.help-content li { margin-bottom: 4px; }
+.help-content a { color: var(--gold); }
+
+/* Main color cards */
+.main-color-card {
+  background: var(--white); border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow); padding: 16px; margin-bottom: 12px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s; border: 2px solid transparent;
+}
+.main-color-card.highlight { border-color: var(--gold); }
+.main-color-card:active { transform: scale(0.99); }
+.mcc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.mcc-label { font-size: 15px; font-weight: 700; color: var(--navy); }
+.mcc-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  background: var(--gold-bg); color: var(--gold); font-weight: 600;
+}
+.mcc-hint { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+.mcc-swatch-row { display: flex; align-items: center; gap: 12px; min-height: 48px; }
+.mcc-swatch {
+  width: 48px; height: 48px; border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.mcc-swatch.empty {
+  background: linear-gradient(135deg, #f0f0f0 25%, #e8e8e8 25%, #e8e8e8 50%, #f0f0f0 50%, #f0f0f0 75%, #e8e8e8 75%);
+  background-size: 12px 12px;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 20px; color: var(--navy);
+  font-size: 20px; color: var(--text-muted);
 }
-.topbar-text { color: #fff; }
-.topbar-title { font-weight: 700; font-size: 16px; }
-.topbar-sub { font-size: 12px; opacity: 0.7; }
-.container { max-width: 430px; margin: 0 auto; padding: 16px; }
+.mcc-color-info { flex: 1; min-width: 0; }
+.mcc-color-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.mcc-color-code { font-size: 11px; color: var(--text-light); }
+.mcc-applies { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.mcc-link-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--navy); background: #eef2f7;
+  padding: 2px 8px; border-radius: 8px; margin-top: 4px;
+}
+.mcc-unlink {
+  font-size: 11px; color: var(--gold); cursor: pointer;
+  padding: 4px 0; margin-top: 2px; font-weight: 600;
+}
+
+/* Sheen pills (inline) */
+.sheen-pills { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.sheen-pill {
+  font-size: 11px; padding: 4px 10px; border-radius: 14px;
+  border: 1.5px solid #ddd; color: var(--text-light); cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+  background: var(--white);
+}
+.sheen-pill.active { border-color: var(--navy); color: var(--navy); font-weight: 600; background: #eef2f7; }
+.sheen-info-link { font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 4px 0; }
 
 /* Allowance bar */
-.allowance-card {
-  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
-  padding: 16px; margin-bottom: 16px;
-}
-.allowance-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; }
-.allowance-bar { height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
-.allowance-fill { height: 100%; background: var(--gold); border-radius: 4px; transition: width 0.3s; }
-.allowance-fill.over { background: var(--danger); }
-.allowance-info { font-size: 12px; color: var(--text-light); margin-top: 6px; }
-.surcharge-warning {
-  background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
-  padding: 10px 12px; margin-top: 10px; font-size: 13px; color: #991b1b;
-}
-
-/* Section headers */
-.section-header {
-  font-size: 18px; font-weight: 700; margin: 24px 0 12px;
-  display: flex; align-items: center; gap: 8px;
-}
-.section-badge {
-  font-size: 11px; background: var(--navy); color: #fff;
-  padding: 2px 8px; border-radius: 10px; font-weight: 600;
-}
+.allowance-bar { padding: 14px 16px; margin-bottom: 12px; }
+.allowance-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; justify-content: space-between; }
+.allowance-track { height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden; }
+.allowance-fill { height: 100%; border-radius: 3px; transition: width 0.4s, background 0.4s; }
+.allowance-fill.green { background: var(--green); }
+.allowance-fill.yellow { background: var(--yellow); }
+.allowance-fill.red { background: var(--red); }
+.allowance-warn { font-size: 11px; color: var(--red); margin-top: 4px; }
 
 /* Room cards */
 .room-card {
-  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
-  margin-bottom: 14px; overflow: hidden;
+  background: var(--white); border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow); margin-bottom: 10px; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 .room-header {
-  padding: 14px 16px; font-weight: 700; font-size: 15px;
-  border-bottom: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px;
 }
-.room-status { font-size: 12px; font-weight: 500; color: var(--text-light); }
-.room-status.complete { color: var(--success); }
+.room-check { font-size: 16px; }
+.room-name { font-weight: 600; font-size: 14px; flex: 1; }
+.room-arrow { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; }
+.room-card.expanded .room-arrow { transform: rotate(90deg); }
+.room-summary { font-size: 11px; color: var(--text-light); line-height: 1.4; }
+.room-summary-swatch {
+  display: inline-block; width: 10px; height: 10px; border-radius: 3px;
+  vertical-align: middle; margin-right: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+.room-detail { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.room-card.expanded .room-detail { max-height: 600px; }
 .surface-row {
-  padding: 12px 16px; border-bottom: 1px solid #f3f4f6;
-  display: flex; flex-direction: column; gap: 8px;
+  padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+  border-top: 1px solid #f0f0f0;
 }
-.surface-row:last-child { border-bottom: none; }
-.surface-name { font-size: 13px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
-.surface-controls { display: flex; gap: 8px; align-items: center; }
-.color-btn {
-  flex: 1; display: flex; align-items: center; gap: 8px;
-  padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px;
-  background: #fff; cursor: pointer; font-size: 14px; color: var(--text);
-  transition: border-color 0.2s;
-  min-height: 44px;
+.surface-swatch {
+  width: 36px; height: 36px; border-radius: 6px; flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
 }
-.color-btn:active { border-color: var(--gold); }
-.color-btn .swatch {
-  width: 24px; height: 24px; border-radius: 6px;
-  border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0;
+.surface-info { flex: 1; min-width: 0; }
+.surface-name { font-size: 13px; font-weight: 600; }
+.surface-color { font-size: 11px; color: var(--text-light); }
+.surface-sheen { font-size: 10px; color: var(--text-muted); }
+.surface-custom {
+  font-size: 9px; background: var(--gold-bg); color: var(--gold);
+  padding: 1px 6px; border-radius: 6px; font-weight: 600;
 }
-.color-btn .placeholder { color: var(--text-light); }
-.sheen-select {
-  width: 120px; flex-shrink: 0;
-  padding: 10px 8px; border: 1.5px solid var(--border); border-radius: 8px;
-  background: #fff; font-size: 13px; color: var(--text);
-  appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 8px center;
-  min-height: 44px; cursor: pointer;
+.surface-change {
+  font-size: 12px; color: var(--gold); font-weight: 600; cursor: pointer;
+  padding: 6px 10px; border-radius: 8px; -webkit-tap-highlight-color: transparent;
+}
+.dark-warning {
+  font-size: 11px; color: #856404; background: #fff3cd;
+  padding: 6px 10px; border-radius: 6px; margin: 4px 16px 8px;
 }
 
-/* Primer alert */
-.primer-alert {
-  margin: 0 16px 8px; padding: 8px 12px;
-  background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
-  font-size: 12px; color: #92400e;
+/* Exterior */
+.ext-color-card {
+  background: var(--white); border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow); padding: 14px 16px; margin-bottom: 10px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.ext-swatch-row { display: flex; align-items: center; gap: 10px; }
+.ext-warn {
+  font-size: 12px; background: #fff3cd; color: #856404;
+  padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; line-height: 1.5;
+}
+.ext-warn-btn {
+  display: inline-block; padding: 4px 12px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 6px; margin-right: 6px;
+}
+.ext-warn-ok { background: var(--gold); color: #fff; }
+.ext-warn-change { background: #eee; color: var(--text); }
+
+/* Color browser overlay */
+.overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200; background: var(--bg);
+  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+}
+.overlay.open { transform: translateY(0); }
+.overlay-header {
+  background: var(--navy); padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.overlay-close {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 22px; cursor: pointer; border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+}
+.overlay-title { color: #fff; font-size: 16px; font-weight: 600; }
+.search-bar {
+  padding: 10px 16px; flex-shrink: 0; background: var(--white);
+  border-bottom: 1px solid #eee;
+}
+.search-input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #ddd;
+  border-radius: 10px; font-size: 15px; outline: none;
+  font-family: inherit; transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--gold); }
+.search-input::placeholder { color: var(--text-muted); }
+
+/* Recently used */
+.recent-row {
+  padding: 8px 16px; flex-shrink: 0; display: none;
+  overflow-x: auto; white-space: nowrap; gap: 8px;
+  -webkit-overflow-scrolling: touch; background: var(--white);
+  border-bottom: 1px solid #eee;
+}
+.recent-row.visible { display: flex; }
+.recent-swatch {
+  width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0; cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
 }
 
-/* Sheen education */
-.sheen-edu {
-  background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: var(--radius);
-  margin: 0 0 14px; overflow: hidden; transition: all 0.3s;
+/* Filter tabs */
+.filter-row {
+  padding: 8px 16px; flex-shrink: 0; overflow-x: auto;
+  white-space: nowrap; display: flex; gap: 6px;
+  -webkit-overflow-scrolling: touch; background: var(--white);
+  border-bottom: 1px solid #eee;
 }
-.sheen-edu-header {
-  padding: 12px 16px; font-size: 14px; font-weight: 600;
-  display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+.filter-pill {
+  padding: 6px 14px; border-radius: 16px; font-size: 13px;
+  border: 1.5px solid #ddd; color: var(--text-light); cursor: pointer;
+  flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+  transition: all 0.15s; background: var(--white);
 }
-.sheen-edu-body { padding: 0 16px 14px; font-size: 13px; line-height: 1.6; }
-.sheen-edu-body dt { font-weight: 600; margin-top: 8px; }
-.sheen-edu-body dd { color: var(--text-light); margin-left: 0; }
-.sheen-edu-body .warn { color: #b45309; font-style: italic; margin-top: 8px; }
-.sheen-edu-body a { color: var(--navy); }
+.filter-pill.active { border-color: var(--navy); color: var(--navy); font-weight: 600; background: #eef2f7; }
 
-/* Exterior warning */
-.ext-warning {
-  background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius);
-  padding: 14px 16px; margin-bottom: 14px; font-size: 13px;
+/* Brand filter */
+.brand-row {
+  padding: 6px 16px; flex-shrink: 0; display: flex; gap: 6px;
+  background: var(--white); border-bottom: 1px solid #eee;
 }
-.ext-warning-actions { display: flex; gap: 8px; margin-top: 10px; }
-.ext-warning-actions button {
-  padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
-  border: none; cursor: pointer;
+.brand-pill {
+  padding: 4px 12px; border-radius: 12px; font-size: 12px;
+  border: 1px solid #ddd; color: var(--text-light); cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: all 0.15s;
 }
-.btn-accept { background: var(--navy); color: #fff; }
-.btn-remove { background: #fee2e2; color: #991b1b; }
+.brand-pill.active { border-color: var(--navy); color: var(--navy); font-weight: 600; }
 
-/* Bottom bar */
-.bottom-bar {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--card); border-top: 1px solid var(--border);
-  padding: 12px 16px; z-index: 100;
-  display: flex; justify-content: center;
+/* Color grid */
+.color-grid-wrap {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 12px;
 }
-.bottom-inner { max-width: 430px; width: 100%; }
-.submit-btn {
-  width: 100%; padding: 14px; border: none; border-radius: 10px;
-  background: var(--navy); color: var(--gold);
-  font-size: 16px; font-weight: 700; cursor: pointer;
-  transition: opacity 0.2s;
+.color-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
 }
-.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.submit-btn:not(:disabled):active { opacity: 0.8; }
-.submit-count { text-align: center; font-size: 12px; color: var(--text-light); margin-top: 6px; }
-
-/* Need help */
-.help-section {
-  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
-  margin: 20px 0; overflow: hidden;
+.color-card {
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  text-align: center;
 }
-.help-header {
-  padding: 14px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center;
+.color-card-swatch {
+  width: 100%; aspect-ratio: 1; border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.help-body { padding: 0 16px 14px; font-size: 13px; color: var(--text-light); line-height: 1.7; }
-.help-body li { margin-bottom: 4px; }
-.help-body a { color: var(--navy); }
-
-.disclaimer { font-size: 11px; color: var(--text-light); text-align: center; margin: 16px 0 60px; line-height: 1.6; }
+.color-card:active .color-card-swatch { transform: scale(0.94); }
+.color-card-name { font-size: 10px; font-weight: 600; color: var(--text); margin-top: 4px; line-height: 1.2; }
+.color-card-code { font-size: 9px; color: var(--text-muted); }
+.no-results { text-align: center; padding: 40px 16px; color: var(--text-light); font-size: 14px; }
 
 /* Bottom sheet */
-.overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200;
+.bottom-sheet-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 250; background: rgba(0,0,0,0.4);
   opacity: 0; pointer-events: none; transition: opacity 0.25s;
 }
-.overlay.open { opacity: 1; pointer-events: auto; }
-.sheet {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 201;
-  background: var(--card); border-radius: 20px 20px 0 0;
-  max-height: 85vh; display: flex; flex-direction: column;
-  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+.bottom-sheet-overlay.open { opacity: 1; pointer-events: auto; }
+.bottom-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 260;
+  background: var(--white); border-radius: 16px 16px 0 0;
+  max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  padding-bottom: env(safe-area-inset-bottom, 16px);
 }
-.sheet.open { transform: translateY(0); }
-.sheet-handle {
-  width: 36px; height: 4px; background: #d1d5db; border-radius: 2px;
-  margin: 10px auto 0;
+.bottom-sheet.open { transform: translateY(0); }
+.bs-handle { width: 36px; height: 4px; background: #ddd; border-radius: 2px; margin: 10px auto; }
+.bs-swatch-header { width: 100%; height: 56px; border-radius: 0; }
+.bs-color-info { padding: 12px 16px; }
+.bs-color-name { font-size: 18px; font-weight: 700; color: var(--navy); }
+.bs-color-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.bs-lrv-note { font-size: 12px; margin-top: 6px; padding: 6px 10px; border-radius: 6px; }
+.bs-lrv-dark { background: #fff3cd; color: #856404; }
+.bs-lrv-light { background: #e8f5e9; color: #2e7d32; }
+.bs-section { padding: 0 16px 12px; }
+.bs-section-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+
+/* Sheen cards in bottom sheet */
+.sheen-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sheen-card {
+  border: 2px solid #e0e0e0; border-radius: 10px; padding: 10px 4px;
+  text-align: center; cursor: pointer; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent; position: relative; min-height: 70px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
-.sheet-header { padding: 14px 16px 10px; }
-.sheet-search {
-  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
-  border-radius: 10px; font-size: 15px; outline: none;
+.sheen-card.active { border-color: var(--navy); background: #eef2f7; }
+.sheen-card-check {
+  position: absolute; top: 4px; right: 4px; font-size: 12px;
+  display: none;
 }
-.sheet-search:focus { border-color: var(--gold); }
-.sheet-body { flex: 1; overflow-y: auto; padding: 8px 16px 30px; -webkit-overflow-scrolling: touch; }
-.sheet-section-label { font-size: 12px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 6px; }
-.color-option {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 0; border-bottom: 1px solid #f3f4f6; cursor: pointer;
+.sheen-card.active .sheen-card-check { display: block; }
+.sheen-card-name { font-size: 12px; font-weight: 700; color: var(--navy); }
+.sheen-card-desc { font-size: 9px; color: var(--text-light); margin-top: 2px; line-height: 1.2; }
+.sheen-description { font-size: 12px; color: var(--text-light); margin-top: 8px; line-height: 1.5; padding: 0 16px 8px; }
+
+/* Apply-to section */
+.apply-row {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  cursor: pointer; border-top: 1px solid #f0f0f0;
+  -webkit-tap-highlight-color: transparent; min-height: 48px;
 }
-.color-option:active { background: #f9fafb; }
-.color-option .co-swatch {
-  width: 40px; height: 40px; border-radius: 8px;
-  border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0;
+.apply-check {
+  width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: all 0.15s; flex-shrink: 0;
 }
-.co-info { flex: 1; }
-.co-name { font-size: 14px; font-weight: 600; }
-.co-meta { font-size: 12px; color: var(--text-light); }
-.no-results { text-align: center; color: var(--text-light); padding: 30px 0; font-size: 14px; }
+.apply-check.checked { background: var(--navy); border-color: var(--navy); color: #fff; }
+.apply-label { font-size: 14px; flex: 1; }
+.apply-specific-wrap { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+.apply-specific-wrap.open { max-height: 500px; }
+.apply-specific-item {
+  display: flex; align-items: center; gap: 8px; padding: 8px 16px 8px 48px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent; font-size: 13px;
+}
+.apply-specific-check {
+  width: 18px; height: 18px; border: 1.5px solid #ccc; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; transition: all 0.15s;
+}
+.apply-specific-check.checked { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+/* Apply button */
+.apply-btn {
+  margin: 12px 16px 16px; padding: 16px; border: none; border-radius: 12px;
+  background: var(--gold); color: #fff; font-size: 16px; font-weight: 700;
+  width: calc(100% - 32px); cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; transition: background 0.15s;
+}
+.apply-btn:active { background: var(--gold-light); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--navy); color: #fff; padding: 12px 20px; border-radius: 10px;
+  font-size: 14px; font-weight: 500; z-index: 300; opacity: 0;
+  transition: all 0.3s; pointer-events: none; white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Sticky submit bar */
+.submit-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+  background: var(--white); border-top: 1px solid #e0e0e0;
+  padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+@media (min-width: 500px) {
+  .submit-bar { max-width: 430px; left: 50%; transform: translateX(-50%); border-radius: 0 0 24px 24px; }
+}
+.submit-progress { font-size: 13px; color: var(--text-light); }
+.submit-btn {
+  padding: 12px 24px; border: none; border-radius: 10px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.submit-btn.disabled { background: #ddd; color: #aaa; pointer-events: none; }
+.submit-btn.active { background: var(--gold); color: #fff; }
+.submit-btn.active:active { background: var(--gold-light); }
 
 /* Success screen */
 .success-screen {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 500; background: var(--white);
   display: none; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 80vh; text-align: center; padding: 40px 20px;
+  text-align: center; padding: 32px;
 }
 .success-screen.show { display: flex; }
-.success-icon { font-size: 64px; margin-bottom: 20px; }
-.success-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-.success-msg { font-size: 15px; color: var(--text-light); max-width: 320px; line-height: 1.6; }
-.main-content.hidden { display: none; }
+.success-emoji { font-size: 64px; margin-bottom: 16px; }
+.success-title { font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+.success-text { font-size: 14px; color: var(--text-light); line-height: 1.7; max-width: 340px; }
+.success-steps { text-align: left; margin: 20px 0; font-size: 14px; color: var(--text); line-height: 2; }
+.success-brand { font-size: 13px; color: var(--text-muted); margin-top: 24px; }
+
+/* Sheen modal */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 400; background: rgba(0,0,0,0.5);
+  display: none; align-items: center; justify-content: center; padding: 24px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--white); border-radius: 16px; padding: 24px;
+  max-width: 380px; width: 100%; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.modal-title { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+.modal-text { font-size: 13px; color: var(--text); line-height: 1.7; }
+.modal-text strong { color: var(--navy); }
+.modal-btn {
+  display: block; width: 100%; padding: 14px; border: none; border-radius: 10px;
+  background: var(--navy); color: #fff; font-size: 15px; font-weight: 700;
+  cursor: pointer; margin-top: 16px; font-family: inherit;
+}
+.modal-text a { color: var(--gold); }
+
+/* Disclaimer */
+.disclaimer {
+  text-align: center; padding: 20px 16px 8px;
+  font-size: 11px; color: var(--text-muted); line-height: 1.6;
+}
+.footer-brand {
+  text-align: center; padding: 4px 16px 20px;
+  font-size: 12px; color: var(--text-light); font-weight: 500;
+}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="logo">N</div>
-  <div class="topbar-text">
-    <div class="topbar-title">Color Selections</div>
-    <div class="topbar-sub">Johnson Residence · EST-2026-0142</div>
+<div class="phone-frame" id="app">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-logo">N</div>
+    <div class="topbar-text">Nash Painting</div>
+  </div>
+
+  <div class="content" id="mainContent">
+    <!-- Welcome -->
+    <div style="margin-bottom:8px">
+      <div class="welcome-title">🎨 Color Selections</div>
+      <div class="welcome-sub">Johnson Residence · EST-2026-0142</div>
+    </div>
+    <div class="card">
+      <div class="welcome-text">
+        Welcome! Let's pick your colors. Most homes use just 2–3 colors — start with your main wall color and we'll fill in smart defaults for everything else.
+      </div>
+      <div class="help-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+        Need help choosing? ▾
+      </div>
+      <div class="help-content">
+        <ul>
+          <li>Visit your local Sherwin-Williams or Benjamin Moore store to see colors in person</li>
+          <li>Use a Color Muse device to match existing colors</li>
+          <li>Our most popular color is <strong>SW Agreeable Gray</strong></li>
+          <li><a href="https://www.nashpainting.com/blog" target="_blank">Browse our color blog →</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Colors -->
+    <div class="section-header">Your Main Colors</div>
+    <div class="section-sub">Set your defaults — applies to every room at once.</div>
+
+    <div id="mainColorCards"></div>
+
+    <!-- Color Allowance -->
+    <div class="allowance-bar" id="allowanceBar"></div>
+
+    <!-- Room Details -->
+    <div class="section-header">Your Rooms</div>
+    <div class="section-sub">All rooms use your main colors. Tap any room to customize.</div>
+    <div id="roomCards"></div>
+
+    <!-- Exterior -->
+    <div class="section-header">Exterior</div>
+    <div class="section-sub">3 colors included with your exterior. Additional colors add 10% each.</div>
+    <div id="extAllowance"></div>
+    <div id="extWarn"></div>
+    <div id="extCards"></div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      By submitting your color selections, you accept the color selection disclaimer. For best results, we recommend using a Color Muse tool to verify colors match your expectations.
+    </div>
+    <div class="footer-brand">Nash Painting · Nashville, TN · Since 2009</div>
   </div>
 </div>
 
-<div class="container main-content" id="mainContent">
-  <!-- Allowance -->
-  <div class="allowance-card" id="allowanceCard">
-    <div class="allowance-label">
-      <span id="allowanceText">Colors Used: 0 of 10</span>
-      <span id="allowanceRemain" style="color:var(--text-light)">10 remaining</span>
-    </div>
-    <div class="allowance-bar"><div class="allowance-fill" id="allowanceFill" style="width:0%"></div></div>
-    <div class="allowance-info">Same color in multiple rooms counts as 1 color</div>
-    <div class="surcharge-warning" id="surchargeWarn" style="display:none"></div>
-  </div>
-
-  <!-- Interior -->
-  <div class="section-header">Interior Rooms <span class="section-badge">5 rooms</span></div>
-
-  <!-- Sheen education -->
-  <div class="sheen-edu" id="sheenEdu" style="display:none">
-    <div class="sheen-edu-header" onclick="toggleSheenEdu()">
-      <span>✨ Understanding Paint Sheens</span>
-      <span id="sheenEduToggle">▼</span>
-    </div>
-    <div class="sheen-edu-body" id="sheenEduBody">
-      <dl>
-        <dt>Flat / Matte</dt><dd>No shine, hides imperfections. Best for ceilings & low-traffic walls.</dd>
-        <dt>Eggshell</dt><dd>Subtle warmth, slight sheen. Best for living rooms, bedrooms, hallways.</dd>
-        <dt>Satin</dt><dd>Smooth, velvety, easy to clean. Best for kitchens, bathrooms, kids' rooms.</dd>
-        <dt>Semi-Gloss</dt><dd>Noticeable shine, very durable. Best for trim, doors, cabinets, baseboards.</dd>
-      </dl>
-      <p class="warn">⚠️ Higher sheen = more visible surface imperfections</p>
-      <p style="margin-top:6px"><a href="https://www.nashpainting.com/blog/understanding-paint-flashing-sheen-color-and-ceiling-considerations" target="_blank">Learn more on our blog →</a></p>
-      <p style="margin-top:8px;text-align:right"><button onclick="dismissSheenEdu()" style="background:none;border:1px solid var(--navy);border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;color:var(--navy)">Got it</button></p>
-    </div>
-  </div>
-
-  <div id="interiorRooms"></div>
-
-  <!-- Exterior -->
-  <div class="section-header">Exterior <span class="section-badge">4 surfaces</span></div>
-
-  <div class="allowance-card" id="extAllowanceCard">
-    <div class="allowance-label">
-      <span id="extAllowanceText">Exterior Colors: 0 of 3 included</span>
-    </div>
-    <div class="allowance-bar"><div class="allowance-fill" id="extAllowanceFill" style="width:0%"></div></div>
-  </div>
-  <div class="ext-warning" id="extWarning" style="display:none">
-    <strong>Additional exterior color</strong><br>
-    Your exterior estimate includes 3 colors. Adding a 4th color increases the exterior price by 10% (<span id="extSurchargeAmt">+$420</span>).
-    <div class="ext-warning-actions">
-      <button class="btn-accept" onclick="acceptExtSurcharge()">Accept & Continue</button>
-      <button class="btn-remove" onclick="removeExtSurcharge()">Remove Color</button>
-    </div>
-  </div>
-
-  <div id="exteriorSurfaces"></div>
-
-  <!-- Help -->
-  <div class="help-section">
-    <div class="help-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-      <span>💡 Need Help Choosing Colors?</span><span>▼</span>
-    </div>
-    <div class="help-body" style="display:none">
-      <ul>
-        <li>Visit a <strong>Sherwin-Williams</strong> or <strong>Benjamin Moore</strong> store to see colors in person</li>
-        <li>Use a <strong>Color Muse</strong> device to match existing colors in your home</li>
-        <li>Our most popular color is <strong>SW Agreeable Gray</strong> — it works in almost any room!</li>
-        <li><a href="https://www.nashpainting.com/blog" target="_blank">Browse our blog for color inspiration →</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <p class="disclaimer">
-    Acceptance of our estimate is acceptance of the color selection disclaimer.
-    For best results, we recommend using a Color Muse tool to verify your color choices.
-  </p>
+<!-- Submit Bar -->
+<div class="submit-bar" id="submitBar">
+  <div class="submit-progress" id="submitProgress"></div>
+  <button class="submit-btn disabled" id="submitBtn" onclick="submitColors()">Submit Colors</button>
 </div>
 
+<!-- Color Browser Overlay -->
+<div class="overlay" id="colorOverlay">
+  <div class="overlay-header">
+    <div class="overlay-close" onclick="closeOverlay()">✕</div>
+    <div class="overlay-title">Choose Color</div>
+  </div>
+  <div class="search-bar">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search by name or code..." oninput="filterColors()">
+  </div>
+  <div class="recent-row" id="recentRow"></div>
+  <div class="filter-row" id="filterRow"></div>
+  <div class="brand-row" id="brandRow"></div>
+  <div class="color-grid-wrap" id="colorGridWrap">
+    <div class="color-grid" id="colorGrid"></div>
+    <div class="no-results" id="noResults" style="display:none">No colors found. Try a different search.</div>
+  </div>
+</div>
+
+<!-- Bottom Sheet Overlay -->
+<div class="bottom-sheet-overlay" id="bsOverlay" onclick="closeBottomSheet()"></div>
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="bs-handle"></div>
+  <div class="bs-swatch-header" id="bsSwatch"></div>
+  <div class="bs-color-info">
+    <div class="bs-color-name" id="bsName"></div>
+    <div class="bs-color-meta" id="bsMeta"></div>
+    <div id="bsLrvNote"></div>
+  </div>
+  <div class="bs-section">
+    <div class="bs-section-title">Sheen <span class="sheen-info-link" onclick="showSheenModal()">ℹ️ What is sheen?</span></div>
+    <div class="sheen-cards" id="bsSheenCards"></div>
+  </div>
+  <div class="sheen-description" id="bsSheenDesc"></div>
+  <div class="bs-section">
+    <div class="bs-section-title">Apply to</div>
+  </div>
+  <div id="applyTargets"></div>
+  <div id="applySpecific"></div>
+  <button class="apply-btn" id="applyBtn" onclick="applyColor()">Apply Color</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Sheen Education Modal -->
+<div class="modal-overlay" id="sheenModal">
+  <div class="modal">
+    <div class="modal-title">💡 Quick Guide: What is Sheen?</div>
+    <div class="modal-text">
+      Sheen is how shiny the paint finish looks — it's separate from color. The same color can look very different depending on the sheen.<br><br>
+      🎨 <strong>Flat</strong> — No shine at all. Hides wall imperfections and dings. Easy to touch up. Best for ceilings and rooms where you want a soft look.<br><br>
+      🥚 <strong>Eggshell</strong> — A soft, warm shimmer. The most popular choice for living rooms, bedrooms, and hallways. Touch-ups may show slightly.<br><br>
+      🧈 <strong>Satin</strong> — Smooth and easy to wipe clean. Great for kitchens, bathrooms, and high-traffic areas. Touch-ups will be more noticeable.<br><br>
+      ✨ <strong>Semi-Gloss</strong> — Noticeable shine. Very durable and easy to clean. The go-to for trim, doors, cabinets, and baseboards.<br><br>
+      ⚠️ Higher sheen makes wall imperfections more visible. We recommend Flat or Eggshell for most walls.<br><br>
+      📖 <a href="https://www.nashpainting.com/blog/understanding-paint-flashing-sheen-color-and-ceiling-considerations" target="_blank">Learn More</a>
+    </div>
+    <button class="modal-btn" onclick="dismissSheenModal()">Got it!</button>
+  </div>
+</div>
+
+<!-- Success Screen -->
 <div class="success-screen" id="successScreen">
-  <div class="success-icon">🎨</div>
-  <div class="success-title">Thank You!</div>
-  <p class="success-msg">Your color selections have been submitted. Your estimator will review and follow up if there are any changes to your estimate.</p>
-</div>
-
-<div class="bottom-bar" id="bottomBar">
-  <div class="bottom-inner">
-    <button class="submit-btn" id="submitBtn" disabled onclick="submitForm()">Submit Color Selections</button>
-    <div class="submit-count" id="submitCount">0 of 20 surfaces selected</div>
+  <div class="success-emoji">🎉</div>
+  <div class="success-title">Colors Submitted!</div>
+  <div class="success-text">
+    Thank you! Your color selections have been sent to your estimator. They'll review everything and reach out if there are any questions or changes to your estimate.
   </div>
-</div>
-
-<!-- Bottom sheet -->
-<div class="overlay" id="overlay" onclick="closeSheet()"></div>
-<div class="sheet" id="sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <input class="sheet-search" id="sheetSearch" type="text" placeholder="Search colors..." autocomplete="off">
+  <div class="success-steps">
+    <strong>What happens next:</strong><br>
+    1. Your estimator reviews your selections<br>
+    2. If any colors require primer, they'll contact you about pricing<br>
+    3. Once confirmed, your project moves to scheduling!
   </div>
-  <div class="sheet-body" id="sheetBody"></div>
+  <div class="success-brand">Nash Painting · 615-829-6858</div>
 </div>
 
 <script>
-// Color database
+// ========== COLOR DATABASE ==========
 const COLORS = [
-  {name:"Agreeable Gray",code:"SW 7029",brand:"SW",hex:"#D5CEC4",lrv:60},
-  {name:"Repose Gray",code:"SW 7015",brand:"SW",hex:"#C2BFB8",lrv:58},
-  {name:"Alabaster",code:"SW 7008",brand:"SW",hex:"#F0EDE3",lrv:82},
-  {name:"Extra White",code:"SW 7006",brand:"SW",hex:"#F1F0EA",lrv:86},
-  {name:"Snowbound",code:"SW 7004",brand:"SW",hex:"#EDE9DF",lrv:83},
-  {name:"Pure White",code:"SW 7005",brand:"SW",hex:"#EDECE0",lrv:84},
-  {name:"Naval",code:"SW 6244",brand:"SW",hex:"#2E3441",lrv:4},
-  {name:"Tricorn Black",code:"SW 6258",brand:"SW",hex:"#2F2E2D",lrv:3},
-  {name:"Iron Ore",code:"SW 7069",brand:"SW",hex:"#4B4A48",lrv:6},
-  {name:"Accessible Beige",code:"SW 7036",brand:"SW",hex:"#D1C4AD",lrv:58},
-  {name:"Worldly Gray",code:"SW 7043",brand:"SW",hex:"#C5BFAF",lrv:57},
-  {name:"Urbane Bronze",code:"SW 7048",brand:"SW",hex:"#54504A",lrv:8},
-  {name:"Gauntlet Gray",code:"SW 7019",brand:"SW",hex:"#7A746C",lrv:17},
-  {name:"Mindful Gray",code:"SW 7016",brand:"SW",hex:"#B5B0A7",lrv:48},
-  {name:"Dorian Gray",code:"SW 7017",brand:"SW",hex:"#A8A49B",lrv:39},
-  {name:"Incredible White",code:"SW 7028",brand:"SW",hex:"#E5DFD3",lrv:74},
-  {name:"Greek Villa",code:"SW 7551",brand:"SW",hex:"#F0E8D5",lrv:84},
-  {name:"Shoji White",code:"SW 7042",brand:"SW",hex:"#E3DBCA",lrv:74},
-  {name:"Aesthetic White",code:"SW 7035",brand:"SW",hex:"#E3DBCA",lrv:73},
-  {name:"Drift of Mist",code:"SW 9166",brand:"SW",hex:"#E4DFD2",lrv:73},
-  {name:"Sea Salt",code:"SW 6204",brand:"SW",hex:"#C5CFC0",lrv:63},
-  {name:"Comfort Gray",code:"SW 6205",brand:"SW",hex:"#B8C4B4",lrv:54},
-  {name:"Oyster Bay",code:"SW 6206",brand:"SW",hex:"#A4B3A4",lrv:44},
-  {name:"Silvermist",code:"SW 7621",brand:"SW",hex:"#B4BEB8",lrv:47},
-  {name:"Emerald City",code:"SW 6889",brand:"SW",hex:"#2B5546",lrv:8},
-  {name:"Caviar",code:"SW 6990",brand:"SW",hex:"#343233",lrv:3},
-  {name:"Web Gray",code:"SW 7075",brand:"SW",hex:"#6E6B64",lrv:14},
-  {name:"Peppercorn",code:"SW 7674",brand:"SW",hex:"#585550",lrv:10},
-  {name:"Cyberspace",code:"SW 7076",brand:"SW",hex:"#454744",lrv:6},
-  {name:"Westhighland White",code:"SW 7566",brand:"SW",hex:"#F3EEE0",lrv:83},
-  {name:"Simply White",code:"OC-117",brand:"BM",hex:"#F1EFDF",lrv:89},
-  {name:"White Dove",code:"OC-17",brand:"BM",hex:"#EDE8D6",lrv:85},
-  {name:"Chantilly Lace",code:"OC-65",brand:"BM",hex:"#F3F0E7",lrv:90},
-  {name:"Oxford White",code:"OC-20",brand:"BM",hex:"#EDE5D1",lrv:82},
-  {name:"Revere Pewter",code:"HC-172",brand:"BM",hex:"#C7BDA8",lrv:55},
-  {name:"Balboa Mist",code:"OC-27",brand:"BM",hex:"#D8D1C2",lrv:67},
-  {name:"Classic Gray",code:"OC-23",brand:"BM",hex:"#E0D9CA",lrv:74},
-  {name:"Hale Navy",code:"HC-154",brand:"BM",hex:"#3C4758",lrv:7},
-  {name:"Midnight Blue",code:"HC-154",brand:"BM",hex:"#2D3644",lrv:4},
-  {name:"Kendall Charcoal",code:"HC-166",brand:"BM",hex:"#5B5B55",lrv:12},
-  {name:"Chelsea Gray",code:"HC-168",brand:"BM",hex:"#8B8984",lrv:22},
-  {name:"Wrought Iron",code:"2124-10",brand:"BM",hex:"#474745",lrv:6},
-  {name:"Decorator's White",code:"OC-149",brand:"BM",hex:"#EEEAE0",lrv:84},
-  {name:"Cloud White",code:"OC-130",brand:"BM",hex:"#F0E9D8",lrv:85},
-  {name:"Pale Oak",code:"OC-20",brand:"BM",hex:"#D8CFC0",lrv:69},
-  {name:"Edgecomb Gray",code:"HC-173",brand:"BM",hex:"#D3C9B5",lrv:63},
-  {name:"Manchester Tan",code:"HC-81",brand:"BM",hex:"#CCB994",lrv:54},
-  {name:"Newburyport Blue",code:"HC-155",brand:"BM",hex:"#414E5C",lrv:8},
-  {name:"Van Deusen Blue",code:"HC-156",brand:"BM",hex:"#456078",lrv:12},
-  {name:"Gentleman's Gray",code:"2062-20",brand:"BM",hex:"#3F4F5D",lrv:8},
-  {name:"Coventry Gray",code:"HC-169",brand:"BM",hex:"#A5A49F",lrv:40},
-  {name:"Stonington Gray",code:"HC-170",brand:"BM",hex:"#B8B6AE",lrv:55},
-  {name:"Gray Owl",code:"OC-52",brand:"BM",hex:"#C0BFB2",lrv:65},
-  {name:"Swiss Coffee",code:"OC-45",brand:"BM",hex:"#E8DFD0",lrv:81},
-  {name:"China White",code:"PM-20",brand:"BM",hex:"#E8E0CE",lrv:80},
+  // SW Whites
+  {name:"Alabaster",code:"7008",brand:"SW",hex:"#F0EBE0",lrv:82,family:"white"},
+  {name:"Extra White",code:"7006",brand:"SW",hex:"#F0EDE6",lrv:86,family:"white"},
+  {name:"Snowbound",code:"7004",brand:"SW",hex:"#EDEADF",lrv:83,family:"white"},
+  {name:"Pure White",code:"7005",brand:"SW",hex:"#EFECE0",lrv:84,family:"white"},
+  {name:"Incredible White",code:"7028",brand:"SW",hex:"#ECE3D6",lrv:74,family:"white"},
+  {name:"Greek Villa",code:"7551",brand:"SW",hex:"#F1E8D7",lrv:84,family:"white"},
+  {name:"Shoji White",code:"7042",brand:"SW",hex:"#E5DDD0",lrv:74,family:"white"},
+  {name:"Aesthetic White",code:"7035",brand:"SW",hex:"#E4D9C7",lrv:73,family:"white"},
+  {name:"Drift of Mist",code:"9166",brand:"SW",hex:"#E4DFD2",lrv:71,family:"white"},
+  {name:"Eider White",code:"7014",brand:"SW",hex:"#E3DDD5",lrv:73,family:"white"},
+  {name:"Moderate White",code:"6140",brand:"SW",hex:"#E2D9CC",lrv:66,family:"white"},
+  {name:"Zurich White",code:"7626",brand:"SW",hex:"#E4DCCF",lrv:70,family:"white"},
+  {name:"Creamy",code:"7012",brand:"SW",hex:"#EFDDBE",lrv:76,family:"white"},
+  {name:"Dover White",code:"6385",brand:"SW",hex:"#ECDDBD",lrv:73,family:"white"},
+  {name:"Ceiling Bright White",code:"—",brand:"SW",hex:"#FEFEFE",lrv:92,family:"white"},
+  {name:"High Reflective White",code:"7757",brand:"SW",hex:"#F5F0E7",lrv:93,family:"white"},
+  {name:"Westhighland White",code:"7566",brand:"SW",hex:"#F0E6D0",lrv:79,family:"white"},
+  // SW Grays
+  {name:"Agreeable Gray",code:"7029",brand:"SW",hex:"#D5CBC0",lrv:60,family:"gray"},
+  {name:"Repose Gray",code:"7015",brand:"SW",hex:"#B8AFA7",lrv:44,family:"gray"},
+  {name:"Passive",code:"7064",brand:"SW",hex:"#CBCAC5",lrv:60,family:"gray"},
+  {name:"Mindful Gray",code:"7016",brand:"SW",hex:"#B5AEA4",lrv:48,family:"gray"},
+  {name:"Dorian Gray",code:"7017",brand:"SW",hex:"#999590",lrv:39,family:"gray"},
+  {name:"Worldly Gray",code:"7043",brand:"SW",hex:"#BFB7AA",lrv:49,family:"gray"},
+  {name:"Colonnade Gray",code:"7641",brand:"SW",hex:"#BBB1A3",lrv:45,family:"gray"},
+  {name:"Anew Gray",code:"7030",brand:"SW",hex:"#BFB4A6",lrv:47,family:"gray"},
+  {name:"Gauntlet Gray",code:"7019",brand:"SW",hex:"#898580",lrv:17,family:"gray"},
+  {name:"Peppercorn",code:"7674",brand:"SW",hex:"#585856",lrv:10,family:"gray"},
+  {name:"Web Gray",code:"7075",brand:"SW",hex:"#4B4C4E",lrv:7,family:"gray"},
+  {name:"Software",code:"7074",brand:"SW",hex:"#9B9B97",lrv:30,family:"gray"},
+  {name:"Waterloo",code:"7643",brand:"SW",hex:"#73737A",lrv:15,family:"gray"},
+  {name:"Argos",code:"7065",brand:"SW",hex:"#B8B8B4",lrv:46,family:"gray"},
+  {name:"Light French Gray",code:"0055",brand:"SW",hex:"#C4BFB7",lrv:53,family:"gray"},
+  {name:"Gray Screen",code:"7071",brand:"SW",hex:"#ABA8A3",lrv:38,family:"gray"},
+  {name:"Ellie Gray",code:"7650",brand:"SW",hex:"#A8A49E",lrv:36,family:"gray"},
+  {name:"Tin Lizzie",code:"9163",brand:"SW",hex:"#9C9994",lrv:30,family:"gray"},
+  {name:"Functional Gray",code:"7024",brand:"SW",hex:"#9B968E",lrv:31,family:"gray"},
+  {name:"Anonymous",code:"7046",brand:"SW",hex:"#A09A92",lrv:32,family:"gray"},
+  {name:"Mega Greige",code:"7031",brand:"SW",hex:"#B0A898",lrv:41,family:"gray"},
+  {name:"Proper Gray",code:"6003",brand:"SW",hex:"#A19C97",lrv:33,family:"gray"},
+  // SW Beiges
+  {name:"Accessible Beige",code:"7036",brand:"SW",hex:"#D1C4AD",lrv:58,family:"beige"},
+  {name:"Natural Tan",code:"7567",brand:"SW",hex:"#C4B9A3",lrv:50,family:"beige"},
+  {name:"Kilim Beige",code:"6106",brand:"SW",hex:"#C6B293",lrv:44,family:"beige"},
+  {name:"Balanced Beige",code:"7037",brand:"SW",hex:"#C0AD93",lrv:46,family:"beige"},
+  {name:"Loggia",code:"7506",brand:"SW",hex:"#D0B98F",lrv:49,family:"beige"},
+  {name:"Macadamia",code:"6142",brand:"SW",hex:"#C9B99C",lrv:51,family:"beige"},
+  {name:"Tony Taupe",code:"7038",brand:"SW",hex:"#A89C8A",lrv:34,family:"beige"},
+  {name:"Latte",code:"6108",brand:"SW",hex:"#B4A48A",lrv:37,family:"beige"},
+  {name:"Sand Dollar",code:"6099",brand:"SW",hex:"#D4C4A8",lrv:56,family:"beige"},
+  {name:"Ramie",code:"6156",brand:"SW",hex:"#D1C1A7",lrv:55,family:"beige"},
+  {name:"Straw",code:"6154",brand:"SW",hex:"#CCBA9B",lrv:52,family:"beige"},
+  {name:"Warm Stone",code:"7032",brand:"SW",hex:"#B4A590",lrv:38,family:"beige"},
+  {name:"Nomadic Desert",code:"6107",brand:"SW",hex:"#BEA887",lrv:41,family:"beige"},
+  {name:"Toasted Pine Nut",code:"7696",brand:"SW",hex:"#C6AE8B",lrv:43,family:"beige"},
+  {name:"Blonde",code:"6128",brand:"SW",hex:"#D8C9A8",lrv:60,family:"beige"},
+  // SW Blues
+  {name:"Naval",code:"6244",brand:"SW",hex:"#2E3441",lrv:4,family:"blue"},
+  {name:"In the Navy",code:"9178",brand:"SW",hex:"#3B4357",lrv:5,family:"blue"},
+  {name:"Indigo Batik",code:"7602",brand:"SW",hex:"#4E6279",lrv:10,family:"blue"},
+  {name:"Distance",code:"6243",brand:"SW",hex:"#5C6F8A",lrv:14,family:"blue"},
+  {name:"Smoky Blue",code:"7604",brand:"SW",hex:"#768FA5",lrv:22,family:"blue"},
+  {name:"Windy Blue",code:"6240",brand:"SW",hex:"#7593AA",lrv:22,family:"blue"},
+  {name:"Uncertain Gray",code:"6234",brand:"SW",hex:"#8CA3B3",lrv:28,family:"blue"},
+  {name:"Cyberspace",code:"7076",brand:"SW",hex:"#53545C",lrv:6,family:"blue"},
+  {name:"Gale Force",code:"7605",brand:"SW",hex:"#3D5468",lrv:7,family:"blue"},
+  {name:"Denim",code:"6523",brand:"SW",hex:"#4B6380",lrv:10,family:"blue"},
+  {name:"Bracing Blue",code:"6242",brand:"SW",hex:"#6A8399",lrv:18,family:"blue"},
+  {name:"Tradewind",code:"6218",brand:"SW",hex:"#8CB4B3",lrv:38,family:"blue"},
+  {name:"Debonair",code:"9139",brand:"SW",hex:"#98B2C1",lrv:36,family:"blue"},
+  {name:"Heavenly",code:"6138",brand:"SW",hex:"#BDD0DC",lrv:58,family:"blue"},
+  {name:"Languid Blue",code:"6226",brand:"SW",hex:"#B8CCCC",lrv:55,family:"blue"},
+  {name:"Krypton",code:"6247",brand:"SW",hex:"#9BB1BB",lrv:40,family:"blue"},
+  // SW Greens
+  {name:"Sea Salt",code:"6204",brand:"SW",hex:"#C8D2C4",lrv:63,family:"green"},
+  {name:"Oyster Bay",code:"6206",brand:"SW",hex:"#C1D1CB",lrv:61,family:"green"},
+  {name:"Rainwashed",code:"6211",brand:"SW",hex:"#C5D5CF",lrv:59,family:"green"},
+  {name:"Silvermist",code:"6148",brand:"SW",hex:"#B5C6C3",lrv:47,family:"green"},
+  {name:"Comfort Gray",code:"6205",brand:"SW",hex:"#C5CEC0",lrv:54,family:"green"},
+  {name:"Evergreen Fog",code:"9130",brand:"SW",hex:"#95A08E",lrv:30,family:"green"},
+  {name:"Pewter Green",code:"6208",brand:"SW",hex:"#96A59E",lrv:32,family:"green"},
+  {name:"Basil",code:"6194",brand:"SW",hex:"#5C7B54",lrv:14,family:"green"},
+  {name:"Jasper",code:"6216",brand:"SW",hex:"#587A6F",lrv:14,family:"green"},
+  {name:"Stunning Shade",code:"6198",brand:"SW",hex:"#435A4C",lrv:8,family:"green"},
+  {name:"Clary Sage",code:"6178",brand:"SW",hex:"#B0AB8C",lrv:40,family:"green"},
+  {name:"Svelte Sage",code:"6164",brand:"SW",hex:"#97A085",lrv:30,family:"green"},
+  {name:"Retreat",code:"6207",brand:"SW",hex:"#8A9E94",lrv:28,family:"green"},
+  {name:"Rosemary",code:"6187",brand:"SW",hex:"#6D7D5E",lrv:16,family:"green"},
+  {name:"Privilege Green",code:"6193",brand:"SW",hex:"#48694A",lrv:9,family:"green"},
+  {name:"Succulent",code:"9650",brand:"SW",hex:"#A8B99F",lrv:42,family:"green"},
+  // SW Teals
+  {name:"Drizzle",code:"6479",brand:"SW",hex:"#83B5AA",lrv:38,family:"teal"},
+  {name:"Composed",code:"6472",brand:"SW",hex:"#6BA097",lrv:26,family:"teal"},
+  {name:"Riverway",code:"6222",brand:"SW",hex:"#5D7F82",lrv:16,family:"teal"},
+  {name:"Still Water",code:"6223",brand:"SW",hex:"#4D6A6E",lrv:11,family:"teal"},
+  {name:"Underseas",code:"6214",brand:"SW",hex:"#5A7A72",lrv:14,family:"teal"},
+  // SW Reds
+  {name:"Rojo Dust",code:"9006",brand:"SW",hex:"#9B6249",lrv:12,family:"red"},
+  {name:"Cavern Clay",code:"7701",brand:"SW",hex:"#B17A52",lrv:18,family:"orange"},
+  {name:"Red Bay",code:"6321",brand:"SW",hex:"#803234",lrv:5,family:"red"},
+  {name:"Fireweed",code:"6328",brand:"SW",hex:"#9B403D",lrv:8,family:"red"},
+  {name:"Bolero",code:"7600",brand:"SW",hex:"#B04E4A",lrv:11,family:"red"},
+  // SW Yellows
+  {name:"Butter Up",code:"6681",brand:"SW",hex:"#F0D9A0",lrv:70,family:"yellow"},
+  {name:"Banana Cream",code:"6673",brand:"SW",hex:"#F4E4B4",lrv:78,family:"yellow"},
+  {name:"Compatible Cream",code:"6387",brand:"SW",hex:"#E8D5AD",lrv:66,family:"yellow"},
+  {name:"Jersey Cream",code:"6379",brand:"SW",hex:"#F0DDB8",lrv:73,family:"yellow"},
+  {name:"Friendly Yellow",code:"6680",brand:"SW",hex:"#EED28E",lrv:65,family:"yellow"},
+  {name:"Ivoire",code:"6127",brand:"SW",hex:"#E3CFA2",lrv:60,family:"yellow"},
+  // SW Browns
+  {name:"Urbane Bronze",code:"7048",brand:"SW",hex:"#5D5449",lrv:8,family:"brown"},
+  {name:"Iron Ore",code:"7069",brand:"SW",hex:"#474745",lrv:6,family:"black"},
+  {name:"Van Dyke Brown",code:"7041",brand:"SW",hex:"#584E42",lrv:7,family:"brown"},
+  {name:"Grizzle Gray",code:"7068",brand:"SW",hex:"#5A5955",lrv:9,family:"brown"},
+  {name:"Brainstorm Bronze",code:"7033",brand:"SW",hex:"#897C6B",lrv:18,family:"brown"},
+  {name:"Smokehouse",code:"7040",brand:"SW",hex:"#6B6050",lrv:11,family:"brown"},
+  {name:"Homestead Brown",code:"7515",brand:"SW",hex:"#7A6E5C",lrv:14,family:"brown"},
+  // SW Blacks
+  {name:"Tricorn Black",code:"6258",brand:"SW",hex:"#2F2E2D",lrv:3,family:"black"},
+  {name:"Black Magic",code:"6991",brand:"SW",hex:"#353535",lrv:3,family:"black"},
+  {name:"Caviar",code:"6990",brand:"SW",hex:"#3A3A3A",lrv:4,family:"black"},
+  {name:"Inkwell",code:"6992",brand:"SW",hex:"#31343B",lrv:3,family:"black"},
+  {name:"Greenblack",code:"6994",brand:"SW",hex:"#373B38",lrv:4,family:"black"},
+  // SW Oranges
+  {name:"Determined Orange",code:"6635",brand:"SW",hex:"#C47241",lrv:18,family:"orange"},
+  {name:"Copper Wire",code:"7707",brand:"SW",hex:"#AA6B42",lrv:14,family:"orange"},
+  // SW Purples
+  {name:"Expressive Plum",code:"6271",brand:"SW",hex:"#645B6F",lrv:9,family:"purple"},
+  {name:"Exclusive Plum",code:"6263",brand:"SW",hex:"#514259",lrv:5,family:"purple"},
+  {name:"Ash Violet",code:"6543",brand:"SW",hex:"#897C88",lrv:20,family:"purple"},
+
+  // ===== BENJAMIN MOORE =====
+  // BM Whites
+  {name:"Simply White",code:"OC-117",brand:"BM",hex:"#F1ECE2",lrv:89,family:"white"},
+  {name:"White Dove",code:"OC-17",brand:"BM",hex:"#EFEBE0",lrv:85,family:"white"},
+  {name:"Chantilly Lace",code:"OC-65",brand:"BM",hex:"#F5F0E7",lrv:90,family:"white"},
+  {name:"Oxford White",code:"CC-30",brand:"BM",hex:"#EEEADE",lrv:81,family:"white"},
+  {name:"Decorator's White",code:"CC-20",brand:"BM",hex:"#EEEAE3",lrv:84,family:"white"},
+  {name:"Cloud White",code:"OC-130",brand:"BM",hex:"#F0EBE0",lrv:87,family:"white"},
+  {name:"Swiss Coffee",code:"OC-45",brand:"BM",hex:"#E7DDD0",lrv:77,family:"white"},
+  {name:"Linen White",code:"OC-146",brand:"BM",hex:"#ECE5D6",lrv:81,family:"white"},
+  {name:"Navajo White",code:"OC-95",brand:"BM",hex:"#E8D8BE",lrv:72,family:"white"},
+  // BM Grays
+  {name:"Classic Gray",code:"OC-23",brand:"BM",hex:"#E2DDD5",lrv:74,family:"gray"},
+  {name:"Balboa Mist",code:"OC-27",brand:"BM",hex:"#DDD6C9",lrv:67,family:"gray"},
+  {name:"Revere Pewter",code:"HC-172",brand:"BM",hex:"#C5B9A6",lrv:55,family:"gray"},
+  {name:"Edgecomb Gray",code:"HC-173",brand:"BM",hex:"#D5CDBE",lrv:63,family:"gray"},
+  {name:"Pale Oak",code:"OC-20",brand:"BM",hex:"#DDD4C5",lrv:69,family:"gray"},
+  {name:"Collingwood",code:"OC-28",brand:"BM",hex:"#D1C9BE",lrv:62,family:"gray"},
+  {name:"Winds Breath",code:"OC-24",brand:"BM",hex:"#DDD2C0",lrv:67,family:"gray"},
+  {name:"Thunder",code:"AF-685",brand:"BM",hex:"#9C9691",lrv:34,family:"gray"},
+  {name:"Silver Chain",code:"1472",brand:"BM",hex:"#C1BDBA",lrv:52,family:"gray"},
+  {name:"Metropolitan",code:"AF-690",brand:"BM",hex:"#CBC5BE",lrv:57,family:"gray"},
+  {name:"Gray Owl",code:"OC-52",brand:"BM",hex:"#C2C0B6",lrv:65,family:"gray"},
+  {name:"Stonington Gray",code:"HC-170",brand:"BM",hex:"#B5B5B0",lrv:49,family:"gray"},
+  {name:"Coventry Gray",code:"HC-169",brand:"BM",hex:"#A8A9A5",lrv:42,family:"gray"},
+  {name:"Chelsea Gray",code:"HC-168",brand:"BM",hex:"#8A8885",lrv:22,family:"gray"},
+  {name:"Kendall Charcoal",code:"HC-166",brand:"BM",hex:"#646464",lrv:12,family:"gray"},
+  {name:"Iron Mountain",code:"2134-30",brand:"BM",hex:"#6B6D6F",lrv:12,family:"gray"},
+  {name:"Wish",code:"AF-680",brand:"BM",hex:"#D3CCC4",lrv:63,family:"gray"},
+  {name:"Ozark Shadows",code:"AC-26",brand:"BM",hex:"#8A8580",lrv:22,family:"gray"},
+  {name:"Nimbus",code:"1465",brand:"BM",hex:"#BDB8B2",lrv:50,family:"gray"},
+  // BM Beiges
+  {name:"Manchester Tan",code:"HC-81",brand:"BM",hex:"#D1C39D",lrv:57,family:"beige"},
+  {name:"Grant Beige",code:"HC-83",brand:"BM",hex:"#C5B89A",lrv:49,family:"beige"},
+  {name:"Lenox Tan",code:"HC-44",brand:"BM",hex:"#C2AF8D",lrv:43,family:"beige"},
+  {name:"Shaker Beige",code:"HC-45",brand:"BM",hex:"#C9B695",lrv:50,family:"beige"},
+  {name:"Muslin",code:"OC-12",brand:"BM",hex:"#DCCFB8",lrv:63,family:"beige"},
+  {name:"Blanched Coral",code:"886",brand:"BM",hex:"#E3CCA8",lrv:60,family:"beige"},
+  {name:"Meditation",code:"AF-395",brand:"BM",hex:"#D6C6A8",lrv:56,family:"beige"},
+  // BM Blues
+  {name:"Hale Navy",code:"HC-154",brand:"BM",hex:"#3C4658",lrv:5,family:"blue"},
+  {name:"Midnight Blue",code:"CC-658",brand:"BM",hex:"#2D3441",lrv:3,family:"blue"},
+  {name:"Newburyport Blue",code:"HC-155",brand:"BM",hex:"#475B72",lrv:8,family:"blue"},
+  {name:"Van Deusen Blue",code:"HC-156",brand:"BM",hex:"#496A82",lrv:11,family:"blue"},
+  {name:"Gentleman's Gray",code:"2062-20",brand:"BM",hex:"#3D4C5C",lrv:6,family:"blue"},
+  {name:"Hazy Skies",code:"1549",brand:"BM",hex:"#C6D4D9",lrv:62,family:"blue"},
+  {name:"Quiet Moments",code:"1563",brand:"BM",hex:"#BED1CE",lrv:61,family:"blue"},
+  {name:"Nantucket Fog",code:"AC-22",brand:"BM",hex:"#A5B4B8",lrv:42,family:"blue"},
+  {name:"Santorini Blue",code:"1634",brand:"BM",hex:"#5B7FA0",lrv:16,family:"blue"},
+  {name:"Blue Note",code:"2129-30",brand:"BM",hex:"#4D5F6F",lrv:9,family:"blue"},
+  {name:"Old Navy",code:"2063-10",brand:"BM",hex:"#2F3B4C",lrv:4,family:"blue"},
+  {name:"Symphony Blue",code:"2060-10",brand:"BM",hex:"#1D344E",lrv:3,family:"blue"},
+  // BM Greens
+  {name:"Palladian Blue",code:"HC-144",brand:"BM",hex:"#B5C9C3",lrv:56,family:"green"},
+  {name:"Wythe Blue",code:"HC-143",brand:"BM",hex:"#9CB3AD",lrv:41,family:"green"},
+  {name:"Woodlawn Blue",code:"HC-147",brand:"BM",hex:"#A6BAB8",lrv:47,family:"green"},
+  {name:"Mount Saint Anne",code:"AC-29",brand:"BM",hex:"#7B8D8B",lrv:20,family:"green"},
+  {name:"Beach Glass",code:"1564",brand:"BM",hex:"#AFD1B5",lrv:55,family:"green"},
+  {name:"Healing Aloe",code:"1562",brand:"BM",hex:"#BCCFB4",lrv:59,family:"green"},
+  {name:"Boothbay Gray",code:"HC-165",brand:"BM",hex:"#94A9A8",lrv:30,family:"green"},
+  {name:"Salamander",code:"2148-10",brand:"BM",hex:"#3D5042",lrv:5,family:"green"},
+  {name:"Cushing Green",code:"HC-125",brand:"BM",hex:"#5B7A5A",lrv:13,family:"green"},
+  {name:"Jack Pine",code:"692",brand:"BM",hex:"#5E7F6B",lrv:15,family:"green"},
+  {name:"Saybrook Sage",code:"HC-114",brand:"BM",hex:"#A5AD8E",lrv:38,family:"green"},
+  {name:"Sage",code:"2143-40",brand:"BM",hex:"#8CA486",lrv:28,family:"green"},
+  // BM Teals
+  {name:"Aegean Teal",code:"2136-40",brand:"BM",hex:"#6E918B",lrv:20,family:"teal"},
+  {name:"Caribbean Teal",code:"2123-20",brand:"BM",hex:"#456661",lrv:9,family:"teal"},
+  {name:"Teal Ocean",code:"2049-30",brand:"BM",hex:"#3A7E80",lrv:14,family:"teal"},
+  // BM Reds
+  {name:"Caliente",code:"AF-290",brand:"BM",hex:"#A63028",lrv:8,family:"red"},
+  {name:"Heritage Red",code:"1303",brand:"BM",hex:"#7A3027",lrv:5,family:"red"},
+  {name:"Dinner Party",code:"AF-300",brand:"BM",hex:"#8B2D2B",lrv:5,family:"red"},
+  {name:"Raspberry Truffle",code:"2080-10",brand:"BM",hex:"#6A2C3C",lrv:4,family:"red"},
+  // BM Yellows
+  {name:"Hawthorne Yellow",code:"HC-4",brand:"BM",hex:"#E3C67A",lrv:57,family:"yellow"},
+  {name:"Windham Cream",code:"HC-6",brand:"BM",hex:"#E8D5A0",lrv:65,family:"yellow"},
+  {name:"Golden Straw",code:"2152-50",brand:"BM",hex:"#E8D08E",lrv:62,family:"yellow"},
+  // BM Browns
+  {name:"Chocolate Sundae",code:"2113-10",brand:"BM",hex:"#4A3C32",lrv:4,family:"brown"},
+  {name:"Kingsport Gray",code:"HC-86",brand:"BM",hex:"#9B8E7B",lrv:25,family:"brown"},
+  {name:"Alexandria Beige",code:"HC-77",brand:"BM",hex:"#B3A28A",lrv:36,family:"brown"},
+  {name:"Dry Sage",code:"2142-40",brand:"BM",hex:"#9E9878",lrv:30,family:"brown"},
+  // BM Blacks
+  {name:"Black",code:"2132-10",brand:"BM",hex:"#363636",lrv:3,family:"black"},
+  {name:"Wrought Iron",code:"2124-10",brand:"BM",hex:"#474A4E",lrv:6,family:"black"},
+  {name:"Onyx",code:"2133-10",brand:"BM",hex:"#3A3A3B",lrv:3,family:"black"},
+  {name:"Jet Black",code:"2120-10",brand:"BM",hex:"#2E2E2E",lrv:2,family:"black"},
+  {name:"Carbon Copy",code:"2117-10",brand:"BM",hex:"#3F3F3F",lrv:4,family:"black"},
+  // BM Purples
+  {name:"Amethyst Shadow",code:"1395",brand:"BM",hex:"#7B6B7C",lrv:13,family:"purple"},
+  {name:"Kalamata",code:"AF-630",brand:"BM",hex:"#6A5E60",lrv:10,family:"purple"},
+  {name:"Shadow",code:"2117-30",brand:"BM",hex:"#6D6D78",lrv:12,family:"purple"},
+  // BM Oranges
+  {name:"Buttered Yam",code:"AF-230",brand:"BM",hex:"#C98050",lrv:22,family:"orange"},
+  {name:"Harvest Moon",code:"2167-30",brand:"BM",hex:"#D08A45",lrv:25,family:"orange"},
+  {name:"Amber",code:"166",brand:"BM",hex:"#C07B4A",lrv:19,family:"orange"},
 ];
 
-// Config
-const ESTIMATE_TOTAL = 10330;
-const EXTERIOR_TOTAL = 4200;
-const INCLUDED_COLORS = Math.max(3, Math.floor(ESTIMATE_TOTAL / 1000));
-const INCLUDED_EXT_COLORS = 3;
-const EXTRA_COLOR_FEE = 75;
+// Popular color names for "Popular" filter
+const POPULAR = ["Agreeable Gray","Repose Gray","Alabaster","Extra White","Pure White","Snowbound","Accessible Beige","Sea Salt","Naval","Tricorn Black","Simply White","White Dove","Chantilly Lace","Revere Pewter","Hale Navy","Classic Gray","Edgecomb Gray","Palladian Blue","Evergreen Fog","Peppercorn","Iron Ore","Urbane Bronze","Swiss Coffee","Balboa Mist","Gray Owl","Aegean Teal","Chelsea Gray","Kendall Charcoal","Mindful Gray","Worldly Gray"];
 
-const INTERIOR_ROOMS = [
-  {name:"Living Room", surfaces:["Walls","Trim","Ceiling","Doors"]},
-  {name:"Master Bedroom", surfaces:["Walls","Trim","Ceiling"]},
-  {name:"Kitchen", surfaces:["Walls","Trim","Ceiling"]},
-  {name:"Guest Bathroom", surfaces:["Walls","Trim","Ceiling"]},
-  {name:"Hallway", surfaces:["Walls","Trim","Ceiling"]},
+// ========== DATA MODEL ==========
+const SHEENS = ['Flat','Eggshell','Satin','Semi-Gloss'];
+const SHEEN_INFO = {
+  'Flat': {short:'No shine',sub:'Easy touch-up',desc:'No shine. Easiest to touch up later — small wall dings disappear. Best for ceilings and low-traffic areas.'},
+  'Eggshell': {short:'Soft',sub:'shimmer · Popular',desc:'A soft, light shimmer. The most popular choice for walls. Touch-ups may show slightly, but it gives a beautiful warm finish.'},
+  'Satin': {short:'Washable',sub:'No touch up',desc:'Smooth and easy to wipe clean. Great for kitchens, bathrooms, and kids\' rooms. Touch-ups will be visible.'},
+  'Semi-Gloss': {short:'Durable',sub:'Trim & doors',desc:'Noticeable shine. Very durable and easy to clean. The standard choice for trim, doors, baseboards, and cabinets.'}
+};
+
+const SURFACE_DEFAULT_SHEEN = {walls:'Eggshell',trim:'Semi-Gloss',ceiling:'Flat',doors:'Semi-Gloss'};
+
+const ROOMS = [
+  {name:'Living Room', surfaces:['walls','trim','ceiling','doors']},
+  {name:'Master Bedroom', surfaces:['walls','trim','ceiling']},
+  {name:'Kitchen', surfaces:['walls','trim','ceiling']},
+  {name:'Guest Bathroom', surfaces:['walls','trim','ceiling']},
+  {name:'Hallway', surfaces:['walls','trim','ceiling']},
 ];
-const EXTERIOR_SURFACES = ["Siding (Body Color)","Trim & Fascia","Front Door","Shutters"];
 
-function defaultSheen(s) {
-  const sl = s.toLowerCase();
-  if (sl === 'ceiling') return 'Flat';
-  if (sl === 'walls') return 'Eggshell';
-  return 'Semi-Gloss';
-}
+const EXT_SURFACES = [
+  {key:'siding', name:'Siding (Body)', defaultSheen:'Flat'},
+  {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Semi-Gloss'},
+  {key:'front_door', name:'Front Door', defaultSheen:'Semi-Gloss'},
+  {key:'shutters', name:'Shutters', defaultSheen:'Semi-Gloss'},
+];
 
 // State
-let selections = {}; // key: "int-0-0" or "ext-1" => {color, sheen}
-let activeKey = null;
-let sheenEduShown = localStorage.getItem('nashSheenEduDismissed') === 'true';
-let sheenEduTriggered = false;
-let extSurchargeAccepted = false;
-let pendingExtKey = null;
-let totalSurfaces = 0;
+let state = {
+  main: {
+    walls: {color:null, sheen:'Eggshell'},
+    trim: {color:findColor('Extra White','SW'), sheen:'Semi-Gloss'},
+    ceiling: {color:findColor('Ceiling Bright White','SW'), sheen:'Flat'},
+    doors: {color:null, sheen:'Semi-Gloss', linked:true},
+  },
+  rooms: {},
+  exterior: {},
+  recentColors: [],
+  sheenEducationSeen: localStorage.getItem('nashSheenEdu')==='1',
+  extWarnAccepted: false,
+};
 
-function init() {
-  const intEl = document.getElementById('interiorRooms');
-  INTERIOR_ROOMS.forEach((room, ri) => {
-    const card = document.createElement('div');
-    card.className = 'room-card';
-    card.innerHTML = `<div class="room-header"><span>${room.name}</span><span class="room-status" id="rs-${ri}">0/${room.surfaces.length}</span></div>`;
-    room.surfaces.forEach((surf, si) => {
-      const key = `int-${ri}-${si}`;
-      selections[key] = {color: null, sheen: defaultSheen(surf)};
-      totalSurfaces++;
-      card.innerHTML += `
-        <div class="surface-row">
-          <div class="surface-name">${surf}</div>
-          <div class="surface-controls">
-            <button class="color-btn" id="cb-${key}" onclick="openSheet('${key}')">
-              <div class="swatch" style="background:#e5e7eb"></div>
-              <span class="placeholder">Select color...</span>
-            </button>
-            <select class="sheen-select" onchange="setSheen('${key}',this.value);sheenInteract()">
-              ${['Flat','Eggshell','Satin','Semi-Gloss'].map(s=>`<option${s===defaultSheen(surf)?' selected':''}>${s}</option>`).join('')}
-            </select>
-          </div>
-          <div id="primer-${key}"></div>
-        </div>`;
-    });
-    intEl.appendChild(card);
-  });
+// Init room overrides (empty = use main)
+ROOMS.forEach(r => { state.rooms[r.name] = {}; r.surfaces.forEach(s => state.rooms[r.name][s] = null); });
+EXT_SURFACES.forEach(e => { state.exterior[e.key] = {color:null, sheen:e.defaultSheen}; });
 
-  const extEl = document.getElementById('exteriorSurfaces');
-  const extCard = document.createElement('div');
-  extCard.className = 'room-card';
-  extCard.innerHTML = `<div class="room-header"><span>Exterior</span><span class="room-status" id="rs-ext">0/${EXTERIOR_SURFACES.length}</span></div>`;
-  EXTERIOR_SURFACES.forEach((surf, si) => {
-    const key = `ext-${si}`;
-    const dsheen = surf.toLowerCase().includes('door') ? 'Semi-Gloss' : (surf.toLowerCase().includes('trim') ? 'Semi-Gloss' : 'Satin');
-    selections[key] = {color: null, sheen: dsheen};
-    totalSurfaces++;
-    extCard.innerHTML += `
-      <div class="surface-row">
-        <div class="surface-name">${surf}</div>
-        <div class="surface-controls">
-          <button class="color-btn" id="cb-${key}" onclick="openSheet('${key}')">
-            <div class="swatch" style="background:#e5e7eb"></div>
-            <span class="placeholder">Select color...</span>
-          </button>
-          <select class="sheen-select" onchange="setSheen('${key}',this.value);sheenInteract()">
-            ${['Flat','Eggshell','Satin','Semi-Gloss'].map(s=>`<option${s===dsheen?' selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-        <div id="primer-${key}"></div>
-      </div>`;
-  });
-  extEl.appendChild(extCard);
-  updateUI();
+// Browser state
+let browserTarget = null; // {type:'main',surface:'walls'} or {type:'room',room:'Kitchen',surface:'walls'} or {type:'ext',key:'siding'}
+let selectedBrowserColor = null;
+let selectedBrowserSheen = null;
+let activeFamily = 'all';
+let activeBrand = 'all';
+let applyTargets = new Set();
+let specificTargets = new Set();
+let specificOpen = false;
+
+function findColor(name, brand) {
+  return COLORS.find(c => c.name===name && (!brand || c.brand===brand)) || null;
 }
 
-function setSheen(key, val) { selections[key].sheen = val; }
+// ========== RENDERING ==========
+function render() {
+  renderMainCards();
+  renderAllowance();
+  renderRoomCards();
+  renderExtCards();
+  renderExtAllowance();
+  renderSubmitBar();
+}
 
-function sheenInteract() {
-  if (!sheenEduTriggered && !sheenEduShown) {
-    sheenEduTriggered = true;
-    const el = document.getElementById('sheenEdu');
-    el.style.display = 'block';
+function getEffective(room, surface) {
+  const override = state.rooms[room]?.[surface];
+  if (override) return override;
+  if (surface === 'doors' && state.main.doors.linked) {
+    return {color: state.main.trim.color, sheen: state.main.trim.sheen};
   }
-}
-function toggleSheenEdu() {
-  const body = document.getElementById('sheenEduBody');
-  const tog = document.getElementById('sheenEduToggle');
-  if (body.style.display === 'none') { body.style.display = 'block'; tog.textContent = '▼'; }
-  else { body.style.display = 'none'; tog.textContent = '▶'; }
-}
-function dismissSheenEdu() {
-  sheenEduShown = true;
-  localStorage.setItem('nashSheenEduDismissed','true');
-  const body = document.getElementById('sheenEduBody');
-  body.style.display = 'none';
-  document.getElementById('sheenEduToggle').textContent = '▶';
+  if (surface === 'doors') return {color: state.main.doors.color, sheen: state.main.doors.sheen};
+  return {color: state.main[surface]?.color, sheen: state.main[surface]?.sheen};
 }
 
-function getUniqueColors(prefix) {
+function getExtEffective(key) {
+  return state.exterior[key];
+}
+
+function isCustom(room, surface) {
+  return !!state.rooms[room]?.[surface];
+}
+
+function renderMainCards() {
+  const el = document.getElementById('mainColorCards');
+  const cards = [
+    {key:'walls', label:'Walls', icon:'🏠', hint:'Start here! Pick your wall color.', highlight:true, applies:'Applies to all 5 rooms'},
+    {key:'trim', label:'Trim', icon:'✂️', hint:'💡 Suggested — tap to change', highlight:false, applies:'Applies to all 5 rooms'},
+    {key:'ceiling', label:'Ceiling', icon:'⬆', hint:'💡 Suggested — tap to change', highlight:false, applies:'Applies to all 5 rooms'},
+    {key:'doors', label:'Doors', icon:'🚪', hint:null, highlight:false, applies:'Applies to 1 room (Living Room)'},
+  ];
+  el.innerHTML = cards.map(c => {
+    const d = c.key==='doors' && state.main.doors.linked
+      ? {color: state.main.trim.color, sheen: state.main.trim.sheen}
+      : state.main[c.key];
+    const col = d.color;
+    const hasColor = !!col;
+    const swatchStyle = hasColor ? `background:${col.hex}` : '';
+    const linked = c.key==='doors' && state.main.doors.linked;
+    return `<div class="main-color-card${c.highlight?' highlight':''}" onclick="openBrowserFor('main','${c.key}')">
+      <div class="mcc-header">
+        <div class="mcc-label">${c.icon} ${c.label}</div>
+        ${!hasColor ? '<div class="mcc-badge">Required</div>' : ''}
+      </div>
+      ${!hasColor && c.hint ? `<div class="mcc-hint">${c.hint}</div>` : ''}
+      <div class="mcc-swatch-row">
+        <div class="mcc-swatch${hasColor?'':' empty'}" style="${swatchStyle}">${hasColor?'':'+'}</div>
+        ${hasColor ? `<div class="mcc-color-info">
+          <div class="mcc-color-name">${col.name}</div>
+          <div class="mcc-color-code">${col.brand} ${col.code}</div>
+          ${col.lrv<15?'<div style="font-size:11px;color:#856404;margin-top:2px">⚠️ Dark — may need primer</div>':''}
+        </div>` : `<div class="mcc-color-info"><div class="mcc-color-name" style="color:var(--text-muted)">Tap to choose color</div></div>`}
+      </div>
+      ${linked ? `<div class="mcc-link-badge">🔗 Linked to Trim</div>
+        <div class="mcc-unlink" onclick="event.stopPropagation();unlinkDoors()">Use Different Color</div>` : ''}
+      <div class="mcc-applies">${c.applies}</div>
+      <div class="sheen-pills" onclick="event.stopPropagation()">
+        ${SHEENS.map(s => `<div class="sheen-pill${d.sheen===s?' active':''}" onclick="setMainSheen('${c.key}','${s}',this)">${s}</div>`).join('')}
+        <div class="sheen-info-link" onclick="showSheenModal()">ℹ️</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setMainSheen(surface, sheen, el) {
+  maybeSheenEducation();
+  if (surface==='doors' && state.main.doors.linked) {
+    // Don't set sheen independently when linked
+    return;
+  }
+  state.main[surface].sheen = sheen;
+  render();
+}
+
+function unlinkDoors() {
+  state.main.doors.linked = false;
+  state.main.doors.color = state.main.trim.color;
+  state.main.doors.sheen = state.main.trim.sheen;
+  render();
+}
+
+function countUniqueColors() {
   const set = new Set();
-  Object.entries(selections).forEach(([k,v]) => {
-    if (v.color && k.startsWith(prefix)) set.add(v.color.code);
+  ROOMS.forEach(r => {
+    r.surfaces.forEach(s => {
+      const e = getEffective(r.name, s);
+      if (e.color) set.add(e.color.name+'|'+e.color.brand);
+    });
   });
   return set.size;
 }
 
-function getRecentColors() {
-  const used = [];
-  const seen = new Set();
-  Object.values(selections).forEach(v => {
-    if (v.color && !seen.has(v.color.code)) { seen.add(v.color.code); used.push(v.color); }
+function countUniqueExtColors() {
+  const set = new Set();
+  EXT_SURFACES.forEach(e => {
+    const d = state.exterior[e.key];
+    if (d.color) set.add(d.color.name+'|'+d.color.brand);
   });
-  return used;
+  return set.size;
 }
 
-function updateUI() {
-  // Interior allowance
-  const intColors = getUniqueColors('int');
-  const pct = Math.min(100, (intColors / INCLUDED_COLORS) * 100);
-  const fill = document.getElementById('allowanceFill');
-  fill.style.width = pct + '%';
-  fill.className = 'allowance-fill' + (intColors > INCLUDED_COLORS ? ' over' : '');
-  document.getElementById('allowanceText').textContent = `Colors Used: ${intColors} of ${INCLUDED_COLORS}`;
-  const remain = INCLUDED_COLORS - intColors;
-  document.getElementById('allowanceRemain').textContent = remain >= 0 ? `${remain} remaining` : `${-remain} over`;
-  const warn = document.getElementById('surchargeWarn');
-  if (intColors > INCLUDED_COLORS) {
-    const extra = intColors - INCLUDED_COLORS;
-    warn.style.display = 'block';
-    warn.textContent = `${extra} extra color${extra>1?'s':''} — $${extra * EXTRA_COLOR_FEE} surcharge ($${EXTRA_COLOR_FEE}/extra color)`;
-  } else { warn.style.display = 'none'; }
-
-  // Exterior allowance
-  const extColors = getUniqueColors('ext');
-  const extPct = Math.min(100, (extColors / INCLUDED_EXT_COLORS) * 100);
-  const extFill = document.getElementById('extAllowanceFill');
-  extFill.style.width = extPct + '%';
-  extFill.className = 'allowance-fill' + (extColors > INCLUDED_EXT_COLORS ? ' over' : '');
-  document.getElementById('extAllowanceText').textContent = `Exterior Colors: ${extColors} of ${INCLUDED_EXT_COLORS} included`;
-
-  // Room statuses
-  INTERIOR_ROOMS.forEach((room, ri) => {
-    const done = room.surfaces.filter((_, si) => selections[`int-${ri}-${si}`].color).length;
-    const el = document.getElementById(`rs-${ri}`);
-    el.textContent = `${done}/${room.surfaces.length}`;
-    el.className = 'room-status' + (done === room.surfaces.length ? ' complete' : '');
-  });
-  const extDone = EXTERIOR_SURFACES.filter((_, si) => selections[`ext-${si}`].color).length;
-  const extSt = document.getElementById('rs-ext');
-  extSt.textContent = `${extDone}/${EXTERIOR_SURFACES.length}`;
-  extSt.className = 'room-status' + (extDone === EXTERIOR_SURFACES.length ? ' complete' : '');
-
-  // Submit
-  const filled = Object.values(selections).filter(v => v.color).length;
-  document.getElementById('submitCount').textContent = `${filled} of ${totalSurfaces} surfaces selected`;
-  document.getElementById('submitBtn').disabled = filled < totalSurfaces;
+function renderAllowance() {
+  const count = countUniqueColors();
+  const max = 10;
+  const pct = Math.min(count/max*100, 100);
+  const cls = count <= 7 ? 'green' : count <= max ? 'yellow' : 'red';
+  document.getElementById('allowanceBar').innerHTML = `
+    <div class="allowance-label"><span>Colors Used: ${count} of ${max} included</span></div>
+    <div class="allowance-track"><div class="allowance-fill ${cls}" style="width:${pct}%"></div></div>
+    ${count>max ? `<div class="allowance-warn">$75 per additional color (${count-max} extra = $${(count-max)*75})</div>` : ''}
+  `;
 }
 
-function openSheet(key) {
-  activeKey = key;
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('sheet').classList.add('open');
-  const inp = document.getElementById('sheetSearch');
-  inp.value = '';
-  renderSheetResults('');
-  setTimeout(() => inp.focus(), 300);
+function renderExtAllowance() {
+  const count = countUniqueExtColors();
+  const max = 3;
+  const pct = Math.min(count/max*100, 100);
+  const cls = count <= 2 ? 'green' : count <= max ? 'yellow' : 'red';
+  document.getElementById('extAllowance').innerHTML = `
+    <div class="allowance-bar">
+      <div class="allowance-label"><span>Exterior Colors: ${count} of ${max} included</span></div>
+      <div class="allowance-track"><div class="allowance-fill ${cls}" style="width:${pct}%"></div></div>
+    </div>
+  `;
+  // Warning
+  if (count > 3 && !state.extWarnAccepted) {
+    document.getElementById('extWarn').innerHTML = `
+      <div class="ext-warn">Adding a ${count}th exterior color increases your exterior price by 10% (+$420).
+        <br><span class="ext-warn-btn ext-warn-ok" onclick="state.extWarnAccepted=true;render()">That's OK</span>
+        <span class="ext-warn-btn ext-warn-change" onclick="openBrowserFor('ext','shutters')">Choose Different</span>
+      </div>`;
+  } else {
+    document.getElementById('extWarn').innerHTML = '';
+  }
 }
-function closeSheet() {
-  document.getElementById('overlay').classList.remove('open');
-  document.getElementById('sheet').classList.remove('open');
-  activeKey = null;
+
+function renderRoomCards() {
+  const el = document.getElementById('roomCards');
+  el.innerHTML = ROOMS.map((r,i) => {
+    const allFilled = r.surfaces.every(s => getEffective(r.name,s).color);
+    const summary = r.surfaces.map(s => {
+      const e = getEffective(r.name, s);
+      const name = e.color ? e.color.name : '—';
+      const hex = e.color ? e.color.hex : '#ddd';
+      return `<span class="room-summary-swatch" style="background:${hex}"></span>${capitalFirst(s)}: ${name}`;
+    }).join(' · ');
+    return `<div class="room-card" id="room-${i}">
+      <div class="room-header" onclick="toggleRoom(${i})">
+        <span class="room-check">${allFilled?'✅':'⬜'}</span>
+        <span class="room-name">${r.name}</span>
+        <span class="room-arrow">▶</span>
+      </div>
+      <div class="room-summary" style="padding:0 16px 10px 46px;margin-top:-6px">${summary}</div>
+      <div class="room-detail">
+        ${r.surfaces.map(s => {
+          const e = getEffective(r.name, s);
+          const custom = isCustom(r.name, s);
+          const hex = e.color ? e.color.hex : '#eee';
+          const cname = e.color ? e.color.name : 'Not set';
+          return `<div class="surface-row">
+            <div class="surface-swatch" style="background:${hex}"></div>
+            <div class="surface-info">
+              <div class="surface-name">${capitalFirst(s)} ${custom?'<span class="surface-custom">Custom</span>':''}</div>
+              <div class="surface-color">${cname}</div>
+              <div class="surface-sheen">${e.sheen}</div>
+            </div>
+            <div class="surface-change" onclick="openBrowserFor('room','${s}','${r.name}')">Change</div>
+          </div>
+          ${e.color && e.color.lrv<15 ? `<div class="dark-warning">⚠️ Dark color — may need primer. Your estimator will confirm if there's any price impact.</div>` : ''}
+          ${s==='ceiling' && e.color && e.color.lrv<30 ? `<div class="dark-warning">⚠️ Dark ceiling color — imperfections may be more visible. We recommend Flat sheen.</div>` : ''}`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
 }
 
-document.getElementById('sheetSearch').addEventListener('input', function() {
-  renderSheetResults(this.value);
-});
+function toggleRoom(i) {
+  document.getElementById('room-'+i).classList.toggle('expanded');
+}
 
-function renderSheetResults(query) {
-  const body = document.getElementById('sheetBody');
-  let html = '';
-  const recent = getRecentColors();
-  const q = query.toLowerCase().trim();
+function renderExtCards() {
+  const el = document.getElementById('extCards');
+  el.innerHTML = EXT_SURFACES.map(e => {
+    const d = state.exterior[e.key];
+    const col = d.color;
+    const hex = col ? col.hex : '#eee';
+    return `<div class="ext-color-card" onclick="openBrowserFor('ext','${e.key}')">
+      <div class="ext-swatch-row">
+        <div class="mcc-swatch${col?'':' empty'}" style="${col?'background:'+hex:''}">${col?'':'+'}</div>
+        <div class="mcc-color-info">
+          <div class="mcc-color-name">${col ? col.name : 'Tap to choose'}</div>
+          ${col ? `<div class="mcc-color-code">${col.brand} ${col.code}</div>` : ''}
+          <div style="font-size:12px;color:var(--text-light)">${e.name}</div>
+        </div>
+      </div>
+      <div class="sheen-pills" onclick="event.stopPropagation()">
+        ${SHEENS.map(s => `<div class="sheen-pill${d.sheen===s?' active':''}" onclick="setExtSheen('${e.key}','${s}')">${s}</div>`).join('')}
+      </div>
+      ${col && col.lrv<15 ? '<div style="font-size:11px;color:#856404;margin-top:6px">⚠️ Dark color — may need primer</div>' : ''}
+    </div>`;
+  }).join('');
+}
 
-  if (!q && recent.length) {
-    html += '<div class="sheet-section-label">Recently Used</div>';
-    recent.forEach(c => { html += colorOptionHTML(c); });
+function setExtSheen(key, sheen) {
+  maybeSheenEducation();
+  state.exterior[key].sheen = sheen;
+  render();
+}
+
+function renderSubmitBar() {
+  let total = 0, filled = 0;
+  ROOMS.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s).color) filled++; }));
+  EXT_SURFACES.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
+  const ready = filled === total;
+  document.getElementById('submitProgress').textContent = ready ? 'Ready to submit!' : `${filled} of ${total} surfaces complete`;
+  const btn = document.getElementById('submitBtn');
+  btn.className = 'submit-btn ' + (ready ? 'active' : 'disabled');
+  btn.textContent = ready ? 'Submit Colors' : 'Submit Colors';
+}
+
+// ========== COLOR BROWSER ==========
+function openBrowserFor(type, surface, room) {
+  browserTarget = {type, surface, room};
+  applyTargets = new Set();
+  specificTargets = new Set();
+  specificOpen = false;
+
+  // Smart defaults for apply-to
+  if (type === 'main') {
+    applyTargets.add('all_'+surface);
+  } else if (type === 'room') {
+    specificOpen = true;
+    specificTargets.add(room+'|'+surface);
+  } else if (type === 'ext') {
+    applyTargets.add('ext_'+surface);
   }
 
+  // Default sheen
+  selectedBrowserSheen = SURFACE_DEFAULT_SHEEN[surface] || 'Eggshell';
+  if (type === 'ext') selectedBrowserSheen = state.exterior[surface].sheen;
+  selectedBrowserColor = null;
+
+  document.getElementById('searchInput').value = '';
+  activeFamily = 'all';
+  activeBrand = 'all';
+
+  renderBrowserFilters();
+  renderBrandFilters();
+  renderRecentRow();
+  filterColors();
+
+  document.getElementById('colorOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOverlay() {
+  document.getElementById('colorOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  closeBottomSheet();
+}
+
+function renderBrowserFilters() {
+  const families = ['all','popular','white','gray','beige','blue','green','teal','brown','red','yellow','black','purple','orange'];
+  const labels = {all:'All',popular:'Popular ★',white:'Whites',gray:'Grays',beige:'Beiges',blue:'Blues',green:'Greens',teal:'Teals',brown:'Browns',red:'Reds',yellow:'Yellows',black:'Blacks',purple:'Purples',orange:'Oranges'};
+  document.getElementById('filterRow').innerHTML = families.map(f =>
+    `<div class="filter-pill${activeFamily===f?' active':''}" onclick="activeFamily='${f}';renderBrowserFilters();filterColors()">${labels[f]}</div>`
+  ).join('');
+}
+
+function renderBrandFilters() {
+  const brands = ['all','SW','BM'];
+  const labels = {all:'All Brands',SW:'Sherwin-Williams',BM:'Benjamin Moore'};
+  document.getElementById('brandRow').innerHTML = brands.map(b =>
+    `<div class="brand-pill${activeBrand===b?' active':''}" onclick="activeBrand='${b}';renderBrandFilters();filterColors()">${labels[b]}</div>`
+  ).join('');
+}
+
+function renderRecentRow() {
+  const el = document.getElementById('recentRow');
+  if (state.recentColors.length === 0) { el.classList.remove('visible'); return; }
+  el.classList.add('visible');
+  el.innerHTML = state.recentColors.map(c =>
+    `<div class="recent-swatch" style="background:${c.hex}" title="${c.name}" onclick="selectColor(COLORS.find(x=>x.name==='${c.name.replace(/'/g,"\\'")}' && x.brand==='${c.brand}'))"></div>`
+  ).join('');
+}
+
+function filterColors() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
   let filtered = COLORS;
-  if (q) filtered = COLORS.filter(c => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.brand.toLowerCase().includes(q));
-
-  if (!q) {
-    html += '<div class="sheet-section-label">Sherwin-Williams</div>';
-    filtered.filter(c=>c.brand==='SW').forEach(c => { html += colorOptionHTML(c); });
-    html += '<div class="sheet-section-label">Benjamin Moore</div>';
-    filtered.filter(c=>c.brand==='BM').forEach(c => { html += colorOptionHTML(c); });
-  } else {
-    if (filtered.length === 0) { html += '<div class="no-results">No colors found</div>'; }
-    else { filtered.forEach(c => { html += colorOptionHTML(c); }); }
+  if (activeFamily === 'popular') {
+    filtered = filtered.filter(c => POPULAR.includes(c.name));
+  } else if (activeFamily !== 'all') {
+    filtered = filtered.filter(c => c.family === activeFamily);
   }
-  body.innerHTML = html;
+  if (activeBrand !== 'all') {
+    filtered = filtered.filter(c => c.brand === activeBrand);
+  }
+  if (q) {
+    filtered = filtered.filter(c =>
+      c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
+    );
+  }
+  const grid = document.getElementById('colorGrid');
+  const noRes = document.getElementById('noResults');
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+  } else {
+    noRes.style.display = 'none';
+    grid.innerHTML = filtered.map((c,i) =>
+      `<div class="color-card" onclick="selectColor(COLORS[${COLORS.indexOf(c)}])">
+        <div class="color-card-swatch" style="background:${c.hex}"></div>
+        <div class="color-card-name">${c.name}</div>
+        <div class="color-card-code">${c.brand} ${c.code}</div>
+      </div>`
+    ).join('');
+  }
 }
 
-function colorOptionHTML(c) {
-  const idx = COLORS.indexOf(c);
-  const i = idx >= 0 ? idx : COLORS.findIndex(x => x.code === c.code);
-  return `<div class="color-option" onclick="selectColor(${i})">
-    <div class="co-swatch" style="background:${c.hex}"></div>
-    <div class="co-info"><div class="co-name">${c.name}</div><div class="co-meta">${c.brand} ${c.code} · LRV ${c.lrv}</div></div>
-  </div>`;
+function selectColor(color) {
+  selectedBrowserColor = color;
+  openBottomSheet(color);
 }
 
-function selectColor(idx) {
-  const c = COLORS[idx];
-  if (!activeKey) return;
+function openBottomSheet(color) {
+  document.getElementById('bsSwatch').style.background = color.hex;
+  document.getElementById('bsName').textContent = color.name;
+  document.getElementById('bsMeta').textContent = `${color.brand==='SW'?'Sherwin-Williams':'Benjamin Moore'} ${color.code} · LRV ${color.lrv}`;
 
-  // Exterior surcharge check
-  if (activeKey.startsWith('ext') && !extSurchargeAccepted) {
-    const currentExt = getUniqueColors('ext');
-    // Check if this color is new
-    const extUsed = new Set();
-    Object.entries(selections).forEach(([k,v]) => {
-      if (v.color && k.startsWith('ext') && k !== activeKey) extUsed.add(v.color.code);
+  let note = '';
+  if (color.lrv < 15) note = '<div class="bs-lrv-note bs-lrv-dark">⚠️ Deep/dark color — may require primer. We\'ll confirm if there\'s any price impact.</div>';
+  else if (color.lrv > 80) note = '<div class="bs-lrv-note bs-lrv-light">Light color — great coverage ✓</div>';
+  document.getElementById('bsLrvNote').innerHTML = note;
+
+  renderBsSheenCards();
+  renderApplyTargets();
+
+  document.getElementById('bsOverlay').classList.add('open');
+  document.getElementById('bottomSheet').classList.add('open');
+}
+
+function closeBottomSheet() {
+  document.getElementById('bsOverlay').classList.remove('open');
+  document.getElementById('bottomSheet').classList.remove('open');
+}
+
+function renderBsSheenCards() {
+  document.getElementById('bsSheenCards').innerHTML = SHEENS.map(s => {
+    const info = SHEEN_INFO[s];
+    return `<div class="sheen-card${selectedBrowserSheen===s?' active':''}" onclick="maybeSheenEducation();selectedBrowserSheen='${s}';renderBsSheenCards()">
+      <div class="sheen-card-check">✓</div>
+      <div class="sheen-card-name">${s}</div>
+      <div class="sheen-card-desc">${info.short}<br>${info.sub}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('bsSheenDesc').textContent = SHEEN_INFO[selectedBrowserSheen].desc;
+}
+
+function renderApplyTargets() {
+  const isExt = browserTarget.type === 'ext';
+  let html = '';
+  if (isExt) {
+    EXT_SURFACES.forEach(e => {
+      const k = 'ext_'+e.key;
+      const checked = applyTargets.has(k);
+      html += `<div class="apply-row" onclick="toggleApply('${k}')">
+        <div class="apply-check${checked?' checked':''}">${checked?'✓':''}</div>
+        <div class="apply-label">${e.name}</div>
+      </div>`;
     });
-    if (!extUsed.has(c.code) && extUsed.size >= INCLUDED_EXT_COLORS) {
-      pendingExtKey = activeKey;
-      selections[activeKey].color = c;
-      closeSheet();
-      document.getElementById('extWarning').style.display = 'block';
-      updateColorBtn(activeKey, c);
-      updateUI();
-      return;
-    }
-  }
-
-  selections[activeKey].color = c;
-  updateColorBtn(activeKey, c);
-  closeSheet();
-
-  // Primer alerts
-  const primerEl = document.getElementById(`primer-${activeKey}`);
-  if (c.lrv < 20) {
-    primerEl.innerHTML = `<div class="primer-alert">🔴 Primer may be required — dark color (LRV ${c.lrv}). Your estimator will review and contact you if there's any price impact.</div>`;
-  } else if (c.lrv > 80) {
-    primerEl.innerHTML = `<div class="primer-alert">ℹ️ Very light color — primer may be needed if painting over a darker existing color. No action needed from you.</div>`;
   } else {
-    primerEl.innerHTML = '';
+    const surfaceTypes = [{key:'walls',icon:'🏠',label:'All Walls (5 rooms)'},{key:'trim',icon:'✂️',label:'All Trim (5 rooms)'},{key:'ceiling',icon:'⬆',label:'All Ceilings (5 rooms)'},{key:'doors',icon:'🚪',label:'All Doors (1 room)'}];
+    surfaceTypes.forEach(st => {
+      const k = 'all_'+st.key;
+      const checked = applyTargets.has(k);
+      html += `<div class="apply-row" onclick="toggleApply('${k}')">
+        <div class="apply-check${checked?' checked':''}">${checked?'✓':''}</div>
+        <div class="apply-label">${st.icon} ${st.label}</div>
+      </div>`;
+    });
+    // Specific room option
+    html += `<div class="apply-row" onclick="specificOpen=!specificOpen;renderApplyTargets()">
+      <div class="apply-check" style="border:none;font-size:16px">📍</div>
+      <div class="apply-label">Specific room... ${specificOpen?'▾':'▸'}</div>
+    </div>`;
   }
-  updateUI();
-}
 
-function updateColorBtn(key, c) {
-  const btn = document.getElementById(`cb-${key}`);
-  btn.innerHTML = `<div class="swatch" style="background:${c.hex}"></div><span>${c.name} <span style="color:var(--text-light);font-size:12px">${c.code}</span></span>`;
-}
+  document.getElementById('applyTargets').innerHTML = html;
 
-function acceptExtSurcharge() {
-  extSurchargeAccepted = true;
-  document.getElementById('extWarning').style.display = 'none';
-  updateUI();
-}
-function removeExtSurcharge() {
-  if (pendingExtKey) {
-    selections[pendingExtKey].color = null;
-    const btn = document.getElementById(`cb-${pendingExtKey}`);
-    btn.innerHTML = `<div class="swatch" style="background:#e5e7eb"></div><span class="placeholder">Select color...</span>`;
-    document.getElementById(`primer-${pendingExtKey}`).innerHTML = '';
-    pendingExtKey = null;
+  // Specific rooms
+  let specHtml = '';
+  if (!isExt && specificOpen) {
+    ROOMS.forEach(r => {
+      r.surfaces.forEach(s => {
+        const k = r.name+'|'+s;
+        const checked = specificTargets.has(k);
+        specHtml += `<div class="apply-specific-item" onclick="toggleSpecific('${k}')">
+          <div class="apply-specific-check${checked?' checked':''}">${checked?'✓':''}</div>
+          <span>${r.name} — ${capitalFirst(s)}</span>
+        </div>`;
+      });
+    });
   }
-  document.getElementById('extWarning').style.display = 'none';
-  updateUI();
+  document.getElementById('applySpecific').innerHTML = specificOpen ? `<div class="apply-specific-wrap open">${specHtml}</div>` : '';
 }
 
-function submitForm() {
-  document.getElementById('mainContent').classList.add('hidden');
-  document.getElementById('bottomBar').style.display = 'none';
+function toggleApply(key) {
+  if (applyTargets.has(key)) applyTargets.delete(key); else applyTargets.add(key);
+  renderApplyTargets();
+}
+
+function toggleSpecific(key) {
+  if (specificTargets.has(key)) specificTargets.delete(key); else specificTargets.add(key);
+  renderApplyTargets();
+}
+
+function applyColor() {
+  if (!selectedBrowserColor) return;
+  const color = selectedBrowserColor;
+  const sheen = selectedBrowserSheen;
+
+  // Add to recent
+  if (!state.recentColors.find(c => c.name===color.name && c.brand===color.brand)) {
+    state.recentColors.unshift(color);
+    if (state.recentColors.length > 10) state.recentColors.pop();
+  }
+
+  let appliedTo = [];
+
+  // Apply to "all" targets
+  ['walls','trim','ceiling','doors'].forEach(surface => {
+    if (applyTargets.has('all_'+surface)) {
+      state.main[surface].color = color;
+      state.main[surface].sheen = sheen;
+      if (surface==='doors') state.main.doors.linked = false;
+      if (surface==='trim' && state.main.doors.linked) {
+        // Doors follow trim
+      }
+      // Clear room overrides for this surface
+      ROOMS.forEach(r => { if(r.surfaces.includes(surface)) state.rooms[r.name][surface] = null; });
+      appliedTo.push('all '+surface);
+    }
+  });
+
+  // Exterior
+  EXT_SURFACES.forEach(e => {
+    if (applyTargets.has('ext_'+e.key)) {
+      state.exterior[e.key] = {color, sheen};
+      appliedTo.push(e.name);
+    }
+  });
+
+  // Specific rooms
+  specificTargets.forEach(k => {
+    const [room, surface] = k.split('|');
+    state.rooms[room][surface] = {color, sheen};
+    appliedTo.push(room+' '+surface);
+  });
+
+  closeBottomSheet();
+  closeOverlay();
+  render();
+
+  showToast(`${color.name} applied${appliedTo.length?'' :''} ✓`);
+}
+
+// ========== UTILS ==========
+function capitalFirst(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function maybeSheenEducation() {
+  if (!state.sheenEducationSeen) {
+    state.sheenEducationSeen = true;
+    localStorage.setItem('nashSheenEdu','1');
+    document.getElementById('sheenModal').classList.add('show');
+  }
+}
+
+function showSheenModal() {
+  document.getElementById('sheenModal').classList.add('show');
+}
+
+function dismissSheenModal() {
+  document.getElementById('sheenModal').classList.remove('show');
+}
+
+function submitColors() {
+  let total = 0, filled = 0;
+  ROOMS.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s).color) filled++; }));
+  EXT_SURFACES.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
+  if (filled < total) return;
   document.getElementById('successScreen').classList.add('show');
-  window.scrollTo(0, 0);
+  document.getElementById('submitBar').style.display = 'none';
 }
 
-init();
+// Init
+render();
 </script>
 </body>
 </html>
