@@ -433,33 +433,68 @@
   <!-- PROJECT STATUS TAB -->
   <div class="page" id="tab-status">
     <div id="onboardingBlock" style="display:none;">
+      <!-- Step 1: Brief welcome (auto-advances after 2s in production) -->
       <div class="card" style="text-align:center;padding:28px 24px 16px;">
         <div style="font-size:32px;margin-bottom:8px;">🎉</div>
         <div style="font-size:18px;font-weight:700;color:var(--navy);">Welcome to Nash Painting!</div>
-        <div style="font-size:13px;color:var(--text-light);margin-top:4px;">You're officially on board. Here's what we need to get you scheduled.</div>
+        <div style="font-size:13px;color:var(--text-light);margin-top:4px;margin-bottom:16px;">One quick thing before we get you scheduled — takes about 2 minutes.</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">STEP 1 OF 2</div>
+        <div class="onboarding-bar" style="max-width:200px;margin:0 auto 16px;"><div class="fill" style="width:0%;background:var(--gold);"></div></div>
       </div>
-      <div class="onboarding-progress">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-weight:700;font-size:14px;color:var(--navy);">Getting Started</span>
-          <span style="font-size:12px;color:var(--text-muted);">1 of 3 complete</span>
+
+      <!-- Step 2: Pre-Project Checklist (presented immediately inline) -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="card-title">📋 Pre-Project Checklist</div>
+          <span style="font-size:11px;color:var(--text-muted);">~2 minutes</span>
         </div>
-        <div class="onboarding-bar"><div class="fill" style="width:33%"></div></div>
-        <div class="onboarding-step">
-          <div class="step-icon done">✅</div>
-          <div class="step-info"><div class="step-title">Payment Method</div><div class="step-desc">Online ACH selected — due upon completion</div></div>
+        <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">This helps us prepare for your project — parking, access, preferences.</div>
+
+        <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;">
+          <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;">📅 Scheduling</div>
+          <div style="font-size:13px;color:var(--text-light);margin-bottom:6px;">Earliest start date <span style="color:var(--error);">*</span></div>
+          <input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:8px;">
+          <div style="font-size:13px;color:var(--text-light);margin-bottom:6px;">Must be done by <span style="color:var(--error);">*</span></div>
+          <input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;">
         </div>
-        <div class="onboarding-step">
-          <div class="step-icon todo">📋</div>
-          <div class="step-info"><div class="step-title">Pre-Project Checklist</div><div class="step-desc">Parking, access, crew preferences — ~2 min</div></div>
-          <a href="https://willienash1981.github.io/nashos-prototypes/pre-project-checklist.html" class="step-action" target="_blank">Start →</a>
+
+        <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;">
+          <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;">🔑 Property Access</div>
+          <input type="text" placeholder="Gate code (if applicable)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:8px;">
+          <input type="text" placeholder="Door access code (if applicable)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:8px;">
+          <textarea placeholder="Where should the crew park?" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;min-height:60px;font-family:inherit;resize:vertical;"></textarea>
         </div>
-        <div class="onboarding-step">
-          <div class="step-icon todo">🎨</div>
-          <div class="step-info"><div class="step-title">Color Selections</div><div class="step-desc">Take your time — we can't schedule until these are in</div></div>
-          <a href="https://willienash1981.github.io/nashos-prototypes/color-submission.html" class="step-action" target="_blank">Choose →</a>
+
+        <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;">
+          <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;">🏠 Preferences & Special Requests</div>
+          <textarea placeholder="Pets, children, time restrictions, music preferences, anything else we should know..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;min-height:80px;font-family:inherit;resize:vertical;"></textarea>
+        </div>
+
+        <button onclick="showColorOption()" style="width:100%;padding:14px;background:var(--gold);color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">Submit Checklist →</button>
+      </div>
+
+      <!-- Step 3: Color option (shown after checklist submit) -->
+      <div id="colorOption" style="display:none;">
+        <div class="card" style="text-align:center;padding:28px 24px;">
+          <div style="font-size:32px;margin-bottom:8px;">✅</div>
+          <div style="font-weight:700;font-size:16px;color:var(--navy);margin-bottom:4px;">Checklist Complete!</div>
+          <div style="font-size:13px;color:var(--text-light);margin-bottom:20px;">One more thing — we need your color selections before we can schedule. Ready now, or want a link for later?</div>
+
+          <a href="https://willienash1981.github.io/nashos-prototypes/color-submission.html" target="_blank" style="display:block;padding:14px;background:var(--gold);color:white;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;margin-bottom:10px;">Choose My Colors Now →</a>
+
+          <a href="#" onclick="showDeferred()" style="display:block;padding:14px;background:transparent;border:2px solid var(--border);color:var(--text);border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;">Send Me a Link Later</a>
         </div>
       </div>
-      <div style="text-align:center;padding:8px;"><a href="#" style="font-size:13px;color:var(--text-muted);">I'm not ready — send me a link later</a></div>
+
+      <!-- Deferred confirmation -->
+      <div id="deferredConfirm" style="display:none;">
+        <div class="card" style="text-align:center;padding:28px 24px;">
+          <div style="font-size:32px;margin-bottom:8px;">📨</div>
+          <div style="font-weight:700;font-size:16px;color:var(--navy);margin-bottom:4px;">Link Sent!</div>
+          <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">We've sent a color selection link to your email and phone. Take your time — just know we can't get you on the schedule until colors are in.</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:12px;">You can also find it anytime in your portal under "Needs Attention."</div>
+        </div>
+      </div>
     </div>
     <div id="timelineBlock">
       <div class="card">
@@ -806,6 +841,15 @@ function completeAcceptance() {
   setState('onboarding');
 }
 
+function showColorOption() {
+  document.getElementById('colorOption').style.display = 'block';
+  document.getElementById('colorOption').scrollIntoView({behavior:'smooth'});
+}
+function showDeferred() {
+  document.getElementById('colorOption').style.display = 'none';
+  document.getElementById('deferredConfirm').style.display = 'block';
+  document.getElementById('deferredConfirm').scrollIntoView({behavior:'smooth'});
+}
 function showPayConfirm() {
   document.getElementById('payOptions').style.display = 'none';
   document.getElementById('payConfirmACH').style.display = 'block';
