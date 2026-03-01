@@ -218,7 +218,17 @@
   .color-surface { flex: 1; }
   .color-date { font-size: 11px; color: var(--text-muted); text-align: right; white-space: nowrap; }
 
-  /* Documents */
+  /* Pref Toggles */
+.pref-toggle{position:relative;display:inline-block;width:36px;height:20px}
+.pref-toggle input{opacity:0;width:0;height:0}
+.pref-slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:20px;transition:.2s}
+.pref-slider:before{content:"";position:absolute;height:16px;width:16px;left:2px;bottom:2px;background:white;border-radius:50%;transition:.2s}
+.pref-toggle input:checked + .pref-slider{background:var(--navy)}
+.pref-toggle input:checked + .pref-slider:before{transform:translateX(16px)}
+.pref-toggle input:disabled + .pref-slider{background:var(--navy);opacity:.5;cursor:not-allowed}
+.pref-toggle input:disabled:checked + .pref-slider:before{transform:translateX(16px)}
+
+/* Documents */
   .doc-item {
     display: flex; align-items: center; gap: 12px; padding: 12px 0;
     border-bottom: 1px solid #f0f0f0;
@@ -291,6 +301,7 @@
   <div class="nav-tab" data-tab="referrals" onclick="switchTab('referrals')">Referrals</div>
   <div class="nav-tab" data-tab="colors" onclick="switchTab('colors')">Colors</div>
   <div class="nav-tab" data-tab="documents" onclick="switchTab('documents')">Documents</div>
+  <div class="nav-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Settings</div>
 </div>
 
 <div class="container">
@@ -879,6 +890,96 @@
           <div class="doc-info"><div class="doc-title">Understanding Flashing</div><div class="doc-desc">Dark colors, sheens, ceilings, builder-grade paint issues</div></div>
           <a href="#" class="doc-dl">Download</a>
         </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <div class="page" id="tab-settings">
+    <div class="card">
+      <div class="card-body">
+        <div class="section-header" style="margin-top:0;"><div class="section-title">📱 Communication Preferences</div></div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:16px;line-height:1.5;">Control what messages you receive and how. Changes take effect immediately.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;border-bottom:2px solid var(--border);padding-bottom:8px;margin-bottom:4px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);">Category</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);text-align:center;">Email</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);text-align:center;">Text</div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Job Updates</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">Scheduling, crew arrival, rain delays, project status, completion</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked disabled><span class="pref-slider"></span></label><div style="font-size:9px;color:var(--gray);margin-top:2px;">Required</div></div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Estimates & Proposals</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">New estimates, follow-up reminders, expiration warnings</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Invoices & Payments</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">Invoice notifications, payment confirmations, receipts</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked disabled><span class="pref-slider"></span></label><div style="font-size:9px;color:var(--gray);margin-top:2px;">Required</div></div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox"><span class="pref-slider"></span></label></div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Surveys & Reviews</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">Post-project feedback, warranty activation, review requests</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Maintenance Reminders</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">Seasonal tips, re-stain/repaint reminders, warranty check-ins</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox"><span class="pref-slider"></span></label></div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Promotions & Specials</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">Seasonal offers, referral program updates, service discounts</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox"><span class="pref-slider"></span></label></div>
+        </div>
+
+        <div class="pref-row" style="display:grid;grid-template-columns:1fr 60px 60px;gap:0;padding:12px 0;border-bottom:1px solid var(--border);align-items:center;">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Monthly Newsletter</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px;">Tips, blog posts, company updates, educational content</div>
+          </div>
+          <div style="text-align:center;"><label class="pref-toggle"><input type="checkbox" checked><span class="pref-slider"></span></label></div>
+          <div style="text-align:center;"><div style="font-size:11px;color:var(--gray);">N/A</div></div>
+        </div>
+
+        <div style="margin-top:20px;padding:14px;background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;">
+          <div style="font-size:12px;font-weight:600;color:#8B6914;margin-bottom:4px;">📱 Text Message Status</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.5;">SMS consent: <strong style="color:var(--green);">Active</strong> (granted Feb 20, 2026 via proposal acceptance)<br>Reply <strong>STOP</strong> to any Nash Painting text to unsubscribe from all texts instantly.</div>
+        </div>
+
+        <div style="margin-top:16px;text-align:center;">
+          <a href="#" style="font-size:12px;color:var(--red);text-decoration:underline;" onclick="alert('This would unsubscribe you from all marketing communications. Job updates and invoices would still be sent via email.');return false;">Unsubscribe from all marketing</a>
+        </div>
+
       </div>
     </div>
   </div>
