@@ -553,11 +553,58 @@ return '<div class="job-item" onclick="selectJob(\''+j.id+'\')"><div class="ji-m
 function filterJobList(q){renderJobList(q);}
 
 
+var VENDOR_BILLING={hoover:'credit',sw:'credit',homedepot:'cc',lowes:'cc',walker:'cc',other:'cc'};
+var VENDOR_NAMES={hoover:'Hoover Paint',sw:'Sherwin-Williams',homedepot:'Home Depot',lowes:"Lowe's",walker:'Walker Lumber',other:'Other'};
+
+function vendorChanged(){
+var v=document.getElementById('po-vendor').value;
+document.getElementById('po-billing').value=VENDOR_BILLING[v]||'cc';
+var sup=MATERIAL_SUPPLIERS[v];
+var storeLoc=document.getElementById('store-location-group');
+var otherGroup=document.getElementById('other-vendor-group');
+if(sup&&sup.stores&&sup.stores.length>0){storeLoc.style.display='';document.getElementById('po-store').innerHTML=sup.stores.map(function(s){return '<option>'+s+'</option>';}).join('');}
+else{storeLoc.style.display='none';}
+otherGroup.style.display=v==='other'?'':'none';
+}
+
+function validateCheckChanged(){
+var cb=document.getElementById('po-validate-check');
+var btn=document.getElementById('btn-continue-confirm');
+var box=document.getElementById('po-validation');
+if(cb.checked){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';box.style.borderColor='var(--green)';box.style.background='var(--green-bg)';}
+else{btn.disabled=true;btn.style.opacity='.4';btn.style.cursor='not-allowed';box.style.borderColor='var(--border)';box.style.background='var(--white)';}
+}
+
+function goToConfirm(){
+var vendor=document.getElementById('po-vendor').value;
+var vendorName=vendor==='other'?(document.getElementById('po-other-vendor').value||'Other'):VENDOR_NAMES[vendor];
+var billing=document.getElementById('po-billing').value==='credit'?'Credit Account':'Company Credit Card';
+var store=document.getElementById('po-store').value||'—';
+var storeEmp=document.getElementById('po-store-employee').value||'—';
+var pickupPerson=document.getElementById('po-pickup-person').value||'—';
+var items=document.getElementById('po-items').value||'—';
+var amt=document.getElementById('po-amount').value||'Not specified';
+var notes=document.getElementById('po-notes').value||'None';
+if(vendor!=='hoover'&&vendor!=='sw')store='—';
+var isSubDeduct=poSource==='subdeduct';
+var typeBadge=isSubDeduct?'<span class="badge badge-yellow">🔄 Sub Deduction</span>':'<span class="badge badge-blue">Job Materials</span>';
+var html='<div class="summary-row"><span class="s-label">Type</span><span class="s-value">'+typeBadge+'</span></div><div class="summary-row"><span class="s-label">Job</span><span class="s-value">'+selectedJob.customer+' — '+selectedJob.addr+'</span></div><div class="summary-row"><span class="s-label">Job #</span><span class="s-value">'+selectedJob.id+'</span></div><div class="summary-row"><span class="s-label">Crew Leader</span><span class="s-value">'+selectedJob.crew+'</span></div><div class="summary-row"><span class="s-label">Vendor</span><span class="s-value">'+vendorName+'</span></div><div class="summary-row"><span class="s-label">Billing</span><span class="s-value">'+billing+'</span></div>';
+if(store!=='—')html+='<div class="summary-row"><span class="s-label">Store Location</span><span class="s-value">'+store+'</span></div>';
+if(storeEmp!=='—')html+='<div class="summary-row"><span class="s-label">Store Employee</span><span class="s-value">'+storeEmp+'</span></div>';
+if(pickupPerson!=='—')html+='<div class="summary-row"><span class="s-label">Picking Up</span><span class="s-value">'+pickupPerson+'</span></div>';
+html+='<div class="summary-row"><span class="s-label">Items</span><span class="s-value">'+items+'</span></div><div class="summary-row"><span class="s-label">Estimated Amount</span><span class="s-value">'+amt+'</span></div>';
+if(isSubDeduct)html+='<div class="summary-row"><span class="s-label">Deducted From</span><span class="s-value" style="color:var(--red);font-weight:700">Sub payment for job #'+selectedJob.id+'</span></div>';
+html+='<div class="summary-row"><span class="s-label">Notes</span><span class="s-value">'+notes+'</span></div>';
+if(isSubDeduct)html+='<div class="banner banner-warn" style="margin-top:14px">⚠️ This amount will be <strong>deducted from the sub\'s payment</strong> and itemized on their pay stub.</div>';
+document.getElementById('po-summary').innerHTML=html;
+document.getElementById('po-generated').style.display='none';document.getElementById('po-gen-btn').style.display='';
+setStep(3);
+}
+
 function selectJob(id){selectedJob=JOBS.find(function(j){return j.id===id;});document.getElementById('selected-job-info').innerHTML='<div>📌 <strong>'+selectedJob.customer+'</strong> — '+selectedJob.addr+'<br><span style="font-size:12px">Crew Leader: '+selectedJob.crew+' · Job #'+selectedJob.id+' · '+selectedJob.svc+(selectedJob.status!=='In Progress'?' · '+selectedJob.status:'')+'</span></div>';setStep(2);vendorChanged();document.getElementById('subdeduct-banner').style.display=poSource==='subdeduct'?'flex':'none';document.getElementById('po-validation').style.display=poSource==='subdeduct'?'none':'';document.getElementById('po-validate-check').checked=false;validateCheckChanged();if(poSource==='subdeduct'){document.getElementById('btn-continue-confirm').disabled=false;document.getElementById('btn-continue-confirm').style.opacity='1';document.getElementById('btn-continue-confirm').style.cursor='pointer';}}
 
 
 
-function poTypeChanged(){document.getElementById('budget-widget').style.display='none';document.getElementById('budget-denied').style.display='none';document.getElementById('btn-step3').style.display='';}
 
 var poSource='job';
 function setPoType(t){
@@ -570,12 +617,6 @@ document.getElementById('panel-job').style.display=(t==='job'||t==='subdeduct')?
 document.getElementById('panel-perishable').style.display=t==='perishable'?'block':'none';
 if(t==='perishable')checkPerishBudget();
 }
-function populateSuppliers(){
-var sel=document.getElementById('po-supplier');
-sel.innerHTML='';
-Object.keys(MATERIAL_SUPPLIERS).forEach(function(k){
-var s=MATERIAL_SUPPLIERS[k];
-if(poSource==='store'&&(k==='hoover'||k==='sw')){sel.innerHTML+='<option value="'+k+'">'+s.name+' ('+s.acct+')</option>';}
 if(poSource==='field'&&k!=='hoover'&&k!=='sw'){sel.innerHTML+='<option value="'+k+'">'+s.name+'</option>';}
 });
 supplierChanged();
@@ -590,7 +631,6 @@ else{sel.parentElement.style.display='none';sel.innerHTML='';}
 
 function checkBudget(){const name=document.getElementById('po-supervisor').value;const sup=SUPERVISORS.find(s=>s.name.toLowerCase()===name);if(!sup)return;const wP=Math.round(sup.weekSpent/sup.weekLimit*100),mP=Math.round(sup.monthSpent/sup.monthLimit*100);const wC=wP>=100?'red':wP>=75?'yellow':'green',mC=mP>=100?'red':mP>=75?'yellow':'green';const denied=wP>=100||mP>=100;document.getElementById('budget-display').innerHTML='<div class="budget-row"><div class="budget-lbl"><span>This Week</span><span>$'+sup.weekSpent+' / $'+sup.weekLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+wC+'" style="width:'+Math.min(wP,100)+'%"></div></div></div><div class="budget-row"><div class="budget-lbl"><span>This Month</span><span>$'+sup.monthSpent+' / $'+sup.monthLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+mC+'" style="width:'+Math.min(mP,100)+'%"></div></div></div>'+(denied?'<div style="margin-top:8px;font-size:12px;color:var(--red);font-weight:600">🔴 AT BUDGET CAP</div>':wP>=75||mP>=75?'<div style="margin-top:8px;font-size:12px;color:var(--yellow);font-weight:600">🟡 Approaching limit</div>':'<div style="margin-top:8px;font-size:12px;color:var(--green);font-weight:600">🟢 Within budget</div>');document.getElementById('budget-denied').style.display=denied?'flex':'none';document.getElementById('btn-step3').style.display=denied?'none':'';}
 
-function goStep4(){const pt='Materials';const store=document.getElementById('po-store').value;var supplier=document.getElementById('po-supplier').selectedOptions[0].textContent;const amt=document.getElementById('po-amount').value||'Not specified';const notes=document.getElementById('po-notes').value||'None';document.getElementById('po-summary').innerHTML='<div class="summary-row"><span class="s-label">Job</span><span class="s-value">'+selectedJob.customer+' — '+selectedJob.addr+'</span></div><div class="summary-row"><span class="s-label">Job #</span><span class="s-value">'+selectedJob.id+'</span></div><div class="summary-row"><span class="s-label">Crew Leader</span><span class="s-value">'+selectedJob.crew+'</span></div><div class="summary-row"><span class="s-label">PO Type</span><span class="s-value">'+pt+'</span></div><div class="summary-row"><span class="s-label">Supplier</span><span class="s-value">'+supplier+'</span></div><div class="summary-row"><span class="s-label">Store</span><span class="s-value">'+store+'</span></div><div class="summary-row"><span class="s-label">Estimated Amount</span><span class="s-value">'+amt+'</span></div><div class="summary-row"><span class="s-label">Notes</span><span class="s-value">'+notes+'</span></div>';document.getElementById('po-generated').style.display='none';document.getElementById('po-gen-btn').style.display='';setStep(4);}
 
 function generatePO(){const seq=Math.floor(Math.random()*5)+1;const poNum=selectedJob.id+'-'+seq;document.getElementById('po-number-display').textContent='PO# '+poNum;document.getElementById('po-generated').style.display='block';document.getElementById('po-gen-btn').style.display='none';}
 
