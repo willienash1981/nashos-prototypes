@@ -208,7 +208,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="filter-bar" style="padding:12px 18px 0">
         <select id="f-status"><option value="">All Statuses</option><option>AUTHORIZED</option><option>FULFILLED</option><option>BILLED</option><option>PAID</option><option>ROGUE</option></select>
         <select id="f-type"><option value="">All Types</option><option>Materials</option></select>
-        <select id="f-supplier"><option value="">All Suppliers</option><option>Hoover Paint</option><option>Sherwin-Williams</option></select>
+        <select id="f-supplier"><option value="">All Suppliers</option><option>Hoover Paint</option><option>Sherwin-Williams</option><option>Home Depot</option><option>Lowe's</option><option>Walker Lumber</option></select>
         <input type="date" id="f-from" title="From date">
         <input type="date" id="f-to" title="To date">
         <button class="btn-outline-dark btn-sm" onclick="filterPOs()">Filter</button>
@@ -220,7 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <!-- TAB 2: NEW PO WIZARD -->
   <div id="tab-newpo" class="tab-content">
     <div class="card">
-      <div class="card-h"><div class="card-t">📞 New Purchase Order — Store Call Workflow</div></div>
+      <div class="card-h"><div class="card-t">📞 New Purchase Order</div></div>
       <div class="card-b">
         <div class="wizard-progress">
           <div class="wizard-dot active" id="wd1">1. Identify Job</div>
@@ -229,6 +229,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <div class="wizard-dot" id="wd4">4. Confirm</div>
         </div>
         <div class="wizard-step active" id="ws1">
+          <div style="display:flex;gap:10px;margin-bottom:16px">
+            <div class="po-source-btn active" id="src-store" onclick="setSource('store')" style="flex:1;padding:14px;border:2px solid var(--gold);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:#FDFCF8;transition:all .15s">
+              <div style="font-size:18px;margin-bottom:4px">🏪</div>
+              <div style="font-size:13px;font-weight:700">Store Call</div>
+              <div style="font-size:11px;color:var(--text-sec)">Hoover / SW calling to authorize pickup</div>
+            </div>
+            <div class="po-source-btn" id="src-field" onclick="setSource('field')" style="flex:1;padding:14px;border:2px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:var(--white);transition:all .15s">
+              <div style="font-size:18px;margin-bottom:4px">💳</div>
+              <div style="font-size:13px;font-weight:700">Field CC Purchase</div>
+              <div style="font-size:11px;color:var(--text-sec)">Supervisor needs CC PO approval</div>
+            </div>
+          </div>
           <div class="form-group"><label>Search Jobs</label><input type="text" id="job-search" placeholder="Filter by customer name or street..." oninput="filterJobList(this.value)" autocomplete="off" style="margin-bottom:12px"></div>
           <div id="job-list-container">
             <div id="job-section-inprogress" class="job-section">
@@ -247,11 +259,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </div>
         <div class="wizard-step" id="ws2">
           <div class="banner banner-info" id="selected-job-info"></div>
+          <div id="validate-store">
           <h3 style="margin-bottom:8px">Is there anything on this order other than paint, primer, or caulking?</h3>
           <p style="font-size:13px;color:var(--text-sec);margin-bottom:16px">Items like rollers, tape, brushes, drop cloths, or personal items require separation.</p>
           <div style="display:flex;gap:12px;flex-wrap:wrap">
             <button class="btn-gold" style="flex:1;min-width:180px;padding:14px;font-size:14px" onclick="validateClean()">No — Clean Order ✓</button>
             <button class="btn-outline-dark" style="flex:1;min-width:180px;padding:14px;font-size:14px;border-color:var(--yellow);color:#92400E" onclick="validateDirty()">Yes — Needs Separation ⚠️</button>
+          </div>
+          </div>
+          <div id="validate-field" style="display:none">
+          <h3 style="margin-bottom:8px">What does the supervisor need?</h3>
+          <p style="font-size:13px;color:var(--text-sec);margin-bottom:16px">Describe what they're purchasing and approve the CC charge.</p>
+          <div class="form-group"><label>Item Description</label><input type="text" id="field-items" placeholder="e.g. Bondo, caulk, sandpaper..."></div>
+          <div class="form-group"><label>Supervisor</label><select id="field-supervisor"><option>Anthony</option><option>Matthew</option><option>Jeff</option><option>Marcus</option><option>David</option></select></div>
+          <button class="btn-gold" style="padding:14px;font-size:14px;width:100%" onclick="validateClean()">Approve & Continue →</button>
           </div>
           <div id="sep-options" class="sep-options" style="display:none;margin-top:16px">
             <p style="font-size:13px;font-weight:600;margin-bottom:10px">How should we handle the non-paint items?</p>
@@ -339,7 +360,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="card-h"><div class="card-t">📥 Import Supplier Bill</div></div>
       <div class="card-b">
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-          <div class="form-group" style="margin:0;flex:1;min-width:150px"><label>Supplier</label><select><option>Hoover Paint</option><option>Sherwin-Williams</option></select></div>
+          <div class="form-group" style="margin:0;flex:1;min-width:150px"><label>Supplier</label><select><option>Hoover Paint</option><option>Sherwin-Williams</option><option>Home Depot</option><option>Lowe's</option><option>Walker Lumber</option></select></div>
           <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Period Start</label><input type="date" value="2026-02-01"></div>
           <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Period End</label><input type="date" value="2026-02-28"></div>
           <button class="btn-gold" style="height:38px" onclick="importBill()">📥 Import</button>
@@ -434,7 +455,11 @@ const JOBS=[
 ];
 const MATERIAL_SUPPLIERS={
 hoover:{name:'Hoover Paint',acct:'Credit Account (Net-30)',stores:['Clarksville — 1690 Wilma Rudolph Blvd','Cookeville — 214 W. Spring St','Cool Springs — 1701 Mallory Ln, Brentwood','Green Hills — 4004 Hillsboro Pike, Nashville','Mt. Juliet — 518 Pleasant Grove Rd','Murfreesboro — 830 Memorial Blvd','Pleasant View — 216 Ren Mar Center Dr','Shelbyville — 101 Northside Cir Ste C','Smyrna — 200 Jefferson St']},
-sw:{name:'Sherwin-Williams',acct:'Credit Account',stores:['SW #7231 — Cool Springs','SW #7458 — Green Hills','SW #7102 — Murfreesboro','SW #7389 — Mt. Juliet','SW #7550 — Smyrna']}
+sw:{name:'Sherwin-Williams',acct:'Credit Account',stores:['SW #7231 — Cool Springs','SW #7458 — Green Hills','SW #7102 — Murfreesboro','SW #7389 — Mt. Juliet','SW #7550 — Smyrna']},
+homedepot:{name:'Home Depot',acct:'CC Purchase',stores:[]},
+lowes:{name:"Lowe's",acct:'CC Purchase',stores:[]},
+walker:{name:'Walker Lumber',acct:'CC Purchase',stores:[]},
+other:{name:'Other',acct:'CC Purchase',stores:[]}
 };
 
 const PO_DATA=[
@@ -453,6 +478,8 @@ const PO_DATA=[
 {po:'555020-1',date:'Feb 23, 8:20 AM',job:'Taylor — 781 Lebanon Pike',crew:'Roberto',store:'Mt. Juliet',type:'Materials',amount:198,status:'PAID',supplier:'Hoover Paint'},
 {po:'555009-2',date:'Feb 25, 8:00 AM',job:'Garcia — 567 Magnolia Blvd',crew:'Jose',store:'SW #7389',type:'Materials',amount:18,status:'PAID',supplier:'Sherwin-Williams'},
 {po:'555020-2',date:'Feb 28, 9:30 AM',job:'Taylor — 781 Lebanon Pike',crew:'Roberto',store:'Mt. Juliet',type:'Materials',amount:355,status:'AUTHORIZED',supplier:'Hoover Paint'},
+{po:'555005-2',date:'Feb 27, 2:15 PM',job:'Patterson — 1087 Cedar Ln',crew:'—',store:'—',type:'Materials',amount:47,status:'PAID',supplier:'Home Depot'},
+{po:'555001-3',date:'Feb 26, 4:30 PM',job:'Thompson — 234 Riverside Dr',crew:'—',store:'—',type:'Materials',amount:32,status:'PAID',supplier:"Lowe's"},
 
 ];
 const SUPERVISORS=[
@@ -503,7 +530,7 @@ return '<div class="job-item" onclick="selectJob(\''+j.id+'\')"><div class="ji-m
 function filterJobList(q){renderJobList(q);}
 
 
-function selectJob(id){selectedJob=JOBS.find(function(j){return j.id===id;});document.getElementById('selected-job-info').innerHTML='<div>📌 <strong>'+selectedJob.customer+'</strong> — '+selectedJob.addr+'<br><span style="font-size:12px">Crew Leader: '+selectedJob.crew+' · Job #'+selectedJob.id+' · '+selectedJob.svc+(selectedJob.status!=='In Progress'?' · '+selectedJob.status:'')+'</span></div>';setStep(2);}
+function selectJob(id){selectedJob=JOBS.find(function(j){return j.id===id;});document.getElementById('selected-job-info').innerHTML='<div>📌 <strong>'+selectedJob.customer+'</strong> — '+selectedJob.addr+'<br><span style="font-size:12px">Crew Leader: '+selectedJob.crew+' · Job #'+selectedJob.id+' · '+selectedJob.svc+(selectedJob.status!=='In Progress'?' · '+selectedJob.status:'')+'</span></div>';setStep(2);document.getElementById('validate-store').style.display=poSource==='store'?'block':'none';document.getElementById('validate-field').style.display=poSource==='field'?'block':'none';}
 
 function validateClean(){wizardSep=null;document.getElementById('po-type').value='materials';poTypeChanged();setStep(3);}
 function validateDirty(){document.getElementById('sep-options').style.display='block';}
@@ -512,18 +539,30 @@ function selectSep(opt,el){document.querySelectorAll('.sep-option').forEach(o=>o
 
 function poTypeChanged(){document.getElementById('budget-widget').style.display='none';document.getElementById('budget-denied').style.display='none';document.getElementById('btn-step3').style.display='';}
 
+var poSource='store';
+function setSource(src){
+poSource=src;
+document.getElementById('src-store').style.borderColor=src==='store'?'var(--gold)':'var(--border)';
+document.getElementById('src-store').style.background=src==='store'?'#FDFCF8':'var(--white)';
+document.getElementById('src-field').style.borderColor=src==='field'?'var(--gold)':'var(--border)';
+document.getElementById('src-field').style.background=src==='field'?'#FDFCF8':'var(--white)';
+}
 function populateSuppliers(){
 var sel=document.getElementById('po-supplier');
 sel.innerHTML='';
-Object.keys(MATERIAL_SUPPLIERS).forEach(function(k){sel.innerHTML+='<option value="'+k+'">'+MATERIAL_SUPPLIERS[k].name+' ('+MATERIAL_SUPPLIERS[k].acct+')</option>';});
+Object.keys(MATERIAL_SUPPLIERS).forEach(function(k){
+var s=MATERIAL_SUPPLIERS[k];
+if(poSource==='store'&&(k==='hoover'||k==='sw')){sel.innerHTML+='<option value="'+k+'">'+s.name+' ('+s.acct+')</option>';}
+if(poSource==='field'&&k!=='hoover'&&k!=='sw'){sel.innerHTML+='<option value="'+k+'">'+s.name+'</option>';}
+});
 supplierChanged();
 }
 function supplierChanged(){
 var sel=document.getElementById('po-store');
 var supVal=document.getElementById('po-supplier').value;
 var sup=MATERIAL_SUPPLIERS[supVal];
-if(sup&&sup.stores){sel.innerHTML=sup.stores.map(function(s){return '<option>'+s+'</option>';}).join('');}
-else{sel.innerHTML='';}
+if(sup&&sup.stores&&sup.stores.length>0){sel.parentElement.style.display='';sel.innerHTML=sup.stores.map(function(s){return '<option>'+s+'</option>';}).join('');}
+else{sel.parentElement.style.display='none';sel.innerHTML='';}
 }
 
 function checkBudget(){const name=document.getElementById('po-supervisor').value;const sup=SUPERVISORS.find(s=>s.name.toLowerCase()===name);if(!sup)return;const wP=Math.round(sup.weekSpent/sup.weekLimit*100),mP=Math.round(sup.monthSpent/sup.monthLimit*100);const wC=wP>=100?'red':wP>=75?'yellow':'green',mC=mP>=100?'red':mP>=75?'yellow':'green';const denied=wP>=100||mP>=100;document.getElementById('budget-display').innerHTML='<div class="budget-row"><div class="budget-lbl"><span>This Week</span><span>$'+sup.weekSpent+' / $'+sup.weekLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+wC+'" style="width:'+Math.min(wP,100)+'%"></div></div></div><div class="budget-row"><div class="budget-lbl"><span>This Month</span><span>$'+sup.monthSpent+' / $'+sup.monthLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+mC+'" style="width:'+Math.min(mP,100)+'%"></div></div></div>'+(denied?'<div style="margin-top:8px;font-size:12px;color:var(--red);font-weight:600">🔴 AT BUDGET CAP</div>':wP>=75||mP>=75?'<div style="margin-top:8px;font-size:12px;color:var(--yellow);font-weight:600">🟡 Approaching limit</div>':'<div style="margin-top:8px;font-size:12px;color:var(--green);font-weight:600">🟢 Within budget</div>');document.getElementById('budget-denied').style.display=denied?'flex':'none';document.getElementById('btn-step3').style.display=denied?'none':'';}
