@@ -607,7 +607,7 @@ function renderSpreadChart(){const data=[{label:'Walls',est:350,act:320},{label:
 
 function renderVarianceChart(){const data=[{label:'Interior',val:6},{label:'Exterior',val:14},{label:'Deck',val:10},{label:'Fence',val:4},{label:'Cabinet',val:18}];const max=Math.max(...data.map(d=>d.val));document.getElementById('variance-chart').innerHTML=data.map(d=>{const c=d.val>15?'var(--red)':d.val>10?'var(--yellow)':'var(--green)';return '<div class="bar-row"><div class="bar-label">'+d.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(d.val/max*100)+'%;background:'+c+'"></div></div><div class="bar-val">+'+d.val+'%</div></div>';}).join('');}
 
-renderPOs(PO_DATA);populateSuppliers();checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
+renderPOs(PO_DATA);checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
 </script>
 </body>
 </html>
