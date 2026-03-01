@@ -499,7 +499,7 @@ return '<div class="job-item" onclick="selectJob(\''+j.id+'\')"><div class="ji-m
 function filterJobList(q){renderJobList(q);}
 
 
-function selectJob(id){selectedJob=JOBS.find(j=>j.id===id);document.getElementById('job-results').classList.remove('show');document.getElementById('selected-job-info').innerHTML='<div>📌 <strong>'+selectedJob.customer+'</strong> — '+selectedJob.addr+'<br><span style="font-size:12px">Crew Leader: '+selectedJob.crew+' · Job #'+selectedJob.id+' · Supervisor: '+selectedJob.sup+'</span></div>';setStep(2);}
+function selectJob(id){selectedJob=JOBS.find(function(j){return j.id===id;});document.getElementById('selected-job-info').innerHTML='<div>📌 <strong>'+selectedJob.customer+'</strong> — '+selectedJob.addr+'<br><span style="font-size:12px">Crew Leader: '+selectedJob.crew+' · Job #'+selectedJob.id+' · '+selectedJob.svc+(selectedJob.status!=='In Progress'?' · '+selectedJob.status:'')+'</span></div>';setStep(2);}
 
 function validateClean(){wizardSep=null;document.getElementById('po-type').value='crew';poTypeChanged();setStep(3);}
 function validateDirty(){document.getElementById('sep-options').style.display='block';}
