@@ -441,6 +441,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <input type="checkbox" id="payCheck" onchange="toggleAgreeRow(this);updateAcceptBtn()">
       <span>I understand payment is due upon completion and have selected how I'll pay</span>
     </label>
+
+    <label class="agree-row checked" id="smsAgree" style="margin-top:8px;border-color:var(--navy);background:rgba(26,35,50,.02)">
+      <input type="checkbox" id="smsCheck" checked onchange="toggleAgreeRow(this)">
+      <span>I agree to receive project updates, scheduling notifications, and follow-up messages via text message from Nash Painting. You can opt out at any time by replying STOP.</span>
+    </label>
+    <div style="font-size:10px;color:var(--g500);padding:0 4px 0;line-height:1.4;margin-bottom:14px">Message frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. <a href="#" style="color:var(--g500)">Privacy Policy</a> | <a href="#" style="color:var(--g500)">Terms</a></div>
   </div>
 
   <!-- Step 3: Digital Signature -->

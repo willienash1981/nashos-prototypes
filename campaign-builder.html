@@ -718,6 +718,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
             <div class="supp-desc">Stop all marketing emails if customer unsubscribes (transactional still sends)</div>
           </div>
         </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">SMS Consent Required</div>
+            <div class="supp-desc">Skip SMS steps if customer has not opted in (via proposal acceptance or website form)</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -745,6 +755,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="kpi-lbl">Paused</div>
       <div class="kpi-val">10</div>
       <div class="kpi-icon">⏸️</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">SMS Consent Rate</div>
+      <div class="kpi-val">87%</div>
+      <div class="kpi-icon">📱</div>
     </div>
   </div>
 
@@ -793,7 +808,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </thead>
         <tbody>
           <tr data-customer="mark" onclick="openCustomerTimeline('mark')">
-            <td><strong>Mark Frei</strong></td>
+            <td><strong>Mark Frei</strong> <span style="font-size:10px;color:var(--green);font-weight:600">📱 SMS ✓</span></td>
             <td>Estimate Follow-Up</td>
             <td>Day 8 — Follow-Up 3</td>
             <td>8 of 45</td>
@@ -801,7 +816,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
             <td><span class="status-pill status-active">▶ Active</span></td>
           </tr>
           <tr data-customer="sarah" onclick="openCustomerTimeline('sarah')">
-            <td><strong>Sarah Johnson</strong></td>
+            <td><strong>Sarah Johnson</strong> <span style="font-size:10px;color:var(--green);font-weight:600">📱 SMS ✓</span></td>
             <td>Lead Scheduling</td>
             <td>Day 3 — IC</td>
             <td>3 of 5</td>
@@ -817,7 +832,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
             <td><span class="status-pill status-disputed">⚠️ Disputed</span></td>
           </tr>
           <tr data-customer="robert" onclick="openCustomerTimeline('robert')">
-            <td><strong>Robert Williams</strong></td>
+            <td><strong>Robert Williams</strong> <span style="font-size:10px;color:var(--text-muted);font-weight:600">📱 SMS ✗</span></td>
             <td>Post-Completion</td>
             <td>Day 7 — HC</td>
             <td>7 of 30</td>
@@ -825,7 +840,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
             <td><span class="status-pill status-active">▶ Active</span></td>
           </tr>
           <tr data-customer="jennifer" onclick="openCustomerTimeline('jennifer')">
-            <td><strong>Jennifer Adams</strong></td>
+            <td><strong>Jennifer Adams</strong> <span style="font-size:10px;color:var(--green);font-weight:600">📱 SMS ✓</span></td>
             <td>Estimate Follow-Up</td>
             <td>Day 3 — Follow-Up 2</td>
             <td>3 of 45</td>
