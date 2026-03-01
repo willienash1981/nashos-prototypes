@@ -373,32 +373,64 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
   <!-- TAB 5: BILL RECONCILIATION -->
   <div id="tab-reconcile" class="tab-content">
-    <div class="card">
-      <div class="card-h"><div class="card-t">📥 Import Supplier Bill</div></div>
-      <div class="card-b">
-        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-          <div class="form-group" style="margin:0;flex:1;min-width:150px"><label>Supplier</label><select><option>Hoover Paint</option><option>Sherwin-Williams</option><option>Home Depot</option><option>Lowe's</option><option>Walker Lumber</option></select></div>
-          <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Period Start</label><input type="date" value="2026-02-01"></div>
-          <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Period End</label><input type="date" value="2026-02-28"></div>
-          <button class="btn-gold" style="height:38px" onclick="importBill()">📥 Import</button>
+    <!-- Step 1: Import -->
+    <div id="recon-step1">
+      <div class="card">
+        <div class="card-h"><div class="card-t">📥 Step 1: Import Supplier Bill</div></div>
+        <div class="card-b">
+          <p style="font-size:13px;color:var(--text-sec);margin-bottom:14px">Upload or enter the monthly supplier statement. NashOS will auto-match line items to authorized POs.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <div class="form-group" style="margin:0;flex:1;min-width:150px"><label>Supplier</label><select id="recon-supplier"><option>Hoover Paint</option><option>Sherwin-Williams</option></select></div>
+            <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Period Start</label><input type="date" value="2026-02-01"></div>
+            <div class="form-group" style="margin:0;flex:1;min-width:140px"><label>Period End</label><input type="date" value="2026-02-28"></div>
+            <button class="btn-gold" style="height:38px" onclick="reconStep2()">📥 Import & Match</button>
+          </div>
+          <div style="margin-top:16px;padding:16px;border:2px dashed var(--border);border-radius:var(--radius-sm);text-align:center;color:var(--text-sec);font-size:13px;cursor:pointer" onclick="reconStep2()">
+            📄 Drop PDF here or click to upload<br><span style="font-size:11px">(Simulated — click to proceed with sample Hoover statement)</span>
+          </div>
         </div>
       </div>
     </div>
-    <div id="recon-results">
+
+    <!-- Step 2: Auto-match results -->
+    <div id="recon-step2" style="display:none">
+      <div class="banner banner-info" style="margin-bottom:14px">🔄 <strong>Auto-matching complete.</strong> NashOS matched bill line items to authorized POs by PO number, date, store, and amount. Review the results below.</div>
+      <div class="kpi-strip" id="recon-kpis"></div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">Hoover Paint — February 2026 Statement</div><div style="display:flex;gap:8px"><span class="badge badge-green">7 Matched</span><span class="badge badge-red">2 Unmatched</span><span class="badge badge-yellow">1 Discrepancy</span></div></div>
+        <div id="recon-table-interactive"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn-outline-dark" onclick="reconBack()">← Back to Import</button>
+        <div style="flex:1"></div>
+        <span id="recon-remaining" style="font-size:13px;color:var(--text-sec);align-self:center"></span>
+        <button class="btn-gold" id="recon-approve-btn" style="opacity:.4;cursor:not-allowed" disabled onclick="reconApprove()">✅ Approve & Update All to BILLED</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Approved -->
+    <div id="recon-step3" style="display:none">
+      <div class="banner banner-success" style="margin-bottom:14px">✅ <strong>Reconciliation complete!</strong> 10 line items processed. 8 POs updated to BILLED status. 2 rogue POs created for investigation.</div>
       <div class="kpi-strip">
-        <div class="kpi"><div class="kpi-lbl">Matched</div><div class="kpi-val" style="color:var(--green)">7</div></div>
-        <div class="kpi alert"><div class="kpi-lbl">Unmatched</div><div class="kpi-val" style="color:var(--red)">2</div></div>
-        <div class="kpi"><div class="kpi-lbl">Price Discrepancy</div><div class="kpi-val" style="color:var(--yellow)">1</div></div>
-        <div class="kpi"><div class="kpi-lbl">Total Billed</div><div class="kpi-val">$4,872</div></div>
-        <div class="kpi"><div class="kpi-lbl">Total Authorized</div><div class="kpi-val">$4,536</div></div>
+        <div class="kpi"><div class="kpi-lbl">POs Updated → BILLED</div><div class="kpi-val" style="color:var(--green)">8</div></div>
+        <div class="kpi"><div class="kpi-lbl">Rogue POs Created</div><div class="kpi-val" style="color:var(--red)">2</div></div>
+        <div class="kpi"><div class="kpi-lbl">Discrepancies Resolved</div><div class="kpi-val" style="color:var(--yellow)">1</div></div>
+        <div class="kpi"><div class="kpi-lbl">Total Reconciled</div><div class="kpi-val">$4,872</div></div>
       </div>
       <div class="card">
-        <div class="card-h"><div class="card-t">Hoover Paint — February 2026 Statement</div><div class="card-a">Download PDF →</div></div>
-        <div id="recon-table"></div>
-        <div style="padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-          <span style="font-size:13px;color:var(--text-sec)">Difference: <strong style="color:var(--red)">+$336</strong> (unmatched + discrepancy)</span>
-          <button class="btn-gold">✅ Approve & Update Statuses</button>
+        <div class="card-h"><div class="card-t">📋 What Happened</div></div>
+        <div class="card-b">
+          <div style="font-size:13px;line-height:1.8">
+            <div>✅ <strong>7 line items</strong> matched to existing POs → status updated to <span class="badge badge-purple">BILLED</span></div>
+            <div>⚠️ <strong>1 price discrepancy</strong> on PO 555005-1 ($340 authorized, $358 billed) → approved with $18 variance noted on job cost</div>
+            <div>🚨 <strong>2 unmatched charges</strong> → created as <span class="badge badge-red">ROGUE</span> POs for investigation (see Rogue POs tab)</div>
+            <div style="margin-top:10px">📧 Reconciliation summary emailed to <strong>accounting@hooverpaint.com</strong> requesting PO# references on future invoices for unmatched items.</div>
+          </div>
         </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn-gold" onclick="switchTab('rogue')">🔍 Review Rogue POs</button>
+        <button class="btn-outline-dark" onclick="reconReset()">Start New Reconciliation</button>
       </div>
     </div>
   </div>
@@ -506,17 +538,17 @@ const SUPERVISORS=[
 {name:'Marcus',initials:'MC',weekSpent:22,weekLimit:25,monthSpent:168,monthLimit:200,recent:[{desc:'Drop cloths — 555007',amt:22},{desc:'Sandpaper — 555017',amt:14}]},
 {name:'David',initials:'DV',weekSpent:0,weekLimit:25,monthSpent:45,monthLimit:200,recent:[{desc:'Tape — 555009',amt:18},{desc:'Brushes — 555009',amt:12}]}
 ];
-const RECON_LINES=[
-{bill:'5 gal SW Duration — Cool Springs',po:'555001-1',billAmt:485,poAmt:485,match:'matched'},
-{bill:'2 gal primer — Cool Springs',po:'555001-2',billAmt:220,poAmt:220,match:'matched'},
-{bill:'8 gal SW ProMar 200 — Murfreesboro',po:'555003-1',billAmt:612,poAmt:612,match:'matched'},
-{bill:'Rollers, tape — Murfreesboro',po:'555003-2',billAmt:38,poAmt:38,match:'matched'},
-{bill:'4 gal BM Advance — Murfreesboro',po:'555005-1',billAmt:358,poAmt:340,match:'discrepancy'},
-{bill:'10 gal SW Emerald — Green Hills',po:'555007-1',billAmt:725,poAmt:725,match:'matched'},
-{bill:'Perishables — Green Hills',po:'555007-2',billAmt:22,poAmt:22,match:'matched'},
-{bill:'6 gal BM Regal Select — Mt. Juliet',po:'555009-1',billAmt:395,poAmt:395,match:'matched'},
-{bill:'3 gal SW Duration — Clarksville',po:'—',billAmt:287,poAmt:0,match:'unmatched'},
-{bill:'5 gal primer — Smyrna',po:'—',billAmt:149,poAmt:0,match:'unmatched'}
+var RECON_LINES=[
+{id:0,bill:'5 gal SW Duration Extra White',store:'Cool Springs',date:'Feb 3',po:'555001-1',job:'Thompson — 234 Riverside Dr',crew:'Carlos',billAmt:485,poAmt:485,match:'matched',resolved:true},
+{id:1,bill:'2 gal SW ProMar 200 Primer',store:'Cool Springs',date:'Feb 3',po:'555001-2',job:'Thompson — 234 Riverside Dr',crew:'Carlos',billAmt:220,poAmt:220,match:'matched',resolved:true},
+{id:2,bill:'8 gal SW ProMar 200 Flat',store:'Murfreesboro',date:'Feb 7',po:'555003-1',job:'Johnson — 412 Elm St',crew:'Miguel',billAmt:612,poAmt:612,match:'matched',resolved:true},
+{id:3,bill:'Rollers, tape, plastic',store:'Murfreesboro',date:'Feb 7',po:'555003-2',job:'Johnson — 412 Elm St',crew:'Miguel',billAmt:38,poAmt:38,match:'matched',resolved:true},
+{id:4,bill:'4 gal BM Advance Semi-Gloss',store:'Murfreesboro',date:'Feb 10',po:'555005-1',job:'Patterson — 1087 Cedar Ln',crew:'Roberto',billAmt:358,poAmt:340,match:'discrepancy',resolved:false,note:'Billed $18 more than authorized. Store says paint price increased Feb 1.'},
+{id:5,bill:'10 gal SW Emerald Matte',store:'Green Hills',date:'Feb 14',po:'555007-1',job:'Williams — 890 Oak Ave',crew:'Eduardo',billAmt:725,poAmt:725,match:'matched',resolved:true},
+{id:6,bill:'Caulk (6 tubes), mineral spirits',store:'Green Hills',date:'Feb 14',po:'555007-2',job:'Williams — 890 Oak Ave',crew:'Eduardo',billAmt:22,poAmt:22,match:'matched',resolved:true},
+{id:7,bill:'6 gal BM Regal Select Eggshell',store:'Mt. Juliet',date:'Feb 18',po:'555009-1',job:'Garcia — 567 Magnolia Blvd',crew:'Jose',billAmt:395,poAmt:395,match:'matched',resolved:true},
+{id:8,bill:'3 gal SW Duration Satin',store:'Clarksville',date:'Feb 22',po:'—',job:'—',crew:'—',billAmt:287,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Clarksville store says someone gave account number directly.'},
+{id:9,bill:'5 gal SW ProMar 200 Primer',store:'Smyrna',date:'Feb 25',po:'—',job:'—',crew:'—',billAmt:149,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Smyrna store has no record of who picked up.'}
 ];
 
 function switchTab(id){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');const tabs=['dashboard','newpo','budgets','rogue','reconcile','tracking'];const idx=tabs.indexOf(id);if(idx>=0)document.querySelectorAll('.tab-btn')[idx].classList.add('active');}
@@ -655,14 +687,96 @@ function renderSupervisors(){document.getElementById('sup-grid').innerHTML=SUPER
 function openBudgetModal(name){document.getElementById('modal-sup-name').value=name;document.getElementById('modal-budget').classList.add('show');}
 function closeBudgetModal(){document.getElementById('modal-budget').classList.remove('show');}
 
-function importBill(){renderRecon();}
-function renderRecon(){const ic={matched:'✅',unmatched:'⚠️',discrepancy:'❌'};document.getElementById('recon-table').innerHTML=RECON_LINES.map(l=>'<div class="match-row"><div class="match-icon">'+ic[l.match]+'</div><div class="match-bill"><strong>'+l.bill+'</strong></div><div class="match-po">'+l.po+'</div><div class="match-amt">$'+l.billAmt+(l.match==='discrepancy'?' <span style="color:var(--red);font-size:11px">(auth: $'+l.poAmt+')</span>':'')+'</div></div>').join('');}
+function reconStep2(){
+document.getElementById('recon-step1').style.display='none';
+document.getElementById('recon-step2').style.display='block';
+document.getElementById('recon-step3').style.display='none';
+RECON_LINES.forEach(function(l){if(l.match==='matched')l.resolved=true;else l.resolved=false;});
+renderReconInteractive();
+}
+function reconBack(){
+document.getElementById('recon-step1').style.display='block';
+document.getElementById('recon-step2').style.display='none';
+}
+function reconReset(){
+document.getElementById('recon-step1').style.display='block';
+document.getElementById('recon-step2').style.display='none';
+document.getElementById('recon-step3').style.display='none';
+}
+function reconApprove(){
+document.getElementById('recon-step2').style.display='none';
+document.getElementById('recon-step3').style.display='block';
+}
+function renderReconInteractive(){
+var matched=0,unmatched=0,discrepancy=0,totalBill=0,totalAuth=0,unresolved=0;
+RECON_LINES.forEach(function(l){
+totalBill+=l.billAmt;totalAuth+=l.poAmt;
+if(l.match==='matched')matched++;
+else if(l.match==='unmatched')unmatched++;
+else if(l.match==='discrepancy')discrepancy++;
+if(!l.resolved)unresolved++;
+});
+document.getElementById('recon-kpis').innerHTML='<div class="kpi"><div class="kpi-lbl">Auto-Matched</div><div class="kpi-val" style="color:var(--green)">'+matched+'</div><div class="kpi-sub">PO# matched instantly</div></div><div class="kpi alert"><div class="kpi-lbl">Unmatched</div><div class="kpi-val" style="color:var(--red)">'+unmatched+'</div><div class="kpi-sub">No authorized PO found</div></div><div class="kpi"><div class="kpi-lbl">Price Discrepancy</div><div class="kpi-val" style="color:var(--yellow)">'+discrepancy+'</div><div class="kpi-sub">Amount doesn\'t match</div></div><div class="kpi"><div class="kpi-lbl">Total Billed</div><div class="kpi-val">$'+totalBill.toLocaleString()+'</div></div><div class="kpi"><div class="kpi-lbl">Total Authorized</div><div class="kpi-val">$'+totalAuth.toLocaleString()+'</div><div class="kpi-sub">Difference: <strong style="color:'+(totalBill>totalAuth?'var(--red)':'var(--green)')+'">'+((totalBill>totalAuth?'+':'')+('$'+(totalBill-totalAuth)))+'</strong></div></div>';
+var html='';
+RECON_LINES.forEach(function(l,i){
+var icon=l.match==='matched'?'✅':l.match==='discrepancy'?'❌':'⚠️';
+var rowBg=l.resolved?'':'background:var(--bg);';
+var border=l.match==='unmatched'&&!l.resolved?'border-left:3px solid var(--red);':l.match==='discrepancy'&&!l.resolved?'border-left:3px solid var(--yellow);':'border-left:3px solid transparent;';
+html+='<div style="padding:12px 16px;border-bottom:1px solid var(--border);'+rowBg+border+'">';
+html+='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
+html+='<span style="font-size:16px;flex-shrink:0">'+icon+'</span>';
+html+='<div style="flex:1;min-width:200px"><div style="font-size:13px;font-weight:600">'+l.bill+'</div><div style="font-size:11px;color:var(--text-sec)">'+l.store+' · '+l.date+'</div></div>';
+html+='<div style="min-width:100px"><div style="font-size:11px;color:var(--text-sec)">PO Match</div><div style="font-size:13px;font-weight:600">'+(l.po==='—'?'<span style="color:var(--red)">None</span>':l.po)+'</div></div>';
+html+='<div style="min-width:80px"><div style="font-size:11px;color:var(--text-sec)">Job</div><div style="font-size:12px">'+(l.job==='—'?'<span style="color:var(--red)">Unknown</span>':l.job.split(' — ')[0])+'</div></div>';
+html+='<div style="min-width:60px;text-align:right"><div style="font-size:11px;color:var(--text-sec)">Billed</div><div style="font-size:14px;font-weight:700">$'+l.billAmt+'</div></div>';
+if(l.match==='discrepancy')html+='<div style="min-width:60px;text-align:right"><div style="font-size:11px;color:var(--text-sec)">Authorized</div><div style="font-size:14px;font-weight:700;color:var(--yellow)">$'+l.poAmt+'</div></div>';
+html+='</div>';
+// Action area for unresolved items
+if(!l.resolved&&l.match==='discrepancy'){
+html+='<div style="margin-top:10px;padding:10px 14px;background:var(--yellow-bg);border-radius:var(--radius-sm);border:1px solid #FDE68A">';
+html+='<div style="font-size:12px;color:#92400E;margin-bottom:8px">'+l.note+'</div>';
+html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
+html+='<button class="btn-gold btn-sm" onclick="resolveRecon('+i+',\'approve\')">✅ Approve Difference (+$'+(l.billAmt-l.poAmt)+')</button>';
+html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'dispute\')">❌ Dispute with Store</button>';
+html+='</div></div>';
+}
+if(!l.resolved&&l.match==='unmatched'){
+html+='<div style="margin-top:10px;padding:10px 14px;background:var(--red-bg);border-radius:var(--radius-sm);border:1px solid #FECACA">';
+html+='<div style="font-size:12px;color:var(--red);margin-bottom:8px">'+l.note+'</div>';
+html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
+html+='<button class="btn-gold btn-sm" onclick="resolveRecon('+i+',\'match\')">🔍 Match to Job</button>';
+html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'rogue\')">🚨 Flag as Rogue PO</button>';
+html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'error\')">📧 Dispute — Billing Error</button>';
+html+='</div></div>';
+}
+if(l.resolved&&l.match!=='matched'){
+html+='<div style="margin-top:8px;font-size:12px;color:var(--green);font-weight:600">✅ Resolved'+(l.resolution?' — '+l.resolution:'')+'</div>';
+}
+html+='</div>';
+});
+document.getElementById('recon-table-interactive').innerHTML=html;
+var remaining=RECON_LINES.filter(function(l){return !l.resolved;}).length;
+document.getElementById('recon-remaining').textContent=remaining>0?remaining+' item'+(remaining>1?'s':'')+' need'+(remaining===1?'s':'')+' attention':'All items resolved ✓';
+var btn=document.getElementById('recon-approve-btn');
+if(remaining===0){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
+else{btn.disabled=true;btn.style.opacity='.4';btn.style.cursor='not-allowed';}
+}
+function resolveRecon(idx,action){
+var l=RECON_LINES[idx];
+l.resolved=true;
+if(action==='approve')l.resolution='Price difference approved (+$'+(l.billAmt-l.poAmt)+' added to job cost)';
+if(action==='dispute')l.resolution='Disputed with store — awaiting credit';
+if(action==='match'){l.resolution='Matched to job retroactively — PO created';l.po='555015-2';l.job='Davis — 3305 River Rd';l.crew='Carlos';}
+if(action==='rogue')l.resolution='Flagged as Rogue PO → sent to investigation';
+if(action==='error')l.resolution='Disputed as billing error — email sent to store';
+renderReconInteractive();
+}
 
 function renderSpreadChart(){const data=[{label:'Walls',est:350,act:320},{label:'Ceilings',est:400,act:370},{label:'Trim',est:200,act:160},{label:'Fascia',est:250,act:210},{label:'Doors',est:150,act:140},{label:'Windows',est:120,act:100}];const max=Math.max(...data.flatMap(d=>[d.est,d.act]));document.getElementById('spread-chart').innerHTML='<div class="charts-row">'+data.map(d=>'<div class="chart-group"><div class="dual-bar" style="height:120px;align-items:flex-end"><div class="bar" style="background:var(--navy);height:'+Math.round(d.est/max*100)+'px" title="Est: '+d.est+'"></div><div class="bar" style="background:var(--gold);height:'+Math.round(d.act/max*100)+'px" title="Act: '+d.act+'"></div></div><div class="chart-group-label">'+d.label+'</div></div>').join('')+'</div>';}
 
 function renderVarianceChart(){const data=[{label:'Interior',val:6},{label:'Exterior',val:14},{label:'Deck',val:10},{label:'Fence',val:4},{label:'Cabinet',val:18}];const max=Math.max(...data.map(d=>d.val));document.getElementById('variance-chart').innerHTML=data.map(d=>{const c=d.val>15?'var(--red)':d.val>10?'var(--yellow)':'var(--green)';return '<div class="bar-row"><div class="bar-label">'+d.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(d.val/max*100)+'%;background:'+c+'"></div></div><div class="bar-val">+'+d.val+'%</div></div>';}).join('');}
 
-renderPOs(PO_DATA);checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');renderRecon();
+renderPOs(PO_DATA);checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
 </script>
 </body>
 </html>
