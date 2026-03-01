@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nash Painting — Customer Portal</title>
+<style>
+  :root {
+    --navy: #1a2a3a;
+    --gold: #c9a84c;
+    --gold-light: #e8d59a;
+    --gold-bg: rgba(201,168,76,0.08);
+    --white: #ffffff;
+    --light-bg: #f7f5f0;
+    --text: #2c2c2c;
+    --text-light: #666;
+    --text-muted: #999;
+    --border: #e0ddd8;
+    --error: #c0392b;
+    --success: #27ae60;
+    --success-bg: rgba(39,174,96,0.08);
+    --blue: #2980b9;
+    --blue-bg: rgba(41,128,185,0.08);
+    --orange: #e67e22;
+    --orange-bg: rgba(230,126,34,0.08);
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--light-bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Proto Banner */
+  .proto-banner {
+    background: var(--navy); color: var(--gold); text-align: center;
+    padding: 8px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .proto-banner select {
+    background: rgba(255,255,255,0.1); color: var(--gold); border: 1px solid var(--gold);
+    border-radius: 4px; padding: 2px 8px; font-size: 11px; margin-left: 8px; cursor: pointer;
+  }
+
+  /* Header */
+  .header {
+    background: var(--white); padding: 20px 16px; border-bottom: 1px solid var(--border); text-align: center;
+  }
+  .header .logo {
+    font-family: Georgia, serif; font-size: 22px; font-weight: 400;
+    color: var(--navy); letter-spacing: 2px; text-transform: uppercase;
+  }
+  .header .logo span { color: var(--gold); }
+  .header .customer-greeting { font-size: 14px; color: var(--text-light); margin-top: 4px; }
+
+  /* Nav Tabs */
+  .nav-tabs {
+    display: flex; background: var(--white); border-bottom: 1px solid var(--border);
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    flex: 0 0 auto; padding: 12px 18px; font-size: 13px; font-weight: 600;
+    color: var(--text-muted); border-bottom: 2px solid transparent;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  .nav-tab .badge {
+    display: inline-block; background: var(--error); color: white;
+    font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 4px;
+  }
+  .nav-tab .badge.green { background: var(--success); }
+
+  /* Container */
+  .container { max-width: 680px; margin: 0 auto; padding: 20px 16px; }
+
+  /* Cards */
+  .card {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 24px; margin-bottom: 16px;
+  }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .card-subtitle { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+  /* Status Pill */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px;
+    border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .status-pill.pending { background: var(--orange-bg); color: var(--orange); }
+  .status-pill.active { background: var(--blue-bg); color: var(--blue); }
+  .status-pill.complete { background: var(--success-bg); color: var(--success); }
+  .status-pill.expired { background: #f0f0f0; color: var(--text-muted); }
+
+  /* Expiration */
+  .expiration-bar {
+    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    background: var(--orange-bg); border-radius: var(--radius); margin-bottom: 16px;
+    font-size: 13px; color: var(--orange); font-weight: 500;
+  }
+
+  /* Scope */
+  .scope-section { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+  .scope-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; cursor: pointer; background: #fafaf8; transition: background 0.2s;
+  }
+  .scope-header:hover { background: #f5f4f0; }
+  .scope-header .label { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .scope-header .price { font-weight: 700; font-size: 14px; }
+  .scope-header .chevron { color: var(--text-muted); font-size: 12px; }
+  .scope-body { display: none; padding: 0 16px 14px; font-size: 13px; color: var(--text-light); }
+  .scope-body.open { display: block; }
+  .scope-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+  .scope-line:last-child { border-bottom: none; }
+
+  /* Package Switcher */
+  .package-switcher { display: flex; gap: 8px; margin-bottom: 20px; }
+  .package-card {
+    flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 14px 12px;
+    text-align: center; cursor: pointer; transition: all 0.2s; position: relative;
+  }
+  .package-card.selected { border-color: var(--gold); background: var(--gold-bg); }
+  .package-card .pkg-name { font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 2px; }
+  .package-card .pkg-price { font-size: 18px; font-weight: 700; }
+  .package-card .pkg-badge {
+    position: absolute; top: -8px; right: -8px; background: var(--gold); color: var(--white);
+    font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;
+  }
+
+  /* Totals */
+  .totals-block { background: #fafaf8; border-radius: 8px; padding: 16px; margin-top: 16px; }
+  .totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+  .totals-row.total { border-top: 2px solid var(--navy); margin-top: 8px; padding-top: 10px; font-weight: 700; font-size: 16px; color: var(--navy); }
+  .totals-row .label { color: var(--text-light); }
+
+  /* Buttons */
+  .btn {
+    display: block; width: 100%; padding: 16px; border: none; border-radius: 8px;
+    font-size: 16px; font-weight: 700; cursor: pointer; text-align: center;
+    transition: all 0.2s; text-decoration: none;
+  }
+  .btn-gold { background: var(--gold); color: var(--white); }
+  .btn-gold:hover { background: #b8963e; }
+  .btn-navy { background: var(--navy); color: var(--gold); }
+  .btn-navy:hover { background: #0f1d2a; }
+  .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--navy); }
+  .btn + .btn { margin-top: 10px; }
+  .btn-small { display: inline-block; width: auto; padding: 8px 20px; font-size: 13px; }
+
+  /* Acceptance Overlay */
+  .acceptance-overlay {
+    display: none; position: fixed; inset: 0; background: var(--light-bg);
+    z-index: 50; overflow-y: auto;
+  }
+  .acceptance-overlay.visible { display: block; }
+  .accept-header {
+    background: var(--navy); color: var(--white); padding: 16px; text-align: center;
+    position: sticky; top: 0; z-index: 51;
+  }
+  .accept-header h2 { font-size: 18px; font-weight: 600; }
+  .accept-progress { display: flex; gap: 4px; margin: 12px auto 0; max-width: 300px; }
+  .accept-progress .step { flex: 1; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+  .accept-progress .step.done { background: var(--gold); }
+  .accept-step { display: none; padding: 20px 16px; max-width: 680px; margin: 0 auto; }
+  .accept-step.active { display: block; }
+  .terms-box {
+    background: var(--white); border-radius: var(--radius); padding: 20px;
+    max-height: 300px; overflow-y: auto; font-size: 13px; line-height: 1.7;
+    color: var(--text-light); border: 1px solid var(--border); margin-bottom: 16px;
+  }
+  .terms-box h4 { color: var(--navy); margin: 16px 0 6px; font-size: 13px; }
+  .terms-box h4:first-child { margin-top: 0; }
+  .checkbox-row {
+    display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px;
+    background: var(--white); border-radius: 8px; margin-bottom: 16px; cursor: pointer;
+  }
+  .checkbox-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--gold); flex-shrink: 0; }
+  .checkbox-row span { font-size: 14px; line-height: 1.4; }
+
+  /* Payment Method Cards */
+  .pay-method {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    background: var(--white); border: 2px solid var(--border); border-radius: 8px;
+    margin-bottom: 8px; cursor: pointer; transition: all 0.2s;
+  }
+  .pay-method:hover { border-color: var(--gold-light); }
+  .pay-method.selected { border-color: var(--gold); background: var(--gold-bg); }
+  .pay-method .icon { font-size: 24px; }
+  .pay-method .info { flex: 1; }
+  .pay-method .info .name { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .pay-method .info .desc { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+  .pay-method .easiest {
+    background: var(--success); color: white; font-size: 9px; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px; text-transform: uppercase;
+  }
+
+  /* Signature */
+  .sig-preview { text-align: center; padding: 24px; border: 2px dashed var(--border); border-radius: 8px; margin: 16px 0; }
+  .sig-preview .sig-text { font-family: 'Brush Script MT', 'Segoe Script', cursive; font-size: 36px; color: var(--navy); }
+  .sig-date { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+  .summary-card { background: #fafaf8; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+  .summary-row .label { color: var(--text-light); }
+  .summary-row .value { font-weight: 600; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px; width: 2px; background: var(--border); }
+  .timeline-item { position: relative; padding-bottom: 20px; }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot {
+    position: absolute; left: -24px; top: 2px; width: 14px; height: 14px;
+    border-radius: 50%; background: var(--border); border: 2px solid var(--white);
+  }
+  .timeline-dot.done { background: var(--success); }
+  .timeline-dot.current { background: var(--blue); box-shadow: 0 0 0 4px var(--blue-bg); }
+  .timeline-dot.upcoming { background: var(--border); }
+  .timeline-item .tl-title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .timeline-item .tl-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .timeline-item .tl-note { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+
+  /* Invoice */
+  .invoice-card { border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .invoice-row { display: flex; justify-content: space-between; align-items: center; }
+  .invoice-info .inv-label { font-weight: 700; font-size: 14px; color: var(--navy); }
+  .invoice-info .inv-date { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .invoice-amount { font-size: 20px; font-weight: 700; color: var(--navy); }
+  .pay-options { margin-top: 14px; padding-top: 14px; border-top: 1px solid #eee; }
+  .pay-btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .pay-btn-row .btn { flex: 1; padding: 12px; font-size: 13px; }
+
+  /* Warranty */
+  .warranty-card {
+    text-align: center; padding: 32px 24px; border: 2px solid var(--gold);
+    border-radius: var(--radius); background: var(--gold-bg);
+  }
+  .warranty-card .shield { font-size: 48px; margin-bottom: 12px; }
+  .warranty-card h3 { font-size: 18px; color: var(--navy); margin-bottom: 4px; }
+  .warranty-card .validity { font-size: 13px; color: var(--text-light); }
+  .warranty-card .warranty-status {
+    display: inline-block; margin-top: 12px; padding: 6px 16px;
+    border-radius: 20px; font-weight: 600; font-size: 13px;
+  }
+  .warranty-card .warranty-status.active-warranty { background: var(--success); color: white; }
+  .warranty-card .warranty-status.pending-warranty { background: var(--orange); color: white; }
+  .warranty-details { text-align: left; margin-top: 16px; }
+  .warranty-details li {
+    padding: 6px 0; font-size: 13px; color: var(--text-light);
+    list-style: none; display: flex; gap: 8px;
+  }
+
+  /* Color History */
+  .color-entry { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .color-entry:last-child { border-bottom: none; }
+  .color-swatch { width: 36px; height: 36px; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; }
+  .color-entry .color-info { flex: 1; }
+  .color-entry .color-name { font-weight: 600; font-size: 13px; color: var(--navy); }
+  .color-entry .color-surface { font-size: 12px; color: var(--text-muted); }
+  .color-entry .color-date { font-size: 11px; color: var(--text-muted); text-align: right; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 12px 0 6px; }
+
+  /* Onboarding */
+  .onboarding-progress { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 16px; }
+  .onboarding-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 12px 0 20px; }
+  .onboarding-bar .fill { height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.4s; }
+  .onboarding-step { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+  .onboarding-step:last-child { border-bottom: none; }
+  .onboarding-step .step-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 16px; flex-shrink: 0; }
+  .onboarding-step .step-icon.done { background: var(--success-bg); }
+  .onboarding-step .step-icon.todo { background: #f0f0f0; }
+  .onboarding-step .step-info { flex: 1; }
+  .onboarding-step .step-title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .onboarding-step .step-desc { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .onboarding-step .step-action { font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: none; white-space: nowrap; }
+
+  /* Pages */
+  .page { display: none; }
+  .page.active { display: block; }
+  .contact-bar { text-align: center; padding: 20px; font-size: 13px; color: var(--text-muted); }
+  .contact-bar a { color: var(--navy); font-weight: 600; text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .card { padding: 18px; }
+    .package-card .pkg-price { font-size: 16px; }
+    .nav-tab { padding: 12px 14px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-banner">
+  ⚡ NashOS Prototype — Customer Portal
+  <select id="stateSelector" onchange="setState(this.value)">
+    <option value="proposal">Proposal Sent (Awaiting Accept)</option>
+    <option value="onboarding">Just Accepted (Onboarding)</option>
+    <option value="in-progress">In Progress</option>
+    <option value="complete">Project Complete</option>
+    <option value="expired">Proposal Expired</option>
+  </select>
+</div>
+
+<div class="header">
+  <div class="logo">Nash <span>Painting</span></div>
+  <div class="customer-greeting">Welcome, Mark — 1931 Warfield Dr</div>
+</div>
+
+<div class="nav-tabs" id="navTabs">
+  <div class="nav-tab active" data-tab="proposal" onclick="switchTab('proposal')">Proposal</div>
+  <div class="nav-tab" data-tab="status" onclick="switchTab('status')">Project Status</div>
+  <div class="nav-tab" data-tab="payments" onclick="switchTab('payments')">Payments</div>
+  <div class="nav-tab" data-tab="warranty" onclick="switchTab('warranty')">Warranty</div>
+  <div class="nav-tab" data-tab="colors" onclick="switchTab('colors')">Color History</div>
+</div>
+
+<div class="container">
+
+  <!-- PROPOSAL TAB -->
+  <div class="page active" id="tab-proposal">
+    <div class="expiration-bar" id="expirationBar">
+      ⏳ This proposal expires <strong style="margin-left:4px;">March 15, 2026</strong> <span style="margin-left:auto;font-size:12px;opacity:0.7;">(14 days)</span>
+    </div>
+    <div id="expiredNotice" style="display:none;">
+      <div class="card" style="text-align:center;padding:40px 24px;">
+        <div style="font-size:48px;margin-bottom:12px;">📋</div>
+        <h3 style="color:var(--navy);margin-bottom:8px;">This Proposal Has Expired</h3>
+        <p style="color:var(--text-light);font-size:14px;line-height:1.5;margin-bottom:20px;">This proposal expired on February 15, 2026. Prices may have changed since it was created.</p>
+        <a href="tel:6158296858" class="btn btn-gold btn-small" style="display:inline-block;">Call for Updated Quote — 615-829-6858</a>
+      </div>
+    </div>
+    <div id="proposalContent">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interior & Exterior Painting</div>
+            <div class="card-subtitle">Estimate #EST-2026-0142 · Sent Feb 18, 2026</div>
+          </div>
+          <span class="status-pill pending" id="proposalStatus">⏳ Awaiting</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-light);line-height:1.6;margin-bottom:16px;">
+          Thank you for choosing Nash Painting. Below is your detailed proposal for 1931 Warfield Dr. We've included scope, pricing, and everything you need to know.
+        </div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Select Your Package</div>
+        <div class="package-switcher">
+          <div class="package-card" onclick="selectPackage(this, 8450)">
+            <div class="pkg-name">Value</div>
+            <div class="pkg-price">$8,450</div>
+          </div>
+          <div class="package-card selected" onclick="selectPackage(this, 11200)">
+            <div class="pkg-badge">Popular</div>
+            <div class="pkg-name">Premium</div>
+            <div class="pkg-price">$11,200</div>
+          </div>
+          <div class="package-card" onclick="selectPackage(this, 14800)">
+            <div class="pkg-name">Premium Plus</div>
+            <div class="pkg-price">$14,800</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;">Scope of Work</div>
+        <div class="scope-section">
+          <div class="scope-header" onclick="toggleScope(this)">
+            <span class="label">Interior — Living Room, Kitchen, Hallway</span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="price">$4,200</span><span class="chevron">▼</span></span>
+          </div>
+          <div class="scope-body">
+            <div class="scope-line"><span>Walls — 3 rooms, ~1,200 SF</span><span>$2,640</span></div>
+            <div class="scope-line"><span>Ceilings — 3 rooms</span><span>$780</span></div>
+            <div class="scope-line"><span>Trim & Baseboards — 280 LF</span><span>$560</span></div>
+            <div class="scope-line"><span>Door painting — 5 doors (both sides)</span><span>$220</span></div>
+          </div>
+        </div>
+        <div class="scope-section">
+          <div class="scope-header" onclick="toggleScope(this)">
+            <span class="label">Exterior — Siding, Trim, Fascia</span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="price">$5,800</span><span class="chevron">▼</span></span>
+          </div>
+          <div class="scope-body">
+            <div class="scope-line"><span>Siding — ~2,800 SF (2 coats)</span><span>$3,400</span></div>
+            <div class="scope-line"><span>Trim & Fascia — 320 LF</span><span>$1,280</span></div>
+            <div class="scope-line"><span>Shutters — 8 shutters</span><span>$640</span></div>
+            <div class="scope-line"><span>Front door refinish</span><span>$280</span></div>
+            <div class="scope-line"><span>Gutters & Downspouts</span><span>$200</span></div>
+          </div>
+        </div>
+        <div class="scope-section">
+          <div class="scope-header" onclick="toggleScope(this)">
+            <span class="label">Prep & Repairs</span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="price">$1,200</span><span class="chevron">▼</span></span>
+          </div>
+          <div class="scope-body">
+            <div class="scope-line"><span>Power washing — full exterior</span><span>$450</span></div>
+            <div class="scope-line"><span>Caulking — windows, doors, trim joints</span><span>$380</span></div>
+            <div class="scope-line"><span>Wood repair — 2 fascia boards, 1 window sill</span><span>$370</span></div>
+          </div>
+        </div>
+        <div class="totals-block">
+          <div class="totals-row"><span class="label">Labor</span><span>$9,480</span></div>
+          <div class="totals-row"><span class="label">Materials (Premium — SW Cashmere Int / Duration Ext)</span><span>$1,720</span></div>
+          <div class="totals-row total"><span>Total</span><span id="totalPrice">$11,200</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">Included With Your Project</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
+          <div style="display:flex;gap:10px;"><span>🛡️</span><span><strong>10-Year Warranty</strong> — covers peeling, flaking, and application defects</span></div>
+          <div style="display:flex;gap:10px;"><span>🔄</span><span><strong>Lifetime Touchups</strong> — free minor touchups, anytime</span></div>
+          <div style="display:flex;gap:10px;"><span>📄</span><span><a href="#" style="color:var(--blue);">Warranty Details (PDF)</a> · <a href="#" style="color:var(--blue);">Color Guide</a> · <a href="#" style="color:var(--blue);">Understanding Flashing</a></span></div>
+        </div>
+      </div>
+      <div id="acceptCTA">
+        <button class="btn btn-gold" onclick="openAcceptance()">Accept This Proposal</button>
+        <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--text-muted);">No deposit required. Payment due upon completion.</div>
+      </div>
+      <div id="acceptedBadge" style="display:none;">
+        <div class="card" style="text-align:center;background:var(--success-bg);border:2px solid var(--success);">
+          <div style="font-size:32px;margin-bottom:8px;">✅</div>
+          <div style="font-weight:700;font-size:16px;color:var(--success);">Proposal Accepted</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px;">Signed by Mark Frei on Feb 20, 2026 · Premium Package</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT STATUS TAB -->
+  <div class="page" id="tab-status">
+    <div id="onboardingBlock" style="display:none;">
+      <div class="card" style="text-align:center;padding:28px 24px 16px;">
+        <div style="font-size:32px;margin-bottom:8px;">🎉</div>
+        <div style="font-size:18px;font-weight:700;color:var(--navy);">Welcome to Nash Painting!</div>
+        <div style="font-size:13px;color:var(--text-light);margin-top:4px;">You're officially on board. Here's what we need to get you scheduled.</div>
+      </div>
+      <div class="onboarding-progress">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-weight:700;font-size:14px;color:var(--navy);">Getting Started</span>
+          <span style="font-size:12px;color:var(--text-muted);">1 of 3 complete</span>
+        </div>
+        <div class="onboarding-bar"><div class="fill" style="width:33%"></div></div>
+        <div class="onboarding-step">
+          <div class="step-icon done">✅</div>
+          <div class="step-info"><div class="step-title">Payment Method</div><div class="step-desc">Online ACH selected — due upon completion</div></div>
+        </div>
+        <div class="onboarding-step">
+          <div class="step-icon todo">📋</div>
+          <div class="step-info"><div class="step-title">Pre-Project Checklist</div><div class="step-desc">Parking, access, crew preferences — ~2 min</div></div>
+          <a href="https://willienash1981.github.io/nashos-prototypes/pre-project-checklist.html" class="step-action" target="_blank">Start →</a>
+        </div>
+        <div class="onboarding-step">
+          <div class="step-icon todo">🎨</div>
+          <div class="step-info"><div class="step-title">Color Selections</div><div class="step-desc">Take your time — we can't schedule until these are in</div></div>
+          <a href="https://willienash1981.github.io/nashos-prototypes/color-submission.html" class="step-action" target="_blank">Choose →</a>
+        </div>
+      </div>
+      <div style="text-align:center;padding:8px;"><a href="#" style="font-size:13px;color:var(--text-muted);">I'm not ready — send me a link later</a></div>
+    </div>
+    <div id="timelineBlock">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Project Timeline</div><div class="card-subtitle">1931 Warfield Dr · EST-2026-0142</div></div>
+          <span class="status-pill active" id="projectStatusPill">🔨 In Progress</span>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot done"></div><div class="tl-title">Proposal Sent</div><div class="tl-date">Feb 18, 2026</div></div>
+          <div class="timeline-item"><div class="timeline-dot done"></div><div class="tl-title">Proposal Accepted</div><div class="tl-date">Feb 20, 2026 · Premium Package</div></div>
+          <div class="timeline-item"><div class="timeline-dot done"></div><div class="tl-title">Onboarding Complete</div><div class="tl-date">Feb 22, 2026 · Colors submitted, checklist done</div></div>
+          <div class="timeline-item" id="tlScheduled"><div class="timeline-dot done"></div><div class="tl-title">Scheduled</div><div class="tl-date">Start date: March 3, 2026</div><div class="tl-note">Crew: Team Reyes · Est. 4 days</div></div>
+          <div class="timeline-item" id="tlInProgress"><div class="timeline-dot current"></div><div class="tl-title">In Progress</div><div class="tl-date">Started March 3, 2026</div><div class="tl-note">Day 2 of 4 · Interior 60% complete, exterior starting tomorrow</div></div>
+          <div class="timeline-item" id="tlComplete"><div class="timeline-dot upcoming"></div><div class="tl-title" id="tlCompleteTitle">Estimated Completion</div><div class="tl-date" id="tlCompleteDate">March 6, 2026</div></div>
+          <div class="timeline-item" id="tlPayment"><div class="timeline-dot upcoming"></div><div class="tl-title">Payment Due</div><div class="tl-date">Due upon completion · Online ACH</div></div>
+        </div>
+      </div>
+      <div class="card" id="crewCard" style="display:none;">
+        <div class="card-title" style="margin-bottom:12px;">Your Crew</div>
+        <div style="font-size:14px;line-height:1.8;"><div><strong>Team Reyes</strong> — 4 painters</div><div style="color:var(--text-light);font-size:13px;">Led by Carlos Reyes · 4.8 ★ average rating</div></div>
+        <div style="margin-top:12px;padding:12px;background:#fafaf8;border-radius:8px;font-size:13px;color:var(--text-light);">
+          <strong style="color:var(--navy);">Today's update:</strong> Interior walls and ceilings — living room and kitchen complete. Hallway in progress. Trim work starts tomorrow.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENTS TAB -->
+  <div class="page" id="tab-payments">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Payment Summary</div>
+      <div class="card-subtitle" style="margin-bottom:16px;">Project #EST-2026-0142</div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee;font-size:14px;"><span style="color:var(--text-light);">Payment Method</span><span style="font-weight:600;">Online ACH</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee;font-size:14px;"><span style="color:var(--text-light);">Total Contract</span><span style="font-weight:600;">$11,200.00</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:14px;"><span style="color:var(--text-light);">Deposit Required</span><span style="font-weight:600;color:var(--success);">None — $0</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Invoices</div>
+      <div class="invoice-card" id="invoiceFinal">
+        <div class="invoice-row">
+          <div class="invoice-info"><div class="inv-label">Final Invoice</div><div class="inv-date">Due upon completion · March 6, 2026</div></div>
+          <div class="invoice-amount">$11,200</div>
+        </div>
+        <div class="pay-options" id="payOptions">
+          <div style="font-size:13px;color:var(--text-light);margin-bottom:10px;">Ready to pay? Choose your method:</div>
+          <div class="pay-btn-row">
+            <button class="btn btn-gold btn-small" onclick="showPayConfirm()">Pay via ACH</button>
+            <button class="btn btn-outline btn-small" onclick="showPayConfirm()">Card (+3%)</button>
+          </div>
+          <div style="text-align:center;margin-top:8px;"><a href="#" style="font-size:12px;color:var(--text-muted);">Upload check photo instead</a></div>
+        </div>
+        <div id="payConfirmACH" style="display:none;margin-top:14px;padding:16px;background:var(--success-bg);border-radius:8px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:8px;">✅</div>
+          <div style="font-weight:700;color:var(--success);">ACH Payment Initiated</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px;">$11,200.00 · Confirmation emailed within 1 business day</div>
+        </div>
+      </div>
+      <div class="invoice-card" id="changeOrderInvoice" style="display:none;">
+        <div class="invoice-row">
+          <div class="invoice-info"><div class="inv-label">Change Order #1 — Added Garage Door</div><div class="inv-date">Approved Feb 28, 2026</div></div>
+          <div class="invoice-amount">$380</div>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--text-muted);">Added to final invoice total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARRANTY TAB -->
+  <div class="page" id="tab-warranty">
+    <div class="warranty-card">
+      <div class="shield">🛡️</div>
+      <h3>Nash Painting Warranty</h3>
+      <div class="validity">Interior & Exterior · 1931 Warfield Dr</div>
+      <div class="warranty-status pending-warranty" id="warrantyStatusBadge">Pending — Complete Survey to Activate</div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title" style="margin-bottom:12px;">What's Covered</div>
+      <ul class="warranty-details">
+        <li><span>✅</span> 10-year warranty on interior painting — peeling, flaking, application defects</li>
+        <li><span>✅</span> 10-year warranty on exterior painting — peeling, flaking (limited)</li>
+        <li><span>✅</span> 10-year warranty on carpentry repairs</li>
+        <li><span>✅</span> Lifetime free touchups — minor nicks, scratches, small areas</li>
+        <li><span>📄</span> <a href="#" style="color:var(--blue);">Download Full Warranty Terms (PDF)</a></li>
+      </ul>
+    </div>
+    <div id="surveyCTA" style="display:none;margin-top:16px;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">📝</div>
+        <div style="font-weight:700;font-size:16px;color:var(--navy);margin-bottom:4px;">Activate Your Warranty</div>
+        <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Complete a quick survey (~2 min) to register your warranty coverage.</div>
+        <a href="https://willienash1981.github.io/nash-survey/?name=Mark+Frei&address=1931+Warfield+DR&project=2303-2414-0044" target="_blank" class="btn btn-gold" style="display:inline-block;width:auto;padding:14px 32px;">Complete Survey & Activate →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR HISTORY TAB -->
+  <div class="page" id="tab-colors">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">🎨 Your Color History</div><div class="card-subtitle">1931 Warfield Dr</div></div></div>
+      <div class="section-label">Interior</div>
+      <div class="color-entry"><div class="color-swatch" style="background:#d5cec0;"></div><div class="color-info"><div class="color-name">SW 7036 Accessible Beige</div><div class="color-surface">Living Room, Kitchen, Hallway — Walls</div></div><div class="color-date">Mar 2026<br><span style="font-size:10px;">Cashmere</span></div></div>
+      <div class="color-entry"><div class="color-swatch" style="background:#f0ece4;"></div><div class="color-info"><div class="color-name">SW 7012 Creamy</div><div class="color-surface">Living Room, Kitchen, Hallway — Ceilings</div></div><div class="color-date">Mar 2026<br><span style="font-size:10px;">Cashmere Flat</span></div></div>
+      <div class="color-entry"><div class="color-swatch" style="background:#e8e2d8;"></div><div class="color-info"><div class="color-name">SW 7011 Natural Choice</div><div class="color-surface">All Rooms — Trim & Baseboards</div></div><div class="color-date">Mar 2026<br><span style="font-size:10px;">ProClassic Semi</span></div></div>
+      <div class="section-label">Exterior</div>
+      <div class="color-entry"><div class="color-swatch" style="background:#e6e0d4;"></div><div class="color-info"><div class="color-name">SW 7015 Repose Gray</div><div class="color-surface">Siding (2 coats)</div></div><div class="color-date">Mar 2026<br><span style="font-size:10px;">Duration</span></div></div>
+      <div class="color-entry"><div class="color-swatch" style="background:#f5f1ea;"></div><div class="color-info"><div class="color-name">SW 7006 Extra White</div><div class="color-surface">Trim, Fascia, Eaves, Gutters</div></div><div class="color-date">Mar 2026<br><span style="font-size:10px;">Duration Satin</span></div></div>
+      <div class="color-entry"><div class="color-swatch" style="background:#2c4a6e;"></div><div class="color-info"><div class="color-name">BM HC-158 Newburyport Blue</div><div class="color-surface">Front Door</div></div><div class="color-date">Mar 2026<br><span style="font-size:10px;">Advance Satin</span></div></div>
+      <div style="margin-top:20px;padding:16px;background:var(--gold-bg);border-radius:8px;font-size:13px;color:var(--text-light);text-align:center;">
+        💡 <strong style="color:var(--navy);">Due for a refresh?</strong> Your exterior typically lasts 8–12 years in Tennessee.<br>
+        <a href="#" style="color:var(--gold);font-weight:600;margin-top:6px;display:inline-block;">Request a New Estimate →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="contact-bar">
+  Questions? <a href="tel:6158296858">615-829-6858</a> · <a href="mailto:service@nashpainting.com">service@nashpainting.com</a>
+  <div style="margin-top:6px;font-size:12px;">Nash Painting · Nashville, TN · Since 2009</div>
+</div>
+
+<!-- ACCEPTANCE OVERLAY -->
+<div class="acceptance-overlay" id="acceptOverlay">
+  <div class="accept-header">
+    <h2>Accept Your Proposal</h2>
+    <div class="accept-progress"><div class="step done" id="ap1"></div><div class="step" id="ap2"></div><div class="step" id="ap3"></div></div>
+  </div>
+  <div class="accept-step active" id="aStep1">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Step 1 of 3</div>
+      <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Review and agree to the contract terms.</div>
+      <div class="terms-box">
+        <h4>Payment Terms</h4>Full payment is due upon project completion. No deposit is required. Nash Painting is a family-owned business — our crews depend on timely payment.
+        <h4>Scope of Work</h4>The scope described in this proposal represents the complete work. Any changes require a formal change order.
+        <h4>Color Selection Disclaimer</h4>Final color selections are your responsibility. We recommend viewing colors in natural light and using a Color Muse tool. Color changes after painting begins may incur charges.
+        <h4>Change Orders</h4>Any additions or changes must be authorized in writing via the NashOS change order process. May affect timeline and cost.
+        <h4>Warranty</h4>Workmanship is warranted per the scope above. Warranty activation requires completion of a post-project survey. See Warranty PDF for full terms.
+        <h4>Licensing & Insurance</h4>Nash Painting is fully licensed and insured in Tennessee. Certificates available upon request.
+        <h4>Subcontractors</h4>Nash Painting may use qualified subcontractors for specialty work. All carry their own insurance.
+        <h4>Right to Cancel</h4>You may cancel within 3 business days of acceptance for a full refund.
+        <h4>Dispute Resolution</h4>Disputes resolved through good-faith negotiation, then binding arbitration in Davidson County, Tennessee.
+      </div>
+      <label class="checkbox-row" onclick="toggleCheck()"><input type="checkbox" id="termsCheck"><span>I have read and agree to the contract terms above</span></label>
+      <button class="btn btn-gold" onclick="acceptStep(2)" id="termsNextBtn" style="opacity:0.5;pointer-events:none;">Continue →</button>
+    </div>
+  </div>
+  <div class="accept-step" id="aStep2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:4px;">Step 2 of 3 — How Will You Pay?</div>
+      <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Full payment is due on your project's final day. Choose now so there are no surprises.</div>
+      <div class="pay-method" onclick="selectPay(this)"><span class="icon">🏦</span><div class="info"><div class="name">Online ACH</div><div class="desc">Secure portal link sent on final day — no fees</div></div><span class="easiest">EASIEST</span></div>
+      <div class="pay-method" onclick="selectPay(this)"><span class="icon">📝</span><div class="info"><div class="name">Check to Field Supervisor</div><div class="desc">Hand check to crew supervisor on final day</div></div></div>
+      <div class="pay-method" onclick="selectPay(this)"><span class="icon">📸</span><div class="info"><div class="name">Check Photo via Text/Email</div><div class="desc">Snap photo, send to office — processed same day</div></div></div>
+      <div class="pay-method" onclick="selectPay(this)"><span class="icon">💳</span><div class="info"><div class="name">Credit/Debit Card</div><div class="desc">Pay by phone — +3% processing fee</div></div></div>
+      <div class="pay-method" onclick="selectPay(this)"><span class="icon">✉️</span><div class="info"><div class="name">Mail Check Early</div><div class="desc">Mail 7+ days before completion — held until work done</div></div></div>
+      <div style="margin-top:12px;padding:12px;background:#fafaf8;border-radius:8px;font-size:12px;color:var(--text-light);line-height:1.5;">
+        <strong style="color:var(--navy);">Why do we ask?</strong> Nash Painting is family-owned — we don't require deposits because we trust our customers. Our crews depend on timely payment. Choosing now ensures a smooth final day.
+      </div>
+      <label class="checkbox-row" onclick="toggleCheck()" style="margin-top:12px;"><input type="checkbox" id="payCheck"><span>I understand payment is due upon completion and have selected how I'll pay</span></label>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="acceptStep(1)" style="flex:0 0 auto;width:auto;padding:14px 24px;">← Back</button>
+        <button class="btn btn-gold" onclick="acceptStep(3)" id="payNextBtn" style="flex:1;opacity:0.5;pointer-events:none;">Continue →</button>
+      </div>
+    </div>
+  </div>
+  <div class="accept-step" id="aStep3">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px;">Step 3 of 3 — Sign & Accept</div>
+      <div class="summary-card">
+        <div class="summary-row"><span class="label">Package</span><span class="value">Premium</span></div>
+        <div class="summary-row"><span class="label">Services</span><span class="value">Interior + Exterior</span></div>
+        <div class="summary-row"><span class="label">Payment Method</span><span class="value" id="sigPayMethod">Online ACH</span></div>
+        <div class="summary-row" style="border-top:1px solid #ddd;padding-top:10px;margin-top:6px;">
+          <span class="label" style="font-weight:700;color:var(--navy);">Total</span>
+          <span class="value" style="font-size:18px;color:var(--navy);">$11,200.00</span>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">Type your full legal name to sign:</div>
+      <input type="text" id="sigInput" placeholder="Full Legal Name" oninput="updateSig()" style="width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:8px;font-size:16px;font-family:inherit;">
+      <div class="sig-preview"><div class="sig-text" id="sigPreview">&nbsp;</div></div>
+      <div class="sig-date">March 1, 2026</div>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button class="btn btn-outline" onclick="acceptStep(2)" style="flex:0 0 auto;width:auto;padding:14px 24px;">← Back</button>
+        <button class="btn btn-navy" onclick="completeAcceptance()" id="signBtn" style="flex:1;opacity:0.5;pointer-events:none;">Sign & Accept Proposal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentState = 'proposal';
+
+function setState(state) {
+  currentState = state;
+  document.getElementById('stateSelector').value = state;
+
+  // Reset everything
+  document.getElementById('expirationBar').style.display = 'flex';
+  document.getElementById('expiredNotice').style.display = 'none';
+  document.getElementById('proposalContent').style.display = 'block';
+  document.getElementById('acceptCTA').style.display = 'block';
+  document.getElementById('acceptedBadge').style.display = 'none';
+  document.getElementById('onboardingBlock').style.display = 'none';
+  document.getElementById('timelineBlock').style.display = 'block';
+  document.getElementById('crewCard').style.display = 'none';
+  document.getElementById('payOptions').style.display = 'block';
+  document.getElementById('payConfirmACH').style.display = 'none';
+  document.getElementById('surveyCTA').style.display = 'none';
+  document.getElementById('changeOrderInvoice').style.display = 'none';
+  document.getElementById('tlComplete').style.display = 'block';
+
+  // Reset timeline
+  document.getElementById('tlInProgress').querySelector('.timeline-dot').className = 'timeline-dot current';
+  document.getElementById('tlInProgress').querySelector('.tl-title').textContent = 'In Progress';
+  document.getElementById('tlInProgress').querySelector('.tl-date').textContent = 'Started March 3, 2026';
+  document.getElementById('tlInProgress').querySelector('.tl-note').textContent = 'Day 2 of 4 · Interior 60% complete, exterior starting tomorrow';
+  document.getElementById('tlComplete').querySelector('.timeline-dot').className = 'timeline-dot upcoming';
+  document.getElementById('tlPayment').querySelector('.timeline-dot').className = 'timeline-dot upcoming';
+
+  const ps = document.getElementById('proposalStatus');
+  const pp = document.getElementById('projectStatusPill');
+  const wb = document.getElementById('warrantyStatusBadge');
+
+  document.querySelectorAll('.nav-tab .badge').forEach(b => b.remove());
+
+  switch(state) {
+    case 'proposal':
+      ps.textContent = '⏳ Awaiting'; ps.className = 'status-pill pending';
+      pp.textContent = '—'; pp.className = 'status-pill pending';
+      break;
+    case 'onboarding':
+      document.getElementById('expirationBar').style.display = 'none';
+      document.getElementById('acceptCTA').style.display = 'none';
+      document.getElementById('acceptedBadge').style.display = 'block';
+      ps.textContent = '✅ Accepted'; ps.className = 'status-pill complete';
+      document.getElementById('onboardingBlock').style.display = 'block';
+      document.getElementById('timelineBlock').style.display = 'none';
+      addBadge('status', '2', false);
+      switchTab('status');
+      break;
+    case 'in-progress':
+      document.getElementById('expirationBar').style.display = 'none';
+      document.getElementById('acceptCTA').style.display = 'none';
+      document.getElementById('acceptedBadge').style.display = 'block';
+      ps.textContent = '✅ Accepted'; ps.className = 'status-pill complete';
+      document.getElementById('crewCard').style.display = 'block';
+      pp.textContent = '🔨 In Progress'; pp.className = 'status-pill active';
+      switchTab('status');
+      break;
+    case 'complete':
+      document.getElementById('expirationBar').style.display = 'none';
+      document.getElementById('acceptCTA').style.display = 'none';
+      document.getElementById('acceptedBadge').style.display = 'block';
+      ps.textContent = '✅ Accepted'; ps.className = 'status-pill complete';
+      pp.textContent = '✅ Complete'; pp.className = 'status-pill complete';
+      document.getElementById('tlInProgress').querySelector('.timeline-dot').className = 'timeline-dot done';
+      document.getElementById('tlInProgress').querySelector('.tl-title').textContent = 'Work Completed';
+      document.getElementById('tlInProgress').querySelector('.tl-date').textContent = 'March 6, 2026';
+      document.getElementById('tlInProgress').querySelector('.tl-note').textContent = 'All interior and exterior work finished';
+      document.getElementById('tlComplete').style.display = 'none';
+      document.getElementById('tlPayment').querySelector('.timeline-dot').className = 'timeline-dot current';
+      wb.textContent = 'Pending — Complete Survey to Activate';
+      wb.className = 'warranty-status pending-warranty';
+      document.getElementById('surveyCTA').style.display = 'block';
+      document.getElementById('changeOrderInvoice').style.display = 'block';
+      addBadge('payments', '!', true);
+      switchTab('status');
+      break;
+    case 'expired':
+      document.getElementById('expirationBar').style.display = 'none';
+      document.getElementById('expiredNotice').style.display = 'block';
+      document.getElementById('proposalContent').style.display = 'none';
+      switchTab('proposal');
+      break;
+  }
+}
+
+function addBadge(tabName, text, isRed) {
+  const tab = document.querySelector('.nav-tab[data-tab="'+tabName+'"]');
+  const b = document.createElement('span');
+  b.className = 'badge' + (isRed ? '' : ' green');
+  b.textContent = text;
+  tab.appendChild(b);
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.nav-tab[data-tab="'+tabName+'"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+}
+
+function selectPackage(el, price) {
+  document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('totalPrice').textContent = '$' + price.toLocaleString();
+}
+
+function toggleScope(header) {
+  const body = header.nextElementSibling;
+  const ch = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  ch.textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+function openAcceptance() {
+  document.getElementById('acceptOverlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function acceptStep(n) {
+  document.querySelectorAll('.accept-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('aStep' + n).classList.add('active');
+  for (let i = 1; i <= 3; i++) document.getElementById('ap'+i).classList.toggle('done', i <= n);
+  window.scrollTo({top:0});
+}
+
+function toggleCheck() {
+  setTimeout(() => {
+    const t = document.getElementById('termsCheck').checked;
+    const p = document.getElementById('payCheck').checked;
+    document.getElementById('termsNextBtn').style.opacity = t ? '1' : '0.5';
+    document.getElementById('termsNextBtn').style.pointerEvents = t ? 'auto' : 'none';
+    document.getElementById('payNextBtn').style.opacity = p ? '1' : '0.5';
+    document.getElementById('payNextBtn').style.pointerEvents = p ? 'auto' : 'none';
+  }, 50);
+}
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('sigPayMethod').textContent = el.querySelector('.name').textContent;
+}
+
+function updateSig() {
+  const v = document.getElementById('sigInput').value.trim();
+  document.getElementById('sigPreview').textContent = v || '\u00A0';
+  document.getElementById('signBtn').style.opacity = v.length > 2 ? '1' : '0.5';
+  document.getElementById('signBtn').style.pointerEvents = v.length > 2 ? 'auto' : 'none';
+}
+
+function completeAcceptance() {
+  document.getElementById('acceptOverlay').classList.remove('visible');
+  document.body.style.overflow = '';
+  setState('onboarding');
+}
+
+function showPayConfirm() {
+  document.getElementById('payOptions').style.display = 'none';
+  document.getElementById('payConfirmACH').style.display = 'block';
+}
+</script>
+</body>
+</html>
