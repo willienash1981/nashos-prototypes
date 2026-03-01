@@ -207,8 +207,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="card-h"><div class="card-t">📋 Recent Purchase Orders</div><div class="card-a">View All →</div></div>
       <div class="filter-bar" style="padding:12px 18px 0">
         <select id="f-status"><option value="">All Statuses</option><option>AUTHORIZED</option><option>FULFILLED</option><option>BILLED</option><option>PAID</option><option>ROGUE</option></select>
-        <select id="f-type"><option value="">All Types</option><option>Materials</option><option>Subcontractor</option></select>
-        <select id="f-supplier"><option value="">All Suppliers</option><option>Hoover Paint</option><option>Sherwin-Williams</option><option>Carlos Rodriguez</option><option>William Rodriguez</option><option>Javier Paz</option></select>
+        <select id="f-type"><option value="">All Types</option><option>Materials</option></select>
+        <select id="f-supplier"><option value="">All Suppliers</option><option>Hoover Paint</option><option>Sherwin-Williams</option></select>
         <input type="date" id="f-from" title="From date">
         <input type="date" id="f-to" title="To date">
         <button class="btn-outline-dark btn-sm" onclick="filterPOs()">Filter</button>
@@ -257,12 +257,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
             <p style="font-size:13px;font-weight:600;margin-bottom:10px">How should we handle the non-paint items?</p>
             <div class="sep-option" onclick="selectSep('A',this)"><strong>A: Remove Items from Order</strong><span>Ask the store to take the non-paint items off. Only paint, primer, and caulking go on the PO.</span></div>
             <div class="sep-option" onclick="selectSep('B',this)"><strong>B: Crew Pays Personally</strong><span>Crew member pays for perishable items themselves. Only paint goes on Nash PO.</span></div>
-            <div class="sep-option" onclick="selectSep('C',this)"><strong>C: Employee PO for Sub → Payroll Deduction</strong><span>Create a separate Employee Perishable PO. Amount will be deducted from crew's pay.</span></div>
+
           </div>
         </div>
         <div class="wizard-step" id="ws3">
           <div class="grid-2">
-            <div class="form-group"><label>PO Type</label><select id="po-type" onchange="poTypeChanged()"><option value="materials">Materials</option><option value="sub">Subcontractor</option></select></div>
+            <div class="form-group"><label>PO Type</label><input type="text" value="Materials" readonly style="background:#f0eeea;cursor:default"><input type="hidden" id="po-type" value="materials"></div>
             <div class="form-group"><label>Supplier</label><select id="po-supplier" onchange="supplierChanged()"></select></div>
             <div class="form-group"><label>Store Location</label><select id="po-store"></select></div>
             <div class="form-group"><label>Estimated Amount (optional)</label><input type="text" id="po-amount" placeholder="$0.00"></div>
@@ -436,11 +436,7 @@ const MATERIAL_SUPPLIERS={
 hoover:{name:'Hoover Paint',acct:'Credit Account (Net-30)',stores:['Clarksville — 1690 Wilma Rudolph Blvd','Cookeville — 214 W. Spring St','Cool Springs — 1701 Mallory Ln, Brentwood','Green Hills — 4004 Hillsboro Pike, Nashville','Mt. Juliet — 518 Pleasant Grove Rd','Murfreesboro — 830 Memorial Blvd','Pleasant View — 216 Ren Mar Center Dr','Shelbyville — 101 Northside Cir Ste C','Smyrna — 200 Jefferson St']},
 sw:{name:'Sherwin-Williams',acct:'Credit Account',stores:['SW #7231 — Cool Springs','SW #7458 — Green Hills','SW #7102 — Murfreesboro','SW #7389 — Mt. Juliet','SW #7550 — Smyrna']}
 };
-const SUBCONTRACTORS=[
-{id:'carlos-r',name:'Carlos Rodriguez'},
-{id:'william-r',name:'William Rodriguez'},
-{id:'javier-p',name:'Javier Paz'}
-];
+
 const PO_DATA=[
 {po:'555001-1',date:'Feb 28, 10:15 AM',job:'Thompson — 234 Riverside Dr',crew:'Carlos',store:'Cool Springs',type:'Materials',amount:485,status:'AUTHORIZED',supplier:'Hoover Paint'},
 {po:'555001-2',date:'Feb 28, 11:42 AM',job:'Thompson — 234 Riverside Dr',crew:'Carlos',store:'Cool Springs',type:'Materials',amount:220,status:'AUTHORIZED',supplier:'Hoover Paint'},
@@ -457,9 +453,7 @@ const PO_DATA=[
 {po:'555020-1',date:'Feb 23, 8:20 AM',job:'Taylor — 781 Lebanon Pike',crew:'Roberto',store:'Mt. Juliet',type:'Materials',amount:198,status:'PAID',supplier:'Hoover Paint'},
 {po:'555009-2',date:'Feb 25, 8:00 AM',job:'Garcia — 567 Magnolia Blvd',crew:'Jose',store:'SW #7389',type:'Materials',amount:18,status:'PAID',supplier:'Sherwin-Williams'},
 {po:'555020-2',date:'Feb 28, 9:30 AM',job:'Taylor — 781 Lebanon Pike',crew:'Roberto',store:'Mt. Juliet',type:'Materials',amount:355,status:'AUTHORIZED',supplier:'Hoover Paint'},
-{po:'555005-2',date:'Feb 27, 11:00 AM',job:'Patterson — 1087 Cedar Ln',crew:'Roberto',store:'—',type:'Subcontractor',amount:2800,status:'PAID',supplier:'Carlos Rodriguez'},
-{po:'555001-3',date:'Feb 26, 3:15 PM',job:'Thompson — 234 Riverside Dr',crew:'Carlos',store:'—',type:'Subcontractor',amount:3500,status:'AUTHORIZED',supplier:'William Rodriguez'},
-{po:'555009-3',date:'Feb 24, 10:30 AM',job:'Garcia — 567 Magnolia Blvd',crew:'Jose',store:'—',type:'Subcontractor',amount:4200,status:'PAID',supplier:'Javier Paz'}
+
 ];
 const SUPERVISORS=[
 {name:'Anthony',initials:'AT',weekSpent:18,weekLimit:25,monthSpent:142,monthLimit:200,recent:[{desc:'Rollers & tape — 555001',amt:18},{desc:'Drop cloths — 555011',amt:12},{desc:'Brushes — 555011',amt:15}]},
@@ -514,26 +508,15 @@ function selectJob(id){selectedJob=JOBS.find(function(j){return j.id===id;});doc
 function validateClean(){wizardSep=null;document.getElementById('po-type').value='materials';poTypeChanged();setStep(3);}
 function validateDirty(){document.getElementById('sep-options').style.display='block';}
 
-function selectSep(opt,el){document.querySelectorAll('.sep-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');wizardSep=opt;if(opt==='A')document.getElementById('po-type').value='materials';else if(opt==='B')document.getElementById('po-type').value='materials';else document.getElementById('po-type').value='sub';setTimeout(()=>{poTypeChanged();setStep(3);},300);}
+function selectSep(opt,el){document.querySelectorAll('.sep-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');wizardSep=opt;document.getElementById('po-type').value='materials';setTimeout(()=>{poTypeChanged();setStep(3);},300);}
 
-function poTypeChanged(){const v=document.getElementById('po-type').value;populateSuppliers();document.getElementById('budget-widget').style.display='none';document.getElementById('budget-denied').style.display='none';document.getElementById('btn-step3').style.display='';}
+function poTypeChanged(){document.getElementById('budget-widget').style.display='none';document.getElementById('budget-denied').style.display='none';document.getElementById('btn-step3').style.display='';}
 
 function populateSuppliers(){
-var poType=document.getElementById('po-type').value;
-var supLabel=document.querySelector('label[for="po-supplier"]')||document.getElementById('po-supplier').parentElement.querySelector('label');
 var sel=document.getElementById('po-supplier');
-var storeGroup=document.getElementById('po-store').parentElement;
 sel.innerHTML='';
-if(poType==='materials'){
-if(supLabel)supLabel.textContent='Supplier';
 Object.keys(MATERIAL_SUPPLIERS).forEach(function(k){sel.innerHTML+='<option value="'+k+'">'+MATERIAL_SUPPLIERS[k].name+' ('+MATERIAL_SUPPLIERS[k].acct+')</option>';});
-storeGroup.style.display='';
 supplierChanged();
-}else{
-if(supLabel)supLabel.textContent='Subcontractor';
-SUBCONTRACTORS.forEach(function(s){sel.innerHTML+='<option value="'+s.id+'">'+s.name+'</option>';});
-storeGroup.style.display='none';
-}
 }
 function supplierChanged(){
 var sel=document.getElementById('po-store');
@@ -545,7 +528,7 @@ else{sel.innerHTML='';}
 
 function checkBudget(){const name=document.getElementById('po-supervisor').value;const sup=SUPERVISORS.find(s=>s.name.toLowerCase()===name);if(!sup)return;const wP=Math.round(sup.weekSpent/sup.weekLimit*100),mP=Math.round(sup.monthSpent/sup.monthLimit*100);const wC=wP>=100?'red':wP>=75?'yellow':'green',mC=mP>=100?'red':mP>=75?'yellow':'green';const denied=wP>=100||mP>=100;document.getElementById('budget-display').innerHTML='<div class="budget-row"><div class="budget-lbl"><span>This Week</span><span>$'+sup.weekSpent+' / $'+sup.weekLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+wC+'" style="width:'+Math.min(wP,100)+'%"></div></div></div><div class="budget-row"><div class="budget-lbl"><span>This Month</span><span>$'+sup.monthSpent+' / $'+sup.monthLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+mC+'" style="width:'+Math.min(mP,100)+'%"></div></div></div>'+(denied?'<div style="margin-top:8px;font-size:12px;color:var(--red);font-weight:600">🔴 AT BUDGET CAP</div>':wP>=75||mP>=75?'<div style="margin-top:8px;font-size:12px;color:var(--yellow);font-weight:600">🟡 Approaching limit</div>':'<div style="margin-top:8px;font-size:12px;color:var(--green);font-weight:600">🟢 Within budget</div>');document.getElementById('budget-denied').style.display=denied?'flex':'none';document.getElementById('btn-step3').style.display=denied?'none':'';}
 
-function goStep4(){const tm={materials:'Materials',sub:'Subcontractor'};const pt=tm[document.getElementById('po-type').value]||'Materials';const store=document.getElementById('po-store').value;var poType=document.getElementById('po-type').value;var supplier=document.getElementById('po-supplier').selectedOptions[0].textContent;const amt=document.getElementById('po-amount').value||'Not specified';const notes=document.getElementById('po-notes').value||'None';document.getElementById('po-summary').innerHTML='<div class="summary-row"><span class="s-label">Job</span><span class="s-value">'+selectedJob.customer+' — '+selectedJob.addr+'</span></div><div class="summary-row"><span class="s-label">Job #</span><span class="s-value">'+selectedJob.id+'</span></div><div class="summary-row"><span class="s-label">Crew Leader</span><span class="s-value">'+selectedJob.crew+'</span></div><div class="summary-row"><span class="s-label">PO Type</span><span class="s-value">'+pt+'</span></div><div class="summary-row"><span class="s-label">Supplier</span><span class="s-value">'+supplier+'</span></div><div class="summary-row"><span class="s-label">Store</span><span class="s-value">'+store+'</span></div><div class="summary-row"><span class="s-label">Estimated Amount</span><span class="s-value">'+amt+'</span></div><div class="summary-row"><span class="s-label">Notes</span><span class="s-value">'+notes+'</span></div>';document.getElementById('po-generated').style.display='none';document.getElementById('po-gen-btn').style.display='';setStep(4);}
+function goStep4(){const pt='Materials';const store=document.getElementById('po-store').value;var supplier=document.getElementById('po-supplier').selectedOptions[0].textContent;const amt=document.getElementById('po-amount').value||'Not specified';const notes=document.getElementById('po-notes').value||'None';document.getElementById('po-summary').innerHTML='<div class="summary-row"><span class="s-label">Job</span><span class="s-value">'+selectedJob.customer+' — '+selectedJob.addr+'</span></div><div class="summary-row"><span class="s-label">Job #</span><span class="s-value">'+selectedJob.id+'</span></div><div class="summary-row"><span class="s-label">Crew Leader</span><span class="s-value">'+selectedJob.crew+'</span></div><div class="summary-row"><span class="s-label">PO Type</span><span class="s-value">'+pt+'</span></div><div class="summary-row"><span class="s-label">Supplier</span><span class="s-value">'+supplier+'</span></div><div class="summary-row"><span class="s-label">Store</span><span class="s-value">'+store+'</span></div><div class="summary-row"><span class="s-label">Estimated Amount</span><span class="s-value">'+amt+'</span></div><div class="summary-row"><span class="s-label">Notes</span><span class="s-value">'+notes+'</span></div>';document.getElementById('po-generated').style.display='none';document.getElementById('po-gen-btn').style.display='';setStep(4);}
 
 function generatePO(){const seq=Math.floor(Math.random()*5)+1;const poNum=selectedJob.id+'-'+seq;document.getElementById('po-number-display').textContent='PO# '+poNum;document.getElementById('po-generated').style.display='block';document.getElementById('po-gen-btn').style.display='none';}
 
