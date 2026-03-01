@@ -229,16 +229,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <div class="wizard-dot" id="wd4">4. Confirm</div>
         </div>
         <div class="wizard-step active" id="ws1">
-          <div style="display:flex;gap:10px;margin-bottom:16px">
-            <div class="po-source-btn active" id="src-store" onclick="setSource('store')" style="flex:1;padding:14px;border:2px solid var(--gold);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:#FDFCF8;transition:all .15s">
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+            <div class="po-source-btn active" id="src-store" onclick="setSource('store')" style="flex:1;min-width:140px;padding:14px;border:2px solid var(--gold);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:#FDFCF8;transition:all .15s">
               <div style="font-size:18px;margin-bottom:4px">🏪</div>
               <div style="font-size:13px;font-weight:700">Store Call</div>
-              <div style="font-size:11px;color:var(--text-sec)">Hoover / SW calling to authorize pickup</div>
+              <div style="font-size:11px;color:var(--text-sec)">Hoover / SW credit account</div>
             </div>
-            <div class="po-source-btn" id="src-field" onclick="setSource('field')" style="flex:1;padding:14px;border:2px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:var(--white);transition:all .15s">
+            <div class="po-source-btn" id="src-field" onclick="setSource('field')" style="flex:1;min-width:140px;padding:14px;border:2px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:var(--white);transition:all .15s">
               <div style="font-size:18px;margin-bottom:4px">💳</div>
               <div style="font-size:13px;font-weight:700">Field CC Purchase</div>
-              <div style="font-size:11px;color:var(--text-sec)">Supervisor needs CC PO approval</div>
+              <div style="font-size:11px;color:var(--text-sec)">Job materials from HD / Lowe's / etc.</div>
+            </div>
+            <div class="po-source-btn" id="src-perishable" onclick="setSource('perishable')" style="flex:1;min-width:140px;padding:14px;border:2px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:var(--white);transition:all .15s">
+              <div style="font-size:18px;margin-bottom:4px">🧹</div>
+              <div style="font-size:13px;font-weight:700">Supervisor Perishable</div>
+              <div style="font-size:11px;color:var(--text-sec)">Not job-specific · hits supervisor budget</div>
             </div>
           </div>
           <div class="form-group"><label>Search Jobs</label><input type="text" id="job-search" placeholder="Filter by customer name or street..." oninput="filterJobList(this.value)" autocomplete="off" style="margin-bottom:12px"></div>
@@ -255,6 +260,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
               <div class="job-section-header"><span class="badge badge-yellow" style="font-size:12px;padding:4px 12px">💰 Sold — Not Yet Scheduled</span></div>
               <div class="job-list" id="jobs-sold"></div>
             </div>
+          </div>
+          <div id="perishable-direct" style="display:none">
+            <div class="banner banner-info">🧹 Supervisor perishable purchases are <strong>not tied to a specific job</strong>. They come out of the supervisor's monthly budget ($25/wk, $200/mo cap).</div>
+            <div class="grid-2" style="margin-bottom:14px">
+              <div class="form-group"><label>Supervisor</label><select id="perish-supervisor" onchange="checkPerishBudget()"><option value="anthony">Anthony</option><option value="matthew">Matthew</option><option value="jeff">Jeff</option><option value="marcus">Marcus</option><option value="david">David</option></select></div>
+              <div class="form-group"><label>Where are they buying?</label><select id="perish-store"><option>Home Depot</option><option>Lowe's</option><option>Hoover Paint</option><option>Sherwin-Williams</option><option>Walker Lumber</option><option>Other</option></select></div>
+            </div>
+            <div id="perish-budget-display" style="margin-bottom:14px"></div>
+            <div class="form-group"><label>What are they picking up?</label><input type="text" id="perish-items" placeholder="e.g. Tape, rollers, drop cloths, brushes..."></div>
+            <div class="form-group"><label>Estimated Amount</label><input type="text" id="perish-amount" placeholder="$0.00"></div>
+            <div id="perish-denied" class="banner banner-danger" style="display:none">🚫 <strong>DENIED</strong> — This supervisor has hit their budget cap. Cannot authorize.</div>
+            <button class="btn-gold" id="perish-continue" style="padding:14px;font-size:14px;width:100%" onclick="perishableToConfirm()">Generate PO →</button>
           </div>
         </div>
         <div class="wizard-step" id="ws2">
@@ -511,6 +528,28 @@ function filterPOs(){let d=[...PO_DATA];const s=document.getElementById('f-statu
 let selectedJob=null,wizardSep=null;
 function setStep(n){for(let i=1;i<=4;i++){document.getElementById('ws'+i).classList.toggle('active',i===n);const dot=document.getElementById('wd'+i);dot.classList.remove('active','done');if(i<n)dot.classList.add('done');if(i===n)dot.classList.add('active');}}
 
+function checkPerishBudget(){
+var name=document.getElementById('perish-supervisor').value;
+var sup=SUPERVISORS.find(function(s){return s.name.toLowerCase()===name;});
+if(!sup)return;
+var wP=Math.round(sup.weekSpent/sup.weekLimit*100),mP=Math.round(sup.monthSpent/sup.monthLimit*100);
+var wC=wP>=100?'red':wP>=75?'yellow':'green',mC=mP>=100?'red':mP>=75?'yellow':'green';
+var denied=mP>=100;
+document.getElementById('perish-budget-display').innerHTML='<div style="background:var(--white);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border)"><div class="budget-row"><div class="budget-lbl"><span>This Week</span><span>$'+sup.weekSpent+' / $'+sup.weekLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+wC+'" style="width:'+Math.min(wP,100)+'%"></div></div></div><div class="budget-row"><div class="budget-lbl"><span>This Month</span><span>$'+sup.monthSpent+' / $'+sup.monthLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+mC+'" style="width:'+Math.min(mP,100)+'%"></div></div></div>'+(denied?'<div style="margin-top:8px;font-size:12px;color:var(--red);font-weight:600">🔴 AT BUDGET CAP</div>':wP>=75||mP>=75?'<div style="margin-top:8px;font-size:12px;color:var(--yellow);font-weight:600">🟡 Approaching limit</div>':'<div style="margin-top:8px;font-size:12px;color:var(--green);font-weight:600">🟢 Within budget</div>')+'</div>';
+document.getElementById('perish-denied').style.display=denied?'flex':'none';
+document.getElementById('perish-continue').style.display=denied?'none':'';
+}
+function perishableToConfirm(){
+var supName=document.getElementById('perish-supervisor').value;
+var sup=SUPERVISORS.find(function(s){return s.name.toLowerCase()===supName;});
+var store=document.getElementById('perish-store').value;
+var items=document.getElementById('perish-items').value||'Not specified';
+var amt=document.getElementById('perish-amount').value||'Not specified';
+selectedJob={id:'PERISH',customer:'Supervisor Perishable',addr:'N/A — Not job-specific',crew:sup?sup.name:'—',sup:sup?sup.name:'—',svc:'Perishable'};
+document.getElementById('po-summary').innerHTML='<div class="summary-row"><span class="s-label">Type</span><span class="s-value"><span class="badge badge-yellow">Supervisor Perishable</span></span></div><div class="summary-row"><span class="s-label">Supervisor</span><span class="s-value">'+(sup?sup.name:'—')+'</span></div><div class="summary-row"><span class="s-label">Store</span><span class="s-value">'+store+'</span></div><div class="summary-row"><span class="s-label">Items</span><span class="s-value">'+items+'</span></div><div class="summary-row"><span class="s-label">Estimated Amount</span><span class="s-value">'+amt+'</span></div><div class="summary-row"><span class="s-label">Charged To</span><span class="s-value">Supervisor perishable budget (not job cost)</span></div>';
+document.getElementById('po-generated').style.display='none';document.getElementById('po-gen-btn').style.display='';
+setStep(4);
+}
 function renderJobList(filter){
 var q=(filter||'').toLowerCase();
 var groups={'In Progress':'inprogress','Scheduled':'scheduled','Sold':'sold'};
@@ -542,10 +581,13 @@ function poTypeChanged(){document.getElementById('budget-widget').style.display=
 var poSource='store';
 function setSource(src){
 poSource=src;
-document.getElementById('src-store').style.borderColor=src==='store'?'var(--gold)':'var(--border)';
-document.getElementById('src-store').style.background=src==='store'?'#FDFCF8':'var(--white)';
-document.getElementById('src-field').style.borderColor=src==='field'?'var(--gold)':'var(--border)';
-document.getElementById('src-field').style.background=src==='field'?'#FDFCF8':'var(--white)';
+['store','field','perishable'].forEach(function(s){
+var el=document.getElementById('src-'+s);
+if(el){el.style.borderColor=src===s?'var(--gold)':'var(--border)';el.style.background=src===s?'#FDFCF8':'var(--white)';}
+});
+document.getElementById('job-list-container').style.display=src==='perishable'?'none':'block';
+document.getElementById('job-search').parentElement.style.display=src==='perishable'?'none':'block';
+document.getElementById('perishable-direct').style.display=src==='perishable'?'block':'none';
 }
 function populateSuppliers(){
 var sel=document.getElementById('po-supplier');
@@ -587,7 +629,7 @@ function renderSpreadChart(){const data=[{label:'Walls',est:350,act:320},{label:
 
 function renderVarianceChart(){const data=[{label:'Interior',val:6},{label:'Exterior',val:14},{label:'Deck',val:10},{label:'Fence',val:4},{label:'Cabinet',val:18}];const max=Math.max(...data.map(d=>d.val));document.getElementById('variance-chart').innerHTML=data.map(d=>{const c=d.val>15?'var(--red)':d.val>10?'var(--yellow)':'var(--green)';return '<div class="bar-row"><div class="bar-label">'+d.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(d.val/max*100)+'%;background:'+c+'"></div></div><div class="bar-val">+'+d.val+'%</div></div>';}).join('');}
 
-renderPOs(PO_DATA);populateSuppliers();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
+renderPOs(PO_DATA);populateSuppliers();checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
 </script>
 </body>
 </html>
