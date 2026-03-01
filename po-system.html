@@ -190,7 +190,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <button class="tab-btn" onclick="switchTab('newpo')">📞 New PO</button>
     <button class="tab-btn" onclick="switchTab('budgets')">👷 Supervisor Budgets</button>
     <button class="tab-btn" onclick="switchTab('rogue')">🔍 Rogue POs</button>
-    <button class="tab-btn" onclick="switchTab('reconcile')">📊 Bill Reconciliation</button>
+    <button class="tab-btn" onclick="switchTab('daily')">📋 Daily Receipts</button>
+    <button class="tab-btn" onclick="switchTab('reconcile')">📊 Month-End</button>
     <button class="tab-btn" onclick="switchTab('tracking')">📈 Material Tracking</button>
   </div>
 
@@ -371,7 +372,77 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
   </div>
 
-  <!-- TAB 5: BILL RECONCILIATION -->
+  <!-- TAB 5B: DAILY RECEIPT CHECK -->
+  <div id="tab-daily" class="tab-content">
+    <div class="kpi-strip">
+      <div class="kpi gold-hl"><div class="kpi-lbl">Today's POs</div><div class="kpi-val" id="daily-po-count">5</div></div>
+      <div class="kpi"><div class="kpi-lbl">Receipts Verified</div><div class="kpi-val" style="color:var(--green)" id="daily-verified">3</div></div>
+      <div class="kpi alert"><div class="kpi-lbl">Pending Verification</div><div class="kpi-val" style="color:var(--yellow)" id="daily-pending">2</div></div>
+      <div class="kpi"><div class="kpi-lbl">Today's Material Spend</div><div class="kpi-val" id="daily-spend">$1,465</div></div>
+      <div class="kpi"><div class="kpi-lbl">Month-to-Date</div><div class="kpi-val">$14,870</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-h"><div class="card-t">📥 Enter Store Receipt</div><div class="card-a" onclick="showReceiptEntry()">+ Add Receipt</div></div>
+      <div id="receipt-entry" style="display:none">
+        <div class="card-b">
+          <div style="padding:16px;border:2px dashed var(--border);border-radius:var(--radius-sm);text-align:center;color:var(--text-sec);font-size:13px;margin-bottom:14px;cursor:pointer">
+            📄 Scan or photograph the store receipt<br><span style="font-size:11px">Drop image here, or enter details manually below</span>
+          </div>
+          <div class="grid-2" style="margin-bottom:10px">
+            <div class="form-group" style="margin:0"><label>PO Number</label><input type="text" id="receipt-po" placeholder="e.g. 555001-1"></div>
+            <div class="form-group" style="margin:0"><label>Store</label><select id="receipt-store"><option>Hoover — Cool Springs</option><option>Hoover — Murfreesboro</option><option>Hoover — Green Hills</option><option>Hoover — Mt. Juliet</option><option>Hoover — Clarksville</option><option>Hoover — Smyrna</option><option>Hoover — Pleasant View</option><option>Hoover — Cookeville</option><option>Hoover — Shelbyville</option><option>SW — Cool Springs</option><option>SW — Green Hills</option><option>Home Depot</option><option>Lowe's</option><option>Walker Lumber</option></select></div>
+          </div>
+          <div class="grid-2" style="margin-bottom:10px">
+            <div class="form-group" style="margin:0"><label>Receipt Date</label><input type="date" id="receipt-date" value="2026-02-28"></div>
+            <div class="form-group" style="margin:0"><label>Receipt Total</label><input type="text" id="receipt-total" placeholder="$0.00"></div>
+          </div>
+          <div style="margin-bottom:10px"><p style="font-size:12px;font-weight:600;margin-bottom:6px">Line Items <span style="color:var(--text-sec);font-weight:400">(store all details for future AI analysis)</span></p>
+            <div id="receipt-lines">
+              <div class="receipt-line" style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+                <input type="text" placeholder="Product (e.g. SW Duration EW Semi-Gloss)" style="flex:3;min-width:200px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+                <input type="text" placeholder="Color" style="flex:1;min-width:100px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+                <input type="text" placeholder="Qty" style="width:50px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;text-align:center">
+                <input type="text" placeholder="$" style="width:70px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;text-align:right">
+              </div>
+            </div>
+            <button class="btn-outline-dark btn-sm" onclick="addReceiptLine()" style="margin-top:4px">+ Add Line Item</button>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <button class="btn-gold" onclick="submitReceipt()">✅ Verify & Save Receipt</button>
+            <button class="btn-outline-dark" onclick="hideReceiptEntry()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">📋 Today's PO Receipts — Feb 28, 2026</div>
+        <div style="display:flex;gap:8px">
+          <select id="daily-filter" onchange="filterDaily()" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+            <option value="all">All</option>
+            <option value="verified">Verified ✅</option>
+            <option value="pending">Pending ⏳</option>
+            <option value="mismatch">Mismatch ⚠️</option>
+          </select>
+        </div>
+      </div>
+      <div id="daily-table"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-h"><div class="card-t">📅 This Week's Receipt Log</div></div>
+      <div class="card-b">
+        <div class="bar-row"><div class="bar-label">Mon 2/24</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div><div class="bar-val">6/6 ✅</div></div>
+        <div class="bar-row"><div class="bar-label">Tue 2/25</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div><div class="bar-val">4/4 ✅</div></div>
+        <div class="bar-row"><div class="bar-label">Wed 2/26</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div><div class="bar-val">5/5 ✅</div></div>
+        <div class="bar-row"><div class="bar-label">Thu 2/27</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div><div class="bar-val">3/3 ✅</div></div>
+        <div class="bar-row"><div class="bar-label">Fri 2/28</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--yellow)"></div></div><div class="bar-val">3/5 ⏳</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: MONTH-END RECONCILIATION -->
   <div id="tab-reconcile" class="tab-content">
     <!-- Step 1: Import -->
     <div id="recon-step1">
@@ -551,7 +622,7 @@ var RECON_LINES=[
 {id:9,bill:'5 gal SW ProMar 200 Primer',store:'Smyrna',date:'Feb 25',time:'6:32 AM',po:'—',job:'—',crew:'—',billAmt:149,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Purchased at 6:32 AM — before Nash office opens (7:00 AM). Smyrna store has no record of who picked up.'}
 ];
 
-function switchTab(id){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');const tabs=['dashboard','newpo','budgets','rogue','reconcile','tracking'];const idx=tabs.indexOf(id);if(idx>=0)document.querySelectorAll('.tab-btn')[idx].classList.add('active');}
+function switchTab(id){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');const tabs=['dashboard','newpo','budgets','rogue','daily','reconcile','tracking'];const idx=tabs.indexOf(id);if(idx>=0)document.querySelectorAll('.tab-btn')[idx].classList.add('active');}
 
 function renderPOs(data){document.getElementById('po-tbody').innerHTML=data.map(p=>{const tb=p.type==='Materials'?'badge-blue':'badge-purple';const sm={AUTHORIZED:'badge-blue',FULFILLED:'badge-yellow',BILLED:'badge-purple',PAID:'badge-green',ROGUE:'badge-red'};return '<tr><td><strong>'+p.po+'</strong></td><td>'+p.date+'</td><td>'+p.job+'</td><td>'+p.crew+'</td><td>'+p.store+'</td><td><span class="badge '+tb+'">'+p.type+'</span></td><td>$'+p.amount+'</td><td><span class="badge '+(sm[p.status]||'badge-blue')+'">'+p.status+'</span></td></tr>';}).join('');}
 
@@ -687,6 +758,85 @@ function renderSupervisors(){document.getElementById('sup-grid').innerHTML=SUPER
 function openBudgetModal(name){document.getElementById('modal-sup-name').value=name;document.getElementById('modal-budget').classList.add('show');}
 function closeBudgetModal(){document.getElementById('modal-budget').classList.remove('show');}
 
+var DAILY_RECEIPTS=[
+{po:'555001-1',job:'Thompson — 234 Riverside Dr',crew:'Carlos',store:'Hoover — Cool Springs',date:'Feb 28',time:'8:42 AM',poAmt:485,receiptAmt:485,status:'verified',items:[{product:'SW Duration Extra White Semi-Gloss',color:'Alabaster SW 7008',qty:'5 gal',price:'$485'}]},
+{po:'555001-2',job:'Thompson — 234 Riverside Dr',crew:'Carlos',store:'Hoover — Cool Springs',date:'Feb 28',time:'8:42 AM',poAmt:220,receiptAmt:220,status:'verified',items:[{product:'SW ProMar 200 Primer',color:'White',qty:'2 gal',price:'$220'}]},
+{po:'555020-2',job:'Taylor — 781 Lebanon Pike',crew:'Roberto',store:'Hoover — Mt. Juliet',date:'Feb 28',time:'9:30 AM',poAmt:355,receiptAmt:355,status:'verified',items:[{product:'SW Emerald Matte',color:'Accessible Beige SW 7036',qty:'5 gal',price:'$315'},{product:'Caulk DAP Alex Plus',color:'—',qty:'6 tubes',price:'$40'}]},
+{po:'555003-1',job:'Johnson — 412 Elm St',crew:'Miguel',store:'Hoover — Murfreesboro',date:'Feb 28',time:'10:15 AM',poAmt:612,receiptAmt:612,status:'pending',items:[]},
+{po:'555005-2',job:'Patterson — 1087 Cedar Ln',crew:'Roberto',store:'Home Depot',date:'Feb 28',time:'2:15 PM',poAmt:47,receiptAmt:52,status:'mismatch',items:[],note:'Receipt total $52 vs PO authorized $47 — $5 difference'}
+];
+
+function showReceiptEntry(){document.getElementById('receipt-entry').style.display='block';}
+function hideReceiptEntry(){document.getElementById('receipt-entry').style.display='none';}
+function addReceiptLine(){
+var div=document.createElement('div');
+div.className='receipt-line';
+div.style.cssText='display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap';
+div.innerHTML='<input type="text" placeholder="Product" style="flex:3;min-width:200px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"><input type="text" placeholder="Color" style="flex:1;min-width:100px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"><input type="text" placeholder="Qty" style="width:50px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;text-align:center"><input type="text" placeholder="$" style="width:70px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;text-align:right">';
+document.getElementById('receipt-lines').appendChild(div);
+}
+function submitReceipt(){
+hideReceiptEntry();
+alert('Receipt verified and saved! (Simulated)');
+}
+function filterDaily(){renderDailyReceipts();}
+function renderDailyReceipts(){
+var filter=document.getElementById('daily-filter').value;
+var receipts=DAILY_RECEIPTS;
+if(filter!=='all')receipts=receipts.filter(function(r){return r.status===filter;});
+var html='';
+receipts.forEach(function(r,i){
+var icon=r.status==='verified'?'✅':r.status==='pending'?'⏳':'⚠️';
+var statusBadge=r.status==='verified'?'badge-green':r.status==='pending'?'badge-yellow':'badge-red';
+var statusText=r.status==='verified'?'Verified':r.status==='pending'?'Pending Receipt':'Amount Mismatch';
+var bg=r.status==='mismatch'?'background:var(--red-bg);':'';
+html+='<div style="padding:14px 16px;border-bottom:1px solid var(--border);'+bg+'">';
+html+='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">';
+html+='<span style="font-size:16px">'+icon+'</span>';
+html+='<div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600">PO# '+r.po+'</div><div style="font-size:11px;color:var(--text-sec)">'+r.job+'</div></div>';
+html+='<div style="min-width:80px"><div style="font-size:11px;color:var(--text-sec)">Crew</div><div style="font-size:12px">'+r.crew+'</div></div>';
+html+='<div style="min-width:120px"><div style="font-size:11px;color:var(--text-sec)">Store</div><div style="font-size:12px">'+r.store+'</div></div>';
+html+='<div style="min-width:70px"><div style="font-size:11px;color:var(--text-sec)">PO Amount</div><div style="font-size:13px;font-weight:600">$'+r.poAmt+'</div></div>';
+html+='<div style="min-width:70px"><div style="font-size:11px;color:var(--text-sec)">Receipt</div><div style="font-size:13px;font-weight:600;color:'+(r.status==='mismatch'?'var(--red)':'var(--text)')+'">$'+r.receiptAmt+'</div></div>';
+html+='<span class="badge '+statusBadge+'">'+statusText+'</span>';
+html+='</div>';
+// Show line items if verified
+if(r.status==='verified'&&r.items.length>0){
+html+='<div style="margin-top:8px;margin-left:28px;padding:8px 12px;background:var(--bg);border-radius:6px;font-size:12px">';
+r.items.forEach(function(item){
+html+='<div style="display:flex;justify-content:space-between;padding:2px 0"><span>'+item.qty+' '+item.product+(item.color!=='—'?' — '+item.color:'')+'</span><span style="font-weight:600">'+item.price+'</span></div>';
+});
+html+='</div>';
+}
+// Show actions for pending
+if(r.status==='pending'){
+html+='<div style="margin-top:8px;margin-left:28px;display:flex;gap:8px">';
+html+='<button class="btn-gold btn-sm" onclick="verifyDailyReceipt('+i+')">📥 Enter Receipt Details</button>';
+html+='<button class="btn-outline-dark btn-sm">📷 Scan Receipt Photo</button>';
+html+='</div>';
+}
+// Show mismatch details
+if(r.status==='mismatch'){
+html+='<div style="margin-top:8px;margin-left:28px;padding:8px 12px;background:var(--red-bg);border-radius:6px;border:1px solid #FECACA">';
+html+='<div style="font-size:12px;color:var(--red);margin-bottom:6px">'+r.note+'</div>';
+html+='<div style="display:flex;gap:8px"><button class="btn-gold btn-sm" onclick="approveDailyMismatch('+i+')">✅ Approve Difference</button><button class="btn-outline-dark btn-sm">❌ Dispute</button></div>';
+html+='</div>';
+}
+html+='</div>';
+});
+document.getElementById('daily-table').innerHTML=html;
+}
+function verifyDailyReceipt(idx){
+DAILY_RECEIPTS[idx].status='verified';
+DAILY_RECEIPTS[idx].receiptAmt=DAILY_RECEIPTS[idx].poAmt;
+DAILY_RECEIPTS[idx].items=[{product:'(Receipt details entered)',color:'—',qty:'—',price:'$'+DAILY_RECEIPTS[idx].poAmt}];
+renderDailyReceipts();
+}
+function approveDailyMismatch(idx){
+DAILY_RECEIPTS[idx].status='verified';
+DAILY_RECEIPTS[idx].items=[{product:'(Approved with variance)',color:'—',qty:'—',price:'$'+DAILY_RECEIPTS[idx].receiptAmt}];
+renderDailyReceipts();
+}
 function reconStep2(){
 document.getElementById('recon-step1').style.display='none';
 document.getElementById('recon-step2').style.display='block';
@@ -824,7 +974,7 @@ function renderSpreadChart(){const data=[{label:'Walls',est:350,act:320},{label:
 
 function renderVarianceChart(){const data=[{label:'Interior',val:6},{label:'Exterior',val:14},{label:'Deck',val:10},{label:'Fence',val:4},{label:'Cabinet',val:18}];const max=Math.max(...data.map(d=>d.val));document.getElementById('variance-chart').innerHTML=data.map(d=>{const c=d.val>15?'var(--red)':d.val>10?'var(--yellow)':'var(--green)';return '<div class="bar-row"><div class="bar-label">'+d.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(d.val/max*100)+'%;background:'+c+'"></div></div><div class="bar-val">+'+d.val+'%</div></div>';}).join('');}
 
-renderPOs(PO_DATA);checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
+renderPOs(PO_DATA);checkPerishBudget();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');renderDailyReceipts();
 </script>
 </body>
 </html>
