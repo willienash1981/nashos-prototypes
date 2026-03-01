@@ -96,6 +96,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .wizard-dot{flex:1;text-align:center;padding:10px 8px;font-size:12px;font-weight:600;color:var(--text-muted);position:relative;border-bottom:3px solid var(--border)}
 .wizard-dot.active{color:var(--navy);border-bottom-color:var(--gold)}
 .wizard-dot.done{color:var(--green);border-bottom-color:var(--green)}
+.job-section{margin-bottom:16px}
+.job-section-header{padding:6px 0;margin-bottom:8px;border-bottom:1px solid var(--border)}
+.job-list{display:flex;flex-direction:column;gap:6px}
+.job-item{padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.job-item:hover{border-color:var(--gold);background:#FDFCF8;box-shadow:0 0 0 2px rgba(196,169,98,.15)}
+.job-item .ji-main{flex:1;min-width:0}
+.job-item .ji-name{font-weight:600;font-size:14px}
+.job-item .ji-addr{font-size:12px;color:var(--text-sec)}
+.job-item .ji-meta{font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;gap:12px;flex-wrap:wrap}
+.job-item .ji-right{text-align:right;flex-shrink:0}
+.job-item .ji-id{font-size:12px;font-weight:600;color:var(--navy)}
+.job-item .ji-svc{font-size:11px;color:var(--text-sec)}
+.job-item.hidden{display:none}
+.job-section.hidden{display:none}
 .search-results{border:1px solid var(--border);border-radius:var(--radius-sm);max-height:300px;overflow-y:auto;display:none}
 .search-results.show{display:block}
 .search-result{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
@@ -215,8 +229,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <div class="wizard-dot" id="wd4">4. Confirm</div>
         </div>
         <div class="wizard-step active" id="ws1">
-          <div class="form-group"><label>Search Active Jobs</label><input type="text" id="job-search" placeholder="Type customer name or street address..." oninput="searchJobs(this.value)" autocomplete="off"></div>
-          <div class="search-results" id="job-results"></div>
+          <div class="form-group"><label>Search Jobs</label><input type="text" id="job-search" placeholder="Filter by customer name or street..." oninput="filterJobList(this.value)" autocomplete="off" style="margin-bottom:12px"></div>
+          <div id="job-list-container">
+            <div id="job-section-inprogress" class="job-section">
+              <div class="job-section-header"><span class="badge badge-green" style="font-size:12px;padding:4px 12px">🔨 In Progress</span></div>
+              <div class="job-list" id="jobs-inprogress"></div>
+            </div>
+            <div id="job-section-scheduled" class="job-section">
+              <div class="job-section-header"><span class="badge badge-blue" style="font-size:12px;padding:4px 12px">📅 Scheduled</span></div>
+              <div class="job-list" id="jobs-scheduled"></div>
+            </div>
+            <div id="job-section-sold" class="job-section">
+              <div class="job-section-header"><span class="badge badge-yellow" style="font-size:12px;padding:4px 12px">💰 Sold — Not Yet Scheduled</span></div>
+              <div class="job-list" id="jobs-sold"></div>
+            </div>
+          </div>
         </div>
         <div class="wizard-step" id="ws2">
           <div class="banner banner-info" id="selected-job-info"></div>
@@ -389,7 +416,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <script>
-const JOBS=[{id:'555001',customer:'Thompson',addr:'234 Riverside Dr, Nashville',crew:'Carlos',status:'In Progress',sup:'Anthony'},{id:'555003',customer:'Johnson',addr:'412 Elm St, Franklin',crew:'Miguel',status:'In Progress',sup:'Matthew'},{id:'555005',customer:'Patterson',addr:'1087 Cedar Ln, Murfreesboro',crew:'Roberto',status:'In Progress',sup:'Jeff'},{id:'555007',customer:'Williams',addr:'890 Oak Ave, Brentwood',crew:'Eduardo',status:'In Progress',sup:'Marcus'},{id:'555009',customer:'Garcia',addr:'567 Magnolia Blvd, Hendersonville',crew:'Jose',status:'In Progress',sup:'David'},{id:'555011',customer:'Martin',addr:'2201 West End Ave, Nashville',crew:'Luis',status:'In Progress',sup:'Anthony'},{id:'555012',customer:'Chen',addr:'1522 Maple Dr, Hendersonville',crew:'Fernando',status:'Scheduled',sup:'Matthew'},{id:'555015',customer:'Davis',addr:'3305 River Rd, Nashville',crew:'Carlos',status:'In Progress',sup:'Jeff'},{id:'555017',customer:'Anderson',addr:'445 Briley Pkwy, Nashville',crew:'Miguel',status:'Scheduled',sup:'Marcus'},{id:'555020',customer:'Taylor',addr:'781 Lebanon Pike, Mt. Juliet',crew:'Roberto',status:'In Progress',sup:'David'}];
+const JOBS=[
+{id:'555001',customer:'Thompson',addr:'234 Riverside Dr, Nashville',crew:'Carlos',status:'In Progress',sup:'Anthony',svc:'Interior'},
+{id:'555003',customer:'Johnson',addr:'412 Elm St, Franklin',crew:'Miguel',status:'In Progress',sup:'Matthew',svc:'Exterior'},
+{id:'555005',customer:'Patterson',addr:'1087 Cedar Ln, Murfreesboro',crew:'Roberto',status:'In Progress',sup:'Jeff',svc:'Interior/Exterior'},
+{id:'555007',customer:'Williams',addr:'890 Oak Ave, Brentwood',crew:'Eduardo',status:'In Progress',sup:'Marcus',svc:'Interior'},
+{id:'555009',customer:'Garcia',addr:'567 Magnolia Blvd, Hendersonville',crew:'Jose',status:'In Progress',sup:'David',svc:'Deck'},
+{id:'555011',customer:'Martin',addr:'2201 West End Ave, Nashville',crew:'Luis',status:'In Progress',sup:'Anthony',svc:'Cabinet'},
+{id:'555015',customer:'Davis',addr:'3305 River Rd, Nashville',crew:'Carlos',status:'In Progress',sup:'Jeff',svc:'Deck'},
+{id:'555020',customer:'Taylor',addr:'781 Lebanon Pike, Mt. Juliet',crew:'Roberto',status:'In Progress',sup:'David',svc:'Exterior'},
+{id:'555012',customer:'Chen',addr:'1522 Maple Dr, Hendersonville',crew:'Fernando',status:'Scheduled',sup:'Matthew',svc:'Cabinet',schedDate:'Mar 5'},
+{id:'555017',customer:'Anderson',addr:'445 Briley Pkwy, Nashville',crew:'Miguel',status:'Scheduled',sup:'Marcus',svc:'Interior',schedDate:'Mar 6'},
+{id:'555022',customer:'Richardson',addr:'908 Granny White Pike, Nashville',crew:'TBD',status:'Sold',sup:'\u2014',svc:'Exterior'},
+{id:'555024',customer:'Mitchell',addr:'1340 Old Hickory Blvd, Brentwood',crew:'TBD',status:'Sold',sup:'\u2014',svc:'Interior'},
+{id:'555025',customer:'Clark',addr:'2650 Murfreesboro Pike, Antioch',crew:'TBD',status:'Sold',sup:'\u2014',svc:'Fence'},
+{id:'555026',customer:'Rodriguez',addr:'415 Harding Pl, Nashville',crew:'TBD',status:'Sold',sup:'\u2014',svc:'Interior/Exterior'}
+];
 const HOOVER_STORES=['Clarksville — 1690 Wilma Rudolph Blvd','Cookeville — 214 W. Spring St','Cool Springs — 1701 Mallory Ln, Brentwood','Green Hills — 4004 Hillsboro Pike, Nashville','Mt. Juliet — 518 Pleasant Grove Rd','Murfreesboro — 830 Memorial Blvd','Pleasant View — 216 Ren Mar Center Dr','Shelbyville — 101 Northside Cir Ste C','Smyrna — 200 Jefferson St'];
 const SW_STORES=['SW #7231 — Cool Springs','SW #7458 — Green Hills','SW #7102 — Murfreesboro','SW #7389 — Mt. Juliet','SW #7550 — Smyrna'];
 const PO_DATA=[
@@ -473,7 +515,7 @@ function renderSpreadChart(){const data=[{label:'Walls',est:350,act:320},{label:
 
 function renderVarianceChart(){const data=[{label:'Interior',val:6},{label:'Exterior',val:14},{label:'Deck',val:10},{label:'Fence',val:4},{label:'Cabinet',val:18}];const max=Math.max(...data.map(d=>d.val));document.getElementById('variance-chart').innerHTML=data.map(d=>{const c=d.val>15?'var(--red)':d.val>10?'var(--yellow)':'var(--green)';return '<div class="bar-row"><div class="bar-label">'+d.label+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(d.val/max*100)+'%;background:'+c+'"></div></div><div class="bar-val">+'+d.val+'%</div></div>';}).join('');}
 
-renderPOs(PO_DATA);supplierChanged();renderSupervisors();renderSpreadChart();renderVarianceChart();
+renderPOs(PO_DATA);supplierChanged();renderSupervisors();renderSpreadChart();renderVarianceChart();renderJobList('');
 </script>
 </body>
 </html>
