@@ -442,35 +442,14 @@
         <div class="onboarding-bar" style="max-width:200px;margin:0 auto 16px;"><div class="fill" style="width:0%;background:var(--gold);"></div></div>
       </div>
 
-      <!-- Step 2: Pre-Project Checklist (presented immediately inline) -->
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <div class="card-title">📋 Pre-Project Checklist</div>
-          <span style="font-size:11px;color:var(--text-muted);">~2 minutes</span>
-        </div>
-        <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">This helps us prepare for your project — parking, access, preferences.</div>
+      <!-- Step 2: Pre-Project Checklist (uses existing prototype — NOT duplicated here) -->
+      <div class="card" style="text-align:center;padding:28px 24px;">
+        <div style="font-size:32px;margin-bottom:8px;">📋</div>
+        <div style="font-weight:700;font-size:16px;color:var(--navy);margin-bottom:4px;">Pre-Project Checklist</div>
+        <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">This helps us prepare for your project — parking, access, preferences. Takes about 2 minutes.</div>
 
-        <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;">
-          <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;">📅 Scheduling</div>
-          <div style="font-size:13px;color:var(--text-light);margin-bottom:6px;">Earliest start date <span style="color:var(--error);">*</span></div>
-          <input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:8px;">
-          <div style="font-size:13px;color:var(--text-light);margin-bottom:6px;">Must be done by <span style="color:var(--error);">*</span></div>
-          <input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;">
-        </div>
-
-        <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;">
-          <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;">🔑 Property Access</div>
-          <input type="text" placeholder="Gate code (if applicable)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:8px;">
-          <input type="text" placeholder="Door access code (if applicable)" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;margin-bottom:8px;">
-          <textarea placeholder="Where should the crew park?" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;min-height:60px;font-family:inherit;resize:vertical;"></textarea>
-        </div>
-
-        <div style="border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;">
-          <div style="font-weight:600;font-size:13px;color:var(--navy);margin-bottom:8px;">🏠 Preferences & Special Requests</div>
-          <textarea placeholder="Pets, children, time restrictions, music preferences, anything else we should know..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;min-height:80px;font-family:inherit;resize:vertical;"></textarea>
-        </div>
-
-        <button onclick="showColorOption()" style="width:100%;padding:14px;background:var(--gold);color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">Submit Checklist →</button>
+        <a href="https://willienash1981.github.io/nashos-prototypes/pre-project-checklist.html" target="_blank" onclick="setTimeout(showColorOption, 500)" style="display:block;padding:14px;background:var(--gold);color:white;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;">Start Checklist → (~2 min)</a>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Opens the full checklist form. After you submit, you'll choose colors or defer.</div>
       </div>
 
       <!-- Step 3: Color option (shown after checklist submit) -->
