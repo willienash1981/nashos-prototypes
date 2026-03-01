@@ -167,6 +167,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .tbl{font-size:12px}
   .tbl th,.tbl td{padding:8px 10px}
 }
+
+/* ─── AI INSIGHTS ─── */
+.ai-panel{background:linear-gradient(135deg,#1B2A4A 0%,#2A3D5F 100%);border-radius:var(--radius);color:#fff;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow-md)}
+.ai-panel-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.ai-panel-header:hover{background:rgba(255,255,255,.05)}
+.ai-panel-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
+.ai-panel-title .ai-badge{background:linear-gradient(135deg,#C4A962,#D4BE82);color:var(--navy);font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
+.ai-panel-meta{font-size:11px;opacity:.6;display:flex;align-items:center;gap:12px}
+.ai-panel-toggle{font-size:18px;transition:transform .2s}
+.ai-panel.collapsed .ai-panel-toggle{transform:rotate(-90deg)}
+.ai-panel.collapsed .ai-panel-body{display:none}
+.ai-panel-body{border-top:1px solid rgba(255,255,255,.1)}
+.ai-section{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.ai-section:last-child{border-bottom:none}
+.ai-section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.6;margin-bottom:10px}
+.ai-insight{background:rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;position:relative;border-left:3px solid transparent}
+.ai-insight:last-child{margin-bottom:0}
+.ai-insight.alert{border-left-color:#ef4444}
+.ai-insight.warn{border-left-color:#f59e0b}
+.ai-insight.good{border-left-color:#22c55e}
+.ai-insight.idea{border-left-color:#a78bfa}
+.ai-insight-text{font-size:13px;line-height:1.5;margin-bottom:8px}
+.ai-insight-evidence{font-size:11px;opacity:.5;margin-bottom:8px}
+.ai-insight-actions{display:flex;gap:6px}
+.ai-act-btn{font-size:10px;padding:3px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;cursor:pointer;font-weight:500;transition:all .15s}
+.ai-act-btn:hover{background:rgba(255,255,255,.15)}
+.ai-act-btn.accept{border-color:var(--green);color:var(--green)}
+.ai-act-btn.accept:hover{background:rgba(22,163,74,.2)}
+.ai-act-btn.dismiss{opacity:.5}
+.ai-act-btn.pin{border-color:var(--gold);color:var(--gold)}
+.ai-software{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px}
+.ai-software:last-child{margin-bottom:0}
+.ai-software-title{font-size:13px;font-weight:600;margin-bottom:4px;color:#c4b5fd}
+.ai-software-desc{font-size:12px;opacity:.8;line-height:1.5;margin-bottom:6px}
+.ai-software-meta{display:flex;gap:12px;font-size:10px;opacity:.5}
+.ai-analyze-btn{background:linear-gradient(135deg,#C4A962,#D4BE82);color:var(--navy);border:none;padding:8px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:12px;transition:opacity .15s}
+.ai-analyze-btn:hover{opacity:.9}
 </style>
 </head>
 <body>
@@ -241,6 +278,92 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <!-- OVERVIEW -->
 <div class="tab-content active" id="tab-overview">
+
+  <!-- AI Insights Panel -->
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-panel-header" onclick="toggleAI()">
+      <div class="ai-panel-title">🧠 AI Insights <span class="ai-badge">Beta</span></div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="ai-panel-meta"><span>Last analysis: Today 6:00 AM</span><span>34 surveys analyzed</span></div>
+        <div class="ai-panel-toggle">▼</div>
+      </div>
+    </div>
+    <div class="ai-panel-body">
+      <div class="ai-section">
+        <div class="ai-section-title">🚨 Alerts</div>
+        <div class="ai-insight alert">
+          <div class="ai-insight-text"><strong>Thompson Crew quality decline is accelerating.</strong> 3 quality complaints in 6 weeks (up from 1 per quarter historically). If this trend continues, projected NPS impact: -3 points company-wide by end of March.</div>
+          <div class="ai-insight-evidence">Based on: 3 surveys (Daniel P., Laura G., Karen D.) · Thompson Crew historical avg was 4.3, now 3.8 · Quality category dropped 1.1 pts in 45 days</div>
+          <div class="ai-insight-actions">
+            <button class="ai-act-btn accept" onclick="this.textContent='✅ Action Created'">✅ Create Action Item</button>
+            <button class="ai-act-btn pin">📌 Pin</button>
+            <button class="ai-act-btn dismiss">🚫 Dismiss</button>
+          </div>
+        </div>
+        <div class="ai-insight warn">
+          <div class="ai-insight-text"><strong>Tom B. expectation gap widening.</strong> "Didn't match description" complaints at 5 of 22 jobs (23%). Jake M. is at 3% for comparison. Recommend ride-along or estimate language review.</div>
+          <div class="ai-insight-evidence">Based on: 5 open-text mentions of "different than expected" or "not what was described" on Tom B. jobs since October</div>
+          <div class="ai-insight-actions">
+            <button class="ai-act-btn accept" onclick="this.textContent='✅ Action Created'">✅ Create Action Item</button>
+            <button class="ai-act-btn dismiss">🚫 Dismiss</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-section">
+        <div class="ai-section-title">📈 Trends</div>
+        <div class="ai-insight good">
+          <div class="ai-insight-text"><strong>Cabinet satisfaction at all-time high (4.8).</strong> Williams Crew driving this — "look brand new" is the #1 phrase in cabinet testimonials. Consider featuring cabinet work more prominently in marketing.</div>
+          <div class="ai-insight-evidence">18 cabinet reviews · 8.8 NPS · Highest-rated service type for 3 consecutive months</div>
+        </div>
+        <div class="ai-insight warn">
+          <div class="ai-insight-text"><strong>"Value" scores plateauing at 4.3</strong> — lowest category for 4 months straight. Customers love the quality but increasingly mention pricing. Not critical yet, but worth monitoring if you're planning price increases.</div>
+          <div class="ai-insight-evidence">Based on: "Overall Value" ratings across 142 surveys · 14 open-text mentions of "expensive" or "pricey" (up from 8 last quarter)</div>
+        </div>
+        <div class="ai-insight good">
+          <div class="ai-insight-text"><strong>Referral rate up 60% quarter-over-quarter.</strong> LeadChuck integration driving results — $18,450 in referral revenue from 8 submissions. Jennifer R. alone generated 2 referrals ($11,000).</div>
+          <div class="ai-insight-evidence">Q4 2025: 5 referrals · Q1 2026 (to date): 8 referrals · Conversion rate: 37.5%</div>
+        </div>
+      </div>
+
+      <div class="ai-section">
+        <div class="ai-section-title">💡 Software Improvement Suggestions</div>
+        <div class="ai-software">
+          <div class="ai-software-title">📸 Add progress photos to Customer Portal</div>
+          <div class="ai-software-desc">8 customers mentioned wanting to see job progress while at work. "Wish I could see how it's going without having to call." Recommend crew check-in photos that auto-post to Customer Portal timeline.</div>
+          <div class="ai-software-meta"><span>Frequency: 8 mentions</span><span>Impact: High</span><span>Effort: Medium</span><span>§3.13D + §7.5</span></div>
+          <div class="ai-insight-actions" style="margin-top:8px">
+            <button class="ai-act-btn accept" onclick="this.textContent='✅ Added to Backlog'">✅ Add to Backlog</button>
+            <button class="ai-act-btn dismiss">🚫 Not Now</button>
+          </div>
+        </div>
+        <div class="ai-software">
+          <div class="ai-software-title">🎨 Color test-patch photo approval step</div>
+          <div class="ai-software-desc">5 complaints about final color not matching expectations. Suggest adding a step where crew paints a test patch, photos it, and customer approves in-app before full application.</div>
+          <div class="ai-software-meta"><span>Frequency: 5 mentions</span><span>Impact: High</span><span>Effort: Low</span><span>§3.8B</span></div>
+          <div class="ai-insight-actions" style="margin-top:8px">
+            <button class="ai-act-btn accept" onclick="this.textContent='✅ Added to Backlog'">✅ Add to Backlog</button>
+            <button class="ai-act-btn dismiss">🚫 Not Now</button>
+          </div>
+        </div>
+        <div class="ai-software">
+          <div class="ai-software-title">📅 Crew schedule visibility for customers</div>
+          <div class="ai-software-desc">3 customers frustrated by not knowing exact arrival time. "I took the day off and they showed up at 2pm." Recommend ETA notifications via SMS when crew is en route.</div>
+          <div class="ai-software-meta"><span>Frequency: 3 mentions</span><span>Impact: Medium</span><span>Effort: Medium</span><span>§5.2 + §3.13D</span></div>
+          <div class="ai-insight-actions" style="margin-top:8px">
+            <button class="ai-act-btn accept" onclick="this.textContent='✅ Added to Backlog'">✅ Add to Backlog</button>
+            <button class="ai-act-btn dismiss">🚫 Not Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;opacity:.5">Next scheduled analysis: Sunday Mar 7, 11:00 PM CT</div>
+        <button class="ai-analyze-btn" onclick="this.innerHTML='⏳ Analyzing...';setTimeout(()=>{this.innerHTML='✅ Analysis Complete'},2000)">🧠 Run Analysis Now</button>
+      </div>
+    </div>
+  </div>
+
   <div class="card" style="margin-bottom:16px">
     <div class="card-h">
       <div class="card-t">📈 NPS Trend</div>
@@ -779,6 +902,10 @@ function sortCrew(btn,by){
     return 0;
   });
   cards.forEach(c=>grid.appendChild(c));
+}
+
+function toggleAI(){
+  document.getElementById('aiPanel').classList.toggle('collapsed');
 }
 </script>
 </body>
