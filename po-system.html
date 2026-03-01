@@ -740,13 +740,34 @@ html+='<button class="btn-gold btn-sm" onclick="resolveRecon('+i+',\'approve\')"
 html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'dispute\')">❌ Dispute with Store</button>';
 html+='</div></div>';
 }
-if(!l.resolved&&l.match==='unmatched'){
+if(!l.resolved&&l.match==='unmatched'&&!l.pendingRogue){
 html+='<div style="margin-top:10px;padding:10px 14px;background:var(--red-bg);border-radius:var(--radius-sm);border:1px solid #FECACA">';
 html+='<div style="font-size:12px;color:var(--red);margin-bottom:8px">'+l.note+'</div>';
 html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
 html+='<button class="btn-gold btn-sm" onclick="resolveRecon('+i+',\'match\')">🔍 Match to Job</button>';
 html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'rogue\')">🚨 Flag as Rogue PO</button>';
 html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'error\')">📧 Dispute — Billing Error</button>';
+html+='</div></div>';
+}
+if(!l.resolved&&l.pendingRogue){
+html+='<div style="margin-top:10px;padding:14px;background:var(--yellow-bg);border-radius:var(--radius-sm);border:1px solid #FDE68A">';
+html+='<div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">🚨 Rogue PO — Assign to Job & Crew</div>';
+html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">';
+html+='<div class="form-group" style="margin:0"><label style="font-size:11px;color:#92400E">Job</label><select id="rogue-job-'+i+'" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px">';
+JOBS.filter(function(j){return j.status==="In Progress"||j.status==="Scheduled";}).forEach(function(j){
+html+='<option value="'+j.id+'">'+j.customer+' — '+j.addr+' (#'+j.id+')</option>';
+});
+html+='</select></div>';
+html+='<div class="form-group" style="margin:0"><label style="font-size:11px;color:#92400E">Crew Leader</label><select id="rogue-crew-'+i+'" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"><option>Carlos</option><option>Miguel</option><option>Roberto</option><option>Eduardo</option><option>Jose</option><option>Luis</option><option>Fernando</option></select></div>';
+html+='</div>';
+html+='<div class="form-group" style="margin:0;margin-bottom:10px"><label style="font-size:11px;color:#92400E">Who picked up? (if known)</label><input type="text" id="rogue-who-'+i+'" placeholder="e.g. Someone gave account number" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"></div>';
+html+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400E;cursor:pointer"><input type="checkbox" id="rogue-flag-'+i+'" checked style="accent-color:var(--red)"> Flag crew for policy violation</label>';
+html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400E;cursor:pointer"><input type="checkbox" id="rogue-store-'+i+'" style="accent-color:var(--yellow)"> Notify store management</label>';
+html+='</div>';
+html+='<div style="display:flex;gap:8px;margin-top:12px">';
+html+='<button class="btn-gold btn-sm" onclick="resolveRogue('+i+')">✅ Create Rogue PO & Assign to Job</button>';
+html+='<button class="btn-outline-dark btn-sm" onclick="cancelRogue('+i+')">← Back</button>';
 html+='</div></div>';
 }
 if(l.resolved&&l.match!=='matched'){
@@ -761,13 +782,38 @@ var btn=document.getElementById('recon-approve-btn');
 if(remaining===0){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
 else{btn.disabled=true;btn.style.opacity='.4';btn.style.cursor='not-allowed';}
 }
+function resolveRogue(idx){
+var l=RECON_LINES[idx];
+var jobSel=document.getElementById('rogue-job-'+idx);
+var crewSel=document.getElementById('rogue-crew-'+idx);
+var jobId=jobSel.value;
+var jobText=jobSel.options[jobSel.selectedIndex].text;
+var crew=crewSel.value;
+var who=document.getElementById('rogue-who-'+idx).value||'Unknown';
+var flagCrew=document.getElementById('rogue-flag-'+idx).checked;
+var notifyStore=document.getElementById('rogue-store-'+idx).checked;
+l.resolved=true;
+l.pendingRogue=false;
+l.po=jobId+'-R';
+l.job=jobText.split(' (#')[0];
+l.crew=crew;
+var res='Rogue PO created → assigned to '+l.job+' ('+crew+')';
+if(flagCrew)res+=' · Crew flagged for violation';
+if(notifyStore)res+=' · Store notified';
+l.resolution=res;
+renderReconInteractive();
+}
+function cancelRogue(idx){
+RECON_LINES[idx].pendingRogue=false;
+renderReconInteractive();
+}
 function resolveRecon(idx,action){
 var l=RECON_LINES[idx];
 l.resolved=true;
 if(action==='approve')l.resolution='Price difference approved (+$'+(l.billAmt-l.poAmt)+' added to job cost)';
 if(action==='dispute')l.resolution='Disputed with store — awaiting credit';
-if(action==='match'){l.resolution='Matched to job retroactively — PO created';l.po='555015-2';l.job='Davis — 3305 River Rd';l.crew='Carlos';}
-if(action==='rogue')l.resolution='Flagged as Rogue PO → sent to investigation';
+if(action==='match'){l.resolved=false;l.pendingRogue=true;renderReconInteractive();return;}
+if(action==='rogue'){l.resolved=false;l.pendingRogue=true;renderReconInteractive();return;}
 if(action==='error')l.resolution='Disputed as billing error — email sent to store';
 renderReconInteractive();
 }
