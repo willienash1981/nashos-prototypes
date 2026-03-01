@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Campaign / Drip Builder</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3D5F;
+  --gold: #C4A962;
+  --gold-light: #D4BE82;
+  --bg: #F5F3EF;
+  --white: #FFFFFF;
+  --border: #E2DFD8;
+  --text: #1B2A4A;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --yellow: #F59E0B;
+  --yellow-bg: #FFFBEB;
+  --blue: #2563EB;
+  --blue-bg: #EFF6FF;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+
+/* ─── TOPBAR ─── */
+.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
+.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-greeting{font-size:14px;opacity:.85}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-date{font-size:13px;opacity:.7}
+.notif-bell{position:relative;cursor:pointer;font-size:20px}
+.notif-badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ─── MAIN ─── */
+.main{max-width:1400px;margin:0 auto;padding:24px}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:2px;background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:48px;z-index:90;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--text-sec);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.tab .badge{display:inline-block;background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px}
+
+/* ─── KPI STRIP ─── */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi.hl{border-left:4px solid var(--gold)}
+.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:700;color:var(--navy);line-height:1.1}
+.kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
+.kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
+
+/* ─── CARD ─── */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
+.card-a:hover{text-decoration:underline}
+.card-b{padding:18px}
+
+/* ─── CAMPAIGN TABLE ─── */
+.campaign-table{width:100%;border-collapse:collapse}
+.campaign-table th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg)}
+.campaign-table td{padding:12px 14px;border-bottom:1px solid var(--bg);font-size:13px;vertical-align:middle}
+.campaign-table tr:last-child td{border-bottom:none}
+.campaign-table tbody tr{cursor:pointer;transition:background .1s}
+.campaign-table tbody tr:hover{background:#FAFAF8}
+.c-name{font-weight:600;color:var(--navy)}
+.c-code{font-size:11px;color:var(--text-muted);font-family:'SF Mono',Monaco,monospace;background:var(--bg);padding:2px 6px;border-radius:4px}
+.c-trigger{font-size:12px;color:var(--text-sec)}
+.c-steps{font-size:12px;color:var(--text-sec)}
+.c-count{font-weight:700;color:var(--navy)}
+
+/* ─── BADGE ─── */
+.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.b-green{background:var(--green-bg);color:var(--green)}
+.b-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.b-red{background:var(--red-bg);color:var(--red)}
+.b-blue{background:var(--blue-bg);color:var(--blue)}
+.b-orange{background:var(--orange-bg);color:var(--orange)}
+.b-gray{background:var(--bg);color:var(--text-sec)}
+.b-navy{background:rgba(27,42,74,.08);color:var(--navy)}
+
+/* ─── SEQUENCE EDITOR ─── */
+.seq-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.seq-back{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;font-size:13px;cursor:pointer;color:var(--text-sec);display:flex;align-items:center;gap:6px;transition:all .15s}
+.seq-back:hover{border-color:var(--gold);color:var(--text)}
+.seq-title{font-size:22px;font-weight:700;color:var(--navy)}
+.seq-code{font-size:13px;color:var(--text-muted);font-family:'SF Mono',Monaco,monospace}
+
+/* ─── TIMELINE ─── */
+.timeline-container{display:grid;grid-template-columns:280px 1fr;gap:24px}
+.timeline-sidebar{position:sticky;top:110px;align-self:start}
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:19px;top:24px;bottom:24px;width:2px;background:var(--border)}
+
+.step{position:relative;margin-bottom:16px}
+.step:last-child{margin-bottom:0}
+.step-day{position:absolute;left:-40px;top:0;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:var(--navy);z-index:2;border:3px solid var(--white);box-shadow:var(--shadow)}
+.step-day.email{background:var(--blue)}
+.step-day.task{background:var(--orange)}
+.step-day.system{background:var(--text-sec)}
+.step-day.sms{background:var(--green)}
+
+.step-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all .15s}
+.step-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md)}
+.step-card.expanded{border-color:var(--gold);box-shadow:var(--shadow-md)}
+
+.step-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
+.step-name{font-size:14px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px}
+.step-channel{font-size:16px}
+.step-summary{font-size:12px;color:var(--text-sec);line-height:1.4}
+
+.step-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.supp-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:12px;background:var(--orange-bg);color:var(--orange)}
+.supp-tag.always{background:var(--green-bg);color:var(--green)}
+
+.step-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none}
+.step-card.expanded .step-detail{display:block}
+.step-detail-row{display:flex;gap:8px;font-size:12px;margin-bottom:6px}
+.step-detail-label{font-weight:600;color:var(--text-sec);min-width:90px;flex-shrink:0}
+.step-detail-val{color:var(--text)}
+.edit-template-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
+.edit-template-btn:hover{background:var(--navy-light)}
+
+/* ─── SUPPRESSION SIDEBAR ─── */
+.supp-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.supp-card .card-h{padding:12px 16px}
+.supp-rule{padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:flex-start;gap:10px}
+.supp-rule:last-child{border-bottom:none}
+.supp-toggle{position:relative;width:36px;height:20px;flex-shrink:0;margin-top:2px}
+.supp-toggle input{opacity:0;width:0;height:0}
+.supp-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#D1D5DB;border-radius:20px;transition:.2s}
+.supp-slider::before{content:'';position:absolute;height:16px;width:16px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
+.supp-toggle input:checked+.supp-slider{background:var(--green)}
+.supp-toggle input:checked+.supp-slider::before{transform:translateX(16px)}
+.supp-info{flex:1}
+.supp-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.supp-desc{font-size:11px;color:var(--text-sec);line-height:1.4}
+
+/* ─── TEMPLATE EDITOR MODAL ─── */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(27,42,74,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);width:100%;max-width:900px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(27,42,74,.2)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1;border-radius:var(--radius) var(--radius) 0 0}
+.modal-title{font-size:16px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-sec);padding:4px;line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.modal-section{display:flex;flex-direction:column;gap:14px}
+.modal-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:4px}
+.modal-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;color:var(--text);transition:border-color .15s}
+.modal-input:focus{outline:none;border-color:var(--gold)}
+.modal-textarea{width:100%;min-height:240px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;color:var(--text);line-height:1.6;resize:vertical;transition:border-color .15s}
+.modal-textarea:focus{outline:none;border-color:var(--gold)}
+
+.merge-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.merge-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:14px;background:var(--blue-bg);color:var(--blue);cursor:pointer;transition:all .1s;border:1px solid transparent}
+.merge-tag:hover{border-color:var(--blue);transform:translateY(-1px)}
+
+.channel-select{display:flex;gap:6px}
+.channel-btn{padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;background:var(--white);color:var(--text-sec);transition:all .15s}
+.channel-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.channel-btn:hover:not(.active){border-color:var(--gold)}
+
+.preview-pane{background:var(--bg);border-radius:var(--radius-sm);padding:20px;border:1px solid var(--border)}
+.preview-subject{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.preview-from{font-size:12px;color:var(--text-sec);margin-bottom:12px}
+.preview-body{font-size:13px;color:var(--text);line-height:1.7}
+.preview-body .merge-val{background:var(--gold-light);color:var(--navy);padding:1px 6px;border-radius:4px;font-weight:600;font-size:12px}
+
+.modal-footer{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border)}
+.btn{padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy-light)}
+.btn-secondary{background:var(--white);color:var(--text-sec);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--gold);color:var(--text)}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover{background:var(--gold-light)}
+
+/* ─── ACTIVE CAMPAIGNS TABLE ─── */
+.active-table{width:100%;border-collapse:collapse}
+.active-table th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg)}
+.active-table td{padding:12px 14px;border-bottom:1px solid var(--bg);font-size:13px;vertical-align:middle}
+.active-table tr:last-child td{border-bottom:none}
+.active-table tbody tr{cursor:pointer;transition:background .1s}
+.active-table tbody tr:hover{background:#FAFAF8}
+
+.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px}
+.status-active{background:var(--green-bg);color:var(--green)}
+.status-suppressed{background:var(--bg);color:var(--text-sec)}
+.status-disputed{background:var(--yellow-bg);color:var(--yellow)}
+.status-paused{background:var(--blue-bg);color:var(--blue)}
+.status-completed{background:var(--bg);color:var(--text-muted)}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-select{padding:7px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:500;color:var(--text);background:var(--white);cursor:pointer;appearance:auto}
+.filter-select:focus{outline:none;border-color:var(--gold)}
+
+/* ─── SUPPRESSION TOOLTIP ─── */
+.supp-tooltip{position:relative;display:inline-block}
+.supp-tooltip .tooltip-text{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:8px 12px;border-radius:var(--radius-sm);font-size:11px;white-space:nowrap;z-index:10;transition:all .15s;box-shadow:var(--shadow-md)}
+.supp-tooltip .tooltip-text::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--navy)}
+.supp-tooltip:hover .tooltip-text{visibility:visible;opacity:1}
+
+/* ─── CUSTOMER TIMELINE MODAL ─── */
+.cust-timeline{padding:20px}
+.cust-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.cust-name{font-size:18px;font-weight:700;color:var(--navy)}
+.cust-campaign{font-size:13px;color:var(--text-sec)}
+
+.cust-steps{position:relative;padding-left:30px}
+.cust-steps::before{content:'';position:absolute;left:10px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.cust-step{position:relative;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start}
+.cust-step:last-child{margin-bottom:0}
+.cust-dot{position:absolute;left:-30px;top:4px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;z-index:1;border:2px solid var(--white)}
+.cust-dot.sent{background:var(--green)}
+.cust-dot.pending{background:var(--blue)}
+.cust-dot.suppressed{background:var(--text-muted)}
+.cust-dot.future{background:var(--border)}
+.cust-step-info{flex:1}
+.cust-step-name{font-size:13px;font-weight:600;color:var(--navy)}
+.cust-step-date{font-size:11px;color:var(--text-sec)}
+.cust-step-status{font-size:11px;margin-top:2px}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .timeline-container{grid-template-columns:1fr}
+  .timeline-sidebar{position:static}
+  .modal-body{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .main{padding:12px}
+  .topbar{padding:10px 12px}
+  .tabs{padding:0 12px}
+  .kpi-strip{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi-val{font-size:22px}
+  .campaign-table th:nth-child(3),.campaign-table td:nth-child(3),
+  .campaign-table th:nth-child(4),.campaign-table td:nth-child(4){display:none}
+  .active-table th:nth-child(4),.active-table td:nth-child(4),
+  .active-table th:nth-child(5),.active-table td:nth-child(5){display:none}
+  .seq-title{font-size:18px}
+}
+@media(max-width:480px){
+  .kpi-strip{grid-template-columns:1fr}
+  .kpi{padding:14px}
+}
+
+/* ─── HIDDEN ─── */
+.hidden{display:none!important}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;box-shadow:var(--shadow-md);transform:translateY(80px);opacity:0;transition:all .3s;z-index:300;display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">Nash<span>OS</span></div>
+    <div class="topbar-greeting">Campaign / Drip Builder</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-date">Mar 1, 2026</div>
+    <div class="notif-bell">
+      🔔
+      <div class="notif-badge">3</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="library">Campaign Library</div>
+  <div class="tab" data-tab="active">Active Campaigns <span class="badge">1,932</span></div>
+</div>
+
+<!-- ═══ VIEW: CAMPAIGN LIBRARY ═══ -->
+<div id="view-library" class="main">
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi hl">
+      <div class="kpi-lbl">Total Active Campaigns</div>
+      <div class="kpi-val">1,932</div>
+      <div class="kpi-sub">Across all campaign types</div>
+      <div class="kpi-icon">📊</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Emails Sent (This Week)</div>
+      <div class="kpi-val">847</div>
+      <div class="kpi-sub">+12% vs last week</div>
+      <div class="kpi-icon">📧</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Open Rate</div>
+      <div class="kpi-val">38.2%</div>
+      <div class="kpi-sub">Industry avg: 21%</div>
+      <div class="kpi-icon">📬</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Suppressed (This Week)</div>
+      <div class="kpi-val">124</div>
+      <div class="kpi-sub">Activity-aware filtering</div>
+      <div class="kpi-icon">🔇</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Unsubscribed</div>
+      <div class="kpi-val">3</div>
+      <div class="kpi-sub">0.15% rate — excellent</div>
+      <div class="kpi-icon">🚫</div>
+    </div>
+  </div>
+
+  <!-- Campaign Table -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-t">📋 Campaign Types</div>
+      <div class="card-a">+ New Campaign</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="campaign-table">
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>Code</th>
+            <th>Trigger</th>
+            <th>Steps</th>
+            <th style="text-align:right">Active</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-campaign="lead">
+            <td><span class="c-name">Lead → Schedule Estimate</span></td>
+            <td><span class="c-code">IA–IE</span></td>
+            <td class="c-trigger">New lead, no appointment</td>
+            <td class="c-steps">5 emails over 5 days</td>
+            <td style="text-align:right"><span class="c-count">23</span></td>
+          </tr>
+          <tr data-campaign="estimate" class="highlight-row">
+            <td><span class="c-name">Estimate Follow-Up</span></td>
+            <td><span class="c-code">DA–DF</span></td>
+            <td class="c-trigger">Proposal sent</td>
+            <td class="c-steps">6 emails + 2 tasks over 45 days</td>
+            <td style="text-align:right"><span class="c-count">147</span></td>
+          </tr>
+          <tr data-campaign="appointment">
+            <td><span class="c-name">Appointment Confirmation</span></td>
+            <td><span class="c-code">CA</span></td>
+            <td class="c-trigger">Estimate scheduled</td>
+            <td class="c-steps">1 email (transactional)</td>
+            <td style="text-align:right"><span class="c-count">12</span></td>
+          </tr>
+          <tr data-campaign="lifecycle">
+            <td><span class="c-name">Job Lifecycle Notifications</span></td>
+            <td><span class="c-code">BC/BD</span></td>
+            <td class="c-trigger">Job events</td>
+            <td class="c-steps">Event-triggered</td>
+            <td style="text-align:right"><span class="c-count">34</span></td>
+          </tr>
+          <tr data-campaign="payment">
+            <td><span class="c-name">Payment Follow-Up</span></td>
+            <td><span class="c-code">GA–GE</span></td>
+            <td class="c-trigger">Invoice past due</td>
+            <td class="c-steps">5 emails over 90 days</td>
+            <td style="text-align:right"><span class="c-count">8</span></td>
+          </tr>
+          <tr data-campaign="postcompletion">
+            <td><span class="c-name">Post-Completion (Survey/Warranty)</span></td>
+            <td><span class="c-code">HA–HE</span></td>
+            <td class="c-trigger">Job complete + paid</td>
+            <td class="c-steps">5 touches over 30 days</td>
+            <td style="text-align:right"><span class="c-count">89</span></td>
+          </tr>
+          <tr data-campaign="longterm">
+            <td><span class="c-name">Long-Term Lifecycle</span></td>
+            <td><span class="c-code">HF–HL</span></td>
+            <td class="c-trigger">6mo–6yr post-completion</td>
+            <td class="c-steps">7 emails over 6 years</td>
+            <td style="text-align:right"><span class="c-count">1,619</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: SEQUENCE EDITOR ═══ -->
+<div id="view-sequence" class="main hidden">
+  <div class="seq-header">
+    <button class="seq-back" onclick="showLibrary()">← Back</button>
+    <div>
+      <div class="seq-title">Estimate Follow-Up</div>
+      <div class="seq-code">Campaign DA–DF · 6 emails + 2 tasks over 45 days · 147 active</div>
+    </div>
+  </div>
+
+  <div class="timeline-container">
+    <!-- TIMELINE -->
+    <div style="order:2">
+      <div class="timeline">
+        <!-- Day 0 -->
+        <div class="step">
+          <div class="step-day email">D0</div>
+          <div class="step-card" data-step="da" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Proposal Sent
+                <span class="c-code">DA</span>
+              </div>
+              <span class="badge b-blue">Email</span>
+            </div>
+            <div class="step-summary">Thank you + customer portal link</div>
+            <div class="step-tags">
+              <span class="supp-tag always">Always sends</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">Your Estimate from Nash Painting</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">Thanks for having us out. Your proposal is ready — review it anytime in your portal.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">None — always sends on proposal creation</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('da')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 1 -->
+        <div class="step">
+          <div class="step-day email">D1</div>
+          <div class="step-card" data-step="db-1" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Follow-Up 1
+                <span class="c-code">DB</span>
+              </div>
+              <span class="badge b-blue">Email</span>
+            </div>
+            <div class="step-summary">Educational: comparing estimates, Color Muse</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if accepted/declined</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">How to compare painting estimates</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">Tips for evaluating proposals, plus our free Color Muse tool to pick the perfect colors.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if proposal is accepted or declined</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('db')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="step">
+          <div class="step-day task">D2</div>
+          <div class="step-card" data-step="task-1" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📋</span> Salesperson Task
+                <span class="c-code">—</span>
+              </div>
+              <span class="badge b-orange">Internal Task</span>
+            </div>
+            <div class="step-summary">Follow up call/text</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if activity in 48h</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Assigned To:</span><span class="step-detail-val">Salesperson on record</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Action:</span><span class="step-detail-val">Make a personal follow-up call or text to check in on the proposal</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if any customer activity detected in last 48 hours</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 3 -->
+        <div class="step">
+          <div class="step-day email">D3</div>
+          <div class="step-card" data-step="dc" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Follow-Up 2
+                <span class="c-code">DC</span>
+              </div>
+              <span class="badge b-blue">Email</span>
+            </div>
+            <div class="step-summary">Urgency + quality messaging</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if activity in 48h</span>
+              <span class="supp-tag">Skip if manual follow-up scheduled</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">What sets Nash Painting apart</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">Quality guarantee, team expertise, and why our approach gets lasting results.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if activity in 48h or manual follow-up is scheduled</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('dc')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 8 -->
+        <div class="step">
+          <div class="step-day email">D8</div>
+          <div class="step-card" data-step="dd" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Follow-Up 3
+                <span class="c-code">DD</span>
+              </div>
+              <span class="badge b-blue">Email</span>
+            </div>
+            <div class="step-summary">Value proposition + financing options</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if activity in 48h</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">Making it easy to get started</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">Flexible financing options and why our customers love the investment they made.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if any customer activity detected in last 48 hours</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('dd')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 14 -->
+        <div class="step">
+          <div class="step-day task">D14</div>
+          <div class="step-card" data-step="task-2" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📋</span> Salesperson Task
+                <span class="c-code">—</span>
+              </div>
+              <span class="badge b-orange">Internal Task</span>
+            </div>
+            <div class="step-summary">Personal call recommended</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if activity in 7 days</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Assigned To:</span><span class="step-detail-val">Salesperson on record</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Action:</span><span class="step-detail-val">Personal call recommended — 2 weeks since proposal with no decision</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if any customer activity detected in last 7 days</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 28 -->
+        <div class="step">
+          <div class="step-day email">D28</div>
+          <div class="step-card" data-step="de" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Follow-Up 4
+                <span class="c-code">DE</span>
+              </div>
+              <span class="badge b-blue">Email</span>
+            </div>
+            <div class="step-summary">Soft check-in + financing reminder</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if activity in 7 days</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">Still thinking it over?</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">No pressure — just checking in. Financing is still available and your proposal is still active.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if any customer activity detected in last 7 days</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('de')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 30 -->
+        <div class="step">
+          <div class="step-day email">D30</div>
+          <div class="step-card" data-step="df-1" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Expiration Warning
+                <span class="c-code">DF</span>
+              </div>
+              <span class="badge b-blue">Email + Portal</span>
+            </div>
+            <div class="step-summary">Proposal expires in X days</div>
+            <div class="step-tags">
+              <span class="supp-tag always">Always sends</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">Your proposal expires soon</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">Your estimate expires in 15 days. Lock in your pricing by accepting before it expires.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">None — always sends as a courtesy notification</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('df')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 31 -->
+        <div class="step">
+          <div class="step-day email">D31</div>
+          <div class="step-card" data-step="df-2" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">📧</span> Follow-Up 5
+                <span class="c-code">DF</span>
+              </div>
+              <span class="badge b-blue">Email</span>
+            </div>
+            <div class="step-summary">Graceful close</div>
+            <div class="step-tags">
+              <span class="supp-tag">Skip if activity in 7 days</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Subject:</span><span class="step-detail-val">We're here when you're ready</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Content:</span><span class="step-detail-val">No hard feelings — plans change. We'd love to help whenever the time is right.</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Suppression:</span><span class="step-detail-val">Skip if any customer activity detected in last 7 days</span></div>
+              <button class="edit-template-btn" onclick="event.stopPropagation();openTemplate('df-close')">✏️ Edit Template</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Day 45 -->
+        <div class="step">
+          <div class="step-day system">D45</div>
+          <div class="step-card" data-step="expire" onclick="toggleStep(this)">
+            <div class="step-top">
+              <div class="step-name">
+                <span class="step-channel">⚙️</span> Expire
+                <span class="c-code">—</span>
+              </div>
+              <span class="badge b-gray">System</span>
+            </div>
+            <div class="step-summary">Status → EXPIRED, Campaign → COMPLETED</div>
+            <div class="step-tags">
+              <span class="supp-tag always">Automatic</span>
+            </div>
+            <div class="step-detail">
+              <div class="step-detail-row"><span class="step-detail-label">Action:</span><span class="step-detail-val">Proposal status set to EXPIRED, campaign marked COMPLETED</span></div>
+              <div class="step-detail-row"><span class="step-detail-label">Notes:</span><span class="step-detail-val">Customer can still request a new estimate at any time</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR: SUPPRESSION RULES -->
+    <div class="timeline-sidebar" style="order:1">
+      <div class="supp-card">
+        <div class="card-h">
+          <div class="card-t">🛡️ Suppression Rules</div>
+        </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">Proposal Accepted</div>
+            <div class="supp-desc">Stop drip if customer accepts the proposal</div>
+          </div>
+        </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">Proposal Declined</div>
+            <div class="supp-desc">Stop drip if customer explicitly declines</div>
+          </div>
+        </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">Recent Activity (48h)</div>
+            <div class="supp-desc">Skip next step if any portal/email activity in last 48 hours</div>
+          </div>
+        </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">Recent Activity (7 day)</div>
+            <div class="supp-desc">Skip next step if any portal/email activity in last 7 days</div>
+          </div>
+        </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">Manual Follow-Up Scheduled</div>
+            <div class="supp-desc">Skip automated email if salesperson has a follow-up task scheduled</div>
+          </div>
+        </div>
+        <div class="supp-rule">
+          <label class="supp-toggle">
+            <input type="checkbox" checked>
+            <span class="supp-slider"></span>
+          </label>
+          <div class="supp-info">
+            <div class="supp-name">Unsubscribed</div>
+            <div class="supp-desc">Stop all marketing emails if customer unsubscribes (transactional still sends)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: ACTIVE CAMPAIGNS ═══ -->
+<div id="view-active" class="main hidden">
+  <div class="kpi-strip" style="margin-bottom:20px">
+    <div class="kpi hl">
+      <div class="kpi-lbl">Active</div>
+      <div class="kpi-val">1,798</div>
+      <div class="kpi-icon">▶️</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Suppressed (This Week)</div>
+      <div class="kpi-val">124</div>
+      <div class="kpi-icon">🔇</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Completed (This Week)</div>
+      <div class="kpi-val">47</div>
+      <div class="kpi-icon">✅</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Paused</div>
+      <div class="kpi-val">10</div>
+      <div class="kpi-icon">⏸️</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div class="card-t">📡 Active Campaign Instances</div>
+    </div>
+    <div class="card-b" style="padding:12px 18px 0">
+      <div class="filter-bar">
+        <select class="filter-select" id="filter-campaign">
+          <option value="">All Campaigns</option>
+          <option value="lead">Lead → Schedule Estimate</option>
+          <option value="estimate">Estimate Follow-Up</option>
+          <option value="appointment">Appointment Confirmation</option>
+          <option value="payment">Payment Follow-Up</option>
+          <option value="postcompletion">Post-Completion</option>
+          <option value="longterm">Long-Term Lifecycle</option>
+        </select>
+        <select class="filter-select" id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="suppressed">Suppressed</option>
+          <option value="completed">Completed</option>
+          <option value="paused">Paused</option>
+          <option value="disputed">Disputed</option>
+        </select>
+        <select class="filter-select" id="filter-salesperson">
+          <option value="">All Salespersons</option>
+          <option value="larry">Larry</option>
+          <option value="rick">Rick</option>
+          <option value="david">David</option>
+        </select>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="active-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Campaign</th>
+            <th>Current Step</th>
+            <th>Day</th>
+            <th>Next Send</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-customer="mark" onclick="openCustomerTimeline('mark')">
+            <td><strong>Mark Frei</strong></td>
+            <td>Estimate Follow-Up</td>
+            <td>Day 8 — Follow-Up 3</td>
+            <td>8 of 45</td>
+            <td>Tomorrow 9:00 AM</td>
+            <td><span class="status-pill status-active">▶ Active</span></td>
+          </tr>
+          <tr data-customer="sarah" onclick="openCustomerTimeline('sarah')">
+            <td><strong>Sarah Johnson</strong></td>
+            <td>Lead Scheduling</td>
+            <td>Day 3 — IC</td>
+            <td>3 of 5</td>
+            <td>Today 2:00 PM</td>
+            <td><span class="status-pill status-active">▶ Active</span></td>
+          </tr>
+          <tr data-customer="chen" onclick="openCustomerTimeline('chen')">
+            <td><strong>Tom & Lisa Chen</strong></td>
+            <td>Payment Follow-Up</td>
+            <td>Day 30 — GC</td>
+            <td>30 of 90</td>
+            <td>Pending review</td>
+            <td><span class="status-pill status-disputed">⚠️ Disputed</span></td>
+          </tr>
+          <tr data-customer="robert" onclick="openCustomerTimeline('robert')">
+            <td><strong>Robert Williams</strong></td>
+            <td>Post-Completion</td>
+            <td>Day 7 — HC</td>
+            <td>7 of 30</td>
+            <td>Tomorrow 10:00 AM</td>
+            <td><span class="status-pill status-active">▶ Active</span></td>
+          </tr>
+          <tr data-customer="jennifer" onclick="openCustomerTimeline('jennifer')">
+            <td><strong>Jennifer Adams</strong></td>
+            <td>Estimate Follow-Up</td>
+            <td>Day 3 — Follow-Up 2</td>
+            <td>3 of 45</td>
+            <td>
+              <div class="supp-tooltip">
+                <span style="color:var(--text-muted);font-weight:600">SUPPRESSED</span>
+                <span class="tooltip-text">Suppressed: Salesperson manual follow-up scheduled for Thursday</span>
+              </div>
+            </td>
+            <td><span class="status-pill status-suppressed">🔇 Suppressed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEMPLATE EDITOR MODAL ═══ -->
+<div class="modal-overlay" id="template-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit Template — <span id="template-step-name">Follow-Up 1 (DB)</span></div>
+      <button class="modal-close" onclick="closeTemplate()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- LEFT: Editor -->
+      <div class="modal-section">
+        <div>
+          <div class="modal-label">Channel</div>
+          <div class="channel-select">
+            <button class="channel-btn active" onclick="setChannel(this,'email')">📧 Email</button>
+            <button class="channel-btn" onclick="setChannel(this,'sms')">📱 SMS</button>
+            <button class="channel-btn" onclick="setChannel(this,'both')">📧📱 Both</button>
+          </div>
+        </div>
+        <div>
+          <div class="modal-label">Subject Line</div>
+          <input class="modal-input" id="tpl-subject" value="How to compare painting estimates" oninput="updatePreview()">
+        </div>
+        <div>
+          <div class="modal-label">Body</div>
+          <textarea class="modal-textarea" id="tpl-body" oninput="updatePreview()">Hi {client_first_name},
+
+Thanks for considering Nash Painting for your project. We know you might be comparing estimates, and we think that's smart.
+
+Here are a few tips for evaluating painting proposals:
+• Look for detailed scope (not just a lump sum)
+• Ask about prep work — it's where quality shows
+• Check reviews and warranties
+
+We also have a free Color Muse tool to help you pick the perfect colors for your project. {estimator_name} would be happy to walk you through it.
+
+View your proposal anytime: {customer_portal_url}
+
+Best,
+{estimator_name}
+Nash Painting
+{estimator_phone}</textarea>
+        </div>
+        <div>
+          <div class="modal-label">Insert Merge Tag</div>
+          <div class="merge-tags">
+            <span class="merge-tag" onclick="insertTag('{client_first_name}')">{client_first_name}</span>
+            <span class="merge-tag" onclick="insertTag('{estimator_name}')">{estimator_name}</span>
+            <span class="merge-tag" onclick="insertTag('{estimator_phone}')">{estimator_phone}</span>
+            <span class="merge-tag" onclick="insertTag('{customer_portal_url}')">{customer_portal_url}</span>
+            <span class="merge-tag" onclick="insertTag('{project_name}')">{project_name}</span>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT: Preview -->
+      <div class="modal-section">
+        <div class="modal-label">Preview</div>
+        <div class="preview-pane">
+          <div class="preview-from">From: Nash Painting &lt;hello@nashpainting.com&gt;</div>
+          <div class="preview-subject" id="preview-subject">How to compare painting estimates</div>
+          <div class="preview-body" id="preview-body"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeTemplate()">Cancel</button>
+      <button class="btn btn-secondary" onclick="sendTest()">📤 Send Test</button>
+      <button class="btn btn-primary" onclick="saveTemplate()">Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CUSTOMER TIMELINE MODAL ═══ -->
+<div class="modal-overlay" id="customer-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div class="modal-title" id="cust-modal-title">📊 Campaign Timeline</div>
+      <button class="modal-close" onclick="closeCustomerModal()">&times;</button>
+    </div>
+    <div id="cust-modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── TAB SWITCHING ───
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    if (target === 'library') showLibrary();
+    else if (target === 'active') showActive();
+  });
+});
+
+function setActiveTab(name) {
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+}
+
+function showLibrary() {
+  setActiveTab('library');
+  document.getElementById('view-library').classList.remove('hidden');
+  document.getElementById('view-sequence').classList.add('hidden');
+  document.getElementById('view-active').classList.add('hidden');
+}
+
+function showActive() {
+  setActiveTab('active');
+  document.getElementById('view-library').classList.add('hidden');
+  document.getElementById('view-sequence').classList.add('hidden');
+  document.getElementById('view-active').classList.remove('hidden');
+}
+
+function showSequence() {
+  document.getElementById('view-library').classList.add('hidden');
+  document.getElementById('view-sequence').classList.remove('hidden');
+  document.getElementById('view-active').classList.add('hidden');
+  tabs.forEach(t => t.classList.remove('active'));
+  window.scrollTo(0, 0);
+}
+
+// ─── CAMPAIGN TABLE CLICK ───
+document.querySelectorAll('.campaign-table tbody tr').forEach(row => {
+  row.addEventListener('click', () => {
+    showSequence();
+  });
+});
+
+// ─── STEP EXPAND/COLLAPSE ───
+function toggleStep(card) {
+  const wasExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.step-card.expanded').forEach(c => c.classList.remove('expanded'));
+  if (!wasExpanded) card.classList.add('expanded');
+}
+
+// ─── TEMPLATE EDITOR ───
+const templateData = {
+  da: { name: 'Proposal Sent (DA)', subject: 'Your Estimate from Nash Painting', body: 'Hi {client_first_name},\n\nThank you for having us out to look at your {project_name} project. Your proposal is ready and waiting for you.\n\nYou can review it anytime in your customer portal:\n{customer_portal_url}\n\nIf you have any questions, don\'t hesitate to reach out.\n\nBest,\n{estimator_name}\nNash Painting\n{estimator_phone}' },
+  db: { name: 'Follow-Up 1 (DB)', subject: 'How to compare painting estimates', body: 'Hi {client_first_name},\n\nThanks for considering Nash Painting for your project. We know you might be comparing estimates, and we think that\'s smart.\n\nHere are a few tips for evaluating painting proposals:\n• Look for detailed scope (not just a lump sum)\n• Ask about prep work — it\'s where quality shows\n• Check reviews and warranties\n\nWe also have a free Color Muse tool to help you pick the perfect colors for your project. {estimator_name} would be happy to walk you through it.\n\nView your proposal anytime: {customer_portal_url}\n\nBest,\n{estimator_name}\nNash Painting\n{estimator_phone}' },
+  dc: { name: 'Follow-Up 2 (DC)', subject: 'What sets Nash Painting apart', body: 'Hi {client_first_name},\n\nWe know choosing a painter is a big decision. Here\'s what sets Nash Painting apart:\n\n✅ Detailed prep work — we don\'t cut corners\n✅ Premium materials with manufacturer warranties\n✅ Background-checked, full-time crews\n✅ 100% satisfaction guarantee\n\nYour {project_name} project deserves the best. Let us show you why Nashville trusts Nash Painting.\n\n{customer_portal_url}\n\nBest,\n{estimator_name}\n{estimator_phone}' },
+  dd: { name: 'Follow-Up 3 (DD)', subject: 'Making it easy to get started', body: 'Hi {client_first_name},\n\nWe want to make your {project_name} project as easy as possible to get started.\n\nDid you know we offer flexible financing options? You can break your project into comfortable monthly payments.\n\nOur customers consistently tell us the investment was worth every penny. Check out our reviews and see for yourself.\n\nReady to move forward? {customer_portal_url}\n\nBest,\n{estimator_name}\nNash Painting\n{estimator_phone}' },
+  de: { name: 'Follow-Up 4 (DE)', subject: 'Still thinking it over?', body: 'Hi {client_first_name},\n\nJust checking in on your {project_name} project. No pressure at all — we know these decisions take time.\n\nYour proposal is still active, and financing options are still available if that helps.\n\nFeel free to reach out anytime with questions: {estimator_phone}\n\nOr review your proposal here: {customer_portal_url}\n\nBest,\n{estimator_name}\nNash Painting' },
+  df: { name: 'Expiration Warning (DF)', subject: 'Your proposal expires soon', body: 'Hi {client_first_name},\n\nQuick heads up — your {project_name} proposal expires in 15 days.\n\nWe\'d hate for you to miss out on the current pricing. If you\'d like to move forward, you can accept your proposal anytime:\n\n{customer_portal_url}\n\nIf your plans have changed or you need a revised estimate, just let us know.\n\nBest,\n{estimator_name}\nNash Painting\n{estimator_phone}' },
+  'df-close': { name: 'Graceful Close (DF)', subject: 'We\'re here when you\'re ready', body: 'Hi {client_first_name},\n\nWe understand — sometimes the timing just isn\'t right, and that\'s completely okay.\n\nIf your plans change down the road, we\'d love to help with your {project_name} project. Nash Painting will be here whenever you\'re ready.\n\nWishing you all the best,\n{estimator_name}\nNash Painting\n{estimator_phone}' }
+};
+
+const mergeValues = {
+  '{client_first_name}': 'Mark',
+  '{estimator_name}': 'Larry',
+  '{estimator_phone}': '615-555-0123',
+  '{customer_portal_url}': 'portal.nashpainting.com/mark-frei',
+  '{project_name}': 'Exterior Painting — 123 Oak St'
+};
+
+function openTemplate(code) {
+  const data = templateData[code];
+  if (!data) return;
+  document.getElementById('template-step-name').textContent = data.name;
+  document.getElementById('tpl-subject').value = data.subject;
+  document.getElementById('tpl-body').value = data.body;
+  document.getElementById('template-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updatePreview();
+}
+
+function closeTemplate() {
+  document.getElementById('template-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function updatePreview() {
+  const subject = document.getElementById('tpl-subject').value;
+  const body = document.getElementById('tpl-body').value;
+  document.getElementById('preview-subject').textContent = replaceMergeTags(subject, false);
+  document.getElementById('preview-body').innerHTML = replaceMergeTags(escapeHtml(body), true).replace(/\n/g, '<br>');
+}
+
+function replaceMergeTags(text, useHighlight) {
+  for (const [tag, val] of Object.entries(mergeValues)) {
+    const escaped = tag.replace(/[{}]/g, '\\$&');
+    if (useHighlight) {
+      text = text.replaceAll(escapeHtml(tag), `<span class="merge-val">${val}</span>`);
+    } else {
+      text = text.replaceAll(tag, val);
+    }
+  }
+  return text;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function insertTag(tag) {
+  const textarea = document.getElementById('tpl-body');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = textarea.value;
+  textarea.value = text.substring(0, start) + tag + text.substring(end);
+  textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+  textarea.focus();
+  updatePreview();
+}
+
+function setChannel(btn, channel) {
+  btn.parentElement.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function saveTemplate() {
+  closeTemplate();
+  showToast('✅ Template saved successfully');
+}
+
+function sendTest() {
+  showToast('📤 Test email sent to your inbox');
+}
+
+// ─── CUSTOMER TIMELINE MODAL ───
+const customerData = {
+  mark: {
+    name: 'Mark Frei',
+    campaign: 'Estimate Follow-Up (DA–DF)',
+    salesperson: 'Larry',
+    steps: [
+      { name: 'Proposal Sent (DA)', day: 'Day 0', date: 'Feb 21', status: 'sent' },
+      { name: 'Follow-Up 1 (DB)', day: 'Day 1', date: 'Feb 22', status: 'sent', note: 'Opened — 2 views' },
+      { name: 'Salesperson Task', day: 'Day 2', date: 'Feb 23', status: 'sent', note: 'Completed by Larry' },
+      { name: 'Follow-Up 2 (DC)', day: 'Day 3', date: 'Feb 24', status: 'sent', note: 'Opened — 1 view' },
+      { name: 'Follow-Up 3 (DD)', day: 'Day 8', date: 'Mar 1', status: 'pending', note: 'Scheduled: Tomorrow 9 AM' },
+      { name: 'Salesperson Task', day: 'Day 14', date: 'Mar 7', status: 'future' },
+      { name: 'Follow-Up 4 (DE)', day: 'Day 28', date: 'Mar 21', status: 'future' },
+      { name: 'Expiration Warning (DF)', day: 'Day 30', date: 'Mar 23', status: 'future' },
+      { name: 'Follow-Up 5 (DF)', day: 'Day 31', date: 'Mar 24', status: 'future' },
+      { name: 'Expire', day: 'Day 45', date: 'Apr 7', status: 'future' }
+    ]
+  },
+  sarah: {
+    name: 'Sarah Johnson',
+    campaign: 'Lead → Schedule Estimate (IA–IE)',
+    salesperson: 'Rick',
+    steps: [
+      { name: 'Welcome (IA)', day: 'Day 0', date: 'Feb 27', status: 'sent' },
+      { name: 'Why Nash (IB)', day: 'Day 1', date: 'Feb 28', status: 'sent', note: 'Opened — 3 views' },
+      { name: 'Schedule CTA (IC)', day: 'Day 3', date: 'Mar 1', status: 'pending', note: 'Scheduled: Today 2 PM' },
+      { name: 'Social Proof (ID)', day: 'Day 4', date: 'Mar 2', status: 'future' },
+      { name: 'Final CTA (IE)', day: 'Day 5', date: 'Mar 3', status: 'future' }
+    ]
+  },
+  chen: {
+    name: 'Tom & Lisa Chen',
+    campaign: 'Payment Follow-Up (GA–GE)',
+    salesperson: 'David',
+    steps: [
+      { name: 'Invoice Reminder (GA)', day: 'Day 0', date: 'Jan 31', status: 'sent' },
+      { name: 'Second Notice (GB)', day: 'Day 7', date: 'Feb 7', status: 'sent' },
+      { name: 'Payment Options (GC)', day: 'Day 30', date: 'Mar 1', status: 'pending', note: 'Pending review — disputed' },
+      { name: 'Escalation (GD)', day: 'Day 60', date: 'Mar 31', status: 'future' },
+      { name: 'Final Notice (GE)', day: 'Day 90', date: 'Apr 30', status: 'future' }
+    ]
+  },
+  robert: {
+    name: 'Robert Williams',
+    campaign: 'Post-Completion (HA–HE)',
+    salesperson: 'Larry',
+    steps: [
+      { name: 'Thank You (HA)', day: 'Day 0', date: 'Feb 22', status: 'sent' },
+      { name: 'Review Request (HB)', day: 'Day 3', date: 'Feb 25', status: 'sent', note: 'Opened — left a 5★ review!' },
+      { name: 'Warranty Info (HC)', day: 'Day 7', date: 'Mar 1', status: 'pending', note: 'Scheduled: Tomorrow 10 AM' },
+      { name: 'Referral Ask (HD)', day: 'Day 14', date: 'Mar 8', status: 'future' },
+      { name: 'Color Refresh (HE)', day: 'Day 30', date: 'Mar 24', status: 'future' }
+    ]
+  },
+  jennifer: {
+    name: 'Jennifer Adams',
+    campaign: 'Estimate Follow-Up (DA–DF)',
+    salesperson: 'Rick',
+    steps: [
+      { name: 'Proposal Sent (DA)', day: 'Day 0', date: 'Feb 26', status: 'sent' },
+      { name: 'Follow-Up 1 (DB)', day: 'Day 1', date: 'Feb 27', status: 'sent', note: 'Not opened' },
+      { name: 'Salesperson Task', day: 'Day 2', date: 'Feb 28', status: 'sent', note: 'Rick scheduled call for Thursday' },
+      { name: 'Follow-Up 2 (DC)', day: 'Day 3', date: 'Mar 1', status: 'suppressed', note: 'Suppressed: Manual follow-up scheduled' },
+      { name: 'Follow-Up 3 (DD)', day: 'Day 8', date: 'Mar 6', status: 'future' },
+      { name: 'Salesperson Task', day: 'Day 14', date: 'Mar 12', status: 'future' },
+      { name: 'Follow-Up 4 (DE)', day: 'Day 28', date: 'Mar 26', status: 'future' },
+      { name: 'Expiration Warning (DF)', day: 'Day 30', date: 'Mar 28', status: 'future' },
+      { name: 'Follow-Up 5 (DF)', day: 'Day 31', date: 'Mar 29', status: 'future' },
+      { name: 'Expire', day: 'Day 45', date: 'Apr 12', status: 'future' }
+    ]
+  }
+};
+
+function openCustomerTimeline(id) {
+  const data = customerData[id];
+  if (!data) return;
+  document.getElementById('cust-modal-title').innerHTML = `📊 ${data.name} — Campaign Timeline`;
+
+  let html = '<div class="cust-timeline">';
+  html += `<div class="cust-header">
+    <div>
+      <div class="cust-name">${data.name}</div>
+      <div class="cust-campaign">${data.campaign} · Salesperson: ${data.salesperson}</div>
+    </div>
+  </div>`;
+  html += '<div class="cust-steps">';
+
+  for (const step of data.steps) {
+    const dotClass = step.status;
+    const statusLabel = step.status === 'sent' ? '✅ Sent' :
+                        step.status === 'pending' ? '🔵 Pending' :
+                        step.status === 'suppressed' ? '🔇 Suppressed' : '○ Scheduled';
+    const statusColor = step.status === 'sent' ? 'var(--green)' :
+                        step.status === 'pending' ? 'var(--blue)' :
+                        step.status === 'suppressed' ? 'var(--text-muted)' : 'var(--border)';
+    html += `<div class="cust-step">
+      <div class="cust-dot ${dotClass}"></div>
+      <div class="cust-step-info">
+        <div class="cust-step-name">${step.name}</div>
+        <div class="cust-step-date">${step.day} · ${step.date}${step.note ? ' · <em>' + step.note + '</em>' : ''}</div>
+        <div class="cust-step-status" style="color:${statusColor}">${statusLabel}</div>
+      </div>
+    </div>`;
+  }
+
+  html += '</div></div>';
+  document.getElementById('cust-modal-body').innerHTML = html;
+  document.getElementById('customer-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCustomerModal() {
+  document.getElementById('customer-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ─── CLOSE MODALS ON OVERLAY CLICK ───
+document.getElementById('template-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeTemplate();
+});
+document.getElementById('customer-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeCustomerModal();
+});
+
+// ─── CLOSE MODALS ON ESCAPE ───
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeTemplate();
+    closeCustomerModal();
+  }
+});
+
+// ─── FILTER (UI only — demo filtering) ───
+document.querySelectorAll('.filter-select').forEach(sel => {
+  sel.addEventListener('change', () => {
+    showToast('🔍 Filter applied');
+  });
+});
+
+// ─── TOAST ───
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ─── INIT: Update preview on load ───
+updatePreview();
+</script>
+</body>
+</html>
