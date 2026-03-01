@@ -745,13 +745,13 @@ html+='<div style="margin-top:10px;padding:10px 14px;background:var(--red-bg);bo
 html+='<div style="font-size:12px;color:var(--red);margin-bottom:8px">'+l.note+'</div>';
 html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
 html+='<button class="btn-gold btn-sm" onclick="resolveRecon('+i+',\'match\')">🔍 Match to Job</button>';
-html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'rogue\')">🚨 Flag as Rogue PO</button>';
 html+='<button class="btn-outline-dark btn-sm" onclick="resolveRecon('+i+',\'error\')">📧 Dispute — Billing Error</button>';
 html+='</div></div>';
 }
 if(!l.resolved&&l.pendingRogue){
 html+='<div style="margin-top:10px;padding:14px;background:var(--yellow-bg);border-radius:var(--radius-sm);border:1px solid #FDE68A">';
-html+='<div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">🚨 Rogue PO — Assign to Job & Crew</div>';
+html+='<div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px">🔍 Match to Job</div>';
+html+='<div class="form-group" style="margin:0;margin-bottom:10px"><label style="font-size:11px;color:#92400E">Why was this unmatched?</label><select id="rogue-reason-'+i+'" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"><option value="wrong_po">Store entered wrong PO number on invoice</option><option value="no_call">Crew/store didn\'t call Nash for authorization</option><option value="before_hours">Purchased before office hours — no one to call</option><option value="other">Other</option></select></div>';
 html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">';
 html+='<div class="form-group" style="margin:0"><label style="font-size:11px;color:#92400E">Job</label><select id="rogue-job-'+i+'" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px">';
 JOBS.filter(function(j){return j.status==="In Progress"||j.status==="Scheduled";}).forEach(function(j){
@@ -762,11 +762,11 @@ html+='<div class="form-group" style="margin:0"><label style="font-size:11px;col
 html+='</div>';
 html+='<div class="form-group" style="margin:0;margin-bottom:10px"><label style="font-size:11px;color:#92400E">Who picked up? (if known)</label><input type="text" id="rogue-who-'+i+'" placeholder="e.g. Someone gave account number" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px"></div>';
 html+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400E;cursor:pointer"><input type="checkbox" id="rogue-flag-'+i+'" checked style="accent-color:var(--red)"> Flag crew for policy violation</label>';
-html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400E;cursor:pointer"><input type="checkbox" id="rogue-store-'+i+'" style="accent-color:var(--yellow)"> Notify store management</label>';
+html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400E;cursor:pointer"><input type="checkbox" id="rogue-flag-'+i+'" style="accent-color:var(--red)"> Flag crew for policy violation</label>';
+html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#92400E;cursor:pointer"><input type="checkbox" id="rogue-store-'+i+'" style="accent-color:var(--yellow)"> Notify store to always call Nash before releasing materials</label>';
 html+='</div>';
 html+='<div style="display:flex;gap:8px;margin-top:12px">';
-html+='<button class="btn-gold btn-sm" onclick="resolveRogue('+i+')">✅ Create Rogue PO & Assign to Job</button>';
+html+='<button class="btn-gold btn-sm" onclick="resolveRogue('+i+')">✅ Match & Create PO</button>';
 html+='<button class="btn-outline-dark btn-sm" onclick="cancelRogue('+i+')">← Back</button>';
 html+='</div></div>';
 }
@@ -790,14 +790,16 @@ var jobId=jobSel.value;
 var jobText=jobSel.options[jobSel.selectedIndex].text;
 var crew=crewSel.value;
 var who=document.getElementById('rogue-who-'+idx).value||'Unknown';
+var reason=document.getElementById('rogue-reason-'+idx).value;
 var flagCrew=document.getElementById('rogue-flag-'+idx).checked;
 var notifyStore=document.getElementById('rogue-store-'+idx).checked;
+var reasonText={wrong_po:'Wrong PO# on invoice',no_call:'No authorization call made',before_hours:'Before office hours',other:'Other'};
 l.resolved=true;
 l.pendingRogue=false;
 l.po=jobId+'-R';
 l.job=jobText.split(' (#')[0];
 l.crew=crew;
-var res='Rogue PO created → assigned to '+l.job+' ('+crew+')';
+var res='Matched → '+l.job+' ('+crew+') · Reason: '+(reasonText[reason]||reason);
 if(flagCrew)res+=' · Crew flagged for violation';
 if(notifyStore)res+=' · Store notified';
 l.resolution=res;
