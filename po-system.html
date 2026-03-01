@@ -617,21 +617,6 @@ document.getElementById('panel-job').style.display=(t==='job'||t==='subdeduct')?
 document.getElementById('panel-perishable').style.display=t==='perishable'?'block':'none';
 if(t==='perishable')checkPerishBudget();
 }
-if(poSource==='field'&&k!=='hoover'&&k!=='sw'){sel.innerHTML+='<option value="'+k+'">'+s.name+'</option>';}
-});
-supplierChanged();
-}
-function supplierChanged(){
-var sel=document.getElementById('po-store');
-var supVal=document.getElementById('po-supplier').value;
-var sup=MATERIAL_SUPPLIERS[supVal];
-if(sup&&sup.stores&&sup.stores.length>0){sel.parentElement.style.display='';sel.innerHTML=sup.stores.map(function(s){return '<option>'+s+'</option>';}).join('');}
-else{sel.parentElement.style.display='none';sel.innerHTML='';}
-}
-
-function checkBudget(){const name=document.getElementById('po-supervisor').value;const sup=SUPERVISORS.find(s=>s.name.toLowerCase()===name);if(!sup)return;const wP=Math.round(sup.weekSpent/sup.weekLimit*100),mP=Math.round(sup.monthSpent/sup.monthLimit*100);const wC=wP>=100?'red':wP>=75?'yellow':'green',mC=mP>=100?'red':mP>=75?'yellow':'green';const denied=wP>=100||mP>=100;document.getElementById('budget-display').innerHTML='<div class="budget-row"><div class="budget-lbl"><span>This Week</span><span>$'+sup.weekSpent+' / $'+sup.weekLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+wC+'" style="width:'+Math.min(wP,100)+'%"></div></div></div><div class="budget-row"><div class="budget-lbl"><span>This Month</span><span>$'+sup.monthSpent+' / $'+sup.monthLimit+'</span></div><div class="budget-bar"><div class="budget-fill '+mC+'" style="width:'+Math.min(mP,100)+'%"></div></div></div>'+(denied?'<div style="margin-top:8px;font-size:12px;color:var(--red);font-weight:600">🔴 AT BUDGET CAP</div>':wP>=75||mP>=75?'<div style="margin-top:8px;font-size:12px;color:var(--yellow);font-weight:600">🟡 Approaching limit</div>':'<div style="margin-top:8px;font-size:12px;color:var(--green);font-weight:600">🟢 Within budget</div>');document.getElementById('budget-denied').style.display=denied?'flex':'none';document.getElementById('btn-step3').style.display=denied?'none':'';}
-
-
 function generatePO(){const seq=Math.floor(Math.random()*5)+1;const poNum=selectedJob.id+'-'+seq;document.getElementById('po-number-display').textContent='PO# '+poNum;document.getElementById('po-generated').style.display='block';document.getElementById('po-gen-btn').style.display='none';}
 
 function copyPO(){const num=document.getElementById('po-number-display').textContent;navigator.clipboard.writeText(num).catch(()=>{});const btn=event.target;btn.textContent='✅ Copied!';setTimeout(()=>{btn.textContent='📋 Copy PO Number';},1500);}
