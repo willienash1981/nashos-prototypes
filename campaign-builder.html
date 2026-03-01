@@ -447,7 +447,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <span class="c-code">DB</span>
               </div>
               <span class="badge b-blue">Email</span>
-              <span class="fallback-label"><span class="fb-arrow">↪</span> SMS fallback</span>
+              <span class="channel-strat fallback"><span class="cs-icon">↪</span> SMS fallback</span>
             </div>
             <div class="step-summary">Educational: comparing estimates, Color Muse</div>
             <div class="step-tags">
@@ -495,7 +495,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <span class="c-code">DC</span>
               </div>
               <span class="badge b-blue">Email</span>
-              <span class="fallback-label"><span class="fb-arrow">↪</span> SMS fallback</span>
+              <span class="channel-strat fallback"><span class="cs-icon">↪</span> SMS fallback</span>
             </div>
             <div class="step-summary">Urgency + quality messaging</div>
             <div class="step-tags">
@@ -521,7 +521,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <span class="c-code">DD</span>
               </div>
               <span class="badge b-blue">Email</span>
-              <span class="fallback-label"><span class="fb-arrow">↪</span> SMS fallback</span>
+              <span class="channel-strat fallback"><span class="cs-icon">↪</span> SMS fallback</span>
             </div>
             <div class="step-summary">Value proposition + financing options</div>
             <div class="step-tags">
@@ -569,7 +569,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <span class="c-code">DE</span>
               </div>
               <span class="badge b-blue">Email</span>
-              <span class="fallback-label"><span class="fb-arrow">↪</span> SMS fallback</span>
+              <span class="channel-strat fallback"><span class="cs-icon">↪</span> SMS fallback</span>
             </div>
             <div class="step-summary">Soft check-in + financing reminder</div>
             <div class="step-tags">
@@ -594,7 +594,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <span class="c-code">DF</span>
               </div>
               <span class="badge b-blue">Email + Portal</span>
-              <span class="fallback-label"><span class="fb-arrow">↪</span> SMS + Portal</span>
+              <span class="channel-strat both"><span class="cs-icon">📧+📱</span> Both</span>
             </div>
             <div class="step-summary">Proposal expires in X days</div>
             <div class="step-tags">
@@ -619,7 +619,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
                 <span class="c-code">DF</span>
               </div>
               <span class="badge b-blue">Email</span>
-              <span class="fallback-label"><span class="fb-arrow">↪</span> SMS fallback</span>
+              <span class="channel-strat fallback"><span class="cs-icon">↪</span> SMS fallback</span>
             </div>
             <div class="step-summary">Graceful close</div>
             <div class="step-tags">
@@ -929,11 +929,15 @@ Nash Painting
     </div>
     <div class="modal-footer" style="flex-wrap:wrap;gap:8px">
       <div style="display:flex;align-items:center;gap:8px;margin-right:auto">
-        <label style="font-size:12px;font-weight:600;color:var(--text-sec);white-space:nowrap">Fallback:</label>
+        <label style="font-size:12px;font-weight:600;color:var(--text-sec);white-space:nowrap">Channel Strategy:</label>
         <select style="font-size:12px;padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:white;color:var(--text)">
-          <option selected>📱 SMS (auto-adapt)</option>
-          <option>📧 Email (auto-adapt)</option>
-          <option>🚫 None (skip if blocked)</option>
+          <option>📧 Email only</option>
+          <option>📱 SMS only</option>
+          <option>📧+📱 Both (send all)</option>
+          <option selected>📧→📱 Email, SMS fallback</option>
+          <option>📱→📧 SMS, Email fallback</option>
+          <option disabled>📬 Postcard (V3)</option>
+          <option disabled>📧+📱+📬 All channels (V3)</option>
         </select>
       </div>
       <button class="btn btn-secondary" onclick="closeTemplate()">Cancel</button>
