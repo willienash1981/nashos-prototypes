@@ -480,7 +480,24 @@ function filterPOs(){let d=[...PO_DATA];const s=document.getElementById('f-statu
 let selectedJob=null,wizardSep=null;
 function setStep(n){for(let i=1;i<=4;i++){document.getElementById('ws'+i).classList.toggle('active',i===n);const dot=document.getElementById('wd'+i);dot.classList.remove('active','done');if(i<n)dot.classList.add('done');if(i===n)dot.classList.add('active');}}
 
-function searchJobs(q){const box=document.getElementById('job-results');if(q.length<2){box.classList.remove('show');return;}const m=JOBS.filter(j=>(j.customer+' '+j.addr).toLowerCase().includes(q.toLowerCase()));if(!m.length){box.classList.remove('show');return;}box.innerHTML=m.map(j=>'<div class="search-result" onclick="selectJob(\''+j.id+'\')"><div class="sr-name">'+j.customer+'</div><div class="sr-addr">'+j.addr+'</div><div class="sr-crew">Crew: '+j.crew+' · Job #'+j.id+' · '+j.status+'</div></div>').join('');box.classList.add('show');}
+function renderJobList(filter){
+var q=(filter||'').toLowerCase();
+var groups={'In Progress':'inprogress','Scheduled':'scheduled','Sold':'sold'};
+Object.keys(groups).forEach(function(status){
+var elId=groups[status];
+var jobs=JOBS.filter(function(j){return j.status===status&&(!q||(j.customer+' '+j.addr+' '+j.crew+' '+j.id).toLowerCase().indexOf(q)>=0);});
+var container=document.getElementById('jobs-'+elId);
+var section=document.getElementById('job-section-'+elId);
+if(jobs.length===0){section.classList.add('hidden');}else{section.classList.remove('hidden');}
+container.innerHTML=jobs.map(function(j){
+var schedInfo=j.schedDate?' · Starts '+j.schedDate:'';
+var crewInfo=j.crew==='TBD'?'Crew: TBD':'Crew: '+j.crew+' · Sup: '+j.sup;
+return '<div class="job-item" onclick="selectJob(\''+j.id+'\')"><div class="ji-main"><div class="ji-name">'+j.customer+'</div><div class="ji-addr">'+j.addr+'</div><div class="ji-meta"><span>'+crewInfo+'</span><span>'+j.svc+schedInfo+'</span></div></div><div class="ji-right"><div class="ji-id">#'+j.id+'</div><div class="ji-svc">'+j.svc+'</div></div></div>';
+}).join('');
+});
+}
+function filterJobList(q){renderJobList(q);}
+
 
 function selectJob(id){selectedJob=JOBS.find(j=>j.id===id);document.getElementById('job-results').classList.remove('show');document.getElementById('selected-job-info').innerHTML='<div>📌 <strong>'+selectedJob.customer+'</strong> — '+selectedJob.addr+'<br><span style="font-size:12px">Crew Leader: '+selectedJob.crew+' · Job #'+selectedJob.id+' · Supervisor: '+selectedJob.sup+'</span></div>';setStep(2);}
 
