@@ -539,16 +539,16 @@ const SUPERVISORS=[
 {name:'David',initials:'DV',weekSpent:0,weekLimit:25,monthSpent:45,monthLimit:200,recent:[{desc:'Tape — 555009',amt:18},{desc:'Brushes — 555009',amt:12}]}
 ];
 var RECON_LINES=[
-{id:0,bill:'5 gal SW Duration Extra White',store:'Cool Springs',date:'Feb 3',po:'555001-1',job:'Thompson — 234 Riverside Dr',crew:'Carlos',billAmt:485,poAmt:485,match:'matched',resolved:true},
-{id:1,bill:'2 gal SW ProMar 200 Primer',store:'Cool Springs',date:'Feb 3',po:'555001-2',job:'Thompson — 234 Riverside Dr',crew:'Carlos',billAmt:220,poAmt:220,match:'matched',resolved:true},
-{id:2,bill:'8 gal SW ProMar 200 Flat',store:'Murfreesboro',date:'Feb 7',po:'555003-1',job:'Johnson — 412 Elm St',crew:'Miguel',billAmt:612,poAmt:612,match:'matched',resolved:true},
-{id:3,bill:'Rollers, tape, plastic',store:'Murfreesboro',date:'Feb 7',po:'555003-2',job:'Johnson — 412 Elm St',crew:'Miguel',billAmt:38,poAmt:38,match:'matched',resolved:true},
-{id:4,bill:'4 gal BM Advance Semi-Gloss',store:'Murfreesboro',date:'Feb 10',po:'555005-1',job:'Patterson — 1087 Cedar Ln',crew:'Roberto',billAmt:358,poAmt:340,match:'discrepancy',resolved:false,note:'Billed $18 more than authorized. Store says paint price increased Feb 1.'},
-{id:5,bill:'10 gal SW Emerald Matte',store:'Green Hills',date:'Feb 14',po:'555007-1',job:'Williams — 890 Oak Ave',crew:'Eduardo',billAmt:725,poAmt:725,match:'matched',resolved:true},
-{id:6,bill:'Caulk (6 tubes), mineral spirits',store:'Green Hills',date:'Feb 14',po:'555007-2',job:'Williams — 890 Oak Ave',crew:'Eduardo',billAmt:22,poAmt:22,match:'matched',resolved:true},
-{id:7,bill:'6 gal BM Regal Select Eggshell',store:'Mt. Juliet',date:'Feb 18',po:'555009-1',job:'Garcia — 567 Magnolia Blvd',crew:'Jose',billAmt:395,poAmt:395,match:'matched',resolved:true},
-{id:8,bill:'3 gal SW Duration Satin',store:'Clarksville',date:'Feb 22',po:'—',job:'—',crew:'—',billAmt:287,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Clarksville store says someone gave account number directly.'},
-{id:9,bill:'5 gal SW ProMar 200 Primer',store:'Smyrna',date:'Feb 25',po:'—',job:'—',crew:'—',billAmt:149,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Smyrna store has no record of who picked up.'}
+{id:0,bill:'5 gal SW Duration Extra White',store:'Cool Springs',date:'Feb 3',time:'8:42 AM',po:'555001-1',job:'Thompson — 234 Riverside Dr',crew:'Carlos',billAmt:485,poAmt:485,match:'matched',resolved:true},
+{id:1,bill:'2 gal SW ProMar 200 Primer',store:'Cool Springs',date:'Feb 3',time:'8:42 AM',po:'555001-2',job:'Thompson — 234 Riverside Dr',crew:'Carlos',billAmt:220,poAmt:220,match:'matched',resolved:true},
+{id:2,bill:'8 gal SW ProMar 200 Flat',store:'Murfreesboro',date:'Feb 7',time:'9:15 AM',po:'555003-1',job:'Johnson — 412 Elm St',crew:'Miguel',billAmt:612,poAmt:612,match:'matched',resolved:true},
+{id:3,bill:'Rollers, tape, plastic',store:'Murfreesboro',date:'Feb 7',time:'9:15 AM',po:'555003-2',job:'Johnson — 412 Elm St',crew:'Miguel',billAmt:38,poAmt:38,match:'matched',resolved:true},
+{id:4,bill:'4 gal BM Advance Semi-Gloss',store:'Murfreesboro',date:'Feb 10',time:'10:30 AM',po:'555005-1',job:'Patterson — 1087 Cedar Ln',crew:'Roberto',billAmt:358,poAmt:340,match:'discrepancy',resolved:false,note:'Billed $18 more than authorized. Store says paint price increased Feb 1.'},
+{id:5,bill:'10 gal SW Emerald Matte',store:'Green Hills',date:'Feb 14',time:'11:05 AM',po:'555007-1',job:'Williams — 890 Oak Ave',crew:'Eduardo',billAmt:725,poAmt:725,match:'matched',resolved:true},
+{id:6,bill:'Caulk (6 tubes), mineral spirits',store:'Green Hills',date:'Feb 14',time:'11:05 AM',po:'555007-2',job:'Williams — 890 Oak Ave',crew:'Eduardo',billAmt:22,poAmt:22,match:'matched',resolved:true},
+{id:7,bill:'6 gal BM Regal Select Eggshell',store:'Mt. Juliet',date:'Feb 18',time:'7:50 AM',po:'555009-1',job:'Garcia — 567 Magnolia Blvd',crew:'Jose',billAmt:395,poAmt:395,match:'matched',resolved:true},
+{id:8,bill:'3 gal SW Duration Satin',store:'Clarksville',date:'Feb 22',time:'6:47 AM',po:'—',job:'—',crew:'—',billAmt:287,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Purchased at 6:47 AM — before Nash office opens (7:00 AM). Clarksville store says someone gave account number directly.'},
+{id:9,bill:'5 gal SW ProMar 200 Primer',store:'Smyrna',date:'Feb 25',time:'6:32 AM',po:'—',job:'—',crew:'—',billAmt:149,poAmt:0,match:'unmatched',resolved:false,note:'No PO on file. Purchased at 6:32 AM — before Nash office opens (7:00 AM). Smyrna store has no record of who picked up.'}
 ];
 
 function switchTab(id){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');const tabs=['dashboard','newpo','budgets','rogue','reconcile','tracking'];const idx=tabs.indexOf(id);if(idx>=0)document.querySelectorAll('.tab-btn')[idx].classList.add('active');}
