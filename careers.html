@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careers — Nash Painting</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f0f2f5;color:#333;min-height:100vh}
+.shell{max-width:430px;margin:0 auto;background:#fff;min-height:100vh;position:relative;overflow-x:hidden}
+.header{background:#1a2332;padding:14px 20px;display:flex;align-items:center;gap:12px}
+.logo-n{width:36px;height:36px;background:#c8a85c;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#1a2332}
+.header h1{color:#fff;font-size:17px;font-weight:600}
+.hero{background:linear-gradient(135deg,#1a2332 0%,#2a3a4f 100%);padding:32px 20px;text-align:center}
+.hero h2{color:#c8a85c;font-size:24px;margin-bottom:12px}
+.hero p{color:#ccd3dc;font-size:14px;line-height:1.6}
+.content{padding:16px}
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:12px;font-weight:600}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:20px;margin-bottom:14px;border:1px solid #eee}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.card h3{font-size:15px;color:#1a2332;flex:1}
+.badge{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;white-space:nowrap;margin-left:8px}
+.badge-navy{background:#1a2332;color:#fff}
+.badge-gold{background:#c8a85c;color:#1a2332}
+.card-meta{font-size:12px;color:#888;margin-bottom:8px}
+.card-meta span+span::before{content:"·";margin:0 6px}
+.card p{font-size:13px;line-height:1.5;color:#555;margin-bottom:12px}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.pill{background:#f0f2f5;color:#555;font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500}
+.btn{display:inline-block;background:#1a2332;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%;text-align:center}
+.btn:hover{background:#2a3a4f}
+#app-form{display:none}
+.form-section{margin-bottom:24px}
+.form-section-title{font-size:15px;font-weight:700;color:#1a2332;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.form-section-sub{font-size:12px;color:#888;margin-bottom:14px}
+.applying-for{background:#f0f2f5;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;color:#555}
+.applying-for strong{color:#1a2332}
+.back-btn{background:none;border:none;color:#c8a85c;font-size:14px;font-weight:600;cursor:pointer;padding:8px 0;margin-bottom:12px;display:flex;align-items:center;gap:4px}
+.row{display:flex;gap:10px}
+.row .field{flex:1}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fafafa}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#c8a85c}
+.field textarea{resize:vertical;min-height:80px}
+.toggle-q{background:#fafafa;border:1.5px solid #eee;border-radius:10px;padding:14px;margin-bottom:10px}
+.toggle-q .q-text{font-size:13px;font-weight:600;color:#333;margin-bottom:2px}
+.toggle-q .q-sub{font-size:12px;color:#888;margin-bottom:10px;font-style:italic}
+.toggle-btns{display:flex;gap:8px}
+.toggle-btns button{flex:1;padding:8px;border-radius:6px;border:1.5px solid #ddd;background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.toggle-btns button.yes.active{background:#27ae60;color:#fff;border-color:#27ae60}
+.toggle-btns button.no.active{background:#e74c3c;color:#fff;border-color:#e74c3c}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check-item{display:flex;align-items:center;gap:6px;font-size:13px}
+.check-item input{width:16px;height:16px;accent-color:#1a2332}
+.radio-group{display:flex;gap:12px;flex-wrap:wrap}
+.radio-item{display:flex;align-items:center;gap:6px;font-size:13px}
+.radio-item input{accent-color:#1a2332}
+.info-box{background:#eaf4fb;border:1px solid #bee0f5;border-radius:8px;padding:12px 14px;font-size:12px;color:#2c6fa0;line-height:1.5;margin-top:8px}
+.result{display:none;padding:20px;border-radius:10px;margin:16px 0;text-align:center;font-size:14px;line-height:1.6}
+.result-fail{background:#fdf0f0;border:1px solid #f5c6c6;color:#c0392b}
+.result-pass{background:#eafaf1;border:1px solid #a9dfbf;color:#1e8449}
+.footer{text-align:center;padding:24px 20px;border-top:1px solid #eee;margin-top:20px}
+.footer p{font-size:12px;color:#999;line-height:1.8}
+.footer a{color:#c8a85c;text-decoration:none}
+.req-badge{background:#fff3cd;color:#856404;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div class="logo-n">N</div>
+    <h1>Nash Painting</h1>
+  </div>
+  <div id="postings-view">
+    <div class="hero">
+      <h2>Join Our Team</h2>
+      <p>Nashville's premier residential painting company is looking for talented painting contractors and team members. We offer consistent work, fair pay, and a professional environment.</p>
+    </div>
+    <div class="content">
+      <div class="section-title">Active Openings</div>
+      <div class="card">
+        <div class="card-head"><h3>Painting Crew — Large Residential Projects</h3><span class="badge badge-navy">Subcontractor</span></div>
+        <div class="card-meta"><span>Nashville Metro Area</span><span>Feb 15, 2026</span></div>
+        <p>We're looking for experienced painting crews (4+ painters) to handle large residential projects including whole-home interiors and exteriors. Consistent year-round work available.</p>
+        <div class="pills"><span class="pill">4+ Painters</span><span class="pill">2+ Years Exp</span><span class="pill">Own Tools</span><span class="pill">Reliable Transport</span></div>
+        <button class="btn" onclick="showForm('Painting Crew — Large Residential Projects')">Apply Now →</button>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Painting Crew — Small/Residential</h3><span class="badge badge-navy">Subcontractor</span></div>
+        <div class="card-meta"><span>Nashville Metro Area</span><span>Feb 20, 2026</span></div>
+        <p>Looking for skilled painting contractors (1-3 painters) for residential repaints. Perfect for smaller crews who want steady work without the hassle of finding their own customers.</p>
+        <div class="pills"><span class="pill">1-3 Painters</span><span class="pill">Interior/Exterior</span><span class="pill">Own Tools</span></div>
+        <button class="btn" onclick="showForm('Painting Crew — Small/Residential')">Apply Now →</button>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Specialty Sub — Drywall Texture</h3><span class="badge badge-gold">Specialty</span></div>
+        <div class="card-meta"><span>Nashville Metro Area</span><span>Mar 1, 2026</span></div>
+        <p>Seeking experienced drywall texture specialist for knockdown, orange peel, and skip trowel finishes. As-needed basis for projects requiring texture work.</p>
+        <div class="pills"><span class="pill">Texture Experience</span><span class="pill">As Needed</span><span class="pill">Own Tools</span></div>
+        <button class="btn" onclick="showForm('Specialty Sub — Drywall Texture')">Apply Now →</button>
+      </div>
+    </div>
+  </div>
+  <div id="app-form" class="content">
+    <button class="back-btn" onclick="hideForm()">← Back to Openings</button>
+    <div class="applying-for">Applying for: <strong id="applying-title"></strong></div>
+    <form id="the-form" onsubmit="return submitApp(event)">
+      <div class="form-section">
+        <div class="form-section-title">Contact Information</div>
+        <div class="form-section-sub">How can we reach you?</div>
+        <div class="row"><div class="field"><label>First Name</label><input type="text" required></div><div class="field"><label>Last Name</label><input type="text" required></div></div>
+        <div class="field"><label>Phone Number</label><input type="tel" required></div>
+        <div class="field"><label>Email Address</label><input type="email" required></div>
+        <div class="field"><label>How did you hear about us?</label><select required><option value="">Select…</option><option>Indeed</option><option>Craigslist</option><option>LinkedIn</option><option>Nextdoor</option><option>Referral</option><option>Other</option></select></div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Requirements <span class="req-badge">⚠️ Required</span></div>
+        <div class="form-section-sub">All requirements must be met to qualify.</div>
+        <div class="toggle-q" data-ko><div class="q-text">Do you have an English-speaking communicator available on your crew at all times?</div><div class="q-sub">We promise our customers they can communicate with the crew on site</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="toggle-q" data-ko><div class="q-text">Is your crew willing to wear Nash Painting t-shirts on job sites?</div><div class="q-sub">We provide shirts at no cost</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="toggle-q" data-ko><div class="q-text">Does your crew agree not to wear apparel from competing painting companies?</div><div class="q-sub">Paint supplier shirts like Sherwin-Williams, Hoover, and Benjamin Moore are fine</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="toggle-q" data-ko><div class="q-text">Is your vehicle free of lettering or branding for your own company?</div><div class="q-sub">We don't send branded competitor vehicles to our clients' homes</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="toggle-q" data-ko><div class="q-text">Do you have your own tools and equipment?</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="toggle-q" data-ko><div class="q-text">Do you have reliable transportation?</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Skills & Experience</div>
+        <div class="form-section-sub">Tell us about your crew's capabilities.</div>
+        <div class="field"><label>Service Types</label><div class="check-grid"><label class="check-item"><input type="checkbox"> Interior</label><label class="check-item"><input type="checkbox"> Exterior</label><label class="check-item"><input type="checkbox"> Cabinet Refinishing</label><label class="check-item"><input type="checkbox"> Deck/Fence</label><label class="check-item"><input type="checkbox"> New Construction</label><label class="check-item"><input type="checkbox"> Drywall Repair</label><label class="check-item"><input type="checkbox"> Wallpaper</label><label class="check-item"><input type="checkbox"> Other</label></div></div>
+        <div class="row"><div class="field"><label>Years of Experience</label><input type="number" min="0" max="50"></div><div class="field"><label>Crew Size</label><input type="number" min="1" max="50"></div></div>
+        <div class="field"><label>Experience Type</label><div class="radio-group"><label class="radio-item"><input type="radio" name="exp-type" value="res"> Residential</label><label class="radio-item"><input type="radio" name="exp-type" value="new"> New Construction</label><label class="radio-item"><input type="radio" name="exp-type" value="both"> Both</label></div></div>
+        <div class="field"><label>References</label><textarea placeholder="Other painting contractors you've worked for in the Nashville area…"></textarea></div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Insurance</div>
+        <div class="form-section-sub">Insurance status — not a requirement.</div>
+        <div class="toggle-q"><div class="q-text">Do you carry liability insurance?</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="toggle-q"><div class="q-text">Do you carry workers compensation?</div><div class="toggle-btns"><button type="button" class="yes" onclick="tog(this)">Yes</button><button type="button" class="no" onclick="tog(this)">No</button></div></div>
+        <div class="info-box">💡 Insurance is not required. We cover uninsured crews on our company policy. Insurance status may affect your pay rate.</div>
+      </div>
+      <div id="result-fail" class="result result-fail">Thank you for your interest in Nash Painting. Unfortunately, you do not meet our current requirements at this time. If your situation changes, we encourage you to apply again.</div>
+      <div id="result-pass" class="result result-pass">Thank you for applying! We've received your application and will be in touch within 3 business days.<br><br>— The Nash Painting Team</div>
+      <button type="submit" class="btn" id="submit-btn">Submit Application</button>
+    </form>
+  </div>
+  <div class="footer">
+    <p>© 2026 Nash Painting · Nashville, TN</p>
+    <p><a href="https://nashpainting.com">nashpainting.com</a></p>
+    <p>Nash Painting is an equal opportunity employer</p>
+  </div>
+</div>
+<script>
+function tog(btn){var bs=btn.parentElement.querySelectorAll('button');bs.forEach(function(b){b.classList.remove('active')});btn.classList.add('active')}
+function showForm(title){document.getElementById('postings-view').style.display='none';document.getElementById('app-form').style.display='block';document.getElementById('applying-title').textContent=title;document.getElementById('result-fail').style.display='none';document.getElementById('result-pass').style.display='none';document.getElementById('submit-btn').style.display='block';document.querySelectorAll('.toggle-btns button').forEach(function(b){b.classList.remove('active')});window.scrollTo({top:0,behavior:'smooth'})}
+function hideForm(){document.getElementById('app-form').style.display='none';document.getElementById('postings-view').style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
+function submitApp(e){e.preventDefault();var kos=document.querySelectorAll('[data-ko]');var fail=false;for(var i=0;i<kos.length;i++){var yes=kos[i].querySelector('.yes');var no=kos[i].querySelector('.no');if(no.classList.contains('active')||(!yes.classList.contains('active')&&!no.classList.contains('active'))){fail=true;break}}document.getElementById('result-fail').style.display=fail?'block':'none';document.getElementById('result-pass').style.display=fail?'none':'block';document.getElementById('submit-btn').style.display='none';document.getElementById(fail?'result-fail':'result-pass').scrollIntoView({behavior:'smooth'});return false}
+</script>
+</body>
+</html>
