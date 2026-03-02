@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Invoices & Payments</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3D5F;
+  --gold: #C4A962;
+  --gold-light: #D4BE82;
+  --bg: #F5F3EF;
+  --white: #FFFFFF;
+  --border: #E2DFD8;
+  --text: #1B2A4A;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --yellow: #F59E0B;
+  --yellow-bg: #FFFBEB;
+  --blue: #2563EB;
+  --blue-bg: #EFF6FF;
+  --purple: #7C3AED;
+  --purple-bg: #F5F3FF;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;max-width:430px;margin:0 auto}
+.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:18px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
+.topbar-title{font-size:14px;opacity:.85;border-left:1px solid rgba(255,255,255,.2);padding-left:12px}
+.main{padding:12px 16px 100px}
+.summary-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.summary-item{background:var(--white);border-radius:var(--radius-sm);padding:10px 12px;box-shadow:var(--shadow)}
+.summary-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec)}
+.summary-val{font-size:18px;font-weight:700;color:var(--navy);line-height:1.2}
+.summary-sub{font-size:11px;color:var(--text-muted)}
+.summary-item.alert .summary-val{color:var(--red)}
+.summary-item.success .summary-val{color:var(--green)}
+.tab-bar{display:flex;gap:2px;background:var(--white);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{padding:8px 12px;border:none;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab-btn:hover{background:var(--bg);color:var(--text)}
+.tab-btn.active{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.card.urgent{border-left:4px solid var(--red)}
+.card.warning{border-left:4px solid var(--orange)}
+.card-body{padding:14px 16px}
+.card-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.card-customer{font-size:15px;font-weight:700;color:var(--navy)}
+.card-address{font-size:12px;color:var(--text-sec);margin-bottom:4px}
+.card-meta{font-size:12px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.card-meta span{display:inline-flex;align-items:center;gap:3px}
+.card-amount{font-size:18px;font-weight:700;color:var(--navy);text-align:right}
+.card-actions{display:flex;gap:8px;margin-top:10px}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+.badge-orange{background:var(--orange-bg);color:var(--orange)}
+.days-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.days-ok{background:#E0F2FE;color:#0369A1}
+.days-warn{background:var(--yellow-bg);color:var(--yellow)}
+.days-urgent{background:var(--red-bg);color:var(--red)}
+.btn{border:none;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--navy);border:1px solid var(--border)}.btn-outline:hover{background:var(--bg)}
+.btn-red{background:var(--red);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-sm{padding:6px 10px;font-size:11px}
+.btn-full{width:100%;justify-content:center}
+.milestone-track{margin:10px 0}
+.milestone-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.milestone-item:last-child{border-bottom:none}
+.milestone-status{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ms-paid{background:var(--green-bg);color:var(--green)}
+.ms-due{background:var(--yellow-bg);color:var(--yellow)}
+.ms-upcoming{background:var(--bg);color:var(--text-muted)}
+.milestone-label{flex:1}
+.milestone-amount{font-weight:700;white-space:nowrap}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;border-radius:4px;background:var(--green);transition:width .3s}
+.paid-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+.paid-item:last-child{border-bottom:none}
+.paid-info{flex:1}
+.paid-name{font-size:14px;font-weight:600}
+.paid-detail{font-size:12px;color:var(--text-sec)}
+.paid-amount{text-align:right}
+.paid-val{font-size:16px;font-weight:700;color:var(--green)}
+.paid-method{font-size:11px;color:var(--text-muted)}
+.collection-step{display:inline-flex;gap:2px;margin-top:4px}
+.step-dot{width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-muted)}
+.step-dot.active{background:var(--red);color:#fff}
+.step-dot.done{background:var(--navy);color:#fff}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.drawer{background:var(--white);border-radius:16px 16px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;padding:20px 16px 32px;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.drawer-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.drawer h3{font-size:16px;font-weight:700;margin-bottom:16px}
+.drawer-row{margin-bottom:14px}
+.drawer-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:4px}
+.drawer-value{font-size:15px;font-weight:600}
+.form-field{margin-bottom:14px}
+.form-field label{display:block;font-size:12px;font-weight:600;color:var(--text-sec);margin-bottom:4px}
+.form-field input,.form-field select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--white);color:var(--text)}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,169,98,.15)}
+.invoice-preview{padding:0}
+.inv-header{background:var(--navy);color:#fff;padding:20px 16px;text-align:center}
+.inv-header h2{font-size:14px;font-weight:700;letter-spacing:2px;margin-bottom:2px}
+.inv-logo{font-size:20px;font-weight:700;margin-bottom:4px}.inv-logo span{color:var(--gold)}
+.inv-body{padding:16px}
+.inv-meta{display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px}
+.inv-to{margin-bottom:16px;font-size:13px}
+.inv-to strong{display:block;font-size:14px}
+.inv-lines{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+.inv-lines th{text-align:left;padding:8px;border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;color:var(--text-sec)}
+.inv-lines td{padding:8px;border-bottom:1px solid var(--border)}
+.inv-lines .amt{text-align:right}
+.inv-total{text-align:right;font-size:16px;font-weight:700;padding:12px 0;border-top:2px solid var(--navy)}
+.inv-terms{font-size:11px;color:var(--text-sec);margin:12px 0;padding:10px;background:var(--bg);border-radius:var(--radius-sm)}
+.inv-pay-btn{display:block;width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;text-align:center;cursor:pointer;margin-bottom:12px}
+.collected-banner{background:var(--green-bg);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;text-align:center}
+.collected-banner .cb-val{font-size:24px;font-weight:700;color:var(--green)}
+.collected-banner .cb-label{font-size:12px;color:var(--text-sec)}
+.late-fee{color:var(--red);font-size:12px;font-weight:600;margin-top:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">Nash<span>OS</span></div>
+    <div class="topbar-title">Invoices & Payments</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="summary-bar">
+    <div class="summary-item">
+      <div class="summary-label">Ready to Invoice</div>
+      <div class="summary-val">$98,750</div>
+      <div class="summary-sub">4 jobs</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Outstanding</div>
+      <div class="summary-val">$24,380</div>
+      <div class="summary-sub">4 invoices</div>
+    </div>
+    <div class="summary-item alert">
+      <div class="summary-label">Overdue</div>
+      <div class="summary-val">$15,925</div>
+      <div class="summary-sub">3 invoices</div>
+    </div>
+    <div class="summary-item success">
+      <div class="summary-label">Collected (Mar)</div>
+      <div class="summary-val">$127,450</div>
+      <div class="summary-sub">6 payments</div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('ready',this)">📋 Ready (4)</button>
+    <button class="tab-btn" onclick="switchTab('outstanding',this)">💰 Outstanding (4)</button>
+    <button class="tab-btn" onclick="switchTab('overdue',this)">⚠️ Overdue (3)</button>
+    <button class="tab-btn" onclick="switchTab('progress',this)">📊 Progress (2)</button>
+    <button class="tab-btn" onclick="switchTab('paid',this)">✅ Paid (6)</button>
+  </div>
+
+  <!-- TAB: Ready to Invoice -->
+  <div id="tab-ready" class="tab-content active">
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Thompson, Sarah</div>
+            <div class="card-address">4412 Harding Pike, Nashville 37205</div>
+          </div>
+          <span class="days-badge days-ok">2d ago</span>
+        </div>
+        <div class="card-meta">
+          <span>Est #2847 · $6,250</span>
+          <span>Completed Feb 27</span>
+        </div>
+        <div class="card-meta"><span>💳 ACH on file</span></div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="openPreview('thompson')">Preview</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to Sarah Thompson')">Send Invoice →</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Mitchell, David & Karen</div>
+            <div class="card-address">209 Woodmont Blvd, Nashville 37205</div>
+          </div>
+          <span class="days-badge days-warn">5d ago</span>
+        </div>
+        <div class="card-meta">
+          <span>Est #2831 · $4,800</span>
+          <span>Completed Feb 24</span>
+        </div>
+        <div class="card-meta"><span>🏦 Check</span></div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="openPreview('mitchell')">Preview</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to David Mitchell')">Send Invoice →</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Patel, Raj</div>
+            <div class="card-address">1500 Chickering Ln, Nashville 37215</div>
+          </div>
+          <span class="days-badge days-ok">1d ago</span>
+        </div>
+        <div class="card-meta">
+          <span>Est #2852 · $2,700</span>
+          <span>Completed Feb 28</span>
+        </div>
+        <div class="card-meta"><span>💳 CC +3%</span></div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="openPreview('patel')">Preview</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to Raj Patel')">Send Invoice →</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--gold)">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Westfield HOA</div>
+            <div class="card-address">100 Westfield Dr, Franklin 37067</div>
+          </div>
+          <span class="days-badge days-ok">1d ago</span>
+        </div>
+        <div class="card-meta">
+          <span>Est #2810 · $85,000</span>
+          <span>Completed Feb 28</span>
+        </div>
+        <div class="card-meta">
+          <span>📊 Progress Billing (3 milestones)</span>
+          <span>🏦 ACH</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="switchTab('progress',document.querySelectorAll('.tab-btn')[3])">View Schedule</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Milestone 1 invoice sent')">Send Milestone 1 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Outstanding -->
+  <div id="tab-outstanding" class="tab-content">
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Rodriguez, Maria</div>
+            <div class="card-address">3301 West End Ave, Nashville 37203</div>
+          </div>
+          <div class="card-amount">$8,450</div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1247</span>
+          <span class="badge badge-purple">VIEWED</span>
+          <span>Sent 1d ago</span>
+        </div>
+        <div class="card-meta">
+          <span>👁️ Opened 2 hrs ago</span>
+          <span>💳 ACH on file</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-gold btn-sm" onclick="openRecordPayment('Rodriguez, Maria','INV-1247',8450)">Record Payment</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Chen, William</div>
+            <div class="card-address">815 Curtiswood Ln, Nashville 37204</div>
+          </div>
+          <div class="card-amount">$3,200</div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1244</span>
+          <span class="badge badge-blue">SENT</span>
+          <span>Sent 2d ago</span>
+        </div>
+        <div class="card-meta"><span>🏦 Check</span></div>
+        <div class="card-actions">
+          <button class="btn btn-gold btn-sm" onclick="openRecordPayment('Chen, William','INV-1244',3200)">Record Payment</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Baker, James & Lisa</div>
+            <div class="card-address">2200 Abbott Martin Rd, Nashville 37215</div>
+          </div>
+          <div class="card-amount">$5,880</div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1243</span>
+          <span class="badge badge-orange">PARTIAL</span>
+          <span>Sent 2d ago</span>
+        </div>
+        <div class="card-meta">
+          <span>$2,000 received · $3,880 remaining</span>
+          <span>💳 CC +3%</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-gold btn-sm" onclick="openRecordPayment('Baker, James & Lisa','INV-1243',3880)">Record Payment</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Nguyen, Tina</div>
+            <div class="card-address">4509 Granny White Pike, Nashville 37204</div>
+          </div>
+          <div class="card-amount">$6,850</div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1246</span>
+          <span class="badge badge-blue">SENT</span>
+          <span>Sent 1d ago</span>
+        </div>
+        <div class="card-meta"><span>🏦 EnerBank financing</span></div>
+        <div class="card-actions">
+          <button class="btn btn-gold btn-sm" onclick="openRecordPayment('Nguyen, Tina','INV-1246',6850)">Record Payment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Overdue -->
+  <div id="tab-overdue" class="tab-content">
+    <div class="card urgent">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Franklin, Robert</div>
+            <div class="card-address">710 Estes Rd, Nashville 37215</div>
+          </div>
+          <div>
+            <div class="card-amount" style="color:var(--red)">$4,200</div>
+            <div class="late-fee">+$63.00 late fees</div>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1228</span>
+          <span class="badge badge-red">21 DAYS OVERDUE</span>
+        </div>
+        <div class="card-meta"><span>🏦 Check · Never viewed</span></div>
+        <div style="margin:8px 0">
+          <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Collection: GA → GE sequence</div>
+          <div class="collection-step">
+            <div class="step-dot done">A</div>
+            <div class="step-dot done">B</div>
+            <div class="step-dot done">C</div>
+            <div class="step-dot active">D</div>
+            <div class="step-dot">E</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Calling Robert Franklin...')">📞 Call</button>
+          <button class="btn btn-red btn-sm" onclick="showToast('Reminder sent')">Send Reminder</button>
+          <button class="btn btn-outline btn-sm">View History</button>
+        </div>
+      </div>
+    </div>
+    <div class="card urgent">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Greenwood, Patricia</div>
+            <div class="card-address">1205 Battlefield Dr, Nashville 37204</div>
+          </div>
+          <div>
+            <div class="card-amount" style="color:var(--red)">$7,500</div>
+            <div class="late-fee">+$75.00 late fees</div>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1221</span>
+          <span class="badge badge-red">14 DAYS OVERDUE</span>
+        </div>
+        <div class="card-meta"><span>💳 ACH · Viewed Feb 20</span></div>
+        <div style="margin:8px 0">
+          <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Collection: GA → GE sequence</div>
+          <div class="collection-step">
+            <div class="step-dot done">A</div>
+            <div class="step-dot done">B</div>
+            <div class="step-dot active">C</div>
+            <div class="step-dot">D</div>
+            <div class="step-dot">E</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Calling Patricia Greenwood...')">📞 Call</button>
+          <button class="btn btn-red btn-sm" onclick="showToast('Reminder sent')">Send Reminder</button>
+          <button class="btn btn-outline btn-sm">View History</button>
+        </div>
+      </div>
+    </div>
+    <div class="card warning">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Ellis, Mark</div>
+            <div class="card-address">908 Glen Echo Rd, Nashville 37215</div>
+          </div>
+          <div>
+            <div class="card-amount" style="color:var(--orange)">$4,225</div>
+            <div class="late-fee">+$21.13 late fees</div>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span>INV-1236</span>
+          <span class="badge badge-orange">5 DAYS OVERDUE</span>
+        </div>
+        <div class="card-meta"><span>🏦 Check · Viewed Feb 26</span></div>
+        <div style="margin:8px 0">
+          <div style="font-size:11px;color:var(--text-sec);margin-bottom:4px">Collection: GA → GE sequence</div>
+          <div class="collection-step">
+            <div class="step-dot active">A</div>
+            <div class="step-dot">B</div>
+            <div class="step-dot">C</div>
+            <div class="step-dot">D</div>
+            <div class="step-dot">E</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Calling Mark Ellis...')">📞 Call</button>
+          <button class="btn btn-red btn-sm" onclick="showToast('Reminder sent')">Send Reminder</button>
+          <button class="btn btn-outline btn-sm">View History</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Progress Billing -->
+  <div id="tab-progress" class="tab-content">
+    <div class="card" style="border-left:4px solid var(--gold)">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Westfield HOA</div>
+            <div class="card-address">100 Westfield Dr, Franklin 37067</div>
+          </div>
+          <div class="card-amount">$85,000</div>
+        </div>
+        <div class="card-meta"><span>Est #2810 · Exterior repaint (42 units)</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+        <div class="milestone-track">
+          <div class="milestone-item">
+            <div class="milestone-status ms-due">!</div>
+            <div class="milestone-label"><strong>Payment 1 of 3</strong><br><span style="font-size:11px;color:var(--text-sec)">Upon contract signing</span></div>
+            <div class="milestone-amount">$28,333</div>
+            <span class="badge badge-yellow">DUE NOW</span>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-status ms-upcoming">2</div>
+            <div class="milestone-label"><strong>Payment 2 of 3</strong><br><span style="font-size:11px;color:var(--text-sec)">At 50% completion</span></div>
+            <div class="milestone-amount">$28,333</div>
+            <span class="badge" style="background:var(--bg);color:var(--text-muted)">UPCOMING</span>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-status ms-upcoming">3</div>
+            <div class="milestone-label"><strong>Payment 3 of 3</strong><br><span style="font-size:11px;color:var(--text-sec)">On completion</span></div>
+            <div class="milestone-amount">$28,334</div>
+            <span class="badge" style="background:var(--bg);color:var(--text-muted)">UPCOMING</span>
+          </div>
+        </div>
+        <div class="card-actions" style="margin-top:12px">
+          <button class="btn btn-gold btn-sm" onclick="showToast('Milestone 1 invoice sent to Westfield HOA')">Send Milestone 1 Invoice →</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--green)">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Belle Meade Country Club</div>
+            <div class="card-address">110 Leake Ave, Nashville 37205</div>
+          </div>
+          <div class="card-amount">$125,000</div>
+        </div>
+        <div class="card-meta"><span>Est #2789 · Clubhouse interior & exterior</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:66%;background:var(--green)"></div></div>
+        <div class="milestone-track">
+          <div class="milestone-item">
+            <div class="milestone-status ms-paid">✓</div>
+            <div class="milestone-label"><strong>Payment 1 of 3</strong><br><span style="font-size:11px;color:var(--text-sec)">Upon contract signing</span></div>
+            <div class="milestone-amount" style="color:var(--green)">$41,667</div>
+            <span class="badge badge-green">PAID ✅</span>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-status ms-paid">✓</div>
+            <div class="milestone-label"><strong>Payment 2 of 3</strong><br><span style="font-size:11px;color:var(--text-sec)">At 50% completion</span></div>
+            <div class="milestone-amount" style="color:var(--green)">$41,667</div>
+            <span class="badge badge-green">PAID ✅</span>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-status ms-due">!</div>
+            <div class="milestone-label"><strong>Payment 3 of 3</strong><br><span style="font-size:11px;color:var(--text-sec)">On completion</span></div>
+            <div class="milestone-amount">$41,666</div>
+            <span class="badge badge-yellow">DUE NOW</span>
+          </div>
+        </div>
+        <div class="card-actions" style="margin-top:12px">
+          <button class="btn btn-gold btn-sm" onclick="showToast('Final milestone invoice sent to Belle Meade CC')">Send Final Invoice →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Paid -->
+  <div id="tab-paid" class="tab-content">
+    <div class="collected-banner">
+      <div class="cb-val">$127,450</div>
+      <div class="cb-label">Collected in March 2026</div>
+    </div>
+    <div class="card">
+      <div class="paid-item">
+        <div class="paid-info"><div class="paid-name">Anderson, Kevin</div><div class="paid-detail">INV-1240 · Paid Feb 28 · ACH</div></div>
+        <div class="paid-amount"><div class="paid-val">$12,800</div><div class="paid-method"><a href="#" style="color:var(--gold);font-weight:600;text-decoration:none">View Receipt</a></div></div>
+      </div>
+      <div class="paid-item">
+        <div class="paid-info"><div class="paid-name">Whitfield, Donna</div><div class="paid-detail">INV-1238 · Paid Feb 27 · Check #4851</div></div>
+        <div class="paid-amount"><div class="paid-val">$5,600</div><div class="paid-method"><a href="#" style="color:var(--gold);font-weight:600;text-decoration:none">View Receipt</a></div></div>
+      </div>
+      <div class="paid-item">
+        <div class="paid-info"><div class="paid-name">Belle Meade CC</div><div class="paid-detail">INV-1235 · Paid Feb 25 · ACH (Milestone 2)</div></div>
+        <div class="paid-amount"><div class="paid-val">$41,667</div><div class="paid-method"><a href="#" style="color:var(--gold);font-weight:600;text-decoration:none">View Receipt</a></div></div>
+      </div>
+      <div class="paid-item">
+        <div class="paid-info"><div class="paid-name">Cooper, Brian</div><div class="paid-detail">INV-1232 · Paid Feb 22 · CC</div></div>
+        <div class="paid-amount"><div class="paid-val">$3,850</div><div class="paid-method"><a href="#" style="color:var(--gold);font-weight:600;text-decoration:none">View Receipt</a></div></div>
+      </div>
+      <div class="paid-item">
+        <div class="paid-info"><div class="paid-name">Singh, Priya</div><div class="paid-detail">INV-1229 · Paid Feb 19 · ACH</div></div>
+        <div class="paid-amount"><div class="paid-val">$18,200</div><div class="paid-method"><a href="#" style="color:var(--gold);font-weight:600;text-decoration:none">View Receipt</a></div></div>
+      </div>
+      <div class="paid-item">
+        <div class="paid-info"><div class="paid-name">Morrison, Tyler</div><div class="paid-detail">INV-1226 · Paid Feb 15 · EnerBank</div></div>
+        <div class="paid-amount"><div class="paid-val">$45,333</div><div class="paid-method"><a href="#" style="color:var(--gold);font-weight:600;text-decoration:none">View Receipt</a></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- OVERLAY: Record Payment -->
+<div class="overlay" id="overlay-payment">
+  <div class="drawer">
+    <div class="drawer-handle"></div>
+    <h3>Record Payment</h3>
+    <div class="drawer-row" style="display:flex;justify-content:space-between">
+      <div><div class="drawer-label">Customer</div><div class="drawer-value" id="pay-customer">—</div></div>
+      <div style="text-align:right"><div class="drawer-label">Invoice</div><div class="drawer-value" id="pay-invoice">—</div></div>
+    </div>
+    <div class="form-field">
+      <label>Payment Method</label>
+      <select><option>ACH / Bank Transfer</option><option>Check</option><option>Cash</option><option>Credit/Debit (+3% fee)</option><option>EnerBank Financing</option></select>
+    </div>
+    <div class="form-field">
+      <label>Amount Received</label>
+      <input type="text" id="pay-amount" value="$0.00">
+    </div>
+    <div class="form-field">
+      <label>Date Received</label>
+      <input type="date" id="pay-date">
+    </div>
+    <div class="form-field">
+      <label>Reference / Check #</label>
+      <input type="text" placeholder="Optional">
+    </div>
+    <button class="btn btn-gold btn-full" style="padding:14px;font-size:15px" onclick="closeOverlay('overlay-payment');showToast('Payment recorded ✓')">Record Payment</button>
+    <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="closeOverlay('overlay-payment')">Cancel</button>
+  </div>
+</div>
+
+<!-- OVERLAY: Invoice Preview -->
+<div class="overlay" id="overlay-preview">
+  <div class="drawer" style="padding:0;max-height:90vh">
+    <div style="padding:16px 16px 0"><div class="drawer-handle"></div></div>
+    <div class="invoice-preview">
+      <div class="inv-header">
+        <div class="inv-logo">Nash <span>Painting</span></div>
+        <h2>INVOICE</h2>
+      </div>
+      <div class="inv-body">
+        <div class="inv-meta">
+          <div><strong id="prev-inv-num">INV-1253</strong><br><span style="font-size:12px;color:var(--text-sec)" id="prev-inv-date">March 1, 2026</span></div>
+          <div style="text-align:right"><span style="font-size:12px;color:var(--text-sec)">Due upon receipt</span><br><span style="font-size:12px;color:var(--text-sec)">Net 2 days</span></div>
+        </div>
+        <div class="inv-to">
+          <span style="font-size:11px;color:var(--text-sec)">BILL TO</span>
+          <strong id="prev-customer">Sarah Thompson</strong>
+          <span style="font-size:13px;color:var(--text-sec)" id="prev-address">4412 Harding Pike, Nashville 37205</span>
+        </div>
+        <table class="inv-lines">
+          <thead><tr><th>Description</th><th class="amt">Amount</th></tr></thead>
+          <tbody id="prev-lines">
+            <tr><td>Interior painting — Living room, dining room</td><td class="amt">$3,200</td></tr>
+            <tr><td>Interior painting — Master bedroom, hallway</td><td class="amt">$1,850</td></tr>
+            <tr><td>Trim & baseboard refinishing</td><td class="amt">$1,200</td></tr>
+          </tbody>
+        </table>
+        <div class="inv-total" id="prev-total">Total Due: $6,250</div>
+        <div class="inv-terms"><strong>Payment Terms:</strong> Due upon receipt. A late fee of 0.5% per week will be applied after 2-day grace period. Accepted methods: ACH, check, credit/debit (+3% processing fee).</div>
+        <button class="inv-pay-btn" id="prev-pay-btn">💳 Pay Now — $6,250</button>
+        <button class="btn btn-gold btn-full" style="padding:14px;font-size:15px" onclick="closeOverlay('overlay-preview');showToast('Invoice sent ✓')">Send to Customer →</button>
+        <button class="btn btn-outline btn-full" style="margin-top:8px;margin-bottom:16px" onclick="closeOverlay('overlay-preview')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;box-shadow:var(--shadow-md);z-index:300;display:none;white-space:nowrap"></div>
+
+<script>
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+function openRecordPayment(customer,inv,amount){
+  document.getElementById('pay-customer').textContent=customer;
+  document.getElementById('pay-invoice').textContent=inv;
+  document.getElementById('pay-amount').value='$'+amount.toLocaleString()+'.00';
+  document.getElementById('pay-date').valueAsDate=new Date();
+  document.getElementById('overlay-payment').classList.add('open');
+}
+var previewData={
+  thompson:{num:'INV-1253',customer:'Sarah Thompson',address:'4412 Harding Pike, Nashville 37205',lines:[['Interior painting — Living room, dining room','$3,200'],['Interior painting — Master bedroom, hallway','$1,850'],['Trim & baseboard refinishing','$1,200']],total:'$6,250'},
+  mitchell:{num:'INV-1254',customer:'David & Karen Mitchell',address:'209 Woodmont Blvd, Nashville 37205',lines:[['Exterior painting — Full house','$3,600'],['Deck staining & sealing','$1,200']],total:'$4,800'},
+  patel:{num:'INV-1255',customer:'Raj Patel',address:'1500 Chickering Ln, Nashville 37215',lines:[['Kitchen cabinet painting','$1,800'],['Bathroom vanity refinishing','$900']],total:'$2,700'}
+};
+function openPreview(key){
+  var d=previewData[key];if(!d)return;
+  document.getElementById('prev-inv-num').textContent=d.num;
+  document.getElementById('prev-customer').textContent=d.customer;
+  document.getElementById('prev-address').textContent=d.address;
+  document.getElementById('prev-total').textContent='Total Due: '+d.total;
+  var tbody=document.getElementById('prev-lines');
+  tbody.innerHTML=d.lines.map(function(l){return '<tr><td>'+l[0]+'</td><td class="amt">'+l[1]+'</td></tr>'}).join('');
+  document.getElementById('prev-pay-btn').textContent='💳 Pay Now — '+d.total;
+  document.getElementById('overlay-preview').classList.add('open');
+}
+function closeOverlay(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.overlay').forEach(function(o){
+  o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open')});
+});
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(function(){t.style.display='none'},2500);
+}
+</script>
+
+<!-- ============================================================
+     DASHBOARD ALERT CARD (commented out — for dashboard.html)
+     ============================================================
+<div class="card" style="border-left:4px solid var(--gold);cursor:pointer" onclick="location.href='invoice-payments.html'">
+  <div class="card-body" style="padding:12px 16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">💰 Invoicing</div>
+    <div style="display:flex;flex-direction:column;gap:4px;font-size:13px">
+      <span>🔴 3 overdue ($15,925)</span>
+      <span>🟡 4 ready to invoice ($98,750)</span>
+      <span>🟢 4 outstanding ($24,380)</span>
+    </div>
+    <div style="font-size:11px;color:var(--text-sec);margin-top:6px">Tap to manage →</div>
+  </div>
+</div>
+-->
+
+</body>
+</html>
