@@ -200,7 +200,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="card-meta"><span>💳 ACH on file</span></div>
         <div class="card-actions">
           <button class="btn btn-outline btn-sm" onclick="openPreview('thompson')">Preview</button>
-          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to Sarah Thompson')">Send Invoice →</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to Sarah Thompson via email & text')">Send 📧📱</button>
         </div>
       </div>
     </div>
@@ -220,7 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="card-meta"><span>🏦 Check</span></div>
         <div class="card-actions">
           <button class="btn btn-outline btn-sm" onclick="openPreview('mitchell')">Preview</button>
-          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to David Mitchell')">Send Invoice →</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to David Mitchell via email & text')">Send 📧📱</button>
         </div>
       </div>
     </div>
@@ -240,7 +240,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="card-meta"><span>💳 CC +3%</span></div>
         <div class="card-actions">
           <button class="btn btn-outline btn-sm" onclick="openPreview('patel')">Preview</button>
-          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to Raj Patel')">Send Invoice →</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Invoice sent to Raj Patel via email & text')">Send 📧📱</button>
         </div>
       </div>
     </div>
@@ -263,7 +263,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </div>
         <div class="card-actions">
           <button class="btn btn-outline btn-sm" onclick="switchTab('progress',document.querySelectorAll('.tab-btn')[3])">View Schedule</button>
-          <button class="btn btn-gold btn-sm" onclick="showToast('Milestone 1 invoice sent')">Send Milestone 1 →</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Milestone 1 invoice sent via email & text')">Send Milestone 1 →</button>
         </div>
       </div>
     </div>
@@ -499,7 +499,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           </div>
         </div>
         <div class="card-actions" style="margin-top:12px">
-          <button class="btn btn-gold btn-sm" onclick="showToast('Milestone 1 invoice sent to Westfield HOA')">Send Milestone 1 Invoice →</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Milestone 1 invoice sent to Westfield HOA via email & text')">Send Milestone 1 📧📱</button>
         </div>
       </div>
     </div>
@@ -535,7 +535,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           </div>
         </div>
         <div class="card-actions" style="margin-top:12px">
-          <button class="btn btn-gold btn-sm" onclick="showToast('Final milestone invoice sent to Belle Meade CC')">Send Final Invoice →</button>
+          <button class="btn btn-gold btn-sm" onclick="showToast('Final milestone invoice sent to Belle Meade CC via email & text')">Send Final 📧📱</button>
         </div>
       </div>
     </div>
@@ -637,7 +637,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="inv-total" id="prev-total">Total Due: $6,250</div>
         <div class="inv-terms"><strong>Payment Terms:</strong> Due upon receipt. A late fee of 0.5% per week will be applied after 2-day grace period. Accepted methods: ACH, check, credit/debit (+3% processing fee).</div>
         <button class="inv-pay-btn" id="prev-pay-btn">💳 Pay Now — $6,250</button>
-        <button class="btn btn-gold btn-full" style="padding:14px;font-size:15px" onclick="closeOverlay('overlay-preview');showToast('Invoice sent ✓')">Send to Customer →</button>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Send Via</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600">
+              <input type="checkbox" checked disabled style="width:18px;height:18px;accent-color:var(--navy)">
+              📧 Email <span style="font-size:10px;color:var(--text-muted);font-weight:400;margin-left:auto">Cannot opt out</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600">
+              <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--navy)" id="prev-sms-toggle">
+              📱 Text Message <span style="font-size:10px;color:var(--green);font-weight:400;margin-left:auto" id="prev-sms-status">SMS opted in ✓</span>
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-gold btn-full" style="padding:14px;font-size:15px" onclick="closeOverlay('overlay-preview');showToast('Invoice sent via email & text ✓')">Send to Customer →</button>
         <button class="btn btn-outline btn-full" style="margin-top:8px;margin-bottom:16px" onclick="closeOverlay('overlay-preview')">Close</button>
       </div>
     </div>
