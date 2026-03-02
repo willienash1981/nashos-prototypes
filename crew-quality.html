@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Crew Quality Dashboard</title>
+<style>
+:root {
+  --navy: #1B2A4A; --navy-light: #2A3D5F;
+  --gold: #C4A962; --gold-light: #D4BE82;
+  --bg: #F5F3EF; --white: #FFFFFF;
+  --border: #E2DFD8; --text: #1B2A4A;
+  --text-sec: #6B7280; --text-muted: #9CA3AF;
+  --green: #16A34A; --green-bg: #F0FDF4;
+  --red: #DC2626; --red-bg: #FEF2F2;
+  --yellow: #F59E0B; --yellow-bg: #FFFBEB;
+  --blue: #2563EB; --blue-bg: #EFF6FF;
+  --radius: 12px; --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+.topbar { position: sticky; top: 0; z-index: 100; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; }
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.logo span { color: var(--gold); }
+.topbar-subtitle { font-size: 14px; color: rgba(255,255,255,.7); }
+.topbar-right { font-size: 13px; color: rgba(255,255,255,.6); }
+.hamburger { display: none; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; padding: 4px; }
+.rbac-banner { background: var(--blue-bg); border-bottom: 1px solid #BFDBFE; padding: 8px 24px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--blue); }
+.rbac-banner select { font-size: 13px; padding: 2px 8px; border-radius: 4px; border: 1px solid #BFDBFE; background: #fff; color: var(--text); }
+.layout { display: flex; min-height: calc(100vh - 56px); }
+.sidebar { width: 220px; background: var(--white); border-right: 1px solid var(--border); padding: 16px 0; flex-shrink: 0; }
+.sidebar-nav { list-style: none; }
+.sidebar-nav li { padding: 10px 24px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-sec); border-left: 3px solid transparent; transition: all .15s; }
+.sidebar-nav li:hover { background: var(--bg); color: var(--text); }
+.sidebar-nav li.active { background: var(--bg); color: var(--navy); border-left-color: var(--gold); font-weight: 600; }
+.sidebar-nav li .badge { background: var(--red); color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-left: 8px; font-weight: 600; }
+.main { flex: 1; padding: 24px; max-width: 1100px; overflow-x: auto; }
+.panel { display: none; }
+.panel.active { display: block; }
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.kpi-card { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.kpi-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; margin-bottom: 4px; }
+.kpi-value { font-size: 28px; font-weight: 700; color: var(--navy); }
+.kpi-sub { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+.kpi-value.red { color: var(--red); }
+.filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.filters label { font-size: 13px; color: var(--text-sec); font-weight: 500; }
+.filters select { font-size: 13px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); color: var(--text); }
+.crew-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.crew-table th { background: var(--bg); text-align: left; padding: 10px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+.crew-table td { padding: 12px 14px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.crew-table tr.crew-row { cursor: pointer; transition: background .1s; }
+.crew-table tr.crew-row:hover { background: #FAFAF7; }
+.crew-table tr.crew-row.expanded { background: var(--bg); }
+.score-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 14px; }
+.score-green { background: var(--green-bg); color: var(--green); }
+.score-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.score-red { background: var(--red-bg); color: var(--red); }
+.score-gray { background: #F3F4F6; color: var(--text-muted); }
+.trend-up { color: var(--green); font-weight: 600; }
+.trend-stable { color: var(--text-muted); font-weight: 600; }
+.trend-down { color: var(--red); font-weight: 600; }
+.alert-badge { font-size: 12px; padding: 2px 8px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+.alert-warning { background: var(--yellow-bg); color: #92400E; }
+.alert-critical { background: var(--red-bg); color: var(--red); }
+.alert-building { background: var(--blue-bg); color: var(--blue); }
+.drill-down { display: none; }
+.drill-down.open { display: table-row; }
+.drill-down td { padding: 0; }
+.drill-content { padding: 20px 24px; background: var(--bg); }
+.drill-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.drill-header h3 { font-size: 16px; color: var(--navy); }
+.stacked-bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+.stacked-bar .seg { display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 600; min-width: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-sec); }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+.inputs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.input-card { background: var(--white); border-radius: var(--radius-sm); padding: 14px; box-shadow: var(--shadow); }
+.input-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.input-card-title { font-size: 13px; font-weight: 600; color: var(--navy); }
+.input-card-weight { font-size: 11px; color: var(--text-muted); background: var(--bg); padding: 2px 6px; border-radius: 4px; }
+.input-card-score { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.input-card-bar { height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.input-card-bar-fill { height: 100%; border-radius: 3px; }
+.input-card-detail { font-size: 12px; color: var(--text-sec); line-height: 1.6; }
+.input-card-detail strong { color: var(--text); }
+.alert-list { display: flex; flex-direction: column; gap: 12px; }
+.alert-item { background: var(--white); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-start; border-left: 4px solid; }
+.alert-item.warning { border-left-color: var(--yellow); }
+.alert-item.critical { border-left-color: var(--red); }
+.alert-icon { font-size: 20px; flex-shrink: 0; }
+.alert-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.alert-info p { font-size: 13px; color: var(--text-sec); }
+.alert-info .alert-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.weights-card { background: var(--white); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); max-width: 600px; }
+.weights-card h3 { font-size: 16px; margin-bottom: 4px; }
+.weights-card .subtitle { font-size: 13px; color: var(--text-sec); margin-bottom: 20px; }
+.weights-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.weights-table th { text-align: left; padding: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+.weights-table td { padding: 8px; font-size: 14px; border-bottom: 1px solid var(--border); }
+.weights-table input[type="number"] { width: 60px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; text-align: center; }
+.weights-total { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; font-weight: 600; font-size: 14px; }
+.weights-total.valid { color: var(--green); }
+.weights-total.invalid { color: var(--red); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-primary:hover { background: var(--navy-light); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.weights-note { font-size: 12px; color: var(--text-muted); margin-top: 12px; font-style: italic; }
+.section-title { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+.detail-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.detail-empty .icon { font-size: 48px; margin-bottom: 12px; }
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .sidebar { position: fixed; left: -260px; top: 56px; bottom: 0; z-index: 99; width: 260px; transition: left .25s; box-shadow: var(--shadow-md); }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay { display: none; position: fixed; inset: 0; top: 56px; background: rgba(0,0,0,.3); z-index: 98; }
+  .sidebar-overlay.open { display: block; }
+  .main { padding: 16px; }
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .inputs-grid { grid-template-columns: 1fr; }
+  .crew-table { font-size: 13px; }
+  .crew-table th, .crew-table td { padding: 8px 10px; }
+}
+@media (max-width: 480px) { .kpi-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
+    <div class="logo">Nash<span>OS</span></div>
+    <div class="topbar-subtitle">Crew Quality Dashboard</div>
+  </div>
+  <div class="topbar-right" id="topDate"></div>
+</div>
+<div class="rbac-banner">
+  <span>&#128274; Viewing as:</span>
+  <select id="roleSelect" onchange="switchRole(this.value)">
+    <option value="admin">Owner / Admin &mdash; Full access</option>
+    <option value="office">Office Staff &mdash; View only</option>
+    <option value="field">Field Supervisor &mdash; Limited view</option>
+  </select>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <ul class="sidebar-nav">
+      <li class="active" onclick="showPanel('overview',this)"><span class="nav-icon">&#128202;</span> Overview</li>
+      <li onclick="showPanel('alerts',this)"><span class="nav-icon">&#128276;</span> Alerts <span class="badge">4</span></li>
+      <li onclick="showPanel('weights',this)" id="navWeights"><span class="nav-icon">&#9881;</span> Score Weights</li>
+      <li onclick="showPanel('detail',this)" id="navDetail"><span class="nav-icon">&#128119;</span> Crew Detail</li>
+    </ul>
+  </nav>
+  <div class="main">
+    <!-- Overview -->
+    <div class="panel active" id="panel-overview">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Avg Quality Score</div><div class="kpi-value">80.4</div><div class="kpi-sub">Across 5 scored crews</div></div>
+        <div class="kpi-card"><div class="kpi-label">Active Crews</div><div class="kpi-value">6</div><div class="kpi-sub">1 building data</div></div>
+        <div class="kpi-card"><div class="kpi-label">Jobs in Window</div><div class="kpi-value">52</div><div class="kpi-sub">Last 90 days</div></div>
+        <div class="kpi-card"><div class="kpi-label">Below Threshold</div><div class="kpi-value red">2</div><div class="kpi-sub">Score &lt; 75</div></div>
+      </div>
+      <div class="filters">
+        <label>Time Window:</label><select><option>90 days</option><option>60 days</option><option>30 days</option></select>
+        <label>Min Jobs:</label><select><option>3</option><option selected>5</option><option>10</option></select>
+        <label>Sort by:</label><select><option>Score (high to low)</option><option>Trend</option><option>Jobs completed</option></select>
+      </div>
+      <table class="crew-table"><thead><tr><th>#</th><th>Crew</th><th>Quality Score</th><th>Trend</th><th>Jobs</th><th>Callbacks</th><th>Avg Survey</th><th>Check-in %</th><th>Status</th></tr></thead><tbody id="crewTableBody"></tbody></table>
+    </div>
+    <!-- Alerts -->
+    <div class="panel" id="panel-alerts">
+      <h2 class="section-title">Active Alerts</h2>
+      <div class="alert-list">
+        <div class="alert-item critical"><div class="alert-icon">&#128308;</div><div class="alert-info"><h4>Davis Crew &mdash; Quality concern</h4><p>Score 68 is below 70 threshold. Immediate review recommended.</p><div class="alert-time">Triggered Feb 28, 2026</div></div></div>
+        <div class="alert-item critical"><div class="alert-icon">&#128308;</div><div class="alert-info"><h4>Davis Crew &mdash; Callback spike</h4><p>4 callbacks in the last 30 days (threshold: 3). Most common issue: touch-up needed.</p><div class="alert-time">Triggered Feb 25, 2026</div></div></div>
+        <div class="alert-item warning"><div class="alert-icon">&#9888;&#65039;</div><div class="alert-info"><h4>Williams Crew &mdash; Declining quality</h4><p>Score dropped from 79 to 74 over 30 days. Review recommended.</p><div class="alert-time">Triggered Feb 26, 2026</div></div></div>
+        <div class="alert-item warning"><div class="alert-icon">&#9888;&#65039;</div><div class="alert-info"><h4>Williams Crew &mdash; Check-in compliance issue</h4><p>3 consecutive missed morning check-ins (Feb 24&ndash;26).</p><div class="alert-time">Triggered Feb 26, 2026</div></div></div>
+      </div>
+    </div>
+    <!-- Weights -->
+    <div class="panel" id="panel-weights">
+      <div class="weights-card" id="weightsCard">
+        <h3>Score Weight Configuration</h3>
+        <p class="subtitle">Adjust how each quality input contributes to the overall crew score.</p>
+        <table class="weights-table"><thead><tr><th>Input</th><th>Weight (%)</th></tr></thead><tbody id="weightsBody"></tbody></table>
+        <div class="weights-total valid" id="weightsTotal">Total: 100%</div>
+        <button class="btn btn-primary" id="saveWeightsBtn" onclick="saveWeights()">Save Weights</button>
+        <p class="weights-note">Changing weights recalculates all rolling scores retroactively.</p>
+      </div>
+    </div>
+    <!-- Detail -->
+    <div class="panel" id="panel-detail">
+      <div class="detail-empty" id="detailEmpty"><div class="icon">&#128119;</div><p>Select a crew from the Overview to view details</p></div>
+      <div id="detailContent" style="display:none"></div>
+    </div>
+  </div>
+</div>
+<script>
+var weights=[{name:'Customer Survey',weight:25,color:'#2563EB'},{name:'Callbacks',weight:20,color:'#DC2626'},{name:'Punch List',weight:15,color:'#F59E0B'},{name:'Supervisor Walkthrough',weight:10,color:'#16A34A'},{name:'Photo Compliance',weight:10,color:'#7C3AED'},{name:'On-Time Completion',weight:10,color:'#0891B2'},{name:'Cleanliness/Protection',weight:5,color:'#EA580C'},{name:'Check-In Compliance',weight:5,color:'#64748B'}];
+var crews=[
+{name:'Martinez Crew',score:92,trend:'up',delta:'+3',jobs:12,callbacks:0,survey:4.8,checkin:98,alert:'',inputs:[95,96,90,88,94,92,90,96],details:{survey:{avg:'4.8/5.0',recent:['&#9733;&#9733;&#9733;&#9733;&#9733; "Incredible attention to detail" — Belmont Blvd','&#9733;&#9733;&#9733;&#9733;&#9733; "Best painters we\'ve ever hired" — Green Hills','&#9733;&#9733;&#9733;&#9733;&#9734; "Great work, minor scheduling issue" — Brentwood']},callbacks:{rate:'0 per 10 jobs',list:['No callbacks in last 90 days']},punch:{avg:'0.8 items/job',breakdown:'Touch-up: 60% · Coverage: 20% · Hardware: 20%'},walkthrough:{pass:'95%',recent:'&#10004; Feb 25 · &#10004; Feb 18 · &#10004; Feb 10 · &#10004; Feb 3 · &#10004; Jan 27'},photo:{compliance:'94%',note:'1 job slightly below minimum (12 of 15 required)'},ontime:{rate:'92%',variance:'0.3 days avg ahead of schedule'},clean:{issues:'1 minor in 90 days',note:'Drop cloth feedback: "always thorough"'},checkin:{rate:'98%',missed:'1 missed check-in (excused)'}}},
+{name:'Johnson Crew',score:87,trend:'stable',delta:'+0',jobs:8,callbacks:1,survey:4.6,checkin:95,alert:'',inputs:[88,85,86,92,88,84,90,92],details:{survey:{avg:'4.6/5.0',recent:['&#9733;&#9733;&#9733;&#9733;&#9733; "Very professional crew" — Sylvan Park','&#9733;&#9733;&#9733;&#9733;&#9734; "Good work, took slightly longer" — Donelson']},callbacks:{rate:'1.25 per 10 jobs',list:['123 Oak Hill Dr — minor touch-up on exterior trim']},punch:{avg:'1.2 items/job',breakdown:'Touch-up: 50% · Caulking: 30% · Clean-up: 20%'},walkthrough:{pass:'90%',recent:'&#10004; Feb 22 · &#10004; Feb 14 · &#9888; Feb 5 · &#10004; Jan 28 · &#10004; Jan 20'},photo:{compliance:'88%',note:'All jobs met minimum photo requirement'},ontime:{rate:'84%',variance:'0.5 days avg behind schedule'},clean:{issues:'0 in 90 days',note:'Consistently excellent protection'},checkin:{rate:'95%',missed:'2 missed check-ins (no pattern)'}}},
+{name:'Thompson Crew',score:81,trend:'stable',delta:'+1',jobs:10,callbacks:2,survey:4.3,checkin:90,alert:'',inputs:[82,78,80,85,82,80,84,82],details:{survey:{avg:'4.3/5.0',recent:['&#9733;&#9733;&#9733;&#9733;&#9734; "Solid work" — Hermitage','&#9733;&#9733;&#9733;&#9733;&#9734; "Good quality, minor drips" — Mt. Juliet','&#9733;&#9733;&#9733;&#9734;&#9734; "Decent but could be neater" — Antioch']},callbacks:{rate:'2.0 per 10 jobs',list:['456 Lebanon Rd — missed spot behind door','789 Central Pike — paint drip on baseboard']},punch:{avg:'1.8 items/job',breakdown:'Touch-up: 40% · Drips: 30% · Missed spots: 20% · Other: 10%'},walkthrough:{pass:'85%',recent:'&#10004; Feb 24 · &#10004; Feb 16 · &#9888; Feb 8 · &#10004; Jan 31 · &#10004; Jan 22'},photo:{compliance:'82%',note:'2 jobs below minimum photo count'},ontime:{rate:'80%',variance:'1.0 day avg behind schedule'},clean:{issues:'2 in 90 days',note:'One complaint about paint on carpet (resolved)'},checkin:{rate:'90%',missed:'3 missed check-ins over 90 days'}}},
+{name:'Williams Crew',score:74,trend:'down',delta:'-5',jobs:11,callbacks:3,survey:3.9,checkin:78,alert:'warning',inputs:[72,68,74,78,76,80,70,65],details:{survey:{avg:'3.9/5.0',recent:['&#9733;&#9733;&#9733;&#9733;&#9734; "Fine work" — Bellevue','&#9733;&#9733;&#9733;&#9734;&#9734; "Some areas needed touch-up" — Whites Creek','&#9733;&#9733;&#9733;&#9734;&#9734; "Not as detailed as expected" — Goodlettsville']},callbacks:{rate:'2.7 per 10 jobs',list:['321 Dickerson Pike — peeling on bathroom ceiling','654 Gallatin Ave — color mismatch on accent wall','987 Main St — trim paint on glass']},punch:{avg:'2.5 items/job',breakdown:'Touch-up: 35% · Missed areas: 25% · Drips: 20% · Clean-up: 20%'},walkthrough:{pass:'75%',recent:'&#9888; Feb 23 · &#10004; Feb 15 · &#9888; Feb 7 · &#10004; Jan 30 · &#9888; Jan 22'},photo:{compliance:'76%',note:'3 jobs below minimum — crew needs reminder'},ontime:{rate:'80%',variance:'0.8 days avg behind schedule'},clean:{issues:'4 in 90 days',note:'Recurring complaints about floor protection'},checkin:{rate:'78%',missed:'5 missed check-ins, including 3 consecutive (Feb 24-26)'}}},
+{name:'Davis Crew',score:68,trend:'down',delta:'-8',jobs:9,callbacks:4,survey:3.5,checkin:72,alert:'critical',inputs:[65,55,68,70,72,74,62,60],details:{survey:{avg:'3.5/5.0',recent:['&#9733;&#9733;&#9733;&#9734;&#9734; "Average work" — Madison','&#9733;&#9733;&#9734;&#9734;&#9734; "Had to call back twice" — East Nashville','&#9733;&#9733;&#9733;&#9734;&#9734; "OK but messy" — Inglewood']},callbacks:{rate:'4.4 per 10 jobs',list:['111 Cahal Ave — bubbling on exterior','222 Gallatin Ave — wrong sheen in master bedroom','333 Eastland Ave — missed closet interior','444 Shelby Ave — paint on hardwood floors']},punch:{avg:'3.2 items/job',breakdown:'Missed areas: 30% · Drips: 25% · Clean-up: 25% · Other: 20%'},walkthrough:{pass:'65%',recent:'&#10060; Feb 21 · &#9888; Feb 13 · &#9888; Feb 5 · &#10004; Jan 28 · &#10060; Jan 20'},photo:{compliance:'72%',note:'3 jobs below minimum, 1 job with zero photos'},ontime:{rate:'74%',variance:'1.8 days avg behind schedule'},clean:{issues:'6 in 90 days',note:'Multiple complaints — paint on floors, insufficient drop cloths'},checkin:{rate:'72%',missed:'7 missed check-ins, declining trend'}}},
+{name:'Rodriguez Crew',score:null,trend:null,delta:null,jobs:2,callbacks:0,survey:4.5,checkin:100,alert:'building',inputs:[90,100,85,null,90,100,95,100],details:{survey:{avg:'4.5/5.0 (2 jobs)',recent:['&#9733;&#9733;&#9733;&#9733;&#9733; "Great first impression" — Franklin']},callbacks:{rate:'0 per 10 jobs',list:['No callbacks yet']},punch:{avg:'1.0 items/job',breakdown:'Touch-up: 100% (small sample)'},walkthrough:{pass:'N/A',recent:'No walkthroughs completed yet'},photo:{compliance:'90%',note:'Both jobs met photo requirements'},ontime:{rate:'100%',variance:'Both jobs on time'},clean:{issues:'0',note:'No issues reported'},checkin:{rate:'100%',missed:'No missed check-ins'}}}
+];
+
+document.getElementById('topDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+function renderTable(){
+  var tb=document.getElementById('crewTableBody');tb.innerHTML='';
+  crews.forEach(function(c,i){
+    var sc=c.score===null?'score-gray':c.score>=80?'score-green':c.score>=60?'score-yellow':'score-red';
+    var tc=c.trend==='up'?'trend-up':c.trend==='down'?'trend-down':'trend-stable';
+    var ta=c.trend==='up'?'&#8593;':c.trend==='down'?'&#8595;':c.trend==='stable'?'&#8596;':'&mdash;';
+    var al=c.alert==='warning'?'<span class="alert-badge alert-warning">&#9888;&#65039; Declining</span>':c.alert==='critical'?'<span class="alert-badge alert-critical">&#128308; Review Needed</span>':c.alert==='building'?'<span class="alert-badge alert-building">&#128202; Building Data</span>':'';
+    var tr=document.createElement('tr');tr.className='crew-row';tr.id='crew-row-'+i;
+    tr.onclick=(function(idx){return function(){toggleDrill(idx)}})(i);
+    tr.innerHTML='<td>'+(c.score!==null?i+1:'&mdash;')+'</td><td><strong>'+c.name+'</strong></td><td><span class="score-badge '+sc+'">'+(c.score!==null?c.score:'&mdash;')+'</span></td><td><span class="'+tc+'">'+ta+' '+(c.delta||'')+'</span></td><td>'+c.jobs+'</td><td>'+c.callbacks+'</td><td>'+c.survey+'</td><td>'+c.checkin+'%</td><td>'+al+'</td>';
+    tb.appendChild(tr);
+    var dr=document.createElement('tr');dr.className='drill-down';dr.id='drill-'+i;
+    dr.innerHTML='<td colspan="9">'+buildDrill(c)+'</td>';
+    tb.appendChild(dr);
+  });
+}
+
+function buildDrill(c){
+  var bar='<div class="stacked-bar">';var leg='<div class="legend">';
+  for(var j=0;j<8;j++){var s=c.inputs[j]||0;var w=weights[j].weight;var wd=s*w/100;var pct=c.score?(wd/c.score*100):(100/8);
+    bar+='<div class="seg" style="width:'+Math.max(pct,1)+'%;background:'+weights[j].color+'" title="'+weights[j].name+': '+s+'">'+(pct>8?Math.round(wd):'')+'</div>';
+    leg+='<div class="legend-item"><div class="legend-dot" style="background:'+weights[j].color+'"></div>'+weights[j].name+'</div>';}
+  bar+='</div>';leg+='</div>';
+  var dk=['survey','callbacks','punch','walkthrough','photo','ontime','clean','checkin'];
+  var dl=[['Avg Rating','Recent Reviews'],['Rate','Recent Callbacks'],['Avg Items/Job','Breakdown'],['Pass Rate','Recent'],['Compliance','Note'],['On-Time Rate','Avg Variance'],['Issues (90d)','Feedback'],['Response Rate','Missed']];
+  var ddk=[['avg','recent'],['rate','list'],['avg','breakdown'],['pass','recent'],['compliance','note'],['rate','variance'],['issues','note'],['rate','missed']];
+  var cards='<div class="inputs-grid">';
+  for(var j=0;j<8;j++){var s=c.inputs[j];var sc=s===null?'#9CA3AF':s>=80?'#16A34A':s>=60?'#F59E0B':'#DC2626';
+    var d=c.details[dk[j]];var v1=d[ddk[j][0]];var v2r=d[ddk[j][1]];
+    var v2=Array.isArray(v2r)?v2r.map(function(x){return'<div style="margin:2px 0">&bull; '+x+'</div>'}).join(''):v2r;
+    var wd=s!==null?(s*weights[j].weight/100).toFixed(1):'&mdash;';
+    cards+='<div class="input-card"><div class="input-card-header"><span class="input-card-title">'+weights[j].name+'</span><span class="input-card-weight">'+weights[j].weight+'% weight &rarr; '+wd+' pts</span></div><div class="input-card-score" style="color:'+sc+'">'+(s!==null?s:'N/A')+'</div><div class="input-card-bar"><div class="input-card-bar-fill" style="width:'+(s||0)+'%;background:'+sc+'"></div></div><div class="input-card-detail"><strong>'+dl[j][0]+':</strong> '+v1+'<br><strong>'+dl[j][1]+':</strong> '+v2+'</div></div>';}
+  cards+='</div>';
+  return '<div class="drill-content"><div class="drill-header"><h3>'+c.name+' &mdash; Score Breakdown</h3><span style="font-size:13px;color:var(--text-sec)">Total: <strong>'+(c.score||'Building data')+'</strong></span></div>'+bar+leg+cards+'</div>';
+}
+
+function toggleDrill(i){var r=document.getElementById('crew-row-'+i);var d=document.getElementById('drill-'+i);var o=d.classList.contains('open');
+  document.querySelectorAll('.drill-down').forEach(function(x){x.classList.remove('open')});
+  document.querySelectorAll('.crew-row').forEach(function(x){x.classList.remove('expanded')});
+  if(!o){d.classList.add('open');r.classList.add('expanded');}
+}
+
+function showPanel(id,el){document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.sidebar-nav li').forEach(function(li){li.classList.remove('active')});
+  if(el)el.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');}
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+
+function renderWeights(){var tb=document.getElementById('weightsBody');tb.innerHTML='';
+  weights.forEach(function(w,i){tb.innerHTML+='<tr><td>'+w.name+'</td><td><input type="number" min="0" max="100" value="'+w.weight+'" onchange="updateWeight('+i+',this.value)"></td></tr>';});
+  calcTotal();}
+
+function updateWeight(i,v){weights[i].weight=parseInt(v)||0;calcTotal();}
+function calcTotal(){var t=weights.reduce(function(s,w){return s+w.weight},0);var el=document.getElementById('weightsTotal');el.textContent='Total: '+t+'%';el.className='weights-total '+(t===100?'valid':'invalid');document.getElementById('saveWeightsBtn').disabled=t!==100;}
+function saveWeights(){alert('Weights saved! All crew scores will be recalculated with the new weights.');}
+
+function switchRole(role){var wn=document.getElementById('navWeights');
+  if(role==='field'){wn.style.display='none';if(document.getElementById('panel-weights').classList.contains('active'))showPanel('overview',document.querySelector('.sidebar-nav li'));}
+  else{wn.style.display='';}
+  document.querySelectorAll('#weightsCard input').forEach(function(inp){inp.disabled=role!=='admin';});
+  document.getElementById('saveWeightsBtn').style.display=role==='admin'?'':'none';}
+
+renderTable();renderWeights();
+</script>
+</body>
+</html>
