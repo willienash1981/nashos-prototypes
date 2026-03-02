@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Reporting Hub</title>
+<style>
+:root {
+  --navy: #1B2A4A; --navy-light: #2A3D5F;
+  --gold: #C4A962; --gold-light: #D4BE82;
+  --bg: #F5F3EF; --white: #FFFFFF;
+  --border: #E2DFD8; --text: #1B2A4A;
+  --text-sec: #6B7280; --text-muted: #9CA3AF;
+  --green: #16A34A; --green-bg: #F0FDF4;
+  --red: #DC2626; --red-bg: #FEF2F2;
+  --yellow: #F59E0B; --yellow-bg: #FFFBEB;
+  --blue: #2563EB; --blue-bg: #EFF6FF;
+  --radius: 12px; --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
+  --sidebar-w: 260px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+.topbar { position: sticky; top: 0; z-index: 100; background: var(--navy); color: #fff; display: flex; align-items: center; padding: 0 24px; height: 56px; gap: 16px; }
+.topbar .logo { font-size: 20px; font-weight: 700; letter-spacing: -.5px; white-space: nowrap; }
+.topbar .logo span { color: var(--gold); }
+.topbar .subtitle { font-size: 14px; color: rgba(255,255,255,.6); border-left: 1px solid rgba(255,255,255,.15); padding-left: 16px; }
+.topbar .date { margin-left: auto; font-size: 13px; color: rgba(255,255,255,.5); }
+.hamburger { display: none; background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; padding: 4px 8px; }
+.layout { display: flex; min-height: calc(100vh - 56px); }
+.sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--white); border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto; position: sticky; top: 56px; height: calc(100vh - 56px); }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; font-size: 13.5px; color: var(--text-sec); transition: all .15s; border-left: 3px solid transparent; }
+.sidebar-item:hover { background: var(--bg); color: var(--text); }
+.sidebar-item.active { background: var(--bg); color: var(--navy); font-weight: 600; border-left-color: var(--gold); }
+.sidebar-item .num { font-size: 11px; color: var(--text-muted); min-width: 28px; }
+.main { flex: 1; padding: 24px; max-width: 100%; overflow-x: auto; }
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.kpi-card { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.kpi-card .label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.kpi-card .value { font-size: 28px; font-weight: 700; color: var(--navy); }
+.kpi-card .sub { font-size: 12px; color: var(--text-sec); margin-top: 2px; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+.filters select, .filters input { padding: 7px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--white); color: var(--text); }
+.filters label { font-size: 12px; color: var(--text-sec); }
+.report-panel { display: none; }
+.report-panel.active { display: block; }
+.panel-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.panel-desc { font-size: 14px; color: var(--text-sec); margin-bottom: 20px; }
+.table-wrap { overflow-x: auto; margin-bottom: 24px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg); padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .3px; color: var(--text-sec); white-space: nowrap; position: sticky; top: 0; }
+td { padding: 10px 12px; border-top: 1px solid var(--border); white-space: nowrap; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover { background: var(--bg); }
+.pos { color: var(--green); font-weight: 600; }
+.neg { color: var(--red); font-weight: 600; }
+.warn { color: var(--yellow); font-weight: 600; }
+tr.detail-row { display: none; }
+tr.detail-row.open { display: table-row; }
+tr.detail-row td { background: #FAFAF7; padding: 16px 20px; }
+.detail-content { font-size: 12.5px; }
+.detail-content table { font-size: 12px; }
+.detail-content th { background: #F0EEE9; }
+.export-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+.btn { padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--text); transition: all .15s; }
+.btn:hover { background: var(--bg); }
+.btn-gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
+.btn-gold:hover { background: var(--gold-light); }
+.bar-chart { display: flex; align-items: flex-end; gap: 16px; height: 200px; padding: 16px 0; }
+.bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.bar { width: 40px; border-radius: 4px 4px 0 0; transition: height .3s; }
+.bar-label { font-size: 11px; color: var(--text-sec); margin-top: 6px; text-align: center; }
+.bar-value { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+.pie-chart { width: 180px; height: 180px; border-radius: 50%; position: relative; flex-shrink: 0; }
+.pie-legend { display: flex; flex-direction: column; gap: 8px; }
+.pie-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.pie-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.chart-container { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 24px; }
+.chart-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+.funnel { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 20px 0; }
+.funnel-step { height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 500; border-radius: 4px; transition: width .3s; }
+.line-chart { position: relative; height: 160px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); margin: 20px 0; }
+.line-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--navy); transform: translate(-50%, 50%); }
+.line-label { position: absolute; bottom: -20px; font-size: 10px; color: var(--text-muted); transform: translateX(-50%); }
+.bubble-chart { position: relative; height: 300px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); margin: 20px 0; }
+.bubble { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #fff; transform: translate(-50%, 50%); cursor: pointer; text-align: center; line-height: 1.2; }
+.histogram { display: flex; align-items: flex-end; gap: 4px; height: 160px; }
+.hist-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .sidebar { position: fixed; top: 56px; left: -280px; z-index: 99; width: 280px; min-width: 280px; transition: left .3s; box-shadow: var(--shadow-md); }
+  .sidebar.open { left: 0; }
+  .sidebar-overlay { display: none; position: fixed; inset: 0; top: 56px; background: rgba(0,0,0,.3); z-index: 98; }
+  .sidebar-overlay.open { display: block; }
+  .main { padding: 16px; }
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .topbar .subtitle { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
+  <div class="logo">Nash<span>OS</span></div>
+  <div class="subtitle">Reporting Hub</div>
+  <div class="date">March 1, 2026</div>
+</div>
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-item active" onclick="showReport('profitability',this)"><span class="num">8.1</span> Job Profitability</div>
+  <div class="sidebar-item" onclick="showReport('crew',this)"><span class="num">8.2</span> Crew Efficiency</div>
+  <div class="sidebar-item" onclick="showReport('sales',this)"><span class="num">8.3</span> Sales Performance</div>
+  <div class="sidebar-item" onclick="showReport('customers',this)"><span class="num">8.4</span> Customer Insights</div>
+  <div class="sidebar-item" onclick="showReport('materials',this)"><span class="num">8.5</span> Material Variance</div>
+  <div class="sidebar-item" onclick="showReport('schedule',this)"><span class="num">8.6</span> Schedule Adherence</div>
+  <div class="sidebar-item" onclick="showReport('duration',this)"><span class="num">8.7</span> Job Duration Accuracy</div>
+  <div class="sidebar-item" onclick="showReport('cycle',this)"><span class="num">8.8</span> Sales Cycle Analysis</div>
+  <div class="sidebar-item" onclick="showReport('followup',this)"><span class="num">8.9</span> Follow-Up Effectiveness</div>
+  <div class="sidebar-item" onclick="showReport('retention',this)"><span class="num">8.10</span> Customer Retention</div>
+  <div class="sidebar-item" onclick="showReport('segment',this)"><span class="num">8.11</span> Segment Profitability</div>
+  <div class="sidebar-item" onclick="showReport('callback',this)"><span class="num">8.13</span> Callback Tracking</div>
+  <div class="sidebar-item" onclick="showReport('marketing',this)"><span class="num">8.15</span> Marketing Performance</div>
+</nav>
+<div class="main">
+
+<!-- 8.1 JOB PROFITABILITY -->
+<div class="report-panel active" id="panel-profitability">
+  <div class="panel-title">Job Profitability Report</div>
+  <div class="panel-desc">The report you've wanted for 13 years. Every job, every dollar, every variance.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Total Revenue</div><div class="value">$2.84M</div><div class="sub">142 jobs &middot; Jan&ndash;Feb 2026</div></div>
+    <div class="kpi-card"><div class="label">Avg GP%</div><div class="value">44.7%</div><div class="sub">&uarr; 1.2% vs prior period</div></div>
+    <div class="kpi-card"><div class="label">Jobs Analyzed</div><div class="value">142</div><div class="sub">8 flagged unprofitable</div></div>
+    <div class="kpi-card"><div class="label">Total Gross Profit</div><div class="value">$1.27M</div><div class="sub">Target: $1.30M</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option><option>Q4 2025</option><option>Full Year 2025</option></select></div>
+    <div><label>Salesperson</label><br><select><option>All</option><option>Bill Nash</option><option>Tyler Brooks</option><option>Sarah Chen</option></select></div>
+    <div><label>Work Category</label><br><select><option>All</option><option>Exterior</option><option>Interior</option><option>Cabinets</option><option>Commercial</option></select></div>
+    <div><label>Package Type</label><br><select><option>All</option><option>Premium</option><option>Standard</option><option>Essential</option></select></div>
+    <div><label>Crew</label><br><select><option>All</option><option>Crew Alpha (Carlos)</option><option>Crew Beta (Miguel)</option><option>Crew Charlie (David)</option><option>Crew Delta (James)</option></select></div>
+    <div><label>Job Value</label><br><select><option>All</option><option>$0-$10K</option><option>$10K-$25K</option><option>$25K-$50K</option><option>$50K+</option></select></div>
+  </div>
+  <div class="export-bar">
+    <button class="btn btn-gold">&#11015; Export CSV</button>
+    <button class="btn">&#128196; Export PDF</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Job Name</th><th>Customer</th><th>Est Rev</th><th>Act Rev</th><th>Est Hrs</th><th>Act Hrs</th><th>Labor Var</th><th>Est Mat $</th><th>Act Mat $</th><th>Mat Var</th><th>Gross Profit</th><th>GP%</th><th>Est Margin%</th><th>Margin Var</th></tr></thead>
+      <tbody>
+        <tr class="clickable" onclick="toggleDetail('jp1')"><td><strong>Henderson Exterior</strong></td><td>Jim Henderson</td><td>$38,500</td><td>$38,500</td><td>280</td><td>264</td><td class="pos">-16 hrs</td><td>$4,200</td><td>$4,050</td><td class="pos">-$150</td><td>$18,340</td><td class="pos">47.6%</td><td>45.0%</td><td class="pos">+2.6%</td></tr>
+        <tr class="detail-row" id="jp1"><td colspan="14"><div class="detail-content"><strong>Service Job Breakdown:</strong><table><thead><tr><th>Service</th><th>Est Hrs</th><th>Act Hrs</th><th>Var</th><th>Revenue</th><th>GP%</th></tr></thead><tbody><tr><td>Exterior Body Paint</td><td>180</td><td>168</td><td class="pos">-12</td><td>$26,000</td><td>49.1%</td></tr><tr><td>Trim &amp; Detail</td><td>60</td><td>58</td><td class="pos">-2</td><td>$8,000</td><td>46.2%</td></tr><tr><td>Pressure Wash / Prep</td><td>40</td><td>38</td><td class="pos">-2</td><td>$4,500</td><td>42.8%</td></tr></tbody></table></div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp2')"><td><strong>Mitchell Int/Ext</strong></td><td>Karen Mitchell</td><td>$62,000</td><td>$63,200</td><td>440</td><td>468</td><td class="neg">+28 hrs</td><td>$7,800</td><td>$8,350</td><td class="neg">+$550</td><td>$26,180</td><td class="pos">41.4%</td><td>44.2%</td><td class="neg">-2.8%</td></tr>
+        <tr class="detail-row" id="jp2"><td colspan="14"><div class="detail-content"><strong>Service Job Breakdown:</strong><table><thead><tr><th>Service</th><th>Est Hrs</th><th>Act Hrs</th><th>Var</th><th>Revenue</th><th>GP%</th></tr></thead><tbody><tr><td>Interior &ndash; Full House</td><td>240</td><td>250</td><td class="neg">+10</td><td>$32,000</td><td>40.1%</td></tr><tr><td>Exterior &ndash; Body &amp; Trim</td><td>160</td><td>176</td><td class="neg">+16</td><td>$24,000</td><td>38.5%</td></tr><tr><td>Cabinet Touch-up</td><td>40</td><td>42</td><td class="neg">+2</td><td>$7,200</td><td>52.0%</td></tr></tbody></table></div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp3')"><td><strong>Donelson Cabinet Refinish</strong></td><td>Tom &amp; Lisa Park</td><td>$14,200</td><td>$14,200</td><td>120</td><td>138</td><td class="neg">+18 hrs</td><td>$2,400</td><td>$2,680</td><td class="neg">+$280</td><td>$4,890</td><td class="neg">34.4%</td><td>42.5%</td><td class="neg">-8.1%</td></tr>
+        <tr class="detail-row" id="jp3"><td colspan="14"><div class="detail-content"><strong>&#9888; Flagged: GP below 38% threshold</strong><br>Crew ran +18 hrs over estimate. Cabinet door complexity underestimated (42 doors vs assumed 30). Material overage on primer &mdash; doors required 3 coats vs standard 2.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp4')"><td><strong>Brentwood Estate Ext</strong></td><td>David &amp; Claire Worthington</td><td>$84,500</td><td>$85,200</td><td>560</td><td>540</td><td class="pos">-20 hrs</td><td>$11,200</td><td>$10,800</td><td class="pos">-$400</td><td>$42,800</td><td class="pos">50.2%</td><td>48.0%</td><td class="pos">+2.2%</td></tr>
+        <tr class="detail-row" id="jp4"><td colspan="14"><div class="detail-content"><strong>Top performing job this period.</strong> Premium package, Crew Alpha executed flawlessly. Customer added $700 change order for shutters (included in actuals).</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp5')"><td><strong>Green Hills Interior</strong></td><td>Sarah Blackwell</td><td>$22,800</td><td>$22,800</td><td>180</td><td>176</td><td class="pos">-4 hrs</td><td>$3,100</td><td>$3,050</td><td class="pos">-$50</td><td>$10,620</td><td class="pos">46.6%</td><td>45.8%</td><td class="pos">+0.8%</td></tr>
+        <tr class="detail-row" id="jp5"><td colspan="14"><div class="detail-content">Clean execution. 12 rooms, SW Emerald throughout. Crew Beta completed 4 hrs under estimate.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp6')"><td><strong>Mt. Juliet Ext Repaint</strong></td><td>Robert Nguyen</td><td>$18,600</td><td>$18,600</td><td>140</td><td>162</td><td class="neg">+22 hrs</td><td>$2,600</td><td>$3,100</td><td class="neg">+$500</td><td>$5,920</td><td class="neg">31.8%</td><td>41.0%</td><td class="neg">-9.2%</td></tr>
+        <tr class="detail-row" id="jp6"><td colspan="14"><div class="detail-content"><strong>&#9888; Flagged: GP below 38%</strong><br>Extensive wood rot discovered during prep. 22 hrs additional labor + $500 extra materials. Should have been a change order.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp7')"><td><strong>Franklin Whole-Home</strong></td><td>The Martins</td><td>$45,000</td><td>$46,200</td><td>340</td><td>332</td><td class="pos">-8 hrs</td><td>$5,500</td><td>$5,400</td><td class="pos">-$100</td><td>$22,340</td><td class="pos">48.4%</td><td>46.0%</td><td class="pos">+2.4%</td></tr>
+        <tr class="detail-row" id="jp7"><td colspan="14"><div class="detail-content">Interior + exterior combo. Change order for accent wall (+$1,200). Crew Charlie. Excellent execution.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp8')"><td><strong>Hermitage Commercial</strong></td><td>Peak Dental Group</td><td>$28,400</td><td>$28,400</td><td>200</td><td>210</td><td class="neg">+10 hrs</td><td>$3,200</td><td>$3,350</td><td class="neg">+$150</td><td>$11,900</td><td class="pos">41.9%</td><td>43.5%</td><td class="neg">-1.6%</td></tr>
+        <tr class="detail-row" id="jp8"><td colspan="14"><div class="detail-content">Weekend work required (dental office). Slight labor overage due to after-hours scheduling constraints.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp9')"><td><strong>Hendersonville Deck Stain</strong></td><td>Mark &amp; Amy Foster</td><td>$5,800</td><td>$5,800</td><td>48</td><td>44</td><td class="pos">-4 hrs</td><td>$980</td><td>$940</td><td class="pos">-$40</td><td>$2,860</td><td class="pos">49.3%</td><td>47.0%</td><td class="pos">+2.3%</td></tr>
+        <tr class="detail-row" id="jp9"><td colspan="14"><div class="detail-content">Small job, high margin. 800 sq ft deck, TWP stain. Crew Delta &mdash; quick turnaround.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('jp10')"><td><strong>Bellevue Kitchen Cabs</strong></td><td>Jennifer Walsh</td><td>$11,200</td><td>$11,200</td><td>96</td><td>112</td><td class="neg">+16 hrs</td><td>$1,800</td><td>$2,100</td><td class="neg">+$300</td><td>$3,640</td><td class="neg">32.5%</td><td>42.0%</td><td class="neg">-9.5%</td></tr>
+        <tr class="detail-row" id="jp10"><td colspan="14"><div class="detail-content"><strong>&#9888; Flagged: GP below 38%</strong><br>Oak cabinets required extra sanding and primer &mdash; grain bleed-through after first coat. 16 hrs over, $300 material overage. Estimating needs to flag oak cabs as high-prep.</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 8.2 CREW EFFICIENCY -->
+<div class="report-panel" id="panel-crew">
+  <div class="panel-title">Crew Efficiency Report</div>
+  <div class="panel-desc">Crew performance, revenue per man-hour, and reliability tracking.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Avg Revenue/Man-Hour</div><div class="value">$82.40</div><div class="sub">&uarr; $3.20 vs Q4 2025</div></div>
+    <div class="kpi-card"><div class="label">Avg Cost/SqFt</div><div class="value">$3.85</div><div class="sub">Target: $4.00</div></div>
+    <div class="kpi-card"><div class="label">On-Time Completion</div><div class="value">87.3%</div><div class="sub">&uarr; 2.1% vs prior period</div></div>
+    <div class="kpi-card"><div class="label">Active Crews</div><div class="value">4</div><div class="sub">16 painters total</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option><option>Q4 2025</option></select></div>
+    <div><label>Crew</label><br><select><option>All Crews</option><option>Crew Alpha (Carlos)</option><option>Crew Beta (Miguel)</option><option>Crew Charlie (David)</option><option>Crew Delta (James)</option></select></div>
+    <div><label>Work Category</label><br><select><option>All</option><option>Exterior</option><option>Interior</option><option>Cabinets</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Crew</th><th>Jobs Done</th><th>Rev/Man-Hr</th><th>Cost/SqFt</th><th>Speed</th><th>Est Accuracy %</th><th>Reliability %</th></tr></thead>
+      <tbody>
+        <tr class="clickable" onclick="toggleDetail('cr1')"><td><strong>Crew Alpha (Carlos)</strong></td><td>38</td><td>$91.20</td><td>$3.45</td><td class="pos">&uarr;</td><td>94.2%</td><td>97.5%</td></tr>
+        <tr class="detail-row" id="cr1"><td colspan="7"><div class="detail-content">Top crew. Specializes in large exteriors. 5 painters. Zero callbacks in February. Carlos has 8 years with Nash Painting.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('cr2')"><td><strong>Crew Beta (Miguel)</strong></td><td>42</td><td>$84.60</td><td>$3.72</td><td class="pos">&uarr;</td><td>91.8%</td><td>95.2%</td></tr>
+        <tr class="detail-row" id="cr2"><td colspan="7"><div class="detail-content">Highest volume crew. 4 painters. Strong on interiors. Miguel promoted to lead Q3 2025.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('cr3')"><td><strong>Crew Charlie (David)</strong></td><td>35</td><td>$78.30</td><td>$4.10</td><td>&rarr;</td><td>88.5%</td><td>92.1%</td></tr>
+        <tr class="detail-row" id="cr3"><td colspan="7"><div class="detail-content">4 painters. One newer hire (3 months) bringing avg down. Cabinets and detail work.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('cr4')"><td><strong>Crew Delta (James)</strong></td><td>27</td><td>$73.50</td><td>$4.28</td><td class="neg">&darr;</td><td>85.3%</td><td>88.7%</td></tr>
+        <tr class="detail-row" id="cr4"><td colspan="7"><div class="detail-content"><strong>&#9888; Needs attention.</strong> 3 painters. James missed 3 days in Feb. Two callbacks this period.</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Revenue per Man-Hour by Crew</div>
+    <div class="bar-chart">
+      <div class="bar-group"><div class="bar-value">$91.20</div><div class="bar" style="height:182px; background:var(--navy);"></div><div class="bar-label">Alpha<br>(Carlos)</div></div>
+      <div class="bar-group"><div class="bar-value">$84.60</div><div class="bar" style="height:169px; background:var(--navy-light);"></div><div class="bar-label">Beta<br>(Miguel)</div></div>
+      <div class="bar-group"><div class="bar-value">$78.30</div><div class="bar" style="height:156px; background:var(--gold);"></div><div class="bar-label">Charlie<br>(David)</div></div>
+      <div class="bar-group"><div class="bar-value">$73.50</div><div class="bar" style="height:147px; background:var(--red);"></div><div class="bar-label">Delta<br>(James)</div></div>
+    </div>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">6-Month Trend &mdash; Revenue/Man-Hour (All Crews Avg)</div>
+    <div class="line-chart" style="height:160px;">
+      <div class="line-dot" style="left:8%; bottom:55%;"></div>
+      <div class="line-dot" style="left:24%; bottom:60%;"></div>
+      <div class="line-dot" style="left:40%; bottom:58%;"></div>
+      <div class="line-dot" style="left:56%; bottom:65%;"></div>
+      <div class="line-dot" style="left:72%; bottom:72%;"></div>
+      <div class="line-dot" style="left:88%; bottom:78%;"></div>
+      <div class="line-label" style="left:8%">Sep</div>
+      <div class="line-label" style="left:24%">Oct</div>
+      <div class="line-label" style="left:40%">Nov</div>
+      <div class="line-label" style="left:56%">Dec</div>
+      <div class="line-label" style="left:72%">Jan</div>
+      <div class="line-label" style="left:88%">Feb</div>
+    </div>
+  </div>
+</div>
+
+<!-- 8.3 SALES PERFORMANCE -->
+<div class="report-panel" id="panel-sales">
+  <div class="panel-title">Sales Performance Report</div>
+  <div class="panel-desc">Estimate-to-close tracking by salesperson with funnel analysis.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Estimates Sent</div><div class="value">312</div><div class="sub">Jan&ndash;Feb 2026</div></div>
+    <div class="kpi-card"><div class="label">Overall Close Rate</div><div class="value">45.5%</div><div class="sub">&uarr; 2.3% vs prior</div></div>
+    <div class="kpi-card"><div class="label">Avg Deal Size</div><div class="value">$19,800</div><div class="sub">&uarr; $1,200 vs prior</div></div>
+    <div class="kpi-card"><div class="label">Total Revenue Sold</div><div class="value">$2.81M</div><div class="sub">142 jobs closed</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Salesperson</label><br><select><option>All</option><option>Bill Nash</option><option>Tyler Brooks</option><option>Sarah Chen</option></select></div>
+    <div><label>Lead Source</label><br><select><option>All</option><option>Google Ads</option><option>Referral</option><option>Angi</option><option>Organic</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Salesperson</th><th>Estimates Sent</th><th>Close Rate</th><th>Avg Deal Size</th><th>Revenue Sold</th><th>Avg Days to Close</th><th>Follow-up Close Rate</th></tr></thead>
+      <tbody>
+        <tr class="clickable" onclick="toggleDetail('sp1')"><td><strong>Bill Nash</strong></td><td>128</td><td class="pos">52.3%</td><td>$24,200</td><td>$1,620,000</td><td>6.2</td><td>61.4%</td></tr>
+        <tr class="detail-row" id="sp1"><td colspan="7"><div class="detail-content">Highest close rate and deal size. 67 jobs closed. Averages 2.1 follow-up touches per estimate.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('sp2')"><td><strong>Tyler Brooks</strong></td><td>108</td><td>42.6%</td><td>$17,400</td><td>$800,000</td><td>8.4</td><td>48.2%</td></tr>
+        <tr class="detail-row" id="sp2"><td colspan="7"><div class="detail-content">46 jobs closed. Slower to close. Opportunity: coaching on follow-up timing.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('sp3')"><td><strong>Sarah Chen</strong></td><td>76</td><td>39.5%</td><td>$15,800</td><td>$390,000</td><td>9.8</td><td>44.0%</td></tr>
+        <tr class="detail-row" id="sp3"><td colspan="7"><div class="detail-content">29 jobs closed. Started Oct 2025. Ramping well &mdash; close rate up from 32% in Q4.</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Sales Funnel &mdash; All Salespeople (Jan&ndash;Feb 2026)</div>
+    <div class="funnel">
+      <div class="funnel-step" style="width:100%; background:var(--navy);">Estimates Sent &mdash; 312</div>
+      <div class="funnel-step" style="width:82%; background:var(--navy-light);">Followed Up &mdash; 256</div>
+      <div class="funnel-step" style="width:46%; background:var(--gold);">Accepted &mdash; 142</div>
+      <div class="funnel-step" style="width:42%; background:var(--green);">Completed &mdash; 131</div>
+      <div class="funnel-step" style="width:38%; background:#16A34A;">Paid &mdash; 118</div>
+    </div>
+  </div>
+</div>
+
+<!-- 8.4 CUSTOMER INSIGHTS -->
+<div class="report-panel" id="panel-customers">
+  <div class="panel-title">Customer Insights</div>
+  <div class="panel-desc">Lifetime value, repeat business, and referral tracking.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Avg Lifetime Value</div><div class="value">$34,200</div><div class="sub">Based on all-time data</div></div>
+    <div class="kpi-card"><div class="label">Repeat Rate</div><div class="value">28.4%</div><div class="sub">&uarr; 3.1% vs 2024</div></div>
+    <div class="kpi-card"><div class="label">Referral Revenue %</div><div class="value">22.6%</div><div class="sub">$641K from referrals</div></div>
+    <div class="kpi-card"><div class="label">Active Customers</div><div class="value">892</div><div class="sub">Since 2018</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>All Time</option><option>2025</option><option>2024</option></select></div>
+    <div><label>Customer Type</label><br><select><option>All</option><option>Repeat</option><option>New</option><option>Referral</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Customer</th><th>Lifetime Value</th><th># Jobs</th><th>Last Job</th><th>Referrals Made</th></tr></thead>
+      <tbody>
+        <tr class="clickable" onclick="toggleDetail('ci1')"><td><strong>David &amp; Claire Worthington</strong></td><td>$142,800</td><td>4</td><td>Feb 2026</td><td>3</td></tr>
+        <tr class="detail-row" id="ci1"><td colspan="5"><div class="detail-content">Brentwood estate. Jobs: Exterior 2022, Interior 2023, Deck 2024, Exterior 2026. Referred the Martins, Fosters, and Blackwells.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('ci2')"><td><strong>The Martins</strong></td><td>$86,400</td><td>3</td><td>Jan 2026</td><td>1</td></tr>
+        <tr class="detail-row" id="ci2"><td colspan="5"><div class="detail-content">Franklin. Referred by Worthingtons. Jobs: Interior 2023, Exterior 2024, Whole-Home 2026.</div></td></tr>
+        <tr class="clickable"><td><strong>Peak Dental Group</strong></td><td>$72,600</td><td>3</td><td>Feb 2026</td><td>2</td></tr>
+        <tr class="clickable"><td><strong>Jim Henderson</strong></td><td>$64,200</td><td>2</td><td>Jan 2026</td><td>1</td></tr>
+        <tr class="clickable"><td><strong>Karen Mitchell</strong></td><td>$62,000</td><td>1</td><td>Feb 2026</td><td>0</td></tr>
+        <tr class="clickable"><td><strong>Sarah Blackwell</strong></td><td>$45,600</td><td>2</td><td>Jan 2026</td><td>2</td></tr>
+        <tr class="clickable"><td><strong>Robert Nguyen</strong></td><td>$18,600</td><td>1</td><td>Feb 2026</td><td>0</td></tr>
+        <tr class="clickable"><td><strong>Jennifer Walsh</strong></td><td>$11,200</td><td>1</td><td>Feb 2026</td><td>0</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div class="chart-container" style="flex:1; min-width:240px;">
+      <div class="chart-title">Revenue by Customer Type</div>
+      <div style="display:flex; align-items:center; gap:24px;">
+        <div class="pie-chart" style="background: conic-gradient(var(--navy) 0% 48%, var(--gold) 48% 76%, var(--green) 76% 100%);"></div>
+        <div class="pie-legend">
+          <div class="pie-legend-item"><div class="pie-dot" style="background:var(--navy);"></div>New &mdash; 48% ($1.36M)</div>
+          <div class="pie-legend-item"><div class="pie-dot" style="background:var(--gold);"></div>Repeat &mdash; 29% ($823K)</div>
+          <div class="pie-legend-item"><div class="pie-dot" style="background:var(--green);"></div>Referral &mdash; 23% ($641K)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8.5 MATERIAL VARIANCE -->
+<div class="report-panel" id="panel-materials">
+  <div class="panel-title">Material Variance Report</div>
+  <div class="panel-desc">Track estimated vs actual material usage. Find systematic over/under-estimation.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Total Material Est</div><div class="value">$42,780</div><div class="sub">142 jobs</div></div>
+    <div class="kpi-card"><div class="label">Total Material Actual</div><div class="value">$43,820</div><div class="sub">+$1,040 over (2.4%)</div></div>
+    <div class="kpi-card"><div class="label">Items Over 10%</div><div class="value" style="color:var(--red);">4</div><div class="sub">Need estimating review</div></div>
+    <div class="kpi-card"><div class="label">Most Over-Estimated</div><div class="value" style="font-size:18px;">Tape/Paper</div><div class="sub">-14.2% avg variance</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Material</label><br><select><option>All</option><option>SW Emerald Interior</option><option>SW Duration Exterior</option><option>Primer</option><option>Caulk</option><option>Tape/Paper</option></select></div>
+    <div><label>Variance Threshold</label><br><select><option>All</option><option>&gt; 5%</option><option>&gt; 10%</option><option>&gt; 20%</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Job</th><th>Material</th><th>Est Qty</th><th>Act Qty</th><th>Var (units)</th><th>Var %</th><th>Est Cost</th><th>Act Cost</th><th>Cost Var</th></tr></thead>
+      <tbody>
+        <tr class="clickable"><td>Henderson Exterior</td><td>SW Duration Exterior</td><td>18 gal</td><td>17 gal</td><td class="pos">-1</td><td class="pos">-5.6%</td><td>$1,260</td><td>$1,190</td><td class="pos">-$70</td></tr>
+        <tr class="clickable"><td>Mitchell Int/Ext</td><td>SW Emerald Interior</td><td>14 gal</td><td>16 gal</td><td class="neg">+2</td><td class="neg">+14.3%</td><td>$980</td><td>$1,120</td><td class="neg">+$140</td></tr>
+        <tr class="clickable"><td>Mitchell Int/Ext</td><td>SW Duration Exterior</td><td>20 gal</td><td>22 gal</td><td class="neg">+2</td><td class="neg">+10.0%</td><td>$1,400</td><td>$1,540</td><td class="neg">+$140</td></tr>
+        <tr class="clickable"><td>Donelson Cabinets</td><td>Primer (BIN Shellac)</td><td>6 gal</td><td>9 gal</td><td class="neg">+3</td><td class="neg" style="font-weight:700;">+50.0%</td><td>$300</td><td>$450</td><td class="neg">+$150</td></tr>
+        <tr class="clickable"><td>Donelson Cabinets</td><td>SW Emerald Urethane</td><td>4 gal</td><td>5 gal</td><td class="neg">+1</td><td class="neg">+25.0%</td><td>$320</td><td>$400</td><td class="neg">+$80</td></tr>
+        <tr class="clickable"><td>Brentwood Estate</td><td>SW Duration Exterior</td><td>32 gal</td><td>30 gal</td><td class="pos">-2</td><td class="pos">-6.3%</td><td>$2,240</td><td>$2,100</td><td class="pos">-$140</td></tr>
+        <tr class="clickable"><td>Brentwood Estate</td><td>Caulk</td><td>24 tubes</td><td>28 tubes</td><td class="neg">+4</td><td class="neg">+16.7%</td><td>$168</td><td>$196</td><td class="neg">+$28</td></tr>
+        <tr class="clickable"><td>Green Hills Interior</td><td>SW Emerald Interior</td><td>16 gal</td><td>15 gal</td><td class="pos">-1</td><td class="pos">-6.3%</td><td>$1,120</td><td>$1,050</td><td class="pos">-$70</td></tr>
+        <tr class="clickable"><td>Mt. Juliet Ext</td><td>Primer</td><td>8 gal</td><td>12 gal</td><td class="neg">+4</td><td class="neg" style="font-weight:700;">+50.0%</td><td>$280</td><td>$420</td><td class="neg">+$140</td></tr>
+        <tr class="clickable"><td>Bellevue Cabinets</td><td>Primer (BIN Shellac)</td><td>4 gal</td><td>6 gal</td><td class="neg">+2</td><td class="neg" style="font-weight:700;">+50.0%</td><td>$200</td><td>$300</td><td class="neg">+$100</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Aggregated Variance by Material Type</div>
+    <div class="bar-chart" style="height:160px;">
+      <div class="bar-group"><div class="bar-value" style="color:var(--red);">+18.2%</div><div class="bar" style="height:130px; background:var(--red);"></div><div class="bar-label">Primer<br>(Shellac)</div></div>
+      <div class="bar-group"><div class="bar-value" style="color:var(--red);">+12.1%</div><div class="bar" style="height:90px; background:var(--yellow);"></div><div class="bar-label">Caulk</div></div>
+      <div class="bar-group"><div class="bar-value" style="color:var(--red);">+8.4%</div><div class="bar" style="height:60px; background:var(--yellow);"></div><div class="bar-label">SW Emerald<br>Interior</div></div>
+      <div class="bar-group"><div class="bar-value" style="color:var(--green);">-2.1%</div><div class="bar" style="height:15px; background:var(--green);"></div><div class="bar-label">SW Duration<br>Exterior</div></div>
+      <div class="bar-group"><div class="bar-value" style="color:var(--green);">-14.2%</div><div class="bar" style="height:100px; background:var(--green);"></div><div class="bar-label">Tape/<br>Paper</div></div>
+    </div>
+    <p style="font-size:12px; color:var(--text-sec); margin-top:12px;">Red/yellow = under-estimated (used more than planned). Green = over-estimated (used less).</p>
+  </div>
+</div>
+
+<!-- 8.6 SCHEDULE ADHERENCE -->
+<div class="report-panel" id="panel-schedule">
+  <div class="panel-title">Schedule Adherence Report</div>
+  <div class="panel-desc">On-time starts, on-time finishes, and delay root causes.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">% Started On Time</div><div class="value">82.4%</div><div class="sub">117 of 142 jobs</div></div>
+    <div class="kpi-card"><div class="label">% Finished On Time</div><div class="value">76.1%</div><div class="sub">108 of 142 jobs</div></div>
+    <div class="kpi-card"><div class="label">Avg Delay</div><div class="value">1.4 days</div><div class="sub">When delayed</div></div>
+    <div class="kpi-card"><div class="label">Rain Days Lost</div><div class="value">8</div><div class="sub">Jan&ndash;Feb 2026</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Crew</label><br><select><option>All Crews</option><option>Alpha</option><option>Beta</option><option>Charlie</option><option>Delta</option></select></div>
+    <div><label>Delay Reason</label><br><select><option>All</option><option>Rain</option><option>Customer</option><option>Material</option><option>Crew</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Job</th><th>Crew</th><th>Plan Start</th><th>Act Start</th><th>Start Var</th><th>Plan End</th><th>Act End</th><th>End Var</th><th>Delay Reason</th></tr></thead>
+      <tbody>
+        <tr class="clickable"><td>Henderson Exterior</td><td>Alpha</td><td>Jan 6</td><td>Jan 6</td><td class="pos">0</td><td>Jan 17</td><td>Jan 16</td><td class="pos">-1 day</td><td>&mdash;</td></tr>
+        <tr class="clickable"><td>Mitchell Int/Ext</td><td>Beta</td><td>Jan 13</td><td>Jan 13</td><td class="pos">0</td><td>Feb 7</td><td>Feb 12</td><td class="neg">+5 days</td><td>Rain + Scope</td></tr>
+        <tr class="clickable"><td>Donelson Cabinets</td><td>Charlie</td><td>Jan 20</td><td>Jan 22</td><td class="neg">+2 days</td><td>Feb 3</td><td>Feb 7</td><td class="neg">+4 days</td><td>Material delay</td></tr>
+        <tr class="clickable"><td>Brentwood Estate</td><td>Alpha</td><td>Jan 27</td><td>Jan 27</td><td class="pos">0</td><td>Feb 21</td><td>Feb 19</td><td class="pos">-2 days</td><td>&mdash;</td></tr>
+        <tr class="clickable"><td>Green Hills Interior</td><td>Beta</td><td>Feb 3</td><td>Feb 3</td><td class="pos">0</td><td>Feb 14</td><td>Feb 13</td><td class="pos">-1 day</td><td>&mdash;</td></tr>
+        <tr class="clickable"><td>Mt. Juliet Ext</td><td>Delta</td><td>Feb 3</td><td>Feb 5</td><td class="neg">+2 days</td><td>Feb 14</td><td>Feb 19</td><td class="neg">+5 days</td><td>Rain + Rot repair</td></tr>
+        <tr class="clickable"><td>Franklin Whole-Home</td><td>Charlie</td><td>Feb 10</td><td>Feb 10</td><td class="pos">0</td><td>Feb 26</td><td>Feb 25</td><td class="pos">-1 day</td><td>&mdash;</td></tr>
+        <tr class="clickable"><td>Hermitage Commercial</td><td>Delta</td><td>Feb 17</td><td>Feb 18</td><td class="neg">+1 day</td><td>Feb 26</td><td>Feb 28</td><td class="neg">+2 days</td><td>Crew (James absent)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Delay Reasons Breakdown</div>
+    <div class="bar-chart" style="height:140px;">
+      <div class="bar-group"><div class="bar-value">42%</div><div class="bar" style="height:120px; background:var(--blue);"></div><div class="bar-label">Rain/<br>Weather</div></div>
+      <div class="bar-group"><div class="bar-value">24%</div><div class="bar" style="height:70px; background:var(--gold);"></div><div class="bar-label">Material<br>Delay</div></div>
+      <div class="bar-group"><div class="bar-value">20%</div><div class="bar" style="height:58px; background:var(--red);"></div><div class="bar-label">Crew<br>Issue</div></div>
+      <div class="bar-group"><div class="bar-value">14%</div><div class="bar" style="height:40px; background:var(--text-muted);"></div><div class="bar-label">Customer<br>Change</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 8.7 JOB DURATION ACCURACY -->
+<div class="report-panel" id="panel-duration">
+  <div class="panel-title">Job Duration Accuracy</div>
+  <div class="panel-desc">How well are we estimating job hours and days? Systematic patterns by service type.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Avg Hour Variance</div><div class="value">+4.2%</div><div class="sub">Slightly under-estimating</div></div>
+    <div class="kpi-card"><div class="label">Jobs Over 20% Var</div><div class="value" style="color:var(--red);">6</div><div class="sub">Need estimating review</div></div>
+    <div class="kpi-card"><div class="label">Most Accurate Type</div><div class="value" style="font-size:18px;">Exterior Body</div><div class="sub">+1.8% avg variance</div></div>
+    <div class="kpi-card"><div class="label">Least Accurate</div><div class="value" style="font-size:18px; color:var(--red);">Cabinets</div><div class="sub">+22.4% avg variance</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Service Type</label><br><select><option>All</option><option>Exterior Body</option><option>Interior</option><option>Cabinets</option><option>Trim &amp; Detail</option><option>Deck/Stain</option></select></div>
+    <div><label>Crew</label><br><select><option>All</option><option>Alpha</option><option>Beta</option><option>Charlie</option><option>Delta</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Service Job</th><th>Type</th><th>Crew</th><th>Est Hrs</th><th>Act Hrs</th><th>Var Hrs</th><th>Var %</th><th>Est Days</th><th>Act Days</th></tr></thead>
+      <tbody>
+        <tr class="clickable"><td>Henderson &ndash; Body Paint</td><td>Exterior Body</td><td>Alpha</td><td>180</td><td>168</td><td class="pos">-12</td><td class="pos">-6.7%</td><td>8</td><td>7</td></tr>
+        <tr class="clickable"><td>Henderson &ndash; Trim</td><td>Trim &amp; Detail</td><td>Alpha</td><td>60</td><td>58</td><td class="pos">-2</td><td class="pos">-3.3%</td><td>3</td><td>3</td></tr>
+        <tr class="clickable"><td>Mitchell &ndash; Interior</td><td>Interior</td><td>Beta</td><td>240</td><td>250</td><td class="neg">+10</td><td class="neg">+4.2%</td><td>12</td><td>13</td></tr>
+        <tr class="clickable"><td>Mitchell &ndash; Exterior</td><td>Exterior Body</td><td>Beta</td><td>160</td><td>176</td><td class="neg">+16</td><td class="neg">+10.0%</td><td>7</td><td>8</td></tr>
+        <tr class="clickable" style="background:var(--red-bg);"><td>Donelson &ndash; Cabinets</td><td>Cabinets</td><td>Charlie</td><td>120</td><td>138</td><td class="neg">+18</td><td class="neg">+15.0%</td><td>10</td><td>12</td></tr>
+        <tr class="clickable"><td>Brentwood &ndash; Full Ext</td><td>Exterior Body</td><td>Alpha</td><td>560</td><td>540</td><td class="pos">-20</td><td class="pos">-3.6%</td><td>18</td><td>17</td></tr>
+        <tr class="clickable"><td>Green Hills &ndash; Interior</td><td>Interior</td><td>Beta</td><td>180</td><td>176</td><td class="pos">-4</td><td class="pos">-2.2%</td><td>9</td><td>9</td></tr>
+        <tr class="clickable" style="background:var(--red-bg);"><td>Mt. Juliet &ndash; Ext</td><td>Exterior Body</td><td>Delta</td><td>140</td><td>162</td><td class="neg">+22</td><td class="neg">+15.7%</td><td>8</td><td>10</td></tr>
+        <tr class="clickable"><td>Hendersonville &ndash; Deck</td><td>Deck/Stain</td><td>Delta</td><td>48</td><td>44</td><td class="pos">-4</td><td class="pos">-8.3%</td><td>2</td><td>2</td></tr>
+        <tr class="clickable" style="background:var(--red-bg);"><td>Bellevue &ndash; Cabinets</td><td>Cabinets</td><td>Charlie</td><td>96</td><td>112</td><td class="neg">+16</td><td class="neg">+16.7%</td><td>6</td><td>7</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Avg Variance by Service Type</div>
+    <div class="bar-chart" style="height:140px;">
+      <div class="bar-group"><div class="bar-value" style="color:var(--green);">+1.8%</div><div class="bar" style="height:15px; background:var(--green);"></div><div class="bar-label">Exterior<br>Body</div></div>
+      <div class="bar-group"><div class="bar-value">+3.1%</div><div class="bar" style="height:30px; background:var(--gold);"></div><div class="bar-label">Interior</div></div>
+      <div class="bar-group"><div class="bar-value">+4.8%</div><div class="bar" style="height:45px; background:var(--gold);"></div><div class="bar-label">Trim &amp;<br>Detail</div></div>
+      <div class="bar-group"><div class="bar-value" style="color:var(--green);">-5.2%</div><div class="bar" style="height:48px; background:var(--green);"></div><div class="bar-label">Deck/<br>Stain</div></div>
+      <div class="bar-group"><div class="bar-value" style="color:var(--red);">+22.4%</div><div class="bar" style="height:130px; background:var(--red);"></div><div class="bar-label">Cabinets</div></div>
+    </div>
+    <p style="font-size:12px; color:var(--text-sec); margin-top:8px;">Cabinet jobs consistently under-estimated. Recommend adding 20% buffer or revising estimating templates.</p>
+  </div>
+</div>
+
+<!-- 8.8 SALES CYCLE ANALYSIS -->
+<div class="report-panel" id="panel-cycle">
+  <div class="panel-title">Sales Cycle Analysis</div>
+  <div class="panel-desc">How long from estimate to close? Where do we lose deals?</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Avg Days to Close</div><div class="value">7.8</div><div class="sub">Median: 5 days</div></div>
+    <div class="kpi-card"><div class="label">Median Days</div><div class="value">5</div><div class="sub">50th percentile</div></div>
+    <div class="kpi-card"><div class="label">Close Rate After 14 Days</div><div class="value" style="color:var(--red);">18.2%</div><div class="sub">vs 52% within 7 days</div></div>
+    <div class="kpi-card"><div class="label">Fastest Source</div><div class="value" style="font-size:18px;">Referrals</div><div class="sub">Avg 3.2 days</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Salesperson</label><br><select><option>All</option><option>Bill Nash</option><option>Tyler Brooks</option><option>Sarah Chen</option></select></div>
+    <div><label>Lead Source</label><br><select><option>All</option><option>Referral</option><option>Google Ads</option><option>Angi</option><option>Organic</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="chart-container">
+    <div class="chart-title">Estimates by Days-to-Close</div>
+    <div class="histogram">
+      <div class="hist-bar"><div class="bar-value" style="font-size:11px;">42</div><div style="width:100%; height:140px; background:var(--green); border-radius:3px 3px 0 0;"></div><div class="bar-label" style="font-size:10px; margin-top:4px;">0&ndash;3 days</div></div>
+      <div class="hist-bar"><div class="bar-value" style="font-size:11px;">38</div><div style="width:100%; height:126px; background:var(--green); border-radius:3px 3px 0 0; opacity:.8;"></div><div class="bar-label" style="font-size:10px; margin-top:4px;">4&ndash;7 days</div></div>
+      <div class="hist-bar"><div class="bar-value" style="font-size:11px;">28</div><div style="width:100%; height:93px; background:var(--gold); border-radius:3px 3px 0 0;"></div><div class="bar-label" style="font-size:10px; margin-top:4px;">8&ndash;14 days</div></div>
+      <div class="hist-bar"><div class="bar-value" style="font-size:11px;">18</div><div style="width:100%; height:60px; background:var(--yellow); border-radius:3px 3px 0 0;"></div><div class="bar-label" style="font-size:10px; margin-top:4px;">15&ndash;30 days</div></div>
+      <div class="hist-bar"><div class="bar-value" style="font-size:11px;">16</div><div style="width:100%; height:53px; background:var(--red); border-radius:3px 3px 0 0;"></div><div class="bar-label" style="font-size:10px; margin-top:4px;">30+ days</div></div>
+    </div>
+    <p style="font-size:12px; color:var(--text-sec); margin-top:8px;">56% of closed deals happen within 7 days. After 14 days, close rate drops to 18%.</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Lead Source</th><th>Avg Days to Close</th><th>Close Rate</th><th>Avg Deal Size</th><th>Volume</th></tr></thead>
+      <tbody>
+        <tr class="clickable"><td><strong>Referrals</strong></td><td class="pos">3.2</td><td class="pos">62.4%</td><td>$26,400</td><td>68</td></tr>
+        <tr class="clickable"><td><strong>Google Ads</strong></td><td>7.1</td><td>44.8%</td><td>$18,200</td><td>94</td></tr>
+        <tr class="clickable"><td><strong>Organic/SEO</strong></td><td>6.8</td><td>48.2%</td><td>$20,100</td><td>52</td></tr>
+        <tr class="clickable"><td><strong>Angi</strong></td><td class="neg">12.4</td><td class="neg">28.6%</td><td>$12,800</td><td>56</td></tr>
+        <tr class="clickable"><td><strong>HomeAdvisor</strong></td><td class="neg">11.8</td><td class="neg">31.2%</td><td>$14,200</td><td>42</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 8.9 FOLLOW-UP EFFECTIVENESS -->
+<div class="report-panel" id="panel-followup">
+  <div class="panel-title">Follow-Up Effectiveness</div>
+  <div class="panel-desc">Does following up actually work? Spoiler: yes, up to a point.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Estimates w/ Follow-up</div><div class="value">82.1%</div><div class="sub">256 of 312</div></div>
+    <div class="kpi-card"><div class="label">Follow-up Close Rate</div><div class="value">51.2%</div><div class="sub">vs 22.1% with no follow-up</div></div>
+    <div class="kpi-card"><div class="label">Sweet Spot</div><div class="value">3 touches</div><div class="sub">Peak close rate at 58.6%</div></div>
+    <div class="kpi-card"><div class="label">Revenue from Follow-ups</div><div class="value">$2.14M</div><div class="sub">76% of total</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Follow-up Type</label><br><select><option>All</option><option>Automated</option><option>Manual</option><option>None</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Follow-up Type</th><th>Estimates</th><th>Close Rate</th><th>Revenue</th><th>Avg Deal Size</th></tr></thead>
+      <tbody>
+        <tr class="clickable"><td><strong>Automated (email/text)</strong></td><td>148</td><td>46.6%</td><td>$1,180,000</td><td>$17,100</td></tr>
+        <tr class="clickable"><td><strong>Manual (call/visit)</strong></td><td>108</td><td class="pos">58.3%</td><td>$960,000</td><td>$15,200</td></tr>
+        <tr class="clickable"><td><strong>None</strong></td><td>56</td><td class="neg">22.1%</td><td>$270,000</td><td>$21,600</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Close Rate by Number of Touches</div>
+    <div class="line-chart" style="height:160px;">
+      <div class="line-dot" style="left:10%; bottom:22%;"></div>
+      <div class="line-dot" style="left:28%; bottom:42%;"></div>
+      <div class="line-dot" style="left:46%; bottom:58%; background:var(--gold); width:12px; height:12px; border:2px solid var(--navy);"></div>
+      <div class="line-dot" style="left:64%; bottom:52%;"></div>
+      <div class="line-dot" style="left:82%; bottom:44%;"></div>
+      <div class="line-label" style="left:10%">1 touch<br>22%</div>
+      <div class="line-label" style="left:28%">2 touches<br>42%</div>
+      <div class="line-label" style="left:46%; color:var(--gold); font-weight:700;">3 touches<br>58.6% &#9733;</div>
+      <div class="line-label" style="left:64%">4 touches<br>52%</div>
+      <div class="line-label" style="left:82%">5+ touches<br>44%</div>
+    </div>
+    <p style="font-size:12px; color:var(--text-sec); margin-top:28px;">Sweet spot: 3 follow-up touches. After that, diminishing returns.</p>
+  </div>
+</div>
+
+<!-- 8.10 CUSTOMER RETENTION -->
+<div class="report-panel" id="panel-retention">
+  <div class="panel-title">Customer Retention</div>
+  <div class="panel-desc">Repeat business, cohort analysis, and churn tracking.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Repeat Rate</div><div class="value">28.4%</div><div class="sub">&uarr; from 24.1% in 2024</div></div>
+    <div class="kpi-card"><div class="label">Avg Months to Repeat</div><div class="value">18.6</div><div class="sub">Median: 14 months</div></div>
+    <div class="kpi-card"><div class="label">Revenue from Repeat</div><div class="value">34.2%</div><div class="sub">$970K</div></div>
+    <div class="kpi-card"><div class="label">At-Risk Customers</div><div class="value" style="color:var(--yellow);">47</div><div class="sub">Last job 3+ years ago</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Cohort Year</label><br><select><option>All</option><option>2022</option><option>2023</option><option>2024</option><option>2025</option></select></div>
+    <div><label>Service Type</label><br><select><option>All</option><option>Exterior</option><option>Interior</option><option>Cabinets</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:24px;">
+    <div class="chart-container" style="flex:1; min-width:240px;">
+      <div class="chart-title">Revenue by Customer Source</div>
+      <div style="display:flex; align-items:center; gap:24px;">
+        <div class="pie-chart" style="background: conic-gradient(var(--navy) 0% 44%, var(--gold) 44% 78%, var(--green) 78% 100%);"></div>
+        <div class="pie-legend">
+          <div class="pie-legend-item"><div class="pie-dot" style="background:var(--navy);"></div>New &mdash; 44% ($1.25M)</div>
+          <div class="pie-legend-item"><div class="pie-dot" style="background:var(--gold);"></div>Repeat &mdash; 34% ($970K)</div>
+          <div class="pie-legend-item"><div class="pie-dot" style="background:var(--green);"></div>Referral &mdash; 22% ($620K)</div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-container" style="flex:1; min-width:300px;">
+      <div class="chart-title">Cohort Retention &mdash; % Returned for Another Job</div>
+      <div class="table-wrap" style="box-shadow:none;">
+        <table>
+          <thead><tr><th>First Job Year</th><th>Total Customers</th><th>Returned</th><th>Return Rate</th></tr></thead>
+          <tbody>
+            <tr><td>2019</td><td>84</td><td>32</td><td class="pos">38.1%</td></tr>
+            <tr><td>2020</td><td>72</td><td>26</td><td class="pos">36.1%</td></tr>
+            <tr><td>2021</td><td>96</td><td>31</td><td>32.3%</td></tr>
+            <tr><td>2022</td><td>118</td><td>34</td><td>28.8%</td></tr>
+            <tr><td>2023</td><td>142</td><td>32</td><td>22.5%</td></tr>
+            <tr><td>2024</td><td>168</td><td>18</td><td class="neg">10.7%*</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted);">* 2024 cohort still maturing &mdash; most repeats happen at 14-18 months.</p>
+    </div>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">At-Risk Churn List &mdash; Last Job 3+ Years Ago</div>
+    <div class="table-wrap" style="box-shadow:none;">
+      <table>
+        <thead><tr><th>Customer</th><th>Last Job</th><th>Lifetime Value</th><th>Jobs</th><th>Days Since</th></tr></thead>
+        <tbody>
+          <tr class="clickable"><td>Thompson Family</td><td>Nov 2022</td><td>$28,400</td><td>2</td><td class="neg">1,186</td></tr>
+          <tr class="clickable"><td>Williams Residence</td><td>Aug 2022</td><td>$18,200</td><td>1</td><td class="neg">1,281</td></tr>
+          <tr class="clickable"><td>Garcia Int/Ext</td><td>Mar 2022</td><td>$42,600</td><td>3</td><td class="neg">1,461</td></tr>
+          <tr class="clickable"><td>Baker Property Mgmt</td><td>Jan 2022</td><td>$64,800</td><td>4</td><td class="neg">1,520</td></tr>
+          <tr class="clickable"><td>Reynolds Estate</td><td>Oct 2021</td><td>$52,400</td><td>2</td><td class="neg">1,613</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 8.11 SEGMENT PROFITABILITY -->
+<div class="report-panel" id="panel-segment">
+  <div class="panel-title">Segment Profitability</div>
+  <div class="panel-desc">Which segments make the most money? Volume vs margin analysis.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Most Profitable</div><div class="value" style="font-size:18px;">Large Exterior</div><div class="sub">52.1% GP, $1.2M revenue</div></div>
+    <div class="kpi-card"><div class="label">Highest Volume</div><div class="value" style="font-size:18px;">Interior</div><div class="sub">48 jobs, $820K revenue</div></div>
+    <div class="kpi-card"><div class="label">Best ROI Source</div><div class="value" style="font-size:18px;">Referrals</div><div class="sub">49.2% GP, $0 CAC</div></div>
+    <div class="kpi-card"><div class="label">Lowest Margin</div><div class="value" style="font-size:18px; color:var(--red);">Cabinets</div><div class="sub">36.8% GP avg</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Segment By</label><br><select><option>Service Type</option><option>Package</option><option>Job Size</option><option>Lead Source</option></select></div>
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="chart-container">
+    <div class="chart-title">Segment Map &mdash; Volume (x) vs GP% (y), Circle Size = Revenue</div>
+    <div class="bubble-chart" style="height:280px;">
+      <div style="position:absolute; left:4px; bottom:4px; font-size:10px; color:var(--text-muted);">&larr; Low Volume</div>
+      <div style="position:absolute; right:4px; bottom:4px; font-size:10px; color:var(--text-muted);">High Volume &rarr;</div>
+      <div style="position:absolute; left:4px; top:4px; font-size:10px; color:var(--text-muted);">High GP% &uarr;</div>
+      <div class="bubble" style="left:75%; bottom:72%; width:90px; height:90px; background:rgba(27,42,74,.75);">Lg Ext<br>52%</div>
+      <div class="bubble" style="left:82%; bottom:48%; width:70px; height:70px; background:rgba(196,169,98,.8);">Interior<br>44%</div>
+      <div class="bubble" style="left:30%; bottom:32%; width:50px; height:50px; background:rgba(220,38,38,.7);">Cabs<br>37%</div>
+      <div class="bubble" style="left:45%; bottom:58%; width:55px; height:55px; background:rgba(22,163,74,.7);">Deck<br>49%</div>
+      <div class="bubble" style="left:60%; bottom:55%; width:60px; height:60px; background:rgba(42,61,95,.75);">Whole<br>48%</div>
+      <div class="bubble" style="left:20%; bottom:62%; width:45px; height:45px; background:rgba(37,99,235,.7);">Comm<br>42%</div>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Segment</th><th>Jobs</th><th>Total Revenue</th><th>Avg GP%</th><th>Avg Job Size</th><th>Close Rate</th><th>Callback Rate</th><th>Satisfaction</th></tr></thead>
+      <tbody>
+        <tr class="clickable"><td><strong>Large Exterior ($25K+)</strong></td><td>32</td><td>$1,240,000</td><td class="pos">52.1%</td><td>$38,750</td><td>48.2%</td><td>2.1%</td><td>4.8/5</td></tr>
+        <tr class="clickable"><td><strong>Interior</strong></td><td>48</td><td>$820,000</td><td>44.2%</td><td>$17,080</td><td>52.4%</td><td>3.8%</td><td>4.6/5</td></tr>
+        <tr class="clickable"><td><strong>Whole Home (Int+Ext)</strong></td><td>18</td><td>$680,000</td><td class="pos">48.4%</td><td>$37,780</td><td>38.6%</td><td>2.4%</td><td>4.7/5</td></tr>
+        <tr class="clickable"><td><strong>Small Exterior (&lt;$25K)</strong></td><td>22</td><td>$310,000</td><td>42.8%</td><td>$14,090</td><td>55.1%</td><td>4.2%</td><td>4.5/5</td></tr>
+        <tr class="clickable"><td><strong>Deck/Stain</strong></td><td>14</td><td>$98,000</td><td class="pos">49.3%</td><td>$7,000</td><td>61.2%</td><td>1.8%</td><td>4.8/5</td></tr>
+        <tr class="clickable"><td><strong>Cabinets</strong></td><td>12</td><td>$148,000</td><td class="neg">36.8%</td><td>$12,330</td><td>42.6%</td><td class="neg">8.4%</td><td>4.2/5</td></tr>
+        <tr class="clickable"><td><strong>Commercial</strong></td><td>6</td><td>$164,000</td><td>41.9%</td><td>$27,330</td><td>34.8%</td><td>3.2%</td><td>4.4/5</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 8.13 CALLBACK TRACKING -->
+<div class="report-panel" id="panel-callback">
+  <div class="panel-title">Callback Tracking</div>
+  <div class="panel-desc">Quality control &mdash; callbacks, resolution times, and crew quality scores.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Overall Callback Rate</div><div class="value">3.5%</div><div class="sub">5 of 142 jobs</div></div>
+    <div class="kpi-card"><div class="label">Avg Resolution Time</div><div class="value">2.8 days</div><div class="sub">Target: &le;3 days</div></div>
+    <div class="kpi-card"><div class="label">Monthly Trend</div><div class="value" style="color:var(--green);">&darr;</div><div class="sub">Down from 4.2% in Q4</div></div>
+    <div class="kpi-card"><div class="label">Top Quality Crew</div><div class="value" style="font-size:18px;">Alpha (Carlos)</div><div class="sub">0 callbacks this period</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Crew</label><br><select><option>All</option><option>Alpha</option><option>Beta</option><option>Charlie</option><option>Delta</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Crew</th><th>Jobs Done</th><th>Callbacks</th><th>Rate %</th><th>Avg Resolution Days</th><th>Trend</th></tr></thead>
+      <tbody>
+        <tr class="clickable" onclick="toggleDetail('cb1')"><td><strong>Crew Alpha (Carlos)</strong></td><td>38</td><td>0</td><td class="pos">0.0%</td><td>&mdash;</td><td class="pos">&darr;</td></tr>
+        <tr class="detail-row" id="cb1"><td colspan="6"><div class="detail-content">Zero callbacks 3 months running. Carlos runs the tightest ship.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('cb2')"><td><strong>Crew Beta (Miguel)</strong></td><td>42</td><td>1</td><td>2.4%</td><td>1.5</td><td class="pos">&darr;</td></tr>
+        <tr class="detail-row" id="cb2"><td colspan="6"><div class="detail-content">One callback: touch-up on Green Hills interior &mdash; small area missed behind door.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('cb3')"><td><strong>Crew Charlie (David)</strong></td><td>35</td><td>2</td><td class="neg">5.7%</td><td>3.2</td><td>&rarr;</td></tr>
+        <tr class="detail-row" id="cb3"><td colspan="6"><div class="detail-content">Both on cabinet jobs &mdash; drip marks and uneven finish. New crew member learning curve.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('cb4')"><td><strong>Crew Delta (James)</strong></td><td>27</td><td>2</td><td class="neg">7.4%</td><td>4.1</td><td class="neg">&uarr;</td></tr>
+        <tr class="detail-row" id="cb4"><td colspan="6"><div class="detail-content">One exterior peeling (prep issue), one missed caulk line. Consider ride-along QC check.</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div class="chart-container" style="flex:1; min-width:280px;">
+      <div class="chart-title">Callback Reasons</div>
+      <div class="bar-chart" style="height:120px;">
+        <div class="bar-group"><div class="bar-value">2</div><div class="bar" style="height:100px; background:var(--navy);"></div><div class="bar-label">Finish<br>Quality</div></div>
+        <div class="bar-group"><div class="bar-value">1</div><div class="bar" style="height:50px; background:var(--gold);"></div><div class="bar-label">Missed<br>Area</div></div>
+        <div class="bar-group"><div class="bar-value">1</div><div class="bar" style="height:50px; background:var(--red);"></div><div class="bar-label">Prep<br>Issue</div></div>
+        <div class="bar-group"><div class="bar-value">1</div><div class="bar" style="height:50px; background:var(--blue);"></div><div class="bar-label">Caulk/<br>Detail</div></div>
+      </div>
+    </div>
+    <div class="chart-container" style="flex:1; min-width:280px;">
+      <div class="chart-title">Quality Leaderboard</div>
+      <div class="table-wrap" style="box-shadow:none;">
+        <table>
+          <thead><tr><th>Rank</th><th>Crew</th><th>Quality Score</th><th>Points</th></tr></thead>
+          <tbody>
+            <tr><td>&#129351;</td><td>Crew Alpha (Carlos)</td><td class="pos">98.5</td><td>485</td></tr>
+            <tr><td>&#129352;</td><td>Crew Beta (Miguel)</td><td>94.2</td><td>412</td></tr>
+            <tr><td>&#129353;</td><td>Crew Charlie (David)</td><td>88.1</td><td>348</td></tr>
+            <tr><td>4</td><td>Crew Delta (James)</td><td class="neg">82.6</td><td>286</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 8.15 MARKETING PERFORMANCE -->
+<div class="report-panel" id="panel-marketing">
+  <div class="panel-title">Marketing Performance</div>
+  <div class="panel-desc">Channel ROI, cost per lead, and conversion funnels.</div>
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="label">Total Marketing Spend</div><div class="value">$38,400</div><div class="sub">Jan&ndash;Feb 2026</div></div>
+    <div class="kpi-card"><div class="label">Avg Cost/Lead</div><div class="value">$124</div><div class="sub">&darr; $18 vs prior period</div></div>
+    <div class="kpi-card"><div class="label">Avg Cost/Sale</div><div class="value">$271</div><div class="sub">142 sold jobs</div></div>
+    <div class="kpi-card"><div class="label">Best ROI Channel</div><div class="value" style="font-size:18px;">Referrals</div><div class="sub">&infin; ROI ($0 spend)</div></div>
+  </div>
+  <div class="filters">
+    <div><label>Date Range</label><br><select><option>Jan 1 &ndash; Feb 28, 2026</option></select></div>
+    <div><label>Channel</label><br><select><option>All</option><option>Google Ads</option><option>Angi</option><option>HomeAdvisor</option><option>Referrals</option><option>Direct Mail</option><option>Organic/SEO</option></select></div>
+  </div>
+  <div class="export-bar"><button class="btn btn-gold">&#11015; Export CSV</button><button class="btn">&#128196; Export PDF</button></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Channel</th><th>Spend</th><th>Calls</th><th>Leads</th><th>Estimates</th><th>Sold Jobs</th><th>Revenue</th><th>Cost/Lead</th><th>Cost/Sale</th><th>ROI</th></tr></thead>
+      <tbody>
+        <tr class="clickable" onclick="toggleDetail('mk1')"><td><strong>Google Ads</strong></td><td>$14,200</td><td>312</td><td>86</td><td>94</td><td>42</td><td>$764,000</td><td>$165</td><td>$338</td><td class="pos">5,281%</td></tr>
+        <tr class="detail-row" id="mk1"><td colspan="10"><div class="detail-content">Top paid channel. Search: "Nashville house painters". Display retargeting 12% of conversions. CPC avg $8.40.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('mk2')"><td><strong>Angi</strong></td><td>$8,600</td><td>148</td><td>52</td><td>56</td><td>16</td><td>$204,800</td><td>$165</td><td>$538</td><td>2,281%</td></tr>
+        <tr class="detail-row" id="mk2"><td colspan="10"><div class="detail-content">High volume, lower close rate (28.6%). Price-shoppers. Consider reducing budget.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('mk3')"><td><strong>HomeAdvisor</strong></td><td>$6,400</td><td>96</td><td>38</td><td>42</td><td>13</td><td>$184,600</td><td>$168</td><td>$492</td><td>2,784%</td></tr>
+        <tr class="detail-row" id="mk3"><td colspan="10"><div class="detail-content">Shared leads lower quality. Exclusive leads perform 2x better on close rate.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('mk4')"><td><strong>Referrals</strong></td><td>$0</td><td>&mdash;</td><td>68</td><td>68</td><td>42</td><td>$620,000</td><td>$0</td><td>$0</td><td class="pos">&infin;</td></tr>
+        <tr class="detail-row" id="mk4"><td colspan="10"><div class="detail-content">62.4% close rate, $26,400 avg deal, 3.2 days to close. Every dollar on satisfaction drives referral revenue.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('mk5')"><td><strong>Direct Mail</strong></td><td>$4,800</td><td>42</td><td>18</td><td>14</td><td>6</td><td>$118,200</td><td>$267</td><td>$800</td><td>2,363%</td></tr>
+        <tr class="detail-row" id="mk5"><td colspan="10"><div class="detail-content">Targeted Brentwood/Franklin. Higher CPL but premium package customers. Worth continuing for specific zips.</div></td></tr>
+        <tr class="clickable" onclick="toggleDetail('mk6')"><td><strong>Organic/SEO</strong></td><td>$4,400</td><td>186</td><td>52</td><td>38</td><td>23</td><td>$462,400</td><td>$85</td><td>$191</td><td class="pos">10,409%</td></tr>
+        <tr class="detail-row" id="mk6"><td colspan="10"><div class="detail-content">Blog + GBP driving strong leads. Lowest CPL. "Nashville painting" ranks #2. Content investment paying off.</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div class="chart-container" style="flex:1; min-width:300px;">
+      <div class="chart-title">Cost per Lead by Channel</div>
+      <div class="bar-chart" style="height:140px;">
+        <div class="bar-group"><div class="bar-value">$267</div><div class="bar" style="height:130px; background:var(--red);"></div><div class="bar-label">Direct<br>Mail</div></div>
+        <div class="bar-group"><div class="bar-value">$168</div><div class="bar" style="height:82px; background:var(--yellow);"></div><div class="bar-label">Home<br>Advisor</div></div>
+        <div class="bar-group"><div class="bar-value">$165</div><div class="bar" style="height:80px; background:var(--yellow);"></div><div class="bar-label">Google<br>Ads</div></div>
+        <div class="bar-group"><div class="bar-value">$165</div><div class="bar" style="height:80px; background:var(--yellow);"></div><div class="bar-label">Angi</div></div>
+        <div class="bar-group"><div class="bar-value">$85</div><div class="bar" style="height:42px; background:var(--green);"></div><div class="bar-label">Organic<br>/SEO</div></div>
+        <div class="bar-group"><div class="bar-value">$0</div><div class="bar" style="height:2px; background:var(--green);"></div><div class="bar-label">Referrals</div></div>
+      </div>
+    </div>
+    <div class="chart-container" style="flex:1; min-width:300px;">
+      <div class="chart-title">Conversion Funnel &mdash; Google Ads</div>
+      <div class="funnel">
+        <div class="funnel-step" style="width:100%; background:var(--navy);">Clicks &mdash; 1,690</div>
+        <div class="funnel-step" style="width:52%; background:var(--navy-light);">Calls &mdash; 312</div>
+        <div class="funnel-step" style="width:28%; background:var(--gold);">Leads &mdash; 86</div>
+        <div class="funnel-step" style="width:18%; background:var(--gold-light);">Estimates &mdash; 94</div>
+        <div class="funnel-step" style="width:8%; background:var(--green);">Sold &mdash; 42</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .main -->
+</div><!-- .layout -->
+
+<script>
+function showReport(id, el) {
+  document.querySelectorAll('.report-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.sidebar-item').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('panel-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+function toggleDetail(id) {
+  var row = document.getElementById(id);
+  if (row) row.classList.toggle('open');
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+</script>
+</body>
+</html>
