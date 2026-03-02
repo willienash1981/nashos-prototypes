@@ -3,36 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NashOS — Direct Mail</title>
+<title>NashOS — Direct Mail Manager</title>
 <style>
-:root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3D5F;
-  --gold: #C4A962;
-  --gold-light: #D4BE82;
-  --bg: #F5F3EF;
-  --white: #FFFFFF;
-  --border: #E2DFD8;
-  --text: #1B2A4A;
-  --text-sec: #6B7280;
-  --text-muted: #9CA3AF;
-  --green: #16A34A;
-  --green-bg: #F0FDF4;
-  --red: #DC2626;
-  --red-bg: #FEF2F2;
-  --yellow: #F59E0B;
-  --yellow-bg: #FFFBEB;
-  --blue: #2563EB;
-  --blue-bg: #EFF6FF;
-  --purple: #7C3AED;
-  --purple-bg: #F5F3FF;
-  --orange: #EA580C;
-  --orange-bg: #FFF7ED;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(27,42,74,.08);
-  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
-}
+:root{--navy:#1B2A4A;--navy-light:#2A3D5F;--gold:#C4A962;--gold-light:#D4BE82;--bg:#F5F3EF;--white:#FFFFFF;--border:#E2DFD8;--text:#1B2A4A;--text-sec:#6B7280;--text-muted:#9CA3AF;--green:#16A34A;--green-bg:#F0FDF4;--red:#DC2626;--red-bg:#FEF2F2;--yellow:#F59E0B;--yellow-bg:#FFFBEB;--blue:#2563EB;--blue-bg:#EFF6FF;--purple:#7C3AED;--purple-bg:#F5F3FF;--orange:#EA580C;--orange-bg:#FFF7ED;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(27,42,74,.08);--shadow-md:0 4px 12px rgba(27,42,74,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
 .topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
@@ -40,546 +13,846 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
 .topbar-title{font-size:15px;opacity:.85;border-left:1px solid rgba(255,255,255,.2);padding-left:16px}
 .topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.btn-gold{background:var(--gold);color:var(--navy);border:none;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background .15s}
-.btn-gold:hover{background:var(--gold-light)}
-.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.btn-outline:hover{background:rgba(255,255,255,.1)}
-.btn-outline-dark{background:transparent;color:var(--navy);border:1px solid var(--border);padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.btn-outline-dark:hover{background:var(--bg)}
+.btn-gold{background:var(--gold);color:var(--navy);border:none;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background .15s}.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}.btn-outline:hover{background:rgba(255,255,255,.1)}
+.btn-outline-dark{background:transparent;color:var(--navy);border:1px solid var(--border);padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}.btn-outline-dark:hover{background:var(--bg)}
 .btn-sm{padding:5px 10px;font-size:11px}
 .btn-red{background:var(--red);color:#fff;border:none;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer}
-.btn-green{background:var(--green);color:#fff;border:none;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer}
+.btn-blue{background:var(--blue);color:#fff;border:none;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer}
 .main{max-width:1400px;margin:0 auto;padding:24px}
-.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:22px}
 .kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.kpi.alert{border-left:4px solid var(--red)}
-.kpi.gold-hl{border-left:4px solid var(--gold)}
+.kpi.gold-hl{border-left:4px solid var(--gold)}.kpi.alert{border-left:4px solid var(--red)}
 .kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
 .kpi-val{font-size:28px;font-weight:700;color:var(--navy);line-height:1.1}
 .kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
 .kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
-.kpi-trend.up{background:var(--green-bg);color:var(--green)}
-.kpi-trend.down{background:var(--red-bg);color:var(--red)}
+.kpi-trend.up{background:var(--green-bg);color:var(--green)}.kpi-trend.down{background:var(--red-bg);color:var(--red)}
 .kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
 .tab-bar{display:flex;gap:2px;background:var(--white);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tab-btn{padding:9px 16px;border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s;white-space:nowrap}
-.tab-btn:hover{background:var(--bg);color:var(--text)}
-.tab-btn.active{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
-.tab-content{display:none}
-.tab-content.active{display:block}
+.tab-btn{padding:9px 16px;border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s;white-space:nowrap}.tab-btn:hover{background:var(--bg);color:var(--text)}.tab-btn.active{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
+.tab-content{display:none}.tab-content.active{display:block}
 .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
 .card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
 .card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
 .card-b{padding:18px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(2,1fr)}.filter-bar{flex-direction:column}.filter-bar select,.filter-bar input{width:100%}}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(2,1fr)}.filter-bar{flex-direction:column}.filter-bar select,.filter-bar input{width:100%}.tab-btn{padding:8px 12px;font-size:12px}.responsibility-split{grid-template-columns:1fr}}
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
 .tbl th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);border-bottom:2px solid var(--border);white-space:nowrap}
-.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-.tbl tr:hover{background:var(--bg)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}.tbl tr:hover{background:var(--bg)}
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
-.badge-green{background:var(--green-bg);color:var(--green)}
-.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
-.badge-red{background:var(--red-bg);color:var(--red)}
-.badge-blue{background:var(--blue-bg);color:var(--blue)}
-.badge-purple{background:var(--purple-bg);color:var(--purple)}
-.badge-orange{background:var(--orange-bg);color:var(--orange)}
-.badge-navy{background:rgba(27,42,74,.08);color:var(--navy)}
+.badge-green{background:var(--green-bg);color:var(--green)}.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}.badge-red{background:var(--red-bg);color:var(--red)}.badge-blue{background:var(--blue-bg);color:var(--blue)}.badge-purple{background:var(--purple-bg);color:var(--purple)}.badge-orange{background:var(--orange-bg);color:var(--orange)}.badge-navy{background:rgba(27,42,74,.08);color:var(--navy)}
 .filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
 .filter-bar select,.filter-bar input{padding:7px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--white);color:var(--text)}
-.banner{padding:14px 18px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;display:flex;align-items:flex-start;gap:10px}
-.banner-info{background:var(--blue-bg);color:var(--blue);border:1px solid #BFDBFE}
-.banner-warn{background:var(--yellow-bg);color:#92400E;border:1px solid #FDE68A}
-.banner-success{background:var(--green-bg);color:var(--green);border:1px solid #BBF7D0}
-.banner-purple{background:var(--purple-bg);color:var(--purple);border:1px solid #DDD6FE}
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
+.callout{padding:14px 18px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.callout-info{background:var(--blue-bg);border-left:4px solid var(--blue)}
+.callout-warn{background:var(--yellow-bg);border-left:4px solid var(--yellow)}
+.callout-danger{background:var(--red-bg);border-left:4px solid var(--red)}
+.callout-success{background:var(--green-bg);border-left:4px solid var(--green)}
+.callout-navy{background:rgba(27,42,74,.06);border-left:4px solid var(--navy)}
+.toggle{position:relative;display:inline-block;width:36px;height:20px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:20px;transition:.2s}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--green)}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(27,42,74,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.show{display:flex}
-.modal{background:var(--white);border-radius:var(--radius);padding:24px;width:90%;max-width:560px;box-shadow:var(--shadow-md);max-height:90vh;overflow-y:auto}
-.modal h3{font-size:16px;margin-bottom:16px}
+.modal{background:var(--white);border-radius:var(--radius);max-width:700px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-md)}
+.modal-h{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-h h3{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-sec);padding:4px 8px}
+.modal-b{padding:20px}
+.modal-f{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--text-sec)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit}
-.form-group textarea{resize:vertical;min-height:60px}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
-.toggle-row:last-child{border-bottom:none}
-.toggle-label{font-size:13px;font-weight:500}
-.toggle-desc{font-size:11px;color:var(--text-sec);margin-top:2px}
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;border-radius:24px;transition:.2s}
-.toggle .slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked+.slider{background:var(--green)}
-.toggle input:checked+.slider:before{transform:translateX(20px)}
-.postcard{background:var(--white);border-radius:16px;box-shadow:var(--shadow-md);overflow:hidden;border:2px solid var(--border)}
-.postcard-front{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);color:#fff;padding:28px 24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
-.postcard-back{background:var(--white);padding:20px 24px;min-height:160px;border-top:3px dashed var(--border)}
-.postcard-label{position:absolute;top:10px;right:12px;font-size:10px;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
-.postcard-logo{font-size:16px;font-weight:700;margin-bottom:12px}.postcard-logo span{color:var(--gold)}
-.postcard-headline{font-size:18px;font-weight:700;line-height:1.3;margin-bottom:8px}
-.postcard-subtext{font-size:12px;opacity:.8;line-height:1.4}
-.postcard-qr{width:52px;height:52px;background:rgba(255,255,255,.9);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--navy);font-weight:700;position:absolute;bottom:16px;right:16px;text-align:center;line-height:1.2}
-.merge-field{background:var(--gold-light);color:var(--navy);padding:1px 6px;border-radius:4px;font-size:11px;font-family:monospace;font-weight:600}
-.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;align-items:flex-start}
-.activity-item:last-child{border-bottom:none}
-.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
-.activity-dot.green{background:var(--green)}.activity-dot.blue{background:var(--blue)}.activity-dot.gold{background:var(--gold)}.activity-dot.purple{background:var(--purple)}.activity-dot.red{background:var(--red)}
-.activity-time{font-size:11px;color:var(--text-muted);margin-top:2px}
-.bar-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
-.bar-row:last-child{border-bottom:none}
-.bar-label{width:100px;font-size:13px;font-weight:500;flex-shrink:0}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px}
+.postcard-preview{border:2px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.postcard-front{padding:24px;min-height:160px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);color:#fff;position:relative}
+.postcard-back{padding:20px;min-height:140px;background:#fff;border-top:2px dashed var(--border)}
+.postcard-qr{width:60px;height:60px;background:var(--navy);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.postcard-code{font-family:'Courier New',monospace;font-size:12px;color:var(--text-sec);margin-top:4px}
+.timeline-container{position:relative;padding-left:40px}
+.timeline-line{position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;margin-bottom:16px;padding:12px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.timeline-item.postcard{border-left:3px solid var(--gold)}.timeline-item.email{border-left:3px solid var(--blue)}.timeline-item.sms{border-left:3px solid var(--green)}.timeline-item.vm{border-left:3px solid var(--purple)}
+.timeline-dot{position:absolute;left:-30px;top:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--white);border:2px solid var(--border);z-index:1}
+.timeline-item.postcard .timeline-dot{border-color:var(--gold);background:var(--yellow-bg)}
+.timeline-item.email .timeline-dot{border-color:var(--blue);background:var(--blue-bg)}
+.timeline-item.sms .timeline-dot{border-color:var(--green);background:var(--green-bg)}
+.timeline-item.vm .timeline-dot{border-color:var(--purple);background:var(--purple-bg)}
+.timeline-day{font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px}
+.timeline-desc{font-size:13px;font-weight:600;margin-top:2px}
+.timeline-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+.responsibility-split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.responsibility-col{padding:18px}.responsibility-col:first-child{border-right:2px solid var(--border)}
+.responsibility-col h4{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.responsibility-col ul{list-style:none;font-size:12px}.responsibility-col li{padding:4px 0;display:flex;align-items:center;gap:6px}.responsibility-col li::before{content:'•';color:var(--gold);font-weight:bold}
+.photo-priority{counter-reset:pp;list-style:none}
+.photo-priority li{counter-increment:pp;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:13px;display:flex;align-items:center;gap:10px}
+.photo-priority li::before{content:counter(pp);background:var(--gold);color:var(--navy);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.template-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s}.template-card:hover{box-shadow:var(--shadow-md);border-color:var(--gold)}
+.template-thumb{height:130px;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;text-align:center;padding:14px;position:relative}
+.template-thumb .priv-badge{position:absolute;top:8px;right:8px;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priv-safe{background:rgba(22,163,74,.9);color:#fff}.priv-direct{background:rgba(234,88,12,.9);color:#fff}
+.template-info{padding:12px}.template-info h4{font-size:13px;font-weight:700;margin-bottom:4px}.template-info p{font-size:11px;color:var(--text-sec)}
+.share-portal-mock{background:linear-gradient(135deg,#fef9f0,#fff);border:2px solid var(--gold);border-radius:var(--radius);padding:24px;text-align:center}
+.share-btn{padding:8px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;border:none;color:#fff}
+.bar-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}.bar-row:last-child{border-bottom:none}
+.bar-label{width:130px;font-size:13px;font-weight:500;flex-shrink:0}
 .bar-track{flex:1;height:24px;background:#f0eeea;border-radius:12px;overflow:hidden}
 .bar-fill{height:100%;border-radius:12px;transition:width .5s ease}
 .bar-val{width:60px;text-align:right;font-size:13px;font-weight:600;flex-shrink:0}
-.v3-overlay{position:relative}
-.v3-overlay::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(245,243,239,.6);border-radius:var(--radius);pointer-events:none}
-.v3-badge{background:var(--purple);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;display:inline-flex;align-items:center;gap:4px}
-.chart-bar-group{display:flex;align-items:flex-end;gap:4px;justify-content:center}
-.chart-bar{width:20px;border-radius:3px 3px 0 0;transition:height .5s}
-.chart-col{display:flex;flex-direction:column;align-items:center;gap:4px}
-.chart-col-label{font-size:10px;color:var(--text-muted);white-space:nowrap}
-.chart-legend{display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;color:var(--text-sec)}
-.chart-legend span{display:flex;align-items:center;gap:4px}
-.chart-legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.funnel-step{display:flex;align-items:center;gap:12px;padding:10px 0}
-.funnel-bar{height:32px;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:600;color:#fff;min-width:60px;transition:width .5s}
-.funnel-label{width:120px;font-size:12px;font-weight:600;flex-shrink:0}
-.funnel-val{font-size:13px;font-weight:600;width:60px;flex-shrink:0;text-align:right}
-.template-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all .2s;border:2px solid transparent}
-.template-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.template-thumb{height:140px;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
-.template-info{padding:12px 14px;border-top:1px solid var(--border)}
-.template-name{font-size:13px;font-weight:700;margin-bottom:4px}
-.template-meta{font-size:11px;color:var(--text-sec);display:flex;gap:8px;flex-wrap:wrap}
-.config-panel{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
-.config-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.select-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.select-row:last-child{border-bottom:none}
-.select-row label{font-size:13px;font-weight:500}
-.select-row select{padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;background:var(--white)}
-.budget-bar-wrap{margin-bottom:8px}
-.budget-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:4px;display:flex;justify-content:space-between}
-.budget-bar{height:10px;background:#f0eeea;border-radius:5px;overflow:hidden}
-.budget-fill{height:100%;border-radius:5px;transition:width .3s}
-.budget-fill.green{background:var(--green)}.budget-fill.yellow{background:var(--yellow)}.budget-fill.red{background:var(--red)}
-.dnm-remove{color:var(--red);cursor:pointer;font-size:12px;font-weight:600;border:none;background:none}
-.dnm-remove:hover{text-decoration:underline}
+.progress-bar{height:8px;background:#f0eeea;border-radius:4px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:4px}
+.trait-cell{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block}
+.trait-high{background:var(--red-bg);color:var(--red)}.trait-med{background:var(--yellow-bg);color:var(--yellow)}.trait-low{background:var(--green-bg);color:var(--green)}.trait-neutral{background:rgba(27,42,74,.06);color:var(--text-sec)}
+.funnel-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.funnel-bar{height:32px;border-radius:6px;display:flex;align-items:center;padding:0 12px;color:#fff;font-size:12px;font-weight:600;min-width:60px}
+.funnel-label{font-size:12px;font-weight:600;width:120px;flex-shrink:0}
+.funnel-val{font-size:12px;font-weight:600;color:var(--text-sec);width:60px;flex-shrink:0}
+code{background:rgba(27,42,74,.06);padding:1px 6px;border-radius:4px;font-size:12px}
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="topbar-left">
     <div class="topbar-logo">Nash<span>OS</span></div>
-    <div class="topbar-title">📬 Direct Mail</div>
+    <div class="topbar-title">📬 Direct Mail Manager</div>
   </div>
   <div class="topbar-right">
-    <button class="btn-gold" onclick="openModal('campaign-modal')">✉️ New Campaign</button>
-    <button class="btn-outline" onclick="alert('Export coming soon')">⬇ Export</button>
+    <button class="btn-outline btn-sm" onclick="showModal('lookup-modal')">🔍 Code Lookup</button>
+    <button class="btn-gold" onclick="showModal('create-campaign-modal')">+ New Campaign</button>
   </div>
 </div>
-
 <div class="main">
-  <div class="tab-bar" id="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
-    <button class="tab-btn" onclick="switchTab('campaigns')">📬 Campaigns</button>
-    <button class="tab-btn" onclick="switchTab('templates')">🎨 Templates</button>
-    <button class="tab-btn" onclick="switchTab('neighbor')">🏠 Neighbor Reach</button>
-    <button class="tab-btn" onclick="switchTab('homeowner')">🏡 Homeowner Discovery</button>
-    <button class="tab-btn" onclick="switchTab('roi')">📈 ROI & Reports</button>
-    <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+  <div class="tab-bar" id="tabBar">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="drip">Drip Integration</button>
+    <button class="tab-btn" data-tab="campaigns">Campaigns</button>
+    <button class="tab-btn" data-tab="templates">Templates</button>
+    <button class="tab-btn" data-tab="neighbor">Neighbor Reach</button>
+    <button class="tab-btn" data-tab="referral">Referral Share</button>
+    <button class="tab-btn" data-tab="roi">ROI & Reports</button>
+    <button class="tab-btn" data-tab="scale">Test & Scale</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
   </div>
 
-  <!-- ============ TAB 1: DASHBOARD ============ -->
-  <div id="tab-dashboard" class="tab-content active">
+  <!-- TAB 1: DASHBOARD -->
+  <div class="tab-content active" id="tab-dashboard">
     <div class="kpi-strip">
-      <div class="kpi gold-hl"><div class="kpi-lbl">Sent (MTD)</div><div class="kpi-val">2,847</div><div class="kpi-trend up">↑ 18% vs last month</div><div class="kpi-icon">📬</div></div>
+      <div class="kpi gold-hl"><div class="kpi-lbl">Total Sent (MTD)</div><div class="kpi-val">2,847</div><div class="kpi-trend up">↑ 18% vs last month</div><div class="kpi-icon">📬</div></div>
       <div class="kpi"><div class="kpi-lbl">Delivery Rate</div><div class="kpi-val">96.2%</div><div class="kpi-sub">109 returned</div><div class="kpi-icon">✅</div></div>
-      <div class="kpi"><div class="kpi-lbl">QR Scans</div><div class="kpi-val">87</div><div class="kpi-trend up">↑ 3.1% scan rate</div><div class="kpi-icon">📱</div></div>
-      <div class="kpi"><div class="kpi-lbl">Leads Generated</div><div class="kpi-val">14</div><div class="kpi-sub">16.1% of scans</div><div class="kpi-icon">🎯</div></div>
-      <div class="kpi"><div class="kpi-lbl">Revenue Attributed</div><div class="kpi-val">$38,400</div><div class="kpi-trend up">↑ 3 jobs closed</div><div class="kpi-icon">💰</div></div>
-      <div class="kpi"><div class="kpi-lbl">Cost / Acquisition</div><div class="kpi-val">$142</div><div class="kpi-sub">Target: &lt;$200</div><div class="kpi-icon">📉</div></div>
-      <div class="kpi"><div class="kpi-lbl">Monthly Spend</div><div class="kpi-val">$1,987</div><div class="kpi-sub">Budget: $2,500</div><div class="kpi-icon">💳</div></div>
+      <div class="kpi"><div class="kpi-lbl">QR Scans</div><div class="kpi-val">84</div><div class="kpi-sub">2.9% scan rate</div><div class="kpi-icon">📱</div></div>
+      <div class="kpi"><div class="kpi-lbl">Tracking Code Calls</div><div class="kpi-val">162</div><div class="kpi-sub">5.7% of sent</div><div class="kpi-icon">📞</div></div>
+      <div class="kpi"><div class="kpi-lbl">Leads Generated</div><div class="kpi-val">71</div><div class="kpi-trend up">↑ 23%</div><div class="kpi-icon">🎯</div></div>
+      <div class="kpi"><div class="kpi-lbl">Revenue Attributed</div><div class="kpi-val">$94.2K</div><div class="kpi-sub">Mail-sourced leads</div><div class="kpi-icon">💰</div></div>
+      <div class="kpi"><div class="kpi-lbl">Cost Per Acquisition</div><div class="kpi-val">$38</div><div class="kpi-trend up">↓ $7 vs avg</div><div class="kpi-icon">📊</div></div>
+      <div class="kpi"><div class="kpi-lbl">Spend / Budget</div><div class="kpi-val">$2,190</div><div class="kpi-sub">of $3,000 budget</div><div class="progress-bar"><div class="progress-fill" style="width:73%;background:var(--gold)"></div></div><div class="kpi-icon">💳</div></div>
     </div>
-
     <div class="grid-2">
       <div class="card">
-        <div class="card-h"><div class="card-t">📬 Active Campaigns</div><div class="card-a" onclick="switchTab('campaigns')">View All →</div></div>
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Campaign</th><th>Type</th><th>Sent</th><th>Scans</th><th>Leads</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td style="font-weight:600">Neighbor Reach — Exterior</td><td><span class="badge badge-green">Neighbor</span></td><td>412</td><td>14</td><td>3</td><td><span class="badge badge-green">● Active</span></td></tr>
-              <tr><td style="font-weight:600">Smart Drip — Bid Follow-Up</td><td><span class="badge badge-blue">Lifecycle</span></td><td>186</td><td>8</td><td>2</td><td><span class="badge badge-green">● Active</span></td></tr>
-              <tr><td style="font-weight:600">Spring Exterior Promo 2026</td><td><span class="badge badge-purple">Seasonal</span></td><td>1,200</td><td>41</td><td>5</td><td><span class="badge badge-green">● Active</span></td></tr>
-              <tr><td style="font-weight:600">Zone Blast — Belle Meade</td><td><span class="badge badge-orange">Zone Blast</span></td><td>500</td><td>12</td><td>2</td><td><span class="badge badge-green">● Active</span></td></tr>
-              <tr><td style="font-weight:600">Route Mailer — 37215</td><td><span class="badge badge-navy">Route Mail</span></td><td>549</td><td>12</td><td>2</td><td><span class="badge badge-yellow">● Paused</span></td></tr>
-            </tbody>
-          </table>
+        <div class="card-h"><div class="card-t">📊 Performance by Card Type</div></div>
+        <div class="card-b" style="padding:0;overflow-x:auto">
+          <table class="tbl"><thead><tr><th>Code</th><th>Card Name</th><th>Sent</th><th>Calls</th><th>QR Scans</th><th>Leads</th><th>Conv %</th></tr></thead><tbody>
+            <tr><td><code>NP-NBR1</code></td><td>Neighbor Exterior</td><td>820</td><td>47</td><td>24</td><td>19</td><td>2.3%</td></tr>
+            <tr><td><code>NP-REF1</code></td><td>Referral Reach</td><td>312</td><td>28</td><td>14</td><td>12</td><td>3.8%</td></tr>
+            <tr><td><code>NP-BID1</code></td><td>Bid Follow-Up</td><td>184</td><td>31</td><td>8</td><td>14</td><td>7.6%</td></tr>
+            <tr><td><code>NP-1YR</code></td><td>1-Year Anniversary</td><td>246</td><td>18</td><td>11</td><td>9</td><td>3.7%</td></tr>
+            <tr><td><code>NP-6MO</code></td><td>6-Month Check-In</td><td>198</td><td>14</td><td>9</td><td>7</td><td>3.5%</td></tr>
+            <tr><td><code>NP-REV1</code></td><td>Review Request</td><td>287</td><td>6</td><td>12</td><td>3</td><td>1.0%</td></tr>
+            <tr><td><code>NP-NBR2</code></td><td>Neighbor Interior</td><td>410</td><td>22</td><td>8</td><td>8</td><td>2.0%</td></tr>
+            <tr><td><code>NP-SPR1</code></td><td>Spring Promo</td><td>390</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          </tbody></table>
         </div>
       </div>
-
       <div class="card">
-        <div class="card-h"><div class="card-t">🕐 Recent Activity</div></div>
-        <div class="card-b">
-          <div class="activity-item"><div class="activity-dot green"></div><div><div>Neighbor Reach auto-sent <strong>47 postcards</strong> — 1234 Oak Hill Dr completed (Carlos, Exterior)</div><div class="activity-time">Today 2:18 PM</div></div></div>
-          <div class="activity-item"><div class="activity-dot blue"></div><div><div>QR scan from <strong>Belle Meade Zone Blast</strong> — visitor viewed estimate form</div><div class="activity-time">Today 1:45 PM</div></div></div>
-          <div class="activity-item"><div class="activity-dot gold"></div><div><div>Smart Drip sent <strong>1-Year Anniversary</strong> card to Henderson family</div><div class="activity-time">Today 11:30 AM</div></div></div>
-          <div class="activity-item"><div class="activity-dot green"></div><div><div>Lead created from Neighbor Reach scan — <strong>Sarah Mitchell, 1238 Oak Hill Dr</strong></div><div class="activity-time">Today 10:12 AM</div></div></div>
-          <div class="activity-item"><div class="activity-dot purple"></div><div><div>Spring Promo batch <strong>200 pieces</strong> delivered to USPS</div><div class="activity-time">Yesterday 4:00 PM</div></div></div>
-          <div class="activity-item"><div class="activity-dot blue"></div><div><div>New lead from Route Mailer 37215 — <strong>David Park, Hillsboro West End</strong></div><div class="activity-time">Yesterday 2:33 PM</div></div></div>
-          <div class="activity-item"><div class="activity-dot gold"></div><div><div>Smart Drip <strong>Thank You</strong> card sent to Roberts family (job completed 2/26)</div><div class="activity-time">Yesterday 11:00 AM</div></div></div>
-          <div class="activity-item"><div class="activity-dot green"></div><div><div>Neighbor Reach auto-sent <strong>32 postcards</strong> — 891 Tyne Blvd completed (William, Int+Ext)</div><div class="activity-time">Feb 27, 3:45 PM</div></div></div>
-          <div class="activity-item"><div class="activity-dot red"></div><div><div><strong>12 pieces returned</strong> — invalid addresses flagged for Do-Not-Mail list</div><div class="activity-time">Feb 27, 9:00 AM</div></div></div>
-          <div class="activity-item"><div class="activity-dot blue"></div><div><div>Zone Blast — Brentwood <strong>completed</strong>: 300 pieces, 9 scans, 1 lead</div><div class="activity-time">Feb 26, 5:00 PM</div></div></div>
+        <div class="card-h"><div class="card-t">🕐 Recent Activity</div><span class="card-a">View All</span></div>
+        <div class="card-b" style="padding:0">
+          <table class="tbl"><thead><tr><th>Date</th><th>Event</th><th>Card</th><th>Qty</th></tr></thead><tbody>
+            <tr><td>Mar 1</td><td>Batch sent</td><td><span class="badge badge-green">NP-NBR1</span></td><td>42</td></tr>
+            <tr><td>Mar 1</td><td>Batch sent</td><td><span class="badge badge-blue">NP-REF1</span></td><td>18</td></tr>
+            <tr><td>Feb 28</td><td>Batch sent</td><td><span class="badge badge-purple">NP-BID1</span></td><td>7</td></tr>
+            <tr><td>Feb 28</td><td>Delivered</td><td><span class="badge badge-green">NP-NBR1</span></td><td>38</td></tr>
+            <tr><td>Feb 27</td><td>Batch sent</td><td><span class="badge badge-orange">NP-1YR</span></td><td>12</td></tr>
+            <tr><td>Feb 27</td><td>Delivered</td><td><span class="badge badge-blue">NP-REF1</span></td><td>15</td></tr>
+            <tr><td>Feb 26</td><td>Batch sent</td><td><span class="badge badge-green">NP-NBR2</span></td><td>24</td></tr>
+            <tr><td>Feb 26</td><td>Returned</td><td><span class="badge badge-red">NP-6MO</span></td><td>3</td></tr>
+            <tr><td>Feb 25</td><td>Batch sent</td><td><span class="badge badge-purple">NP-REV1</span></td><td>14</td></tr>
+            <tr><td>Feb 24</td><td>Batch sent</td><td><span class="badge badge-green">NP-NBR1</span></td><td>36</td></tr>
+          </tbody></table>
         </div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-h"><div class="card-t">📊 Monthly Spend vs Leads</div></div>
-      <div class="card-b">
-        <div style="display:flex;justify-content:space-around;align-items:flex-end;gap:12px;padding:20px 0;flex-wrap:wrap">
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:60px;background:var(--navy)"></div><div class="chart-bar" style="height:30px;background:var(--gold)"></div></div><div class="chart-col-label">Sep</div></div>
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:72px;background:var(--navy)"></div><div class="chart-bar" style="height:40px;background:var(--gold)"></div></div><div class="chart-col-label">Oct</div></div>
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:55px;background:var(--navy)"></div><div class="chart-bar" style="height:25px;background:var(--gold)"></div></div><div class="chart-col-label">Nov</div></div>
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:40px;background:var(--navy)"></div><div class="chart-bar" style="height:15px;background:var(--gold)"></div></div><div class="chart-col-label">Dec</div></div>
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:80px;background:var(--navy)"></div><div class="chart-bar" style="height:45px;background:var(--gold)"></div></div><div class="chart-col-label">Jan</div></div>
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:95px;background:var(--navy)"></div><div class="chart-bar" style="height:55px;background:var(--gold)"></div></div><div class="chart-col-label">Feb</div></div>
-          <div class="chart-col"><div class="chart-bar-group"><div class="chart-bar" style="height:85px;background:var(--navy);opacity:.5"></div><div class="chart-bar" style="height:50px;background:var(--gold);opacity:.5"></div></div><div class="chart-col-label">Mar*</div></div>
-        </div>
-        <div class="chart-legend"><span><span class="dot" style="background:var(--navy)"></span> Spend ($)</span><span><span class="dot" style="background:var(--gold)"></span> Leads</span></div>
-        <div style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:4px">* March projected based on MTD</div>
+      <div class="card-h"><div class="card-t">📋 Active Campaigns Summary</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Campaign</th><th>Type</th><th>Card Code</th><th>Status</th><th>Sent (MTD)</th><th>Calls</th><th>Leads</th><th>Spend</th></tr></thead><tbody>
+          <tr><td><strong>Exterior Neighbor March</strong></td><td><span class="badge badge-green">Neighbor Reach</span></td><td><code>NP-NBR1</code></td><td><span class="badge badge-green">● Active</span></td><td>820</td><td>47</td><td>19</td><td>$656</td></tr>
+          <tr><td><strong>Interior Neighbor Q1</strong></td><td><span class="badge badge-green">Neighbor Reach</span></td><td><code>NP-NBR2</code></td><td><span class="badge badge-green">● Active</span></td><td>410</td><td>22</td><td>8</td><td>$328</td></tr>
+          <tr><td><strong>Post-Job Referral Drip</strong></td><td><span class="badge badge-blue">Referral Reach</span></td><td><code>NP-REF1</code></td><td><span class="badge badge-green">● Active</span></td><td>312</td><td>28</td><td>12</td><td>$250</td></tr>
+          <tr><td><strong>Bid Follow-Up Postcards</strong></td><td><span class="badge badge-purple">Smart Drip</span></td><td><code>NP-BID1</code></td><td><span class="badge badge-green">● Active</span></td><td>184</td><td>31</td><td>14</td><td>$147</td></tr>
+          <tr><td><strong>1-Year Anniversary</strong></td><td><span class="badge badge-orange">Smart Drip</span></td><td><code>NP-1YR</code></td><td><span class="badge badge-green">● Active</span></td><td>246</td><td>18</td><td>9</td><td>$197</td></tr>
+          <tr><td><strong>Spring 2026 Promo</strong></td><td><span class="badge badge-yellow">Seasonal Promo</span></td><td><code>NP-SPR1</code></td><td><span class="badge badge-yellow">● Scheduled</span></td><td>0</td><td>—</td><td>—</td><td>$0</td></tr>
+        </tbody></table>
       </div>
     </div>
   </div>
 
-  <!-- ============ TAB 2: CAMPAIGNS ============ -->
-  <div id="tab-campaigns" class="tab-content">
-    <div class="filter-bar">
-      <select id="camp-filter-type" onchange="filterCampaigns()">
-        <option value="">All Types</option>
-        <option value="neighbor">Neighbor Reach</option>
-        <option value="lifecycle">Smart Drip</option>
-        <option value="zone">Zone Blast</option>
-        <option value="route">Route Mailer</option>
-        <option value="seasonal">Seasonal Promo</option>
-        <option value="homeowner">Homeowner Discovery</option>
-      </select>
-      <select id="camp-filter-status" onchange="filterCampaigns()">
-        <option value="">All Statuses</option>
-        <option value="active">Active</option>
-        <option value="paused">Paused</option>
-        <option value="draft">Draft</option>
-        <option value="completed">Completed</option>
-      </select>
-      <div style="flex:1"></div>
-      <button class="btn-gold" onclick="openModal('campaign-modal')">✉️ Create Campaign</button>
+  <!-- TAB 2: DRIP INTEGRATION -->
+  <div class="tab-content" id="tab-drip">
+    <div class="callout callout-navy" style="margin-bottom:20px">
+      <div><strong>📋 How Postcards Fit Into Campaigns</strong><br><span style="font-size:12px">The <strong>Campaign Builder (§6)</strong> defines the full customer journey — WHEN to send and WHO receives it. Direct Mail Manager handles HOW — printing, mailing, photos, and tracking. Postcards are just another channel step alongside email, SMS, and voicemail drop.</span></div>
+    </div>
+    <div class="responsibility-split">
+      <div class="responsibility-col" style="background:var(--blue-bg)">
+        <h4>🔧 Campaign Builder Owns</h4>
+        <ul>
+          <li>Trigger events (job complete, estimate sent, etc.)</li>
+          <li>Timing & sequencing (Day 1, Day 4, Day 15…)</li>
+          <li>Audience targeting & segmentation</li>
+          <li>Conditional logic (IF no review → send card)</li>
+          <li>Channel selection per step</li>
+          <li>Suppression & blacklist enforcement</li>
+        </ul>
+      </div>
+      <div class="responsibility-col" style="background:var(--yellow-bg)">
+        <h4>📬 Direct Mail Manager Owns</h4>
+        <ul>
+          <li>Template design & postcard rendering</li>
+          <li>Photo sourcing (Hero → AFTER → CompanyCam)</li>
+          <li>Print fulfillment (Lob / PostGrid)</li>
+          <li>Tracking codes (NP-XXXX) per card type</li>
+          <li>QR code generation</li>
+          <li>Delivery tracking & return handling</li>
+          <li>Neighbor Reach (non-customer targeting)</li>
+        </ul>
+      </div>
     </div>
     <div class="card">
-      <div style="overflow-x:auto">
-        <table class="tbl" id="campaign-table">
-          <thead><tr><th>Campaign</th><th>Type</th><th>Trigger</th><th>Template</th><th>Sent</th><th>Last Sent</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody id="campaign-tbody"></tbody>
+      <div class="card-h"><div class="card-t">📅 Example: "Post-Completion Lifecycle" Campaign</div><span class="badge badge-green">● Active</span></div>
+      <div class="card-b">
+        <div class="callout callout-info" style="margin-bottom:18px"><span style="font-size:12px">This campaign starts when a job is marked <strong>Complete + Paid</strong>. The Campaign Builder fires each step at the right time. Postcard steps (📬) are sent to Direct Mail Manager for fulfillment.</span></div>
+        <div class="timeline-container">
+          <div class="timeline-line"></div>
+          <div class="timeline-item email"><div class="timeline-dot">📧</div><div class="timeline-day">Day 1</div><div class="timeline-desc">Email — Thank You + Survey Link</div><div class="timeline-meta">Channel: Email · Template: post-job-thanks · Auto-send</div></div>
+          <div class="timeline-item postcard"><div class="timeline-dot">📬</div><div class="timeline-day">Day 4</div><div class="timeline-desc">Postcard — Referral Card <code>NP-REF1</code></div><div class="timeline-meta">"Know Someone Who Needs Painting?" · $75 referral CTA · QR → share portal</div></div>
+          <div class="timeline-item sms"><div class="timeline-dot">💬</div><div class="timeline-day">Day 10</div><div class="timeline-desc">SMS — Friendly Check-In</div><div class="timeline-meta">"Hi {{firstName}}, how's everything looking?"</div></div>
+          <div class="timeline-item postcard"><div class="timeline-dot">📬</div><div class="timeline-day">Day 15</div><div class="timeline-desc">Postcard — Review Request <code>NP-REV1</code> <span class="badge badge-yellow" style="font-size:10px">IF no review yet</span></div><div class="timeline-meta">Conditional: only if no Google review submitted · QR → review page</div></div>
+          <div class="timeline-item vm"><div class="timeline-dot">📞</div><div class="timeline-day">Day 60</div><div class="timeline-desc">Voicemail Drop — Check-In</div><div class="timeline-meta">"Hey, it's Nash Painting, just checking in on your project…"</div></div>
+          <div class="timeline-item postcard"><div class="timeline-dot">📬</div><div class="timeline-day">Day 180</div><div class="timeline-desc">Postcard — 6-Month Check-In <code>NP-6MO</code></div><div class="timeline-meta">"It's been 6 months — time for a touch-up?" · Upsell interior/exterior</div></div>
+          <div class="timeline-item email"><div class="timeline-dot">📧</div><div class="timeline-day">Day 365</div><div class="timeline-desc">Email — 1-Year Anniversary</div><div class="timeline-meta">"Happy anniversary! Here's 10% off your next project"</div></div>
+          <div class="timeline-item postcard"><div class="timeline-dot">📬</div><div class="timeline-day">Day 365</div><div class="timeline-desc">Postcard — 1-Year Anniversary <code>NP-1YR</code></div><div class="timeline-meta">Paired with email · Portfolio hero photo · Anniversary discount CTA</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">📋 Active Drip Campaigns with Postcard Steps</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Campaign Name</th><th>Trigger</th><th>Total Steps</th><th>📬 Postcard Steps</th><th>Card Codes</th><th>Active Recipients</th><th>Status</th></tr></thead><tbody>
+          <tr><td><strong>Post-Completion Lifecycle</strong></td><td>Job Complete + Paid</td><td>7</td><td><strong>4</strong></td><td><code>NP-REF1</code> <code>NP-REV1</code> <code>NP-6MO</code> <code>NP-1YR</code></td><td>847</td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><strong>Estimate Follow-Up</strong></td><td>Estimate Sent (no response)</td><td>5</td><td><strong>1</strong></td><td><code>NP-BID1</code></td><td>62</td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><strong>2-Year Re-engagement</strong></td><td>2-Year Anniversary</td><td>3</td><td><strong>1</strong></td><td><code>NP-2YR</code></td><td>194</td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><strong>Annual Check-In (3yr+)</strong></td><td>Annual Anniversary</td><td>2</td><td><strong>1</strong></td><td><code>NP-ANN</code></td><td>531</td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><strong>Invoice Overdue Escalation</strong></td><td>Invoice > 30 days</td><td>4</td><td><strong>1</strong></td><td><code>NP-DUE1</code></td><td>8</td><td><span class="badge badge-yellow">● Low Vol</span></td></tr>
+          <tr><td><strong>Spring 2026 Seasonal</strong></td><td>Admin-Scheduled (Mar 15)</td><td>3</td><td><strong>1</strong></td><td><code>NP-SPR1</code></td><td>0</td><td><span class="badge badge-blue">● Scheduled</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="callout callout-warn"><div><strong>⚡ Standalone Trigger: Neighbor Reach</strong><br><span style="font-size:12px">Neighbor Reach campaigns target <em>non-customers</em> near completed jobs. Since these recipients aren't in the CRM, Neighbor Reach is managed directly in Direct Mail Manager (not via Campaign Builder). See the <strong>Neighbor Reach</strong> tab.</span></div></div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">🗂️ All Postcard Card Types</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Code</th><th>Card Name</th><th>Category</th><th>Triggered By</th><th>Privacy</th><th>Status</th></tr></thead><tbody>
+          <tr><td><code>NP-NBR1</code></td><td>Neighbor Exterior</td><td><span class="badge badge-green">Neighbor Reach</span></td><td>Direct Mail (job complete)</td><td><span class="badge badge-green">Privacy Safe ✓</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-NBR2</code></td><td>Neighbor Interior</td><td><span class="badge badge-green">Neighbor Reach</span></td><td>Direct Mail (job complete)</td><td><span class="badge badge-green">Privacy Safe ✓</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-REF1</code></td><td>Referral Reach</td><td><span class="badge badge-blue">Referral Reach</span></td><td>Campaign Builder (Day 4)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-BID1</code></td><td>Bid Follow-Up</td><td><span class="badge badge-purple">Smart Drip</span></td><td>Campaign Builder (Day 18)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-REV1</code></td><td>Review Request</td><td><span class="badge badge-purple">Smart Drip</span></td><td>Campaign Builder (Day 15)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-6MO</code></td><td>6-Month Check-In</td><td><span class="badge badge-purple">Smart Drip</span></td><td>Campaign Builder (Day 180)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-1YR</code></td><td>1-Year Anniversary</td><td><span class="badge badge-orange">Smart Drip</span></td><td>Campaign Builder (Day 365)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-2YR</code></td><td>2-Year Anniversary</td><td><span class="badge badge-orange">Smart Drip</span></td><td>Campaign Builder (Day 730)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-ANN</code></td><td>Annual Check-In</td><td><span class="badge badge-purple">Smart Drip</span></td><td>Campaign Builder (Annual)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-green">● Active</span></td></tr>
+          <tr><td><code>NP-DUE1</code></td><td>Overdue Reminder</td><td><span class="badge badge-red">Collections</span></td><td>Campaign Builder (Day 45)</td><td><span class="badge badge-orange">Direct Only</span></td><td><span class="badge badge-yellow">● Low Vol</span></td></tr>
+          <tr><td><code>NP-SPR1</code></td><td>Spring Promo 2026</td><td><span class="badge badge-yellow">Seasonal</span></td><td>Admin Scheduled</td><td><span class="badge badge-green">Privacy Safe ✓</span></td><td><span class="badge badge-blue">● Scheduled</span></td></tr>
+          <tr><td><code>NP-EDDM</code></td><td>EDDM Route Mailer</td><td><span class="badge badge-navy">Route Mailer</span></td><td>Admin Scheduled</td><td><span class="badge badge-green">Privacy Safe ✓</span></td><td><span class="badge badge-yellow">● Paused</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: CAMPAIGNS -->
+  <div class="tab-content" id="tab-campaigns">
+    <div class="filter-bar">
+      <select id="campTypeFilter" onchange="filterCampaigns()"><option value="">All Types</option><option>Neighbor Reach</option><option>Smart Drip</option><option>Zone Blast</option><option>Route Mailer</option><option>Homeowner Discovery</option><option>Seasonal Promo</option><option>Referral Reach</option></select>
+      <select id="campStatusFilter" onchange="filterCampaigns()"><option value="">All Statuses</option><option>Active</option><option>Scheduled</option><option>Paused</option><option>Completed</option></select>
+      <input type="text" placeholder="Search campaigns…" id="campSearch" oninput="filterCampaigns()" style="flex:1;min-width:200px">
+      <button class="btn-gold" onclick="showModal('create-campaign-modal')">+ Create Campaign</button>
+    </div>
+    <div class="card">
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl" id="campaignTable"><thead><tr><th>Campaign</th><th>Type</th><th>Card Code</th><th>Template</th><th>Sent</th><th>Delivered</th><th>Calls</th><th>QR</th><th>Leads</th><th>Cost</th><th>Status</th><th></th></tr></thead>
+          <tbody id="campaignBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- ============ TAB 3: TEMPLATES ============ -->
-  <div id="tab-templates" class="tab-content">
+  <!-- TAB 4: TEMPLATES -->
+  <div class="tab-content" id="tab-templates">
     <div class="filter-bar">
-      <select id="tmpl-filter" onchange="filterTemplates()">
-        <option value="">All Categories</option>
-        <option value="neighbor">Neighbor Reach</option>
-        <option value="followup">Bid Follow-Up</option>
-        <option value="thankyou">Thank You</option>
-        <option value="anniversary">Anniversary</option>
-        <option value="seasonal">Seasonal</option>
-        <option value="homeowner">New Homeowner</option>
-        <option value="referral">Referral</option>
-        <option value="review">Review Request</option>
-      </select>
-      <select id="tmpl-size-filter" onchange="filterTemplates()">
-        <option value="">All Sizes</option>
-        <option value="4x6">4×6</option>
-        <option value="6x9">6×9</option>
-        <option value="6x11">6×11</option>
-        <option value="8.5x11">8.5×11 (Route Mailer)</option>
-      </select>
-      <div style="flex:1"></div>
-      <button class="btn-gold" onclick="alert('Template editor coming soon')">🎨 Create Template</button>
+      <select id="tmplCatFilter" onchange="filterTemplates()"><option value="">All Categories</option><option value="neighbor">Neighbor Reach</option><option value="referral">Referral</option><option value="follow-up">Follow-Up</option><option value="lifecycle">Lifecycle</option><option value="seasonal">Seasonal</option><option value="review">Review</option><option value="collections">Collections</option></select>
+      <select id="tmplPrivFilter" onchange="filterTemplates()"><option value="">All Privacy</option><option value="safe">Privacy Safe ✓</option><option value="direct">Direct Only</option></select>
+      <button class="btn-gold">+ New Template</button>
     </div>
-    <div class="grid-3" id="template-grid"></div>
-  </div>
+    <div class="template-grid" id="templateGrid"></div>
 
-  <!-- ============ TAB 4: NEIGHBOR REACH ============ -->
-  <div id="tab-neighbor" class="tab-content">
-    <div class="banner banner-info">🏠 <strong>Neighbor Reach</strong> automatically mails postcards to homes near completed jobs. Exterior jobs auto-trigger; interior jobs require manual approval.</div>
-    <div class="grid-2">
-      <div class="config-panel">
-        <div class="config-title">⚙️ Neighbor Reach Configuration</div>
-        <div class="toggle-row"><div><div class="toggle-label">Auto-send on Job Completion</div><div class="toggle-desc">Exterior jobs auto-trigger when marked complete</div></div><label class="toggle"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="select-row"><label>Targeting Radius</label><select><option>Same Street Only</option><option>50 Homes</option><option selected>100 Homes</option><option>200 Homes</option><option>500 Homes</option></select></div>
-        <div class="select-row"><label>Property Filter</label><select><option selected>Residential Only</option><option>Include Commercial</option></select></div>
-        <div class="toggle-row"><div><div class="toggle-label">Exclude Existing Customers</div><div class="toggle-desc">Skip addresses already in CRM</div></div><label class="toggle"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="select-row"><label>Exclude Past Recipients</label><select><option>30 days</option><option>60 days</option><option selected>90 days</option><option>180 days</option><option>365 days</option></select></div>
-        <div class="select-row"><label>Min Home Value Filter</label><select><option>OFF</option><option>$200K+</option><option selected>$300K+</option><option>$500K+</option></select></div>
-        <div class="select-row"><label>Default Template</label><select><option selected>We Just Painted Your Neighbor's Home!</option><option>Your Neighbor Chose Nash Painting</option><option>Custom — Belle Meade</option></select></div>
-        <div class="toggle-row"><div><div class="toggle-label">Include Project Photo</div><div class="toggle-desc">Attach before/after on postcard back</div></div><label class="toggle"><input type="checkbox" checked><span class="slider"></span></label></div>
-        <div class="select-row"><label>Service Type Trigger</label><select><option>All Services</option><option selected>Exterior Only (auto)</option><option>Interior + Exterior</option></select></div>
-        <div class="select-row"><label>Postage Type</label><select><option selected>First Class</option><option>Standard</option></select></div>
-      </div>
-      <div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">🧠 Smart Logic</div></div>
-          <div class="card-b">
-            <div class="banner banner-success" style="margin-bottom:12px">✅ <strong>Exterior jobs → Auto-trigger</strong> — postcards queue immediately on completion</div>
-            <div class="banner banner-warn" style="margin-bottom:0">⚡ <strong>Interior jobs → Manual only</strong> — appears in approval queue for admin review</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">📬 Example Trigger</div></div>
-          <div class="card-b" style="background:var(--bg);border-radius:var(--radius-sm);padding:16px">
-            <div style="font-size:13px;margin-bottom:8px">🎨 Job completed at <strong>1234 Oak Hill Dr</strong></div>
-            <div style="font-size:13px;margin-bottom:8px">👷 Crew: <strong>Carlos</strong> | Service: <strong>Exterior</strong></div>
-            <div style="font-size:13px;margin-bottom:8px">🏠 Radius: <strong>100 homes</strong> on Oak Hill Dr & surrounding</div>
-            <div style="font-size:13px;margin-bottom:8px">✂️ Filtered: 12 existing customers, 8 recent recipients, 33 below $300K</div>
-            <div style="font-size:14px;font-weight:700;color:var(--green);margin-top:12px">→ 47 postcards queued for mailing</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">📋 Recent Neighbor Reach Activity</div></div>
-          <div style="overflow-x:auto">
-            <table class="tbl">
-              <thead><tr><th>Date</th><th>Job Address</th><th>Crew</th><th>Service</th><th>Pieces</th><th>Scans</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td>Mar 1</td><td style="font-weight:600">1234 Oak Hill Dr</td><td>Carlos</td><td>Exterior</td><td>47</td><td>2</td><td><span class="badge badge-green">● Mailed</span></td></tr>
-                <tr><td>Feb 27</td><td style="font-weight:600">891 Tyne Blvd</td><td>William</td><td>Int + Ext</td><td>32</td><td>1</td><td><span class="badge badge-green">● Mailed</span></td></tr>
-                <tr><td>Feb 25</td><td style="font-weight:600">4501 Granny White Pk</td><td>Carlos</td><td>Exterior</td><td>65</td><td>3</td><td><span class="badge badge-green">● Mailed</span></td></tr>
-                <tr><td>Feb 23</td><td style="font-weight:600">220 Belle Meade Blvd</td><td>Javier</td><td>Exterior</td><td>89</td><td>4</td><td><span class="badge badge-green">● Mailed</span></td></tr>
-                <tr><td>Feb 22</td><td style="font-weight:600">1018 Battlefield Dr</td><td>William</td><td>Interior</td><td>—</td><td>—</td><td><span class="badge badge-yellow">⏳ Pending Approval</span></td></tr>
-                <tr><td>Feb 20</td><td style="font-weight:600">3344 Hobbs Rd</td><td>Carlos</td><td>Cabinets</td><td>—</td><td>—</td><td><span class="badge badge-yellow">⏳ Pending Approval</span></td></tr>
-                <tr><td>Feb 18</td><td style="font-weight:600">709 Lynnwood Blvd</td><td>Javier</td><td>Exterior</td><td>54</td><td>1</td><td><span class="badge badge-green">● Mailed</span></td></tr>
-                <tr><td>Feb 15</td><td style="font-weight:600">2200 Abbott Martin Rd</td><td>Carlos</td><td>Exterior</td><td>78</td><td>5</td><td><span class="badge badge-green">● Mailed</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ TAB 5: HOMEOWNER DISCOVERY (V3) ============ -->
-  <div id="tab-homeowner" class="tab-content">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-      <span class="v3-badge">🚀 COMING IN V3</span>
-      <span style="font-size:14px;font-weight:600;color:var(--text-sec)">Homeowner Discovery — Automated new homeowner prospecting</span>
-    </div>
-    <div class="banner banner-purple">🏡 <strong>Homeowner Discovery</strong> monitors property sales in your service area and automatically sends personalized welcome postcards to new homeowners — before competitors reach them. Powered by ATTOM Data Solutions property records.</div>
-    <div class="grid-2">
-      <div class="v3-overlay">
-        <div class="config-panel" style="opacity:.65">
-          <div class="config-title">⚙️ Homeowner Discovery Configuration</div>
-          <div class="form-group"><label>Service Area Zip Codes</label><input type="text" value="37205, 37215, 37027, 37064, 37067, 37069" disabled></div>
-          <div class="select-row"><label>Min Home Value</label><select disabled><option>$200K+</option><option selected>$250K+</option><option>$300K+</option><option>$500K+</option></select></div>
-          <div class="select-row"><label>Property Types</label><select disabled><option selected>Single Family</option><option>SF + Townhome</option><option>All Residential</option></select></div>
-          <div class="toggle-row"><div><div class="toggle-label">Exclude New Construction</div><div class="toggle-desc">Skip homes built in last 2 years</div></div><label class="toggle"><input type="checkbox" checked disabled><span class="slider"></span></label></div>
-          <div class="select-row"><label>Drip Sequence</label><select disabled><option>1 Card</option><option selected>2 Cards (Welcome + 30-day)</option><option>3 Cards (Welcome + 30 + 90-day)</option></select></div>
-          <div class="form-group"><label>Monthly Budget Cap</label><input type="text" value="$350" disabled></div>
-          <div style="font-size:12px;color:var(--text-sec);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"><strong>Data Source:</strong> ATTOM Data Solutions<br><strong>Cost:</strong> ~$0.03–0.10 per property record + postcard printing/postage</div>
-        </div>
-      </div>
-      <div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">📊 Preview: Last 7 Days</div><span class="v3-badge" style="font-size:10px">Preview</span></div>
-          <div class="card-b">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-              <div style="text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius-sm)"><div style="font-size:24px;font-weight:700;color:var(--navy)">23</div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">New Home Sales</div></div>
-              <div style="text-align:center;padding:16px;background:var(--bg);border-radius:var(--radius-sm)"><div style="font-size:24px;font-weight:700;color:var(--green)">18</div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">Qualified (≥$250K)</div></div>
+    <div class="card" style="margin-top:20px">
+      <div class="card-h"><div class="card-t">📋 Merge Field Reference</div></div>
+      <div class="card-b">
+        <div class="grid-2">
+          <div>
+            <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--green)">✅ Privacy Safe (Neighbor / Broadcast)</h4>
+            <div style="font-size:12px;background:var(--green-bg);padding:12px;border-radius:var(--radius-sm)">
+              <code>{{company.name}}</code> · <code>{{company.phone}}</code> · <code>{{company.reviewCount}}</code><br>
+              <code>{{job.streetName}}</code> · <code>{{job.neighborhood}}</code> · <code>{{job.serviceType}}</code><br>
+              <code>{{campaign.trackingCode}}</code> · <code>{{campaign.qrUrl}}</code><br>
+              <code>{{promo.discount}}</code> · <code>{{promo.expiry}}</code>
             </div>
-            <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text-sec)">PROJECTED FUNNEL</div>
-            <div class="funnel-step"><div class="funnel-label">Properties</div><div class="funnel-bar" style="width:100%;background:var(--navy)">23</div><div class="funnel-val">23</div></div>
-            <div class="funnel-step"><div class="funnel-label">Qualified</div><div class="funnel-bar" style="width:78%;background:var(--blue)">18</div><div class="funnel-val">18</div></div>
-            <div class="funnel-step"><div class="funnel-label">Mailed</div><div class="funnel-bar" style="width:78%;background:var(--gold)">18</div><div class="funnel-val">18</div></div>
-            <div class="funnel-step"><div class="funnel-label">QR Scanned</div><div class="funnel-bar" style="width:13%;background:var(--green)">3</div><div class="funnel-val">~3</div></div>
-            <div class="funnel-step"><div class="funnel-label">Estimated</div><div class="funnel-bar" style="width:4%;background:var(--purple);min-width:40px">1</div><div class="funnel-val">~1</div></div>
-            <div class="funnel-step"><div class="funnel-label">Sold</div><div class="funnel-bar" style="width:2%;background:var(--green);min-width:30px">—</div><div class="funnel-val">—</div></div>
+          </div>
+          <div>
+            <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--orange)">🔒 Direct Only (Customer-Addressed)</h4>
+            <div style="font-size:12px;background:var(--orange-bg);padding:12px;border-radius:var(--radius-sm)">
+              All Privacy Safe fields, plus:<br>
+              <code>{{customer.firstName}}</code> · <code>{{customer.lastName}}</code><br>
+              <code>{{customer.address}}</code> · <code>{{job.completionDate}}</code><br>
+              <code>{{customer.referralLink}}</code> · <code>{{customer.referralCode}}</code>
+            </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">🏘️ Sample Properties</div><span class="v3-badge" style="font-size:10px">Preview</span></div>
-          <div style="overflow-x:auto">
-            <table class="tbl">
-              <thead><tr><th>Address</th><th>Sale Price</th><th>Sale Date</th><th>Sq Ft</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td>4012 Wallace Ln, Nashville 37215</td><td>$685,000</td><td>Feb 28</td><td>2,800</td><td><span class="badge badge-green">Qualified</span></td></tr>
-                <tr><td>1501 Chickering Rd, Nashville 37215</td><td>$520,000</td><td>Feb 27</td><td>2,200</td><td><span class="badge badge-green">Qualified</span></td></tr>
-                <tr><td>9200 Concord Rd, Brentwood 37027</td><td>$890,000</td><td>Feb 26</td><td>3,600</td><td><span class="badge badge-green">Qualified</span></td></tr>
-                <tr><td>112 Boxwood Dr, Franklin 37064</td><td>$445,000</td><td>Feb 26</td><td>2,100</td><td><span class="badge badge-green">Qualified</span></td></tr>
-                <tr><td>3300 Lealand Ln, Nashville 37204</td><td>$195,000</td><td>Feb 25</td><td>1,100</td><td><span class="badge badge-red">Below Min</span></td></tr>
-              </tbody>
-            </table>
+      </div>
+    </div>
+
+    <div class="card" id="templatePreviewCard" style="margin-top:16px;display:none">
+      <div class="card-h"><div class="card-t" id="previewTitle">Template Preview</div><button class="btn-outline-dark btn-sm" onclick="document.getElementById('templatePreviewCard').style.display='none'">✕ Close</button></div>
+      <div class="card-b">
+        <div class="grid-2">
+          <div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px">Front</div>
+            <div class="postcard-preview">
+              <div class="postcard-front" id="previewFront">
+                <div style="font-size:10px;opacity:.7;margin-bottom:8px">NASH PAINTING</div>
+                <div style="font-size:18px;font-weight:700;margin-bottom:8px" id="previewHeadline"></div>
+                <div style="font-size:12px;opacity:.8" id="previewSubtext"></div>
+                <div style="position:absolute;bottom:12px;right:12px;font-size:10px;opacity:.6">📸 Hero Photo</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px">Back</div>
+            <div class="postcard-preview">
+              <div class="postcard-back">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                  <div>
+                    <div style="font-size:14px;font-weight:700;color:var(--navy)">Nash Painting</div>
+                    <div style="font-size:11px;color:var(--text-sec)">⭐ 4.9 · 680+ Reviews</div>
+                    <div style="font-size:11px;color:var(--text-sec)">📞 (615) 829-6858</div>
+                    <div style="font-size:11px;color:var(--text-sec)">🌐 nashpainting.com</div>
+                  </div>
+                  <div style="text-align:center">
+                    <div class="postcard-qr">QR</div>
+                    <div class="postcard-code" id="previewCode"></div>
+                  </div>
+                </div>
+                <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);font-size:11px;color:var(--text-muted)" id="previewBackText"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============ TAB 6: ROI & REPORTS ============ -->
-  <div id="tab-roi" class="tab-content">
+  <!-- TAB 5: NEIGHBOR REACH -->
+  <div class="tab-content" id="tab-neighbor">
+    <div class="callout callout-info"><div><strong>🏠 Neighbor Reach — Standalone Trigger</strong><br><span style="font-size:12px">Unlike customer lifecycle postcards (managed by Campaign Builder), Neighbor Reach targets <em>non-customers</em> near completed jobs. Direct Mail Manager owns this trigger end-to-end: job completion → select neighbors → source photo → print → mail.</span></div></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">⚙️ Configuration</div></div>
+        <div class="card-b">
+          <div class="form-group"><label>Trigger</label><select><option>Job marked Complete + Paid</option></select></div>
+          <div class="form-group"><label>Radius</label><select><option>25 nearest neighbors</option><option>50 nearest neighbors</option><option>0.25 mile radius</option><option>0.5 mile radius</option></select></div>
+          <div class="form-group"><label>Delay After Job Completion</label><select><option>3 days (allow photo curation)</option><option>1 day</option><option>5 days</option><option>7 days</option></select></div>
+          <div class="form-group"><label>Service Type Filter</label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px"><span class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></span> Exterior</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px"><span class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></span> Interior</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px"><span class="toggle"><input type="checkbox"><span class="toggle-slider"></span></span> Cabinets</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px"><span class="toggle"><input type="checkbox"><span class="toggle-slider"></span></span> Deck</label>
+            </div>
+          </div>
+          <div class="form-group"><label>Min Job Value</label><input type="text" value="$2,500" style="width:120px"></div>
+          <div class="form-group"><label>Card Template</label><select><option>NP-NBR1 — Neighbor Exterior</option><option>NP-NBR2 — Neighbor Interior</option></select></div>
+          <div class="form-group"><label>Suppress if mailed in last</label><select><option>90 days</option><option>60 days</option><option>120 days</option></select></div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;margin-top:8px"><span class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></span> Auto-send enabled</label>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">📸 Photo Sourcing Priority</div></div>
+          <div class="card-b">
+            <ol class="photo-priority">
+              <li><strong>Marketing Hero Photo</strong> — Curated from §6.12.3 Marketing Photo module</li>
+              <li><strong>Best AFTER Photo</strong> — Highest-rated after photo from job gallery</li>
+              <li><strong>CompanyCam Import</strong> — Auto-pulled from CompanyCam project</li>
+              <li><strong>Generic Portfolio</strong> — Fallback: curated Nash portfolio by service type</li>
+            </ol>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;margin-top:12px"><span class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></span> Require admin photo approval before send</label>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">🔒 Privacy Rules</div></div>
+          <div class="card-b">
+            <div class="callout callout-success" style="margin-bottom:10px"><div><strong>✅ Allowed:</strong> Street name only<br><span style="font-size:12px">"We just painted a home on <strong>Granny White Pike</strong>!"</span></div></div>
+            <div class="callout callout-danger" style="margin-bottom:10px"><div><strong>❌ Never:</strong> Full address, customer name, house number<br><span style="font-size:12px">No visible addresses, house numbers, people, or license plates in photos</span></div></div>
+            <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;font-size:12px"><strong>Example text:</strong><br><em>"We just completed a beautiful exterior painting on <strong>{{job.streetName}}</strong> in <strong>{{job.neighborhood}}</strong>. Your neighbors chose Nashville's most-reviewed painters — <strong>{{company.reviewCount}}</strong> 5-star reviews."</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="card">
-      <div class="card-h"><div class="card-t">🏆 Campaign Type Performance</div></div>
-      <div style="overflow-x:auto">
+      <div class="card-h"><div class="card-t">📋 Recent Neighbor Reach Activity</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Job</th><th>Street</th><th>Neighborhood</th><th>Service</th><th>Cards</th><th>Code</th><th>Photo</th><th>Date</th><th>Status</th></tr></thead><tbody>
+          <tr><td>#4821</td><td>Granny White Pike</td><td>Green Hills</td><td>Exterior</td><td>25</td><td><code>NP-NBR1</code></td><td><span class="badge badge-green">Hero ✓</span></td><td>Feb 28</td><td><span class="badge badge-green">Delivered</span></td></tr>
+          <tr><td>#4818</td><td>Tyne Blvd</td><td>Belle Meade</td><td>Exterior</td><td>25</td><td><code>NP-NBR1</code></td><td><span class="badge badge-green">AFTER ✓</span></td><td>Feb 26</td><td><span class="badge badge-green">Delivered</span></td></tr>
+          <tr><td>#4815</td><td>Chickering Ln</td><td>Belle Meade</td><td>Interior</td><td>25</td><td><code>NP-NBR2</code></td><td><span class="badge badge-yellow">Portfolio</span></td><td>Feb 24</td><td><span class="badge badge-green">Delivered</span></td></tr>
+          <tr><td>#4812</td><td>Woodmont Blvd</td><td>Green Hills</td><td>Exterior</td><td>25</td><td><code>NP-NBR1</code></td><td><span class="badge badge-green">Hero ✓</span></td><td>Feb 22</td><td><span class="badge badge-green">Delivered</span></td></tr>
+          <tr><td>#4808</td><td>Harding Pike</td><td>Belle Meade</td><td>Exterior</td><td>25</td><td><code>NP-NBR1</code></td><td><span class="badge badge-blue">CompanyCam</span></td><td>Feb 20</td><td><span class="badge badge-green">Delivered</span></td></tr>
+          <tr><td>#4805</td><td>Otter Creek Rd</td><td>Brentwood</td><td>Exterior</td><td>25</td><td><code>NP-NBR1</code></td><td><span class="badge badge-green">AFTER ✓</span></td><td>Feb 18</td><td><span class="badge badge-green">Delivered</span></td></tr>
+          <tr><td>#4801</td><td>Belle Meade Blvd</td><td>Belle Meade</td><td>Interior</td><td>25</td><td><code>NP-NBR2</code></td><td><span class="badge badge-yellow">Pending ⏳</span></td><td>Mar 1</td><td><span class="badge badge-yellow">Awaiting Photo</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">🔄 Trigger Walkthrough</div></div>
+      <div class="card-b">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px">
+          <span class="badge badge-navy">1. Job #4821 Complete</span><span style="color:var(--text-muted)">→</span>
+          <span class="badge badge-blue">2. Photo Sourced</span><span style="color:var(--text-muted)">→</span>
+          <span class="badge badge-yellow">3. Admin Approves</span><span style="color:var(--text-muted)">→</span>
+          <span class="badge badge-purple">4. 25 Neighbors</span><span style="color:var(--text-muted)">→</span>
+          <span class="badge badge-orange">5. Suppression Check</span><span style="color:var(--text-muted)">→</span>
+          <span class="badge badge-green">6. Sent (22 cards)</span><span style="color:var(--text-muted)">→</span>
+          <span class="badge badge-green">7. Delivered</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: REFERRAL SHARE -->
+  <div class="tab-content" id="tab-referral">
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">📬 Referral Postcard Preview</div><span class="badge badge-blue">NP-REF1</span></div>
+          <div class="card-b">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px">Front</div>
+            <div class="postcard-preview" style="margin-bottom:14px">
+              <div class="postcard-front" style="text-align:center">
+                <div style="font-size:10px;opacity:.7;margin-bottom:6px">📸 Hero Photo Area</div>
+                <div style="font-size:20px;font-weight:700;margin-bottom:6px">Know Someone<br>Who Needs Painting?</div>
+                <div style="font-size:13px;opacity:.8">Earn $75 for every referral that books!</div>
+                <div style="font-size:10px;margin-top:12px;opacity:.6">NASH PAINTING · Nashville's #1 Reviewed Painters</div>
+              </div>
+            </div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px">Back</div>
+            <div class="postcard-preview">
+              <div class="postcard-back">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                  <div>
+                    <div style="font-size:14px;font-weight:700;color:var(--navy)">Refer a Friend, Earn $75</div>
+                    <div style="font-size:11px;color:var(--text-sec);margin-top:4px">1. Scan the QR code<br>2. Share your referral link<br>3. Get $75 when they book!</div>
+                    <div style="font-size:11px;color:var(--text-sec);margin-top:8px">📞 (615) 829-6858<br>⭐ 4.9 · 680+ Reviews</div>
+                  </div>
+                  <div style="text-align:center"><div class="postcard-qr">QR</div><div class="postcard-code">Ref: NP-REF1</div></div>
+                </div>
+                <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--border);font-size:11px;color:var(--text-muted)">Scan QR or visit <strong>nashpainting.com/refer</strong> · Mention code <strong>NP-REF1</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">🎉 Share Portal Preview</div><span class="badge badge-purple">Customer sees after QR scan</span></div>
+          <div class="card-b">
+            <div class="share-portal-mock">
+              <div style="font-size:32px;margin-bottom:4px">🎉</div>
+              <h2 style="color:var(--navy);font-size:22px">Earn $75 for Every Referral!</h2>
+              <p style="font-size:13px;color:var(--text-sec)">Thanks for choosing Nash Painting, Sarah! Share your link with friends.</p>
+              <div style="margin:16px auto;max-width:360px;background:var(--white);border:2px solid var(--gold);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:8px">
+                <code style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;background:none">nashpainting.com/r/sarah-j-4821</code>
+                <button class="btn-gold btn-sm">Copy</button>
+              </div>
+              <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0">
+                <button class="share-btn" style="background:#1877F2">📘 Facebook</button>
+                <button class="share-btn" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">📷 Instagram</button>
+                <button class="share-btn" style="background:var(--green)">💬 Text</button>
+                <button class="share-btn" style="background:var(--navy)">📧 Email</button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;text-align:center">
+                <div><div style="font-size:22px;font-weight:700;color:var(--navy)">3</div><div style="font-size:11px;color:var(--text-sec)">Referrals Sent</div></div>
+                <div><div style="font-size:22px;font-weight:700;color:var(--green)">2</div><div style="font-size:11px;color:var(--text-sec)">Estimates</div></div>
+                <div><div style="font-size:22px;font-weight:700;color:var(--gold)">$150</div><div style="font-size:11px;color:var(--text-sec)">Earned</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><div class="card-t">🔗 LeadChuck API</div><span class="badge badge-green">Connected ✓</span></div>
+          <div class="card-b">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px">Create Referral Link</div>
+            <div style="background:var(--navy);color:#8be9fd;border-radius:var(--radius-sm);padding:12px;font-size:11px;font-family:monospace;margin-bottom:12px;overflow-x:auto"><span style="color:#ff79c6">POST</span> /api/v1/referral-links<br>{ "customer_id": "cust_4821",<br>&nbsp;&nbsp;"campaign": "NP-REF1",<br>&nbsp;&nbsp;"reward_amount": 75,<br>&nbsp;&nbsp;"source": "postcard" }</div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--text-sec);margin-bottom:6px">Webhook (Converted)</div>
+            <div style="background:var(--navy);color:#8be9fd;border-radius:var(--radius-sm);padding:12px;font-size:11px;font-family:monospace;margin-bottom:12px;overflow-x:auto"><span style="color:#50fa7b">WEBHOOK</span> → nashos/referral-converted<br>{ "referrer_id": "cust_4821",<br>&nbsp;&nbsp;"referred_name": "Mike Thompson",<br>&nbsp;&nbsp;"estimate_id": "est_9284",<br>&nbsp;&nbsp;"reward_status": "pending_job_complete" }</div>
+            <div style="display:flex;gap:8px"><button class="btn-outline-dark btn-sm">🧪 Test Postcard</button><button class="btn-outline-dark btn-sm">🔄 Test Webhook</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">📋 Active Referral Campaigns</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Recipient</th><th>Job</th><th>Sent</th><th>QR Scanned</th><th>Referrals</th><th>Estimates</th><th>Earned</th><th>Status</th></tr></thead><tbody>
+          <tr><td>Sarah J.</td><td>#4821 — Granny White Pike</td><td>Feb 24</td><td>✅ Feb 26</td><td>3</td><td>2</td><td>$150</td><td><span class="badge badge-green">Active</span></td></tr>
+          <tr><td>Mark R.</td><td>#4818 — Tyne Blvd</td><td>Feb 22</td><td>✅ Feb 23</td><td>1</td><td>1</td><td>$75</td><td><span class="badge badge-green">Active</span></td></tr>
+          <tr><td>Lisa K.</td><td>#4815 — Chickering Ln</td><td>Feb 20</td><td>—</td><td>0</td><td>0</td><td>$0</td><td><span class="badge badge-yellow">Pending</span></td></tr>
+          <tr><td>Tom H.</td><td>#4812 — Woodmont Blvd</td><td>Feb 18</td><td>✅ Feb 20</td><td>2</td><td>0</td><td>$0</td><td><span class="badge badge-blue">Awaiting Booking</span></td></tr>
+          <tr><td>Amy W.</td><td>#4808 — Harding Pike</td><td>Feb 16</td><td>—</td><td>0</td><td>0</td><td>$0</td><td><span class="badge badge-yellow">Pending</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: ROI & REPORTS -->
+  <div class="tab-content" id="tab-roi">
+    <div class="card">
+      <div class="card-h"><div class="card-t">📊 Performance by Card Type</div>
+        <select style="padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px"><option>Last 90 Days</option><option>Last 30 Days</option><option>This Year</option><option>All Time</option></select>
+      </div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Code</th><th>Card Name</th><th>Sent</th><th>Delivered</th><th>QR Scans</th><th>Calls</th><th>Leads</th><th>Estimates</th><th>Jobs</th><th>Revenue</th><th>Cost</th><th>ROI</th></tr></thead><tbody>
+          <tr><td><code>NP-NBR1</code></td><td>Neighbor Exterior</td><td>2,460</td><td>2,362</td><td>71</td><td>142</td><td>58</td><td>42</td><td>14</td><td>$52,800</td><td>$1,968</td><td style="color:var(--green);font-weight:700">2,582%</td></tr>
+          <tr><td><code>NP-REF1</code></td><td>Referral Reach</td><td>936</td><td>912</td><td>42</td><td>84</td><td>36</td><td>28</td><td>11</td><td>$38,500</td><td>$749</td><td style="color:var(--green);font-weight:700">5,040%</td></tr>
+          <tr><td><code>NP-BID1</code></td><td>Bid Follow-Up</td><td>552</td><td>538</td><td>24</td><td>93</td><td>42</td><td>42</td><td>18</td><td>$61,200</td><td>$442</td><td style="color:var(--green);font-weight:700">13,747%</td></tr>
+          <tr><td><code>NP-1YR</code></td><td>1-Year Anniversary</td><td>738</td><td>721</td><td>33</td><td>54</td><td>27</td><td>22</td><td>9</td><td>$28,800</td><td>$590</td><td style="color:var(--green);font-weight:700">4,780%</td></tr>
+          <tr><td><code>NP-6MO</code></td><td>6-Month Check-In</td><td>594</td><td>580</td><td>27</td><td>42</td><td>21</td><td>16</td><td>7</td><td>$19,600</td><td>$475</td><td style="color:var(--green);font-weight:700">4,026%</td></tr>
+          <tr><td><code>NP-REV1</code></td><td>Review Request</td><td>861</td><td>840</td><td>36</td><td>18</td><td>9</td><td>6</td><td>2</td><td>$7,200</td><td>$689</td><td style="color:var(--green);font-weight:700">945%</td></tr>
+          <tr><td><code>NP-NBR2</code></td><td>Neighbor Interior</td><td>1,230</td><td>1,181</td><td>24</td><td>66</td><td>24</td><td>18</td><td>6</td><td>$21,600</td><td>$984</td><td style="color:var(--green);font-weight:700">2,095%</td></tr>
+          <tr><td><code>NP-2YR</code></td><td>2-Year Anniversary</td><td>388</td><td>380</td><td>14</td><td>28</td><td>12</td><td>8</td><td>4</td><td>$14,400</td><td>$310</td><td style="color:var(--green);font-weight:700">4,545%</td></tr>
+          <tr><td><code>NP-ANN</code></td><td>Annual Check-In</td><td>1,062</td><td>1,038</td><td>18</td><td>36</td><td>15</td><td>10</td><td>4</td><td>$12,800</td><td>$850</td><td style="color:var(--green);font-weight:700">1,406%</td></tr>
+          <tr style="font-weight:700;background:var(--bg)"><td></td><td>TOTALS</td><td>8,821</td><td>8,552</td><td>289</td><td>563</td><td>244</td><td>192</td><td>75</td><td>$256,900</td><td>$7,057</td><td style="color:var(--green)">3,541%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">🔄 Full Attribution Funnel (90 Days)</div></div>
+      <div class="card-b">
+        <div class="funnel-row"><div class="funnel-label">Sent</div><div class="funnel-bar" style="width:100%;background:var(--navy)">8,821</div></div>
+        <div class="funnel-row"><div class="funnel-label">Delivered</div><div class="funnel-bar" style="width:97%;background:var(--navy-light)">8,552</div></div>
+        <div class="funnel-row"><div class="funnel-label">QR Scanned</div><div class="funnel-bar" style="width:12%;background:var(--blue)">289</div><div class="funnel-val">3.3%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Code Called</div><div class="funnel-bar" style="width:22%;background:var(--purple)">563</div><div class="funnel-val">6.4%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Leads</div><div class="funnel-bar" style="width:10%;background:var(--gold)">244</div><div class="funnel-val">2.8%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Estimates</div><div class="funnel-bar" style="width:8%;background:var(--orange)">192</div><div class="funnel-val">2.2%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Jobs Won</div><div class="funnel-bar" style="width:4%;background:var(--green);min-width:60px">75</div><div class="funnel-val">0.9%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Revenue</div><div class="funnel-bar" style="width:30%;background:var(--green)">$256,900</div></div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">💰 Cost by Campaign Type</div></div>
+        <div class="card-b">
+          <div class="bar-row"><div class="bar-label">Neighbor Reach</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--green)"></div></div><div class="bar-val">$2,952</div></div>
+          <div class="bar-row"><div class="bar-label">Smart Drip</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--blue)"></div></div><div class="bar-val">$2,104</div></div>
+          <div class="bar-row"><div class="bar-label">Referral Reach</div><div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--purple)"></div></div><div class="bar-val">$749</div></div>
+          <div class="bar-row"><div class="bar-label">Seasonal</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:var(--yellow)"></div></div><div class="bar-val">$602</div></div>
+          <div class="bar-row"><div class="bar-label">Collections</div><div class="bar-track"><div class="bar-fill" style="width:4%;background:var(--red)"></div></div><div class="bar-val">$150</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">📍 Top Zip Codes</div></div>
+        <div class="card-b" style="padding:0">
+          <table class="tbl"><thead><tr><th>Zip</th><th>Area</th><th>Sent</th><th>Leads</th><th>Conv</th><th>Revenue</th></tr></thead><tbody>
+            <tr><td>37205</td><td>Belle Meade</td><td>1,842</td><td>52</td><td>2.8%</td><td>$68,400</td></tr>
+            <tr><td>37215</td><td>Green Hills</td><td>1,560</td><td>41</td><td>2.6%</td><td>$48,200</td></tr>
+            <tr><td>37027</td><td>Brentwood</td><td>1,380</td><td>38</td><td>2.8%</td><td>$44,800</td></tr>
+            <tr><td>37064</td><td>Franklin</td><td>1,240</td><td>34</td><td>2.7%</td><td>$38,600</td></tr>
+            <tr><td>37220</td><td>Oak Hill</td><td>980</td><td>28</td><td>2.9%</td><td>$32,400</td></tr>
+            <tr><td>37221</td><td>Sylvan Park</td><td>620</td><td>22</td><td>3.5%</td><td>$14,200</td></tr>
+            <tr><td>37069</td><td>Forest Hills</td><td>540</td><td>16</td><td>3.0%</td><td>$10,300</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">📈 Monthly Trends</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
+        <table class="tbl"><thead><tr><th>Month</th><th>Sent</th><th>Delivered</th><th>QR</th><th>Calls</th><th>Leads</th><th>Jobs</th><th>Revenue</th><th>Spend</th><th>CPA</th></tr></thead><tbody>
+          <tr><td><strong>Mar '26</strong></td><td>2,847</td><td>2,738</td><td>84</td><td>162</td><td>71</td><td>22</td><td>$94,200</td><td>$2,190</td><td>$31</td></tr>
+          <tr><td>Feb '26</td><td>2,640</td><td>2,535</td><td>76</td><td>148</td><td>64</td><td>19</td><td>$72,400</td><td>$2,112</td><td>$33</td></tr>
+          <tr><td>Jan '26</td><td>2,180</td><td>2,093</td><td>62</td><td>121</td><td>52</td><td>16</td><td>$54,800</td><td>$1,744</td><td>$34</td></tr>
+          <tr><td>Dec '25</td><td>1,154</td><td>1,108</td><td>34</td><td>68</td><td>29</td><td>9</td><td>$18,900</td><td>$923</td><td>$32</td></tr>
+          <tr><td>Nov '25</td><td>1,420</td><td>1,363</td><td>41</td><td>82</td><td>36</td><td>11</td><td>$28,400</td><td>$1,136</td><td>$32</td></tr>
+          <tr><td>Oct '25</td><td>1,680</td><td>1,613</td><td>52</td><td>98</td><td>44</td><td>14</td><td>$42,600</td><td>$1,344</td><td>$31</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TAB: TEST & SCALE -->
+  <div class="tab-content" id="tab-scale">
+    <div class="callout callout-navy" style="margin-bottom:20px"><div><strong>🧪 Test & Scale Framework</strong><br><span style="font-size:12px">Every campaign type starts small, proves ROI, then scales. This dashboard shows where each lever stands and what to do next. The goal: know exactly what each dollar buys across every lead source.</span></div></div>
+
+    <div class="card">
+      <div class="card-h"><div class="card-t">🎯 Lead Lever Comparison — Cost Per Lead Across All Sources</div></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
         <table class="tbl">
-          <thead><tr><th>Campaign Type</th><th>Sent</th><th>Delivered</th><th>QR Scans</th><th>Scan Rate</th><th>Leads</th><th>Lead Rate</th><th>Jobs Sold</th><th>Revenue</th><th>Cost</th><th>ROI</th></tr></thead>
+          <thead><tr><th>Source</th><th>Type</th><th>Cost / Lead</th><th>Cost / Sold Job</th><th>Avg Job Value</th><th>ROI</th><th>Volume (MTD)</th><th>Trend</th></tr></thead>
           <tbody>
-            <tr><td style="font-weight:600">Neighbor Reach</td><td>1,247</td><td>1,209</td><td>48</td><td>3.8%</td><td>9</td><td>18.8%</td><td>2</td><td>$18,200</td><td>$723</td><td style="color:var(--green);font-weight:700">25.2x</td></tr>
-            <tr><td style="font-weight:600">Smart Drip</td><td>842</td><td>831</td><td>29</td><td>3.4%</td><td>5</td><td>17.2%</td><td>1</td><td>$12,400</td><td>$488</td><td style="color:var(--green);font-weight:700">25.4x</td></tr>
-            <tr><td style="font-weight:600">Zone Blast</td><td>800</td><td>756</td><td>21</td><td>2.6%</td><td>3</td><td>14.3%</td><td>1</td><td>$7,800</td><td>$536</td><td style="color:var(--green);font-weight:700">14.6x</td></tr>
-            <tr><td style="font-weight:600">Route Mailer</td><td>549</td><td>542</td><td>12</td><td>2.2%</td><td>2</td><td>16.7%</td><td>0</td><td>$0</td><td>$412</td><td style="color:var(--text-muted)">—</td></tr>
-            <tr><td style="font-weight:600">Seasonal Promo</td><td>1,200</td><td>1,152</td><td>41</td><td>3.4%</td><td>5</td><td>12.2%</td><td>2</td><td>$22,600</td><td>$828</td><td style="color:var(--green);font-weight:700">27.3x</td></tr>
-            <tr style="background:var(--bg);font-weight:700"><td>TOTAL</td><td>4,638</td><td>4,490</td><td>151</td><td>3.3%</td><td>24</td><td>15.9%</td><td>6</td><td>$61,000</td><td>$2,987</td><td style="color:var(--green)">20.4x</td></tr>
+            <tr style="background:var(--green-bg)"><td><strong>Referrals (Organic)</strong></td><td><span class="badge badge-green">Organic</span></td><td>$0</td><td>$75</td><td>$4,200</td><td style="font-weight:700;color:var(--green)">73:1</td><td>8 leads</td><td><span class="kpi-trend up" style="margin:0">↑ 12%</span></td></tr>
+            <tr style="background:var(--green-bg)"><td><strong>Homeowner Discovery</strong></td><td><span class="badge badge-orange">Direct Mail</span></td><td>$5.20</td><td>$78.00</td><td>$3,800</td><td style="font-weight:700;color:var(--green)">61:1</td><td>5 leads</td><td><span class="kpi-trend up" style="margin:0">↑ New</span></td></tr>
+            <tr style="background:var(--green-bg)"><td><strong>Referral Reach (NP-REF1)</strong></td><td><span class="badge badge-blue">Direct Mail</span></td><td>$6.40</td><td>$83.20</td><td>$3,500</td><td style="font-weight:700;color:var(--green)">56:1</td><td>12 leads</td><td><span class="kpi-trend up" style="margin:0">↑ 18%</span></td></tr>
+            <tr><td><strong>Neighbor Reach (NP-NBR1)</strong></td><td><span class="badge badge-green">Direct Mail</span></td><td>$7.80</td><td>$93.60</td><td>$4,100</td><td style="font-weight:700;color:var(--green)">44:1</td><td>19 leads</td><td><span class="kpi-trend up" style="margin:0">↑ 8%</span></td></tr>
+            <tr><td><strong>Zone Blast — Brentwood 37027</strong></td><td><span class="badge badge-blue">Direct Mail</span></td><td>$9.10</td><td>$145.60</td><td>$5,100</td><td style="font-weight:700;color:var(--green)">35:1</td><td>7 leads</td><td><span class="kpi-trend up" style="margin:0">↑ 5%</span></td></tr>
+            <tr><td><strong>Bid Follow-Up (NP-BID1)</strong></td><td><span class="badge badge-purple">Direct Mail</span></td><td>$10.50</td><td>$42.00</td><td>$3,400</td><td style="font-weight:700;color:var(--green)">81:1</td><td>14 leads</td><td><span class="kpi-trend up" style="margin:0">↑ 22%</span></td></tr>
+            <tr><td><strong>Google Ads (Search)</strong></td><td><span class="badge badge-navy">Digital</span></td><td>$45.00</td><td>$540.00</td><td>$3,900</td><td style="font-weight:700">7.2:1</td><td>24 leads</td><td><span style="font-size:11px;color:var(--text-muted)">→ flat</span></td></tr>
+            <tr><td><strong>Google LSA</strong></td><td><span class="badge badge-navy">Digital</span></td><td>$52.00</td><td>$624.00</td><td>$3,600</td><td style="font-weight:700">5.8:1</td><td>18 leads</td><td><span class="kpi-trend down" style="margin:0">↓ 6%</span></td></tr>
+            <tr style="background:var(--red-bg)"><td><strong>Angi Leads</strong></td><td><span class="badge badge-red">Marketplace</span></td><td>$65.00</td><td>$780.00</td><td>$4,100</td><td style="font-weight:700;color:var(--red)">5.3:1</td><td>11 leads</td><td><span class="kpi-trend down" style="margin:0">↓ 14%</span></td></tr>
+            <tr style="background:var(--red-bg)"><td><strong>Thumbtack</strong></td><td><span class="badge badge-red">Marketplace</span></td><td>$72.00</td><td>$864.00</td><td>$3,200</td><td style="font-weight:700;color:var(--red)">3.7:1</td><td>6 leads</td><td><span class="kpi-trend down" style="margin:0">↓ 9%</span></td></tr>
           </tbody>
         </table>
       </div>
     </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-h"><div class="card-t">🔻 Full Funnel — All Campaigns (YTD)</div></div>
-        <div class="card-b">
-          <div class="funnel-step"><div class="funnel-label">Sent</div><div class="funnel-bar" style="width:100%;background:var(--navy)">4,638</div><div class="funnel-val">4,638</div></div>
-          <div class="funnel-step"><div class="funnel-label">Delivered</div><div class="funnel-bar" style="width:97%;background:var(--blue)">4,490</div><div class="funnel-val">4,490</div></div>
-          <div class="funnel-step"><div class="funnel-label">QR Scanned</div><div class="funnel-bar" style="width:25%;background:var(--gold)">151</div><div class="funnel-val">151</div></div>
-          <div class="funnel-step"><div class="funnel-label">Lead Created</div><div class="funnel-bar" style="width:12%;background:var(--green)">24</div><div class="funnel-val">24</div></div>
-          <div class="funnel-step"><div class="funnel-label">Estimate Sent</div><div class="funnel-bar" style="width:8%;background:var(--purple)">18</div><div class="funnel-val">18</div></div>
-          <div class="funnel-step"><div class="funnel-label">Job Sold</div><div class="funnel-bar" style="width:5%;background:var(--green);min-width:40px">6</div><div class="funnel-val">6</div></div>
-          <div class="funnel-step"><div class="funnel-label">Revenue</div><div class="funnel-bar" style="width:40%;background:var(--gold)">$61,000</div><div class="funnel-val">$61K</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><div class="card-t">💰 Cost per Piece by Type</div></div>
-        <div class="card-b">
-          <div class="bar-row"><div class="bar-label">Neighbor Reach</div><div class="bar-track"><div class="bar-fill" style="width:66%;background:var(--green)"></div></div><div class="bar-val">$0.58</div></div>
-          <div class="bar-row"><div class="bar-label">Smart Drip</div><div class="bar-track"><div class="bar-fill" style="width:66%;background:var(--blue)"></div></div><div class="bar-val">$0.58</div></div>
-          <div class="bar-row"><div class="bar-label">Zone Blast</div><div class="bar-track"><div class="bar-fill" style="width:76%;background:var(--gold)"></div></div><div class="bar-val">$0.67</div></div>
-          <div class="bar-row"><div class="bar-label">Route Mailer</div><div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--orange)"></div></div><div class="bar-val">$0.75</div></div>
-          <div class="bar-row"><div class="bar-label">Seasonal Promo</div><div class="bar-track"><div class="bar-fill" style="width:78%;background:var(--purple)"></div></div><div class="bar-val">$0.69</div></div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Includes printing + postage. Neighbor Reach & Smart Drip use 4×6 First Class. Zone Blast uses 6×9. Route Mailer uses 8.5×11 Standard.</div>
-        </div>
-      </div>
-    </div>
+
     <div class="card">
-      <div class="card-h"><div class="card-t">📍 Performance by Zip Code</div></div>
-      <div style="overflow-x:auto">
+      <div class="card-h"><div class="card-t">🧪 Active Tests</div><button class="btn-gold btn-sm">+ New Test</button></div>
+      <div class="card-b" style="padding:0;overflow-x:auto">
         <table class="tbl">
-          <thead><tr><th>Zip Code</th><th>Area</th><th>Pieces Sent</th><th>QR Scans</th><th>Scan Rate</th><th>Leads</th><th>Jobs Sold</th><th>Revenue</th><th>Avg Home Value</th></tr></thead>
+          <thead><tr><th>Test Campaign</th><th>Stage</th><th>Volume</th><th>Sent</th><th>Leads</th><th>Cost/Lead</th><th>ROI</th><th>Threshold</th><th>Recommendation</th></tr></thead>
           <tbody>
-            <tr><td style="font-weight:600">37205</td><td>Belle Meade / West Nashville</td><td>890</td><td>38</td><td>4.3%</td><td>7</td><td>2</td><td>$22,400</td><td>$685K</td></tr>
-            <tr><td style="font-weight:600">37215</td><td>Green Hills / Forest Hills</td><td>720</td><td>28</td><td>3.9%</td><td>5</td><td>2</td><td>$18,200</td><td>$520K</td></tr>
-            <tr><td style="font-weight:600">37027</td><td>Brentwood</td><td>650</td><td>22</td><td>3.4%</td><td>4</td><td>1</td><td>$12,400</td><td>$610K</td></tr>
-            <tr><td style="font-weight:600">37064</td><td>Franklin</td><td>580</td><td>18</td><td>3.1%</td><td>3</td><td>1</td><td>$8,000</td><td>$485K</td></tr>
-            <tr><td style="font-weight:600">37069</td><td>Franklin (Cool Springs)</td><td>410</td><td>14</td><td>3.4%</td><td>2</td><td>0</td><td>$0</td><td>$440K</td></tr>
-            <tr><td style="font-weight:600">37204</td><td>Berry Hill / 12 South</td><td>388</td><td>11</td><td>2.8%</td><td>2</td><td>0</td><td>$0</td><td>$380K</td></tr>
-            <tr><td style="font-weight:600">37220</td><td>Oak Hill</td><td>320</td><td>12</td><td>3.8%</td><td>1</td><td>0</td><td>$0</td><td>$720K</td></tr>
+            <tr>
+              <td><strong>Neighbor Reach — Exterior</strong><br><span style="font-size:10px;color:var(--text-muted)">Testing 20→25 homes per job</span></td>
+              <td><span class="badge badge-blue">Test B</span></td>
+              <td>20 homes × 8 jobs</td><td>160</td><td>6</td><td>$7.80</td>
+              <td style="font-weight:700;color:var(--green)">7.4:1</td>
+              <td>≥ 5:1</td>
+              <td><span class="badge badge-green">✅ Scale to 25</span></td>
+            </tr>
+            <tr>
+              <td><strong>Neighbor Reach — Interior</strong><br><span style="font-size:10px;color:var(--text-muted)">Testing 15→20 homes per job</span></td>
+              <td><span class="badge badge-purple">Test A</span></td>
+              <td>15 homes × 5 jobs</td><td>75</td><td>2</td><td>$11.20</td>
+              <td style="font-weight:700">4.2:1</td>
+              <td>≥ 5:1</td>
+              <td><span class="badge badge-yellow">⚠️ Continue testing</span></td>
+            </tr>
+            <tr>
+              <td><strong>Zone Blast — Franklin 37064</strong><br><span style="font-size:10px;color:var(--text-muted)">Pilot: radius bomb test</span></td>
+              <td><span class="badge badge-orange">Pilot</span></td>
+              <td>200 homes (one-time)</td><td>200</td><td>3</td><td>$58.00</td>
+              <td style="font-weight:700;color:var(--red)">2.1:1</td>
+              <td>≥ 5:1</td>
+              <td><span class="badge badge-red">🛑 Below threshold, hold</span></td>
+            </tr>
+            <tr>
+              <td><strong>Homeowner Discovery — Brentwood</strong><br><span style="font-size:10px;color:var(--text-muted)">New homeowner list, 90 days</span></td>
+              <td><span class="badge badge-green">Test C</span></td>
+              <td>30 homes/month × 3 mo</td><td>90</td><td>5</td><td>$5.20</td>
+              <td style="font-weight:700;color:var(--green)">9.8:1</td>
+              <td>≥ 5:1</td>
+              <td><span class="badge badge-green">✅ Scale to 50/mo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Zone Blast — Belle Meade 37205</strong><br><span style="font-size:10px;color:var(--text-muted)">High-value neighborhood test</span></td>
+              <td><span class="badge badge-blue">Test B</span></td>
+              <td>150 homes (one-time)</td><td>150</td><td>6</td><td>$9.10</td>
+              <td style="font-weight:700;color:var(--green)">8.2:1</td>
+              <td>≥ 5:1</td>
+              <td><span class="badge badge-green">✅ Scale: quarterly 300</span></td>
+            </tr>
+            <tr>
+              <td><strong>EDDM Route — Sylvan Park</strong><br><span style="font-size:10px;color:var(--text-muted)">Every Door test route</span></td>
+              <td><span class="badge badge-purple">Test A</span></td>
+              <td>1 carrier route (480)</td><td>480</td><td>4</td><td>$42.00</td>
+              <td style="font-weight:700">3.6:1</td>
+              <td>≥ 5:1</td>
+              <td><span class="badge badge-yellow">⚠️ Tweak creative, retest</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <div class="card">
-      <div class="card-h"><div class="card-t">📈 Monthly Trend</div></div>
-      <div class="card-b">
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Month</th><th>Pieces Sent</th><th>Cost</th><th>QR Scans</th><th>Leads</th><th>Jobs Sold</th><th>Revenue</th><th>CPA</th></tr></thead>
-            <tbody>
-              <tr><td>Jan 2026</td><td>1,791</td><td>$1,024</td><td>64</td><td>10</td><td>3</td><td>$22,600</td><td>$102</td></tr>
-              <tr style="font-weight:600"><td>Feb 2026</td><td>2,847</td><td>$1,963</td><td>87</td><td>14</td><td>3</td><td>$38,400</td><td>$140</td></tr>
-              <tr style="color:var(--text-muted)"><td>Mar 2026 (proj.)</td><td>~3,200</td><td>~$2,200</td><td>~100</td><td>~16</td><td>~4</td><td>~$45K</td><td>~$138</td></tr>
-            </tbody>
-          </table>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">📉 Diminishing Returns — Neighbor Reach</div></div>
+        <div class="card-b">
+          <div class="callout callout-info" style="margin-bottom:14px"><span style="font-size:12px">More homes per job = more leads, but ROI drops. Find the sweet spot where you maximize leads without wasting spend.</span></div>
+          <div style="margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+              <div style="width:80px;font-size:13px;font-weight:600">15 homes</div>
+              <div style="flex:1;height:28px;background:#f0eeea;border-radius:6px;overflow:hidden;position:relative"><div style="width:67%;height:100%;background:var(--green);border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;color:#fff;font-weight:600">2.0 leads</div></div>
+              <div style="width:60px;text-align:right;font-size:12px;font-weight:700;color:var(--green)">8.0:1</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+              <div style="width:80px;font-size:13px;font-weight:600">20 homes</div>
+              <div style="flex:1;height:28px;background:#f0eeea;border-radius:6px;overflow:hidden;position:relative"><div style="width:83%;height:100%;background:var(--green);border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;color:#fff;font-weight:600">2.5 leads</div></div>
+              <div style="width:60px;text-align:right;font-size:12px;font-weight:700;color:var(--green)">7.4:1</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:2px solid var(--gold);background:rgba(196,169,98,.08);margin:0 -18px;padding-left:18px;padding-right:18px">
+              <div style="width:80px;font-size:13px;font-weight:700;color:var(--navy)">25 homes</div>
+              <div style="flex:1;height:28px;background:#f0eeea;border-radius:6px;overflow:hidden;position:relative"><div style="width:93%;height:100%;background:var(--gold);border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;color:var(--navy);font-weight:700">2.8 leads ← SWEET SPOT</div></div>
+              <div style="width:60px;text-align:right;font-size:12px;font-weight:700;color:var(--gold)">6.1:1</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+              <div style="width:80px;font-size:13px;font-weight:600;color:var(--text-sec)">30 homes</div>
+              <div style="flex:1;height:28px;background:#f0eeea;border-radius:6px;overflow:hidden;position:relative"><div style="width:97%;height:100%;background:var(--yellow);border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;color:var(--navy);font-weight:600">2.9 leads</div></div>
+              <div style="width:60px;text-align:right;font-size:12px;font-weight:700;color:var(--yellow)">4.8:1</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
+              <div style="width:80px;font-size:13px;font-weight:600;color:var(--text-muted)">50 homes</div>
+              <div style="flex:1;height:28px;background:#f0eeea;border-radius:6px;overflow:hidden;position:relative"><div style="width:100%;height:100%;background:var(--red);border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;color:#fff;font-weight:600">3.0 leads</div></div>
+              <div style="width:60px;text-align:right;font-size:12px;font-weight:700;color:var(--red)">2.9:1</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Based on 6 months of Neighbor Reach data. ROI = (attributed revenue ÷ card cost). Marginal lead gain drops sharply above 25.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><div class="card-t">⚙️ Auto-Scale Configuration</div></div>
+        <div class="card-b">
+          <div class="callout callout-warn" style="margin-bottom:14px"><span style="font-size:12px">When enabled, campaigns that exceed the ROI threshold will automatically scale to the next volume tier. Campaigns below threshold are paused for review.</span></div>
+          <div style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+              <div><div style="font-size:13px;font-weight:600">Neighbor Reach</div><div style="font-size:11px;color:var(--text-sec)">Auto-scale: 15 → 20 → 25 → 30 homes</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+              <div><div style="font-size:13px;font-weight:600">Zone Blast</div><div style="font-size:11px;color:var(--text-sec)">Auto-scale: 150 → 300 → 500 homes</div></div>
+              <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+              <div><div style="font-size:13px;font-weight:600">Homeowner Discovery</div><div style="font-size:11px;color:var(--text-sec)">Auto-scale: 30 → 50 → 75/month</div></div>
+              <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+              <div><div style="font-size:13px;font-weight:600">Route Mailer (EDDM)</div><div style="font-size:11px;color:var(--text-sec)">Auto-scale: 1 → 2 → 4 routes</div></div>
+              <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+              <div><div style="font-size:13px;font-weight:600">Seasonal Promo</div><div style="font-size:11px;color:var(--text-sec)">Manual only (admin-scheduled)</div></div>
+              <label class="toggle"><input type="checkbox" disabled><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group"><label>Min ROI Threshold to Scale</label><select><option>5:1 (recommended)</option><option>3:1</option><option>7:1</option><option>10:1</option></select></div>
+            <div class="form-group"><label>Min Test Volume Before Scale</label><select><option>100 cards sent</option><option>50 cards sent</option><option>200 cards sent</option></select></div>
+            <div class="form-group"><label>Monthly Volume Cap (all types)</label><input type="text" value="4,000 cards" style="width:140px"></div>
+            <div class="form-group"><label>Auto-pause below ROI</label><select><option>3:1 (auto-pause)</option><option>2:1</option><option>Never auto-pause</option></select></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============ TAB 7: SETTINGS ============ -->
-  <div id="tab-settings" class="tab-content">
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">🚫 Do-Not-Mail List</div><button class="btn-gold btn-sm" onclick="alert('Add address form coming soon')">+ Add Address</button></div>
-          <div style="overflow-x:auto">
-            <table class="tbl">
-              <thead><tr><th>Name</th><th>Address</th><th>Date Added</th><th>Reason</th><th></th></tr></thead>
-              <tbody>
-                <tr><td>Margaret Wilson</td><td>304 Lynnwood Blvd, Nashville 37205</td><td>Jan 15, 2026</td><td>Customer request</td><td><button class="dnm-remove" onclick="this.closest('tr').remove()">Remove</button></td></tr>
-                <tr><td>Robert Chen</td><td>1820 Woodmont Blvd, Nashville 37215</td><td>Dec 8, 2025</td><td>Returned mail — vacant</td><td><button class="dnm-remove" onclick="this.closest('tr').remove()">Remove</button></td></tr>
-                <tr><td>Patricia Hayes</td><td>5501 Granny White Pk, Brentwood 37027</td><td>Nov 22, 2025</td><td>Competitor (painting co)</td><td><button class="dnm-remove" onclick="this.closest('tr').remove()">Remove</button></td></tr>
-                <tr><td>James Foster</td><td>209 Page Rd, Nashville 37205</td><td>Oct 3, 2025</td><td>Customer request</td><td><button class="dnm-remove" onclick="this.closest('tr').remove()">Remove</button></td></tr>
-                <tr><td>Linda Schwartz</td><td>4400 Harding Pk, Nashville 37205</td><td>Sep 18, 2025</td><td>Deceased</td><td><button class="dnm-remove" onclick="this.closest('tr').remove()">Remove</button></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">💰 Budget Controls</div></div>
-          <div class="card-b">
-            <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--text-sec)">MONTHLY CAPS BY CAMPAIGN TYPE</div>
-            <div class="budget-bar-wrap"><div class="budget-lbl"><span>Neighbor Reach</span><span>$723 / $1,000</span></div><div class="budget-bar"><div class="budget-fill yellow" style="width:72%"></div></div></div>
-            <div class="budget-bar-wrap"><div class="budget-lbl"><span>Smart Drip</span><span>$488 / $600</span></div><div class="budget-bar"><div class="budget-fill red" style="width:81%"></div></div></div>
-            <div class="budget-bar-wrap"><div class="budget-lbl"><span>Zone Blast</span><span>$536 / $800</span></div><div class="budget-bar"><div class="budget-fill yellow" style="width:67%"></div></div></div>
-            <div class="budget-bar-wrap"><div class="budget-lbl"><span>Route Mailer</span><span>$412 / $500</span></div><div class="budget-bar"><div class="budget-fill red" style="width:82%"></div></div></div>
-            <div class="budget-bar-wrap"><div class="budget-lbl"><span>Seasonal Promo</span><span>$828 / $1,500</span></div><div class="budget-bar"><div class="budget-fill green" style="width:55%"></div></div></div>
-            <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
-              <div class="select-row"><label>Alert at</label><select><option selected>80%</option><option>90%</option><option>100%</option></select></div>
-              <div class="select-row"><label>Hard stop at</label><select><option>90%</option><option selected>100%</option><option>No limit</option></select></div>
-            </div>
-          </div>
+  <!-- TAB 8: SETTINGS -->
+  <div class="tab-content" id="tab-settings">
+    <div class="card">
+      <div class="card-h"><div class="card-t">🚫 Global Blacklist</div><button class="btn-red btn-sm" onclick="showModal('blacklist-modal')">+ Add to Blacklist</button></div>
+      <div class="card-b">
+        <div class="callout callout-danger" style="margin-bottom:16px"><div><strong>🚫 Blacklisted contacts receive ZERO outreach</strong> — no emails, texts, postcards, voicemail drops, or phone campaigns. Only legal obligations (invoices, tax docs) remain. Separate from Do-Not-Mail (mail only).</div></div>
+        <div style="overflow-x:auto">
+          <table class="tbl"><thead><tr><th>Name</th><th>Address</th><th>Phone</th><th>Email</th><th>Reason</th><th>Category</th><th>Added</th><th>By</th><th></th></tr></thead><tbody>
+            <tr><td>Robert Daniels</td><td>412 Harding Pike</td><td>(615) 555-0142</td><td>r.daniels@email.com</td><td style="font-size:11px">Hostile during estimate</td><td><span class="badge badge-red">Hostile</span></td><td>Jan 12</td><td>Bill</td><td><button class="btn-outline-dark btn-sm">Remove</button></td></tr>
+            <tr><td>Karen Mitchell</td><td>2801 Woodmont Blvd</td><td>(615) 555-0198</td><td>k.mitchell@email.com</td><td style="font-size:11px">Threatened legal action</td><td><span class="badge badge-purple">Legal</span></td><td>Nov 3</td><td>Admin</td><td><button class="btn-outline-dark btn-sm">Remove</button></td></tr>
+            <tr><td>James Whitfield</td><td>1560 Belle Meade Blvd</td><td>(615) 555-0234</td><td>—</td><td style="font-size:11px">Competitor (ProCoat owner)</td><td><span class="badge badge-yellow">Competitor</span></td><td>Sep 18</td><td>Bill</td><td><button class="btn-outline-dark btn-sm">Remove</button></td></tr>
+            <tr><td>Martha Ellis</td><td>890 Otter Creek Rd</td><td>(615) 555-0311</td><td>—</td><td style="font-size:11px">Per family request</td><td><span class="badge badge-navy">Deceased</span></td><td>Aug 4</td><td>Admin</td><td><button class="btn-outline-dark btn-sm">Remove</button></td></tr>
+          </tbody></table>
         </div>
       </div>
-      <div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">🖨️ Fulfillment Provider</div></div>
-          <div class="card-b">
-            <div style="display:flex;gap:10px;margin-bottom:16px">
-              <div id="prov-lob" onclick="selectProvider('lob')" style="flex:1;padding:16px;border:2px solid var(--gold);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:#FDFCF8">
-                <div style="font-size:18px;font-weight:700;margin-bottom:4px">Lob</div>
-                <div style="font-size:11px;color:var(--text-sec)">Primary — $0.58/pc avg</div>
-                <span class="badge badge-green" style="margin-top:8px">● Connected</span>
-              </div>
-              <div id="prov-postgrid" onclick="selectProvider('postgrid')" style="flex:1;padding:16px;border:2px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;background:var(--white)">
-                <div style="font-size:18px;font-weight:700;margin-bottom:4px">PostGrid</div>
-                <div style="font-size:11px;color:var(--text-sec)">Backup — $0.62/pc avg</div>
-                <span class="badge badge-navy" style="margin-top:8px">Not configured</span>
-              </div>
-            </div>
-            <div class="form-group"><label>API Key (Lob)</label><input type="password" value="live_xxxxxxxxxxk4Qm" style="font-family:monospace"></div>
-            <div class="form-group"><label>API Key (PostGrid)</label><input type="password" placeholder="Enter PostGrid API key..." style="font-family:monospace"></div>
-            <button class="btn-gold btn-sm">Test Connection</button>
-          </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">📭 Do-Not-Mail List (Mail Only)</div><button class="btn-outline-dark btn-sm">+ Add Address</button></div>
+      <div class="card-b">
+        <div class="callout callout-warn" style="margin-bottom:12px"><div style="font-size:12px">Blocks <strong>physical mail only</strong>. Contacts may still receive email, SMS, etc. For full suppression, use Global Blacklist.</div></div>
+        <div style="font-size:13px;color:var(--text-sec)">12 addresses on Do-Not-Mail list · <span class="card-a">View All</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div class="card-t">🧠 Internal Customer Traits</div></div>
+      <div class="card-b">
+        <div class="callout callout-warn" style="margin-bottom:16px"><div><strong>⚠️ These traits are NEVER visible on:</strong><br><span style="font-size:12px">Customer Portal · Proposals · Estimator's On-Site Tablet · Work Orders<br>Estimator sees only: <em>"Suggested adjustment: +10%"</em> — never the trait name.</span></div></div>
+        <div style="overflow-x:auto">
+          <table class="tbl"><thead><tr><th>Customer</th><th>Difficulty</th><th>Price Sens.</th><th>Decision</th><th>Payment</th><th>Comms</th><th>Property</th><th>Referral</th><th>Repeat</th></tr></thead><tbody>
+            <tr><td><strong>Sarah J.</strong><br><span style="font-size:10px;color:var(--text-muted)">Granny White</span></td><td><span class="trait-cell trait-low">Low</span></td><td><span class="trait-cell trait-low">Low</span></td><td><span class="trait-cell trait-low">Fast</span></td><td><span class="trait-cell trait-low">Excellent</span></td><td><span class="trait-cell trait-neutral">Email</span></td><td><span class="trait-cell trait-low">Great</span></td><td><span class="trait-cell trait-low">High</span></td><td><span class="trait-cell trait-low">High</span></td></tr>
+            <tr><td><strong>Mark R.</strong><br><span style="font-size:10px;color:var(--text-muted)">Tyne Blvd</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-high">High</span></td><td><span class="trait-cell trait-med">Slow</span></td><td><span class="trait-cell trait-low">Good</span></td><td><span class="trait-cell trait-neutral">Phone</span></td><td><span class="trait-cell trait-med">Fair</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-med">Med</span></td></tr>
+            <tr><td><strong>Lisa K.</strong><br><span style="font-size:10px;color:var(--text-muted)">Chickering</span></td><td><span class="trait-cell trait-low">Low</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-low">Fast</span></td><td><span class="trait-cell trait-low">Excellent</span></td><td><span class="trait-cell trait-neutral">Text</span></td><td><span class="trait-cell trait-low">Great</span></td><td><span class="trait-cell trait-low">High</span></td><td><span class="trait-cell trait-low">High</span></td></tr>
+            <tr><td><strong>Tom H.</strong><br><span style="font-size:10px;color:var(--text-muted)">Woodmont</span></td><td><span class="trait-cell trait-high">High</span></td><td><span class="trait-cell trait-high">High</span></td><td><span class="trait-cell trait-high">V. Slow</span></td><td><span class="trait-cell trait-med">Fair</span></td><td><span class="trait-cell trait-neutral">In-Person</span></td><td><span class="trait-cell trait-med">Fair</span></td><td><span class="trait-cell trait-high">Low</span></td><td><span class="trait-cell trait-high">Low</span></td></tr>
+            <tr><td><strong>Amy W.</strong><br><span style="font-size:10px;color:var(--text-muted)">Harding Pike</span></td><td><span class="trait-cell trait-low">Low</span></td><td><span class="trait-cell trait-low">Low</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-low">Excellent</span></td><td><span class="trait-cell trait-neutral">Email</span></td><td><span class="trait-cell trait-low">Great</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-low">High</span></td></tr>
+            <tr><td><strong>David C.</strong><br><span style="font-size:10px;color:var(--text-muted)">Hillsboro</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-med">Med</span></td><td><span class="trait-cell trait-low">Fast</span></td><td><span class="trait-cell trait-med">Fair</span></td><td><span class="trait-cell trait-neutral">Text</span></td><td><span class="trait-cell trait-med">Fair</span></td><td><span class="trait-cell trait-low">High</span></td><td><span class="trait-cell trait-med">Med</span></td></tr>
+          </tbody></table>
         </div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">🛡️ Suppression & Approval</div></div>
-          <div class="card-b">
-            <div class="toggle-row"><div><div class="toggle-label">Require Admin Approval</div><div class="toggle-desc">All mailings need approval before sending</div></div><label class="toggle"><input type="checkbox"><span class="slider"></span></label></div>
-            <div class="select-row"><label>Max Pieces per Customer</label><select><option selected>1 per 30 days</option><option>1 per 60 days</option><option>1 per 90 days</option></select></div>
-            <div class="select-row"><label>Default Postage</label><select><option selected>First Class ($0.44)</option><option>Standard ($0.32)</option></select></div>
-            <div class="form-group" style="margin-top:12px"><label>Return Address</label><input type="text" value="Nash Painting, 1301 Aviation Dr, Mt. Juliet, TN 37122"></div>
-          </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">💰 Budget Controls</div></div>
+        <div class="card-b">
+          <div class="form-group"><label>Monthly Budget</label><input type="text" value="$3,000"></div>
+          <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Spent: $2,190</span><span>Remaining: $810</span></div><div class="progress-bar" style="height:12px"><div class="progress-fill" style="width:73%;background:var(--gold)"></div></div></div>
+          <div class="form-group"><label>Alert Threshold</label><select><option>80%</option><option>90%</option><option>95%</option></select></div>
+          <div class="form-group"><label>Auto-pause at limit</label><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div style="font-size:12px;color:var(--text-sec)">4x6: $0.80 · 6x9: $1.10 · 6x11: $1.35 (print + postage)</div>
         </div>
-        <div class="card">
-          <div class="card-h"><div class="card-t">🔄 SendJim Migration Status</div></div>
-          <div class="card-b">
-            <div class="banner banner-success" style="margin-bottom:12px">✅ Migration from SendJim completed successfully on Jan 5, 2026</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-              <div style="padding:12px;background:var(--bg);border-radius:var(--radius-sm);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green)">8,251</div><div style="font-size:11px;color:var(--text-sec)">Contacts Imported ✓</div></div>
-              <div style="padding:12px;background:var(--bg);border-radius:var(--radius-sm);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green)">12</div><div style="font-size:11px;color:var(--text-sec)">Templates Migrated ✓</div></div>
-              <div style="padding:12px;background:var(--bg);border-radius:var(--radius-sm);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green)">6</div><div style="font-size:11px;color:var(--text-sec)">Campaigns Migrated ✓</div></div>
-              <div style="padding:12px;background:var(--bg);border-radius:var(--radius-sm);text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green)">14 mo</div><div style="font-size:11px;color:var(--text-sec)">History Imported ✓</div></div>
-            </div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:12px">SendJim account deactivated. All data now managed natively in NashOS Direct Mail.</div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">🖨️ Fulfillment & QR</div></div>
+        <div class="card-b">
+          <div class="form-group"><label>Provider</label><select><option selected>Lob (Primary)</option><option>PostGrid</option><option>Click2Mail</option></select></div>
+          <div class="form-group"><label>QR Base URL</label><input type="text" value="https://nashpainting.com/m/"></div>
+          <div class="form-group"><label>Error Correction</label><select><option>Medium (M)</option><option>Low (L)</option><option>High (H)</option></select></div>
+          <div class="form-group"><label>QR Size</label><select><option>0.75"</option><option>1"</option><option>1.25"</option></select></div>
+          <div class="form-group"><label>Tracking Code Format</label><div style="font-size:12px;background:var(--bg);padding:8px 12px;border-radius:var(--radius-sm);font-family:monospace">NP-{TYPE} → NP-NBR1, NP-REF1, NP-1YR</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Same code on every card of that type. Tracks design performance, not individual recipients.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-h"><div class="card-t">🚫 Suppression Rules</div></div>
+        <div class="card-b">
+          <div class="form-group"><label>Suppress duplicate mail within</label><select><option>90 days</option><option>60 days</option><option>120 days</option></select></div>
+          <div class="form-group"><label>Suppress if active job</label><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="form-group"><label>Suppress if estimate pending</label><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+          <div class="form-group"><label>Auto-suppress NCOA (moved)</label><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="card-t">🔄 SendJim Migration</div></div>
+        <div class="card-b">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="badge badge-green">Migration Complete</span><span style="font-size:12px;color:var(--text-sec)">Dec 15, 2025</span></div>
+          <div style="font-size:12px;color:var(--text-sec)">
+            <div style="margin-bottom:4px">✅ 4,200 contacts migrated</div>
+            <div style="margin-bottom:4px">✅ 18 templates imported</div>
+            <div style="margin-bottom:4px">✅ 24 months historical data preserved</div>
+            <div style="margin-bottom:4px">✅ Do-Not-Mail list transferred (12 addresses)</div>
+            <div>⚠️ SendJim deactivated — all mail through NashOS</div>
           </div>
         </div>
       </div>
@@ -587,140 +860,212 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
-<!-- ============ CREATE CAMPAIGN MODAL ============ -->
-<div class="modal-overlay" id="campaign-modal" onclick="if(event.target===this)closeModal('campaign-modal')">
+<!-- MODALS -->
+<div class="modal-overlay" id="lookup-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-h"><h3>🔍 Tracking Code Lookup</h3><button class="modal-close" onclick="hideModal('lookup-modal')">×</button></div>
+    <div class="modal-b">
+      <div class="form-group"><label>Enter Tracking Code</label><div style="display:flex;gap:8px"><input type="text" id="codeLookupInput" placeholder="e.g., NP-NBR1" style="flex:1" onkeyup="if(event.key==='Enter')doCodeLookup()"><button class="btn-gold" onclick="doCodeLookup()">Look Up</button></div></div>
+      <div id="codeLookupResult" style="display:none">
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:16px;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div><div style="font-size:18px;font-weight:700;color:var(--navy)" id="lookupCode"></div><div style="font-size:13px;color:var(--text-sec)" id="lookupName"></div></div>
+            <span class="badge badge-green" id="lookupBadge"></span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center">
+            <div><div style="font-size:20px;font-weight:700" id="lookupSent"></div><div style="font-size:10px;color:var(--text-sec)">Total Sent</div></div>
+            <div><div style="font-size:20px;font-weight:700;color:var(--blue)" id="lookupCalls"></div><div style="font-size:10px;color:var(--text-sec)">Calls</div></div>
+            <div><div style="font-size:20px;font-weight:700;color:var(--purple)" id="lookupScans"></div><div style="font-size:10px;color:var(--text-sec)">QR Scans</div></div>
+            <div><div style="font-size:20px;font-weight:700;color:var(--green)" id="lookupLeads"></div><div style="font-size:10px;color:var(--text-sec)">Leads</div></div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
+            <div><div style="font-size:16px;font-weight:700" id="lookupJobs"></div><div style="font-size:10px;color:var(--text-sec)">Jobs Won</div></div>
+            <div><div style="font-size:16px;font-weight:700;color:var(--green)" id="lookupRev"></div><div style="font-size:10px;color:var(--text-sec)">Revenue</div></div>
+            <div><div style="font-size:16px;font-weight:700" id="lookupConv"></div><div style="font-size:10px;color:var(--text-sec)">Conv Rate</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="create-campaign-modal">
   <div class="modal">
-    <h3>✉️ Create New Campaign</h3>
-    <div class="form-group"><label>Campaign Name</label><input type="text" placeholder="e.g. Spring 2026 Exterior Promo"></div>
-    <div class="form-group"><label>Campaign Type</label><select id="new-camp-type"><option value="neighbor">Neighbor Reach</option><option value="lifecycle">Smart Drip (Lifecycle)</option><option value="zone">Zone Blast (Radius)</option><option value="route">Route Mailer (Bulk Route)</option><option value="seasonal">Seasonal Promo</option></select></div>
-    <div class="form-group"><label>Template</label><select><option>We Just Painted Your Neighbor's Home!</option><option>Your Neighbor Chose Nash Painting</option><option>It's Been a Year!</option><option>Welcome to the Neighborhood</option><option>Spring Exterior Special</option><option>Thank You for Choosing Nash</option></select></div>
-    <div class="form-group"><label>Postcard Size</label><select><option>4×6</option><option>6×9</option><option selected>6×11</option><option>8.5×11 (Route Mailer)</option></select></div>
-    <div class="form-group"><label>Trigger</label><select><option>Manual</option><option>On Job Completion</option><option>On Bid Created (7-day delay)</option><option>Anniversary (1 year)</option><option>Scheduled Date</option></select></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
-      <button class="btn-outline-dark" onclick="closeModal('campaign-modal')">Cancel</button>
-      <button class="btn-gold" onclick="closeModal('campaign-modal');alert('Campaign created! (Demo)')">Create Campaign</button>
+    <div class="modal-h"><h3>+ Create Campaign</h3><button class="modal-close" onclick="hideModal('create-campaign-modal')">×</button></div>
+    <div class="modal-b">
+      <div class="form-group"><label>Campaign Name</label><input type="text" placeholder="e.g., Spring 2026 Exterior Promo"></div>
+      <div class="form-group"><label>Campaign Type</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px" id="campTypeGrid">
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">🏠 Neighbor Reach</div><div style="font-size:11px;color:var(--text-sec)">Target homes near completed jobs</div></div>
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">🔄 Smart Drip</div><div style="font-size:11px;color:var(--text-sec)">Lifecycle drip via Campaign Builder</div></div>
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">📍 Zone Blast</div><div style="font-size:11px;color:var(--text-sec)">Radius / map-based targeting</div></div>
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">📮 Route Mailer</div><div style="font-size:11px;color:var(--text-sec)">EDDM — Every Door Direct Mail</div></div>
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">🏡 Homeowner Discovery</div><div style="font-size:11px;color:var(--text-sec)">New homeowner targeting</div></div>
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">☀️ Seasonal Promo</div><div style="font-size:11px;color:var(--text-sec)">Admin-scheduled seasonal</div></div>
+          <div class="camp-type-opt" style="border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s" onclick="selectCampType(this)"><div style="font-size:14px;font-weight:700">🤝 Referral Reach</div><div style="font-size:11px;color:var(--text-sec)">Referral postcards with share link</div></div>
+        </div>
+      </div>
     </div>
+    <div class="modal-f"><button class="btn-outline-dark" onclick="hideModal('create-campaign-modal')">Cancel</button><button class="btn-gold">Continue →</button></div>
   </div>
 </div>
 
-<!-- ============ TEMPLATE PREVIEW MODAL ============ -->
-<div class="modal-overlay" id="template-modal" onclick="if(event.target===this)closeModal('template-modal')">
-  <div class="modal" style="max-width:700px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h3 id="tmpl-modal-title">Template Preview</h3>
-      <button class="btn-outline-dark btn-sm" onclick="closeModal('template-modal')">✕ Close</button>
+<div class="modal-overlay" id="blacklist-modal">
+  <div class="modal" style="max-width:550px">
+    <div class="modal-h"><h3>🚫 Add to Global Blacklist</h3><button class="modal-close" onclick="hideModal('blacklist-modal')">×</button></div>
+    <div class="modal-b">
+      <div class="callout callout-danger" style="margin-bottom:16px"><div style="font-size:12px">This person will receive <strong>zero outreach</strong> across all channels. Action is logged and auditable.</div></div>
+      <div class="form-group"><label>Full Name *</label><input type="text" placeholder="First Last"></div>
+      <div class="grid-2"><div class="form-group"><label>Phone</label><input type="text" placeholder="(615) 555-0000"></div><div class="form-group"><label>Email</label><input type="text" placeholder="email@example.com"></div></div>
+      <div class="form-group"><label>Address</label><input type="text" placeholder="Full address"></div>
+      <div class="form-group"><label>Category *</label><select><option value="">Select…</option><option>Customer Request</option><option>Hostile</option><option>Legal</option><option>Competitor</option><option>Deceased</option><option>Other</option></select></div>
+      <div class="form-group"><label>Notes</label><textarea rows="2" placeholder="Why?"></textarea></div>
     </div>
-    <div id="tmpl-modal-body"></div>
+    <div class="modal-f"><button class="btn-outline-dark" onclick="hideModal('blacklist-modal')">Cancel</button><button class="btn-red">Confirm Blacklist</button></div>
   </div>
 </div>
 
 <script>
-function switchTab(id) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  var el = document.getElementById('tab-' + id);
-  if (el) el.classList.add('active');
-  var names = ['dashboard','campaigns','templates','neighbor','homeowner','roi','settings'];
-  var btns = document.querySelectorAll('.tab-btn');
-  var idx = names.indexOf(id);
-  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
-}
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-function selectProvider(p) {
-  document.getElementById('prov-lob').style.borderColor = p==='lob' ? 'var(--gold)' : 'var(--border)';
-  document.getElementById('prov-lob').style.background = p==='lob' ? '#FDFCF8' : 'var(--white)';
-  document.getElementById('prov-postgrid').style.borderColor = p==='postgrid' ? 'var(--gold)' : 'var(--border)';
-  document.getElementById('prov-postgrid').style.background = p==='postgrid' ? '#FDFCF8' : 'var(--white)';
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Modal
+function showModal(id){document.getElementById(id).classList.add('show')}
+function hideModal(id){document.getElementById(id).classList.remove('show')}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')})});
+
+// Campaign type selection
+function selectCampType(el){
+  document.querySelectorAll('.camp-type-opt').forEach(e=>{e.style.borderColor='var(--border)';e.style.background=''});
+  el.style.borderColor='var(--gold)';el.style.background='#FDFCF8';
 }
 
-var campaigns = [
-  { name:'Neighbor Reach — Exterior', type:'neighbor', typeLbl:'Neighbor Reach', trigger:'On Job Completion', template:"We Just Painted Your Neighbor's Home!", sent:412, lastSent:'Mar 1, 2026', status:'active' },
-  { name:'Neighbor Reach — Belle Meade Custom', type:'neighbor', typeLbl:'Neighbor Reach', trigger:'On Job Completion', template:'Your Neighbor Chose Nash Painting', sent:89, lastSent:'Feb 23, 2026', status:'active' },
-  { name:'Smart Drip — Bid Follow-Up', type:'lifecycle', typeLbl:'Smart Drip', trigger:'On Bid Created (7-day)', template:'Still Thinking About Your Project?', sent:186, lastSent:'Feb 28, 2026', status:'active' },
-  { name:'Smart Drip — Thank You', type:'lifecycle', typeLbl:'Smart Drip', trigger:'On Job Completion (3-day)', template:'Thank You for Choosing Nash', sent:94, lastSent:'Feb 27, 2026', status:'active' },
-  { name:'Smart Drip — 1-Year Anniversary', type:'lifecycle', typeLbl:'Smart Drip', trigger:'Anniversary (365 days)', template:"It's Been a Year!", sent:62, lastSent:'Mar 1, 2026', status:'active' },
-  { name:'Spring Exterior Promo 2026', type:'seasonal', typeLbl:'Seasonal Promo', trigger:'Scheduled (Mar 1)', template:'Spring Exterior Special', sent:1200, lastSent:'Mar 1, 2026', status:'active' },
-  { name:'Zone Blast — Belle Meade', type:'zone', typeLbl:'Zone Blast', trigger:'Manual (radius)', template:"Nashville's Trusted Painters", sent:500, lastSent:'Feb 22, 2026', status:'active' },
-  { name:'Zone Blast — Brentwood', type:'zone', typeLbl:'Zone Blast', trigger:'Manual (radius)', template:"Nashville's Trusted Painters", sent:300, lastSent:'Feb 10, 2026', status:'completed' },
-  { name:'Route Mailer — 37215', type:'route', typeLbl:'Route Mailer', trigger:'USPS Route (biweekly)', template:'Nash Painting Route Mailer', sent:549, lastSent:'Feb 18, 2026', status:'paused' },
-  { name:'Route Mailer — 37205', type:'route', typeLbl:'Route Mailer', trigger:'USPS Route (monthly)', template:'Nash Painting Route Mailer', sent:420, lastSent:'Feb 1, 2026', status:'paused' },
-  { name:'Winter Interior Promo', type:'seasonal', typeLbl:'Seasonal Promo', trigger:'Scheduled (Dec 1)', template:'Cozy Up Your Interior', sent:800, lastSent:'Dec 1, 2025', status:'completed' },
-  { name:'Smart Drip — Review Request', type:'lifecycle', typeLbl:'Smart Drip', trigger:'On Job Completion (14-day)', template:'How Did We Do?', sent:148, lastSent:'Feb 26, 2026', status:'active' },
-  { name:'Smart Drip — Referral Card', type:'lifecycle', typeLbl:'Smart Drip', trigger:'On Job Completion (30-day)', template:'Know Someone Who Needs Painting?', sent:120, lastSent:'Feb 20, 2026', status:'active' },
-  { name:'Fall Deck Season 2025', type:'seasonal', typeLbl:'Seasonal Promo', trigger:'Scheduled (Sep 15)', template:'Deck Season Is Here', sent:600, lastSent:'Sep 15, 2025', status:'completed' },
-  { name:'Zone Blast — Franklin', type:'zone', typeLbl:'Zone Blast', trigger:'Manual (radius)', template:"Nashville's Trusted Painters", sent:0, lastSent:'—', status:'draft' },
-  { name:'Smart Drip — Collections', type:'lifecycle', typeLbl:'Smart Drip', trigger:'On Invoice 60-day Past Due', template:'Friendly Payment Reminder', sent:12, lastSent:'Feb 15, 2026', status:'active' },
+// Code lookup data
+const codeData={
+  'NP-NBR1':{name:'Neighbor Exterior',cat:'Neighbor Reach',sent:'2,460',calls:'142',scans:'71',leads:'58',jobs:'14',rev:'$52,800',conv:'2.3%'},
+  'NP-NBR2':{name:'Neighbor Interior',cat:'Neighbor Reach',sent:'1,230',calls:'66',scans:'24',leads:'24',jobs:'6',rev:'$21,600',conv:'2.0%'},
+  'NP-REF1':{name:'Referral Reach',cat:'Referral Reach',sent:'936',calls:'84',scans:'42',leads:'36',jobs:'11',rev:'$38,500',conv:'3.8%'},
+  'NP-BID1':{name:'Bid Follow-Up',cat:'Smart Drip',sent:'552',calls:'93',scans:'24',leads:'42',jobs:'18',rev:'$61,200',conv:'7.6%'},
+  'NP-REV1':{name:'Review Request',cat:'Smart Drip',sent:'861',calls:'18',scans:'36',leads:'9',jobs:'2',rev:'$7,200',conv:'1.0%'},
+  'NP-1YR':{name:'1-Year Anniversary',cat:'Smart Drip',sent:'738',calls:'54',scans:'33',leads:'27',jobs:'9',rev:'$28,800',conv:'3.7%'},
+  'NP-6MO':{name:'6-Month Check-In',cat:'Smart Drip',sent:'594',calls:'42',scans:'27',leads:'21',jobs:'7',rev:'$19,600',conv:'3.5%'},
+  'NP-2YR':{name:'2-Year Anniversary',cat:'Smart Drip',sent:'388',calls:'28',scans:'14',leads:'12',jobs:'4',rev:'$14,400',conv:'3.1%'},
+  'NP-ANN':{name:'Annual Check-In',cat:'Smart Drip',sent:'1,062',calls:'36',scans:'18',leads:'15',jobs:'4',rev:'$12,800',conv:'1.4%'},
+  'NP-DUE1':{name:'Overdue Reminder',cat:'Collections',sent:'48',calls:'12',scans:'2',leads:'6',jobs:'0',rev:'$0',conv:'0%'},
+  'NP-SPR1':{name:'Spring Promo 2026',cat:'Seasonal',sent:'390',calls:'—',scans:'—',leads:'—',jobs:'—',rev:'—',conv:'—'},
+  'NP-EDDM':{name:'EDDM Route Mailer',cat:'Route Mailer',sent:'0',calls:'0',scans:'0',leads:'0',jobs:'0',rev:'$0',conv:'0%'},
+};
+function doCodeLookup(){
+  const v=document.getElementById('codeLookupInput').value.trim().toUpperCase();
+  const d=codeData[v];
+  const r=document.getElementById('codeLookupResult');
+  if(!d){r.style.display='none';return;}
+  r.style.display='block';
+  document.getElementById('lookupCode').textContent=v;
+  document.getElementById('lookupName').textContent=d.name;
+  document.getElementById('lookupBadge').textContent=d.cat;
+  document.getElementById('lookupSent').textContent=d.sent;
+  document.getElementById('lookupCalls').textContent=d.calls;
+  document.getElementById('lookupScans').textContent=d.scans;
+  document.getElementById('lookupLeads').textContent=d.leads;
+  document.getElementById('lookupJobs').textContent=d.jobs;
+  document.getElementById('lookupRev').textContent=d.rev;
+  document.getElementById('lookupConv').textContent=d.conv;
+}
+
+// Campaign data
+const campaigns=[
+  {name:'Exterior Neighbor March',type:'Neighbor Reach',code:'NP-NBR1',tmpl:'Neighbor Exterior',sent:820,del:792,calls:47,qr:24,leads:19,cost:'$656',status:'Active'},
+  {name:'Interior Neighbor Q1',type:'Neighbor Reach',code:'NP-NBR2',tmpl:'Neighbor Interior',sent:410,del:394,calls:22,qr:8,leads:8,cost:'$328',status:'Active'},
+  {name:'Post-Job Referral Drip',type:'Referral Reach',code:'NP-REF1',tmpl:'Referral Card',sent:312,del:304,calls:28,qr:14,leads:12,cost:'$250',status:'Active'},
+  {name:'Bid Follow-Up Postcards',type:'Smart Drip',code:'NP-BID1',tmpl:'Bid Follow-Up',sent:184,del:179,calls:31,qr:8,leads:14,cost:'$147',status:'Active'},
+  {name:'1-Year Anniversary',type:'Smart Drip',code:'NP-1YR',tmpl:'Anniversary Card',sent:246,del:240,calls:18,qr:11,leads:9,cost:'$197',status:'Active'},
+  {name:'6-Month Check-In',type:'Smart Drip',code:'NP-6MO',tmpl:'Check-In Card',sent:198,del:193,calls:14,qr:9,leads:7,cost:'$158',status:'Active'},
+  {name:'Review Request Cards',type:'Smart Drip',code:'NP-REV1',tmpl:'Review Request',sent:287,del:280,calls:6,qr:12,leads:3,cost:'$230',status:'Active'},
+  {name:'2-Year Re-engagement',type:'Smart Drip',code:'NP-2YR',tmpl:'Anniversary Card',sent:129,del:126,calls:9,qr:5,leads:4,cost:'$103',status:'Active'},
+  {name:'Annual Check-In (3yr+)',type:'Smart Drip',code:'NP-ANN',tmpl:'Check-In Card',sent:354,del:346,calls:12,qr:6,leads:5,cost:'$283',status:'Active'},
+  {name:'Spring 2026 Promo',type:'Seasonal Promo',code:'NP-SPR1',tmpl:'Spring Promo',sent:0,del:0,calls:0,qr:0,leads:0,cost:'$0',status:'Scheduled'},
+  {name:'Green Hills Zone Blast',type:'Zone Blast',code:'NP-NBR1',tmpl:'Neighbor Exterior',sent:340,del:327,calls:18,qr:10,leads:7,cost:'$272',status:'Active'},
+  {name:'Brentwood EDDM Q1',type:'Route Mailer',code:'NP-EDDM',tmpl:'Route Mailer',sent:0,del:0,calls:0,qr:0,leads:0,cost:'$0',status:'Paused'},
+  {name:'New Homeowner Franklin',type:'Homeowner Discovery',code:'NP-NBR1',tmpl:'New Homeowner',sent:180,del:174,calls:12,qr:6,leads:5,cost:'$144',status:'Active'},
+  {name:'Fall 2025 Promo',type:'Seasonal Promo',code:'NP-FALL',tmpl:'Fall Promo',sent:1200,del:1152,calls:62,qr:34,leads:28,cost:'$960',status:'Completed'},
+  {name:'Belle Meade Zone Q4',type:'Zone Blast',code:'NP-NBR1',tmpl:'Neighbor Exterior',sent:500,del:480,calls:28,qr:14,leads:12,cost:'$400',status:'Completed'},
+  {name:'Overdue Invoice Mailer',type:'Smart Drip',code:'NP-DUE1',tmpl:'Overdue Reminder',sent:48,del:47,calls:12,qr:2,leads:6,cost:'$38',status:'Active'},
 ];
-
-var typeBadge = { neighbor:'badge-green', lifecycle:'badge-blue', zone:'badge-orange', route:'badge-navy', seasonal:'badge-purple', homeowner:'badge-yellow' };
-var statusBadge = { active:'badge-green', paused:'badge-yellow', draft:'badge-navy', completed:'badge-blue' };
-var statusLabel = { active:'● Active', paused:'● Paused', draft:'◯ Draft', completed:'✓ Completed' };
-
-function renderCampaigns(data) {
-  var tbody = document.getElementById('campaign-tbody');
-  tbody.innerHTML = data.map(function(c) {
-    var actions = '<button class="btn-outline-dark btn-sm" onclick="alert(\'Edit: ' + c.name.replace(/'/g,"\\'") + '\')">Edit</button> ';
-    if (c.status === 'active') actions += '<button class="btn-outline-dark btn-sm" onclick="this.textContent=\'Paused\';this.disabled=true">Pause</button>';
-    if (c.status === 'paused') actions += '<button class="btn-gold btn-sm" onclick="this.textContent=\'Resumed\';this.disabled=true">Resume</button>';
-    return '<tr data-type="'+c.type+'" data-status="'+c.status+'"><td style="font-weight:600">'+c.name+'</td><td><span class="badge '+typeBadge[c.type]+'">'+c.typeLbl+'</span></td><td style="font-size:12px;color:var(--text-sec)">'+c.trigger+'</td><td style="font-size:12px">'+c.template+'</td><td>'+c.sent.toLocaleString()+'</td><td style="font-size:12px">'+c.lastSent+'</td><td><span class="badge '+statusBadge[c.status]+'">'+statusLabel[c.status]+'</span></td><td>'+actions+'</td></tr>';
-  }).join('');
+const badgeClasses={
+  'Neighbor Reach':'badge-green','Smart Drip':'badge-purple','Zone Blast':'badge-blue',
+  'Route Mailer':'badge-navy','Homeowner Discovery':'badge-orange','Seasonal Promo':'badge-yellow','Referral Reach':'badge-blue',
+  'Active':'badge-green','Scheduled':'badge-blue','Paused':'badge-yellow','Completed':'badge-navy'
+};
+function renderCampaigns(list){
+  const b=document.getElementById('campaignBody');
+  b.innerHTML=list.map(c=>`<tr>
+    <td><strong>${c.name}</strong></td>
+    <td><span class="badge ${badgeClasses[c.type]||'badge-navy'}">${c.type}</span></td>
+    <td><code>${c.code}</code></td><td>${c.tmpl}</td>
+    <td>${c.sent.toLocaleString()}</td><td>${c.del.toLocaleString()}</td><td>${c.calls}</td><td>${c.qr}</td><td>${c.leads}</td><td>${c.cost}</td>
+    <td><span class="badge ${badgeClasses[c.status]||'badge-navy'}">● ${c.status}</span></td>
+    <td><button class="btn-outline-dark btn-sm">View</button></td>
+  </tr>`).join('');
 }
-
-function filterCampaigns() {
-  var type = document.getElementById('camp-filter-type').value;
-  var status = document.getElementById('camp-filter-status').value;
-  var filtered = campaigns.filter(function(c) { return (!type || c.type===type) && (!status || c.status===status); });
-  renderCampaigns(filtered);
+function filterCampaigns(){
+  const t=document.getElementById('campTypeFilter').value;
+  const s=document.getElementById('campStatusFilter').value;
+  const q=document.getElementById('campSearch').value.toLowerCase();
+  renderCampaigns(campaigns.filter(c=>(!t||c.type===t)&&(!s||c.status===s)&&(!q||c.name.toLowerCase().includes(q))));
 }
-
-var templates = [
-  { name:"We Just Painted Your Neighbor's Home!", cat:'neighbor', catLbl:'Neighbor Reach', size:'4x6', icon:'🏠', color:'var(--green)', lastUsed:'Mar 1, 2026', sent:501, headline:"We Just Painted Your Neighbor's Home!", subtext:"The {{customer.lastName}} family chose Nash Painting for their exterior project at {{job.address.street}}. Your home could be next!", backText:"Hi {{recipient.firstName}},\n\nYour neighbor just had their home beautifully painted by Nash Painting. As Nashville's most-reviewed painting company ({{company.reviewCount}}+ reviews, {{company.avgRating}} stars), we'd love to help you too.\n\nScan the QR code for a free estimate!\n\nNash Painting\n615-829-6858" },
-  { name:"Your Neighbor Chose Nash Painting", cat:'neighbor', catLbl:'Neighbor Reach', size:'6x9', icon:'🎨', color:'var(--green)', lastUsed:'Feb 23, 2026', sent:89, headline:"Your Neighbor Chose Nash Painting", subtext:"Beautiful results at {{job.address.street}}. See what we can do for your home.", backText:"Dear Neighbor,\n\nWe recently completed a {{job.serviceType}} project near your home. The results speak for themselves!\n\n✓ Licensed & Insured\n✓ {{company.reviewCount}}+ 5-Star Reviews\n✓ Free Color Consultation\n\nScan for your free estimate →" },
-  { name:"Still Thinking About Your Project?", cat:'followup', catLbl:'Bid Follow-Up', size:'4x6', icon:'💭', color:'var(--blue)', lastUsed:'Feb 28, 2026', sent:186, headline:"Still Thinking About Your Project?", subtext:"Hi {{customer.firstName}}, we sent you an estimate on {{estimate.date}}. We'd love to bring your vision to life!", backText:"{{customer.firstName}},\n\nWe know choosing a painter is a big decision. That's why we offer:\n\n✓ 2-Year Warranty on all work\n✓ Premium Sherwin-Williams paints\n✓ Background-checked crews\n\nYour estimate: {{estimate.total}}\nValid through: {{estimate.expiryDate}}\n\nQuestions? Call us: 615-829-6858" },
-  { name:"Thank You for Choosing Nash", cat:'thankyou', catLbl:'Thank You', size:'4x6', icon:'🙏', color:'var(--gold)', lastUsed:'Feb 27, 2026', sent:94, headline:"Thank You, {{customer.firstName}}!", subtext:"We loved working on your {{job.serviceType}} project. Here's a little something from the Nash family.", backText:"Dear {{customer.firstName}},\n\nThank you for trusting Nash Painting with your home. We hope you love the results!\n\nRefer a friend and receive $100 off your next project.\n\nReferral code: NASH-{{customer.id}}\n\n— Bill & the Nash Painting team" },
-  { name:"It's Been a Year!", cat:'anniversary', catLbl:'Anniversary', size:'6x9', icon:'🎂', color:'var(--purple)', lastUsed:'Mar 1, 2026', sent:62, headline:"Happy Paint-iversary!", subtext:"It's been one year since we transformed your home. How's everything holding up?", backText:"Hi {{customer.firstName}},\n\nCan you believe it's been a year since we painted your {{job.serviceType}}? Time flies!\n\nWe'd love to:\n✓ Do a free touch-up inspection\n✓ Help with any new projects\n✓ Give you 10% off your next service\n\nCode: ANNIVERSARY10\nExpires: {{anniversary.expiry}}" },
-  { name:"Spring Exterior Special", cat:'seasonal', catLbl:'Seasonal', size:'6x11', icon:'🌸', color:'var(--green)', lastUsed:'Mar 1, 2026', sent:1200, headline:"Spring Is Here — Time to Refresh Your Exterior!", subtext:"Book your exterior painting project this spring and save. Nashville's #1 rated painters.", backText:"SPRING SPECIAL — Book by April 30\n\n✓ 15% off exterior painting\n✓ Free power washing included\n✓ Premium Sherwin-Williams Duration paint\n✓ 2-year warranty\n\n{{company.reviewCount}}+ reviews · {{company.avgRating}} stars\n\nScan for your free estimate →\n\nNash Painting · 615-829-6858\nnashpainting.com" },
-  { name:"Welcome to the Neighborhood", cat:'homeowner', catLbl:'New Homeowner', size:'6x9', icon:'🏡', color:'var(--gold)', lastUsed:'Preview', sent:0, headline:"Welcome to {{recipient.neighborhood}}!", subtext:"Congratulations on your new home! Nash Painting has served this neighborhood for 20+ years.", backText:"Dear New Homeowner,\n\nWelcome to the neighborhood! We've painted hundreds of homes in {{recipient.neighborhood}}.\n\nNew homeowner special:\n✓ Free color consultation\n✓ 10% off your first project\n✓ Interior & Exterior services\n\nCode: WELCOME10\n\nNash Painting · 615-829-6858" },
-  { name:"Know Someone Who Needs Painting?", cat:'referral', catLbl:'Referral', size:'4x6', icon:'👥', color:'var(--blue)', lastUsed:'Feb 20, 2026', sent:120, headline:"Spread the Word, Get Rewarded!", subtext:"Refer a friend to Nash Painting and you both save.", backText:"{{customer.firstName}},\n\nLoved your experience with Nash Painting? Share the love!\n\n🎁 You get: $100 off your next project\n🎁 They get: $100 off their first project\n\nReferral code: NASH-{{customer.id}}\n\nJust have them mention your name or scan this code when booking.\n\n615-829-6858 · nashpainting.com" },
-  { name:"How Did We Do?", cat:'review', catLbl:'Review Request', size:'4x6', icon:'⭐', color:'var(--yellow)', lastUsed:'Feb 26, 2026', sent:148, headline:"How Did We Do?", subtext:"Your feedback means the world to us, {{customer.firstName}}.", backText:"Hi {{customer.firstName}},\n\nWe hope you're enjoying your freshly painted {{job.serviceType}}!\n\nWould you mind leaving us a quick review? It helps other Nashville homeowners find quality painters.\n\nScan the QR code to leave a Google review — it only takes 30 seconds!\n\nThank you!\n— The Nash Painting Team" },
-  { name:"Friendly Payment Reminder", cat:'collections', catLbl:'Collections', size:'4x6', icon:'📮', color:'var(--red)', lastUsed:'Feb 15, 2026', sent:12, headline:"A Friendly Reminder", subtext:"Hi {{customer.firstName}}, we have an outstanding balance on your account.", backText:"Dear {{customer.firstName}},\n\nWe hope you're enjoying your beautiful new paint! We wanted to reach out about invoice #{{invoice.number}} for {{invoice.total}}, which was due on {{invoice.dueDate}}.\n\nPay online: nashpainting.com/pay\nCall: 615-829-6858\n\nThank you!\n— Nash Painting Accounts" },
-  { name:"Nash Painting Route Mailer", cat:'route', catLbl:'Route Mailer', size:'8.5x11', icon:'📬', color:'var(--navy)', lastUsed:'Feb 18, 2026', sent:969, headline:"Nashville's Most-Reviewed Painting Company", subtext:"Interior · Exterior · Cabinets · Decks — Serving your neighborhood for 20+ years.", backText:"WHY NASH PAINTING?\n\n✓ {{company.reviewCount}}+ Five-Star Reviews\n✓ Licensed, Insured & Bonded\n✓ Background-Checked Crews\n✓ 2-Year Warranty\n✓ Premium Sherwin-Williams Paints\n✓ Free Color Consultation\n\nSERVICES:\n• Interior Painting\n• Exterior Painting\n• Cabinet Refinishing\n• Deck Staining\n• Commercial Painting\n\nFree Estimate: 615-829-6858\nnashpainting.com\n\nScan QR for instant quote →" },
-  { name:"Deck Season Is Here", cat:'seasonal', catLbl:'Seasonal', size:'6x9', icon:'🪵', color:'var(--gold)', lastUsed:'Sep 15, 2025', sent:600, headline:"Your Deck Deserves Better", subtext:"Fall is the perfect time to stain or refinish your deck. Book now before the rush!", backText:"DECK SEASON SPECIAL\n\nBook by October 31 and save:\n✓ 10% off deck staining\n✓ Free wood assessment\n✓ Premium stain products\n✓ 2-year warranty\n\nBefore the cold sets in, protect your investment.\n\nNash Painting · 615-829-6858" },
-];
-
-function renderTemplates(data) {
-  var grid = document.getElementById('template-grid');
-  grid.innerHTML = data.map(function(t, i) {
-    return '<div class="template-card" onclick="showTemplateDetail('+i+')" data-cat="'+t.cat+'" data-size="'+t.size+'"><div class="template-thumb" style="background:linear-gradient(135deg,'+t.color+'22,'+t.color+'08)"><span style="font-size:48px">'+t.icon+'</span><span style="position:absolute;bottom:8px;right:10px;font-size:10px;background:var(--navy);color:#fff;padding:2px 8px;border-radius:10px">'+t.size+'</span></div><div class="template-info"><div class="template-name">'+t.name+'</div><div class="template-meta"><span class="badge '+(typeBadge[t.cat]||'badge-navy')+'" style="font-size:10px;padding:2px 6px">'+t.catLbl+'</span><span>'+t.sent.toLocaleString()+' sent</span><span>Last: '+t.lastUsed+'</span></div></div></div>';
-  }).join('');
-}
-
-function filterTemplates() {
-  var cat = document.getElementById('tmpl-filter').value;
-  var size = document.getElementById('tmpl-size-filter').value;
-  var filtered = templates.filter(function(t) { return (!cat || t.cat===cat) && (!size || t.size===size); });
-  renderTemplates(filtered);
-}
-
-function showTemplateDetail(idx) {
-  var t = templates[idx];
-  openModal('template-modal');
-  document.getElementById('tmpl-modal-title').textContent = t.name;
-  var allText = t.headline + ' ' + t.subtext + ' ' + t.backText;
-  var matches = allText.match(/\{\{[^}]+\}\}/g) || [];
-  var unique = [];
-  matches.forEach(function(m) { if (unique.indexOf(m) === -1) unique.push(m); });
-
-  function hl(str) { return str.replace(/\{\{([^}]+)\}\}/g, '<span class="merge-field">{{$1}}</span>'); }
-
-  document.getElementById('tmpl-modal-body').innerHTML =
-    '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"><span class="badge '+(typeBadge[t.cat]||'badge-navy')+'">'+t.catLbl+'</span><span class="badge badge-navy">'+t.size+'</span><span class="badge badge-navy">'+t.sent.toLocaleString()+' sent</span></div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sec);margin-bottom:8px">Front</div><div class="postcard"><div class="postcard-front" style="min-height:200px"><div class="postcard-label">FRONT</div><div class="postcard-logo">Nash<span>Painting</span></div><div><div class="postcard-headline">'+hl(t.headline)+'</div><div class="postcard-subtext">'+hl(t.subtext)+'</div></div><div class="postcard-qr">QR<br>CODE</div></div></div></div><div><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sec);margin-bottom:8px">Back</div><div class="postcard"><div class="postcard-back" style="min-height:200px"><div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Back Side</div><div style="font-size:12px;line-height:1.6;white-space:pre-line;color:var(--text)">'+hl(t.backText)+'</div></div></div></div></div>' +
-    '<div style="margin-top:16px;padding:14px;background:var(--bg);border-radius:var(--radius-sm)"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-sec);margin-bottom:8px">Merge Fields ('+unique.length+')</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+unique.map(function(f) { return '<span class="merge-field" style="font-size:12px;padding:3px 8px">'+f+'</span>'; }).join('')+'</div></div>';
-}
-
 renderCampaigns(campaigns);
+
+// Templates
+const templates=[
+  {name:'Neighbor Exterior',code:'NP-NBR1',cat:'neighbor',priv:'safe',headline:'Your Neighbors Just Got a Fresh Look!',sub:'We just completed a beautiful exterior painting on your street.',back:'Mention code NP-NBR1 when you call for a free estimate!'},
+  {name:'Neighbor Interior',code:'NP-NBR2',cat:'neighbor',priv:'safe',headline:'Beautiful Interior Transformation Nearby!',sub:'A home on your street just got a stunning interior makeover.',back:'Mention code NP-NBR2 for a free interior estimate!'},
+  {name:'Referral Card',code:'NP-REF1',cat:'referral',priv:'direct',headline:'Know Someone Who Needs Painting?',sub:'Earn $75 for every referral that books!',back:'Scan QR or visit nashpainting.com/refer · Code NP-REF1'},
+  {name:'Bid Follow-Up',code:'NP-BID1',cat:'follow-up',priv:'direct',headline:'Still Thinking About Your Project?',sub:'We saved your custom estimate — let\'s make it happen.',back:'Mention code NP-BID1 · Your estimate is waiting!'},
+  {name:'Review Request',code:'NP-REV1',cat:'review',priv:'direct',headline:'How Did We Do?',sub:'Your opinion helps Nashville homeowners find quality painters.',back:'Scan to leave a review · Code NP-REV1'},
+  {name:'6-Month Check-In',code:'NP-6MO',cat:'lifecycle',priv:'direct',headline:'It\'s Been 6 Months!',sub:'Time for a check-in on your painting project.',back:'Mention code NP-6MO for a free touch-up consultation!'},
+  {name:'1-Year Anniversary',code:'NP-1YR',cat:'lifecycle',priv:'direct',headline:'Happy 1-Year Anniversary!',sub:'It\'s been a year since we transformed your home.',back:'Anniversary special: 10% off · Code NP-1YR'},
+  {name:'2-Year Anniversary',code:'NP-2YR',cat:'lifecycle',priv:'direct',headline:'Two Years Already!',sub:'Your home may be ready for its next refresh.',back:'Mention code NP-2YR for a free re-estimate!'},
+  {name:'Annual Check-In',code:'NP-ANN',cat:'lifecycle',priv:'direct',headline:'Your Annual Paint Check-In',sub:'Keeping your home looking its best, year after year.',back:'Schedule a free inspection · Code NP-ANN'},
+  {name:'Spring Promo 2026',code:'NP-SPR1',cat:'seasonal',priv:'safe',headline:'Spring Into a Fresh Look!',sub:'Book your spring painting project and save 15%.',back:'Spring special: 15% off exterior · Code NP-SPR1'},
+  {name:'Overdue Reminder',code:'NP-DUE1',cat:'collections',priv:'direct',headline:'Important: Balance Due',sub:'Please contact us regarding your outstanding balance.',back:'Call (615) 829-6858 · Reference NP-DUE1'},
+  {name:'EDDM Route Mailer',code:'NP-EDDM',cat:'neighbor',priv:'safe',headline:'Nashville\'s #1 Reviewed Painters',sub:'Professional interior & exterior painting for your neighborhood.',back:'Free estimate: nashpainting.com · Code NP-EDDM'},
+  {name:'New Homeowner Welcome',code:'NP-NEW1',cat:'neighbor',priv:'safe',headline:'Welcome to the Neighborhood!',sub:'Make your new house feel like home with fresh paint.',back:'New homeowner special · Code NP-NEW1'},
+];
+function renderTemplates(list){
+  document.getElementById('templateGrid').innerHTML=list.map(t=>`
+    <div class="template-card" onclick="showTemplatePreview('${t.name}','${t.code}','${t.priv}',\`${t.headline}\`,\`${t.sub}\`,\`${t.back}\`)">
+      <div class="template-thumb">
+        <div><div style="font-size:10px;opacity:.6;margin-bottom:4px">NASH PAINTING</div>${t.headline}</div>
+        <span class="priv-badge ${t.priv==='safe'?'priv-safe':'priv-direct'}">${t.priv==='safe'?'Privacy Safe ✓':'Direct Only'}</span>
+      </div>
+      <div class="template-info">
+        <h4>${t.name}</h4>
+        <p><code>${t.code}</code> · ${t.cat}</p>
+      </div>
+    </div>`).join('');
+}
+function showTemplatePreview(name,code,priv,headline,sub,back){
+  document.getElementById('templatePreviewCard').style.display='block';
+  document.getElementById('previewTitle').textContent='Preview: '+name;
+  document.getElementById('previewHeadline').textContent=headline;
+  document.getElementById('previewSubtext').textContent=sub;
+  document.getElementById('previewCode').textContent='Ref: '+code;
+  document.getElementById('previewBackText').innerHTML='Mention code <strong>'+code+'</strong> · '+back;
+  document.getElementById('templatePreviewCard').scrollIntoView({behavior:'smooth'});
+}
+function filterTemplates(){
+  const c=document.getElementById('tmplCatFilter').value;
+  const p=document.getElementById('tmplPrivFilter').value;
+  renderTemplates(templates.filter(t=>(!c||t.cat===c)&&(!p||t.priv===p)));
+}
 renderTemplates(templates);
 </script>
 </body>
