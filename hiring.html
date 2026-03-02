@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>NashOS — Hiring & Recruitment</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3D5F;
+  --gold: #C4A962;
+  --gold-light: #D4BE82;
+  --bg: #F5F3EF;
+  --white: #FFFFFF;
+  --border: #E2DFD8;
+  --text: #1B2A4A;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --yellow: #F59E0B;
+  --yellow-bg: #FFFBEB;
+  --blue: #2563EB;
+  --blue-bg: #EFF6FF;
+  --orange: #EA580C;
+  --orange-bg: #FFF7ED;
+  --purple: #7C3AED;
+  --purple-bg: #F5F3FF;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:14px;max-width:430px;margin:0 auto;min-height:100vh;position:relative}
+.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.logo{width:32px;height:32px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--navy)}
+.topbar-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.role-select{background:var(--navy-light);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:12px;padding:5px 8px;border-radius:6px;outline:none;cursor:pointer}
+.role-select option{background:var(--navy);color:#fff}
+.notif-bell{font-size:18px;cursor:pointer;position:relative}
+.notif-dot{position:absolute;top:-2px;right:-4px;width:8px;height:8px;background:var(--red);border-radius:50%}
+.tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:56px;z-index:90}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 14px;font-size:12px;font-weight:600;color:var(--text-sec);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.main{padding:16px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.kpi{background:var(--white);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-sec);margin-bottom:4px}
+.kpi-value{font-size:24px;font-weight:700;color:var(--navy);line-height:1.1}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.card-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.card-body{padding:14px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;gap:3px}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+.badge-gray{background:#F3F4F6;color:var(--text-sec)}
+.badge-gold{background:rgba(196,169,98,.12);color:#96792F}
+.pill{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;background:#F3F4F6;color:var(--text-sec);margin:1px}
+.btn{padding:8px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--bg)}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:transparent;border:1px solid rgba(220,38,38,.3);color:var(--red)}
+.btn-red:hover{background:var(--red-bg)}
+.btn-block{width:100%;justify-content:center}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.feed-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+.feed-item:last-child{border-bottom:none}
+.feed-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.feed-text{font-size:13px;line-height:1.4}
+.feed-time{font-size:11px;color:var(--text-muted)}
+.posting{padding:14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.posting:last-child{border-bottom:none}
+.posting:hover{background:#FAFAF8}
+.posting-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.posting-title{font-size:14px;font-weight:600}
+.posting-channels{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.posting-stats{display:flex;gap:14px;margin-top:6px;font-size:12px;color:var(--text-sec)}
+.applicant{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.applicant:last-child{border-bottom:none}
+.applicant:hover{background:#FAFAF8}
+.applicant-top{display:flex;justify-content:space-between;align-items:flex-start}
+.applicant-name{font-size:14px;font-weight:600}
+.applicant-info{font-size:12px;color:var(--text-sec);margin-top:2px}
+.applicant-pills{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.applicant-actions{display:flex;gap:6px;margin-top:8px;align-items:center}
+.filter-bar{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-pill{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);color:var(--text-sec);background:var(--white);white-space:nowrap;transition:all .15s}
+.filter-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.filter-pill:hover{border-color:var(--gold)}
+.pipeline-col{margin-bottom:16px}
+.pipeline-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:8px}
+.pipeline-stage{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.pipeline-count{background:var(--navy);color:#fff;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px}
+.pipeline-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;border-left:3px solid var(--gold)}
+.pipeline-card:hover{box-shadow:var(--shadow-md)}
+.pipeline-card-name{font-size:13px;font-weight:600}
+.pipeline-card-info{font-size:12px;color:var(--text-sec);margin-top:2px}
+.pipeline-card-action{font-size:11px;color:#96792F;font-weight:600;margin-top:6px}
+.screen-section{margin-bottom:20px}
+.screen-section-title{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.screen-q{padding:10px 14px;background:var(--white);border-radius:var(--radius-sm);margin-bottom:6px;box-shadow:var(--shadow)}
+.screen-q-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.screen-q-text{font-size:13px;font-weight:500;flex:1}
+.screen-q-note{font-size:11px;color:var(--text-muted);margin-top:3px;font-style:italic}
+.screen-q-ko{color:var(--red);font-size:11px;font-weight:700;flex-shrink:0}
+.toggle{width:36px;height:20px;background:var(--border);border-radius:10px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.toggle.on::after{left:18px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:13px;font-weight:500}
+.setting-status{font-size:12px;display:flex;align-items:center;gap:6px}
+.status-dot{width:8px;height:8px;border-radius:50%}
+.status-dot.green{background:var(--green)}
+.status-dot.gray{background:var(--text-muted)}
+.overlay-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;display:none}
+.overlay-bg.open{display:block}
+.drawer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;max-height:90vh;background:var(--white);border-radius:16px 16px 0 0;z-index:201;display:none;flex-direction:column;overflow:hidden}
+.drawer.open{display:flex}
+.drawer-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 6px}
+.drawer-header{padding:10px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.drawer-title{font-size:16px;font-weight:700}
+.drawer-close{width:28px;height:28px;border:none;background:var(--bg);border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text-sec)}
+.drawer-body{padding:16px;overflow-y:auto;flex:1}
+.drawer-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-sec);margin-bottom:5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--white);outline:none;font-family:inherit}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-check{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px}
+.form-check input[type="checkbox"]{width:16px;height:16px;accent-color:var(--navy)}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.specialty-picker{display:none;margin-top:8px}
+.specialty-picker.show{display:block}
+.detail-section{margin-bottom:16px}
+.detail-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-sec);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.detail-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.detail-row-label{color:var(--text-sec)}
+.detail-row-value{font-weight:500;text-align:right;max-width:55%}
+.timeline-item{display:flex;gap:10px;padding:6px 0}
+.timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:4px;flex-shrink:0}
+.timeline-text{font-size:12px}
+.timeline-date{font-size:11px;color:var(--text-muted)}
+.notes-area{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;min-height:60px;font-family:inherit;resize:vertical}
+.template-card{padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:all .15s}
+.template-card:hover{border-color:var(--gold);background:#FAFAF8}
+.template-card-title{font-size:13px;font-weight:600}
+.template-card-preview{font-size:12px;color:var(--text-sec);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">N</div>
+    <span class="topbar-title">Hiring</span>
+  </div>
+  <div class="topbar-right">
+    <select class="role-select" id="roleSelect" onchange="switchRole(this.value)">
+      <option value="admin">Admin</option>
+      <option value="office">Office</option>
+      <option value="field">Field Supervisor</option>
+    </select>
+    <div class="notif-bell">🔔<div class="notif-dot"></div></div>
+  </div>
+</div>
+<div class="tabs" id="tabBar">
+  <div class="tab active" data-tab="dashboard" data-roles="admin,office">Dashboard</div>
+  <div class="tab" data-tab="postings" data-roles="admin">Postings</div>
+  <div class="tab" data-tab="applications" data-roles="admin,office">Applications</div>
+  <div class="tab" data-tab="pipeline" data-roles="admin,office,field">Pipeline</div>
+  <div class="tab" data-tab="screening" data-roles="admin">Screening</div>
+  <div class="tab" data-tab="settings" data-roles="admin">Settings</div>
+</div>
+<div class="main">
+
+<div class="tab-content active" id="tab-dashboard" data-roles="admin,office">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">Open Positions</div><div class="kpi-value">4</div><div class="kpi-sub">3 sub, 1 internal</div></div>
+    <div class="kpi"><div class="kpi-label">Active Applicants</div><div class="kpi-value">12</div><div class="kpi-sub">6 new this week</div></div>
+    <div class="kpi"><div class="kpi-label">In Pipeline</div><div class="kpi-value">5</div><div class="kpi-sub">3 phone, 1 field, 1 onboard</div></div>
+    <div class="kpi"><div class="kpi-label">Hired This Qtr</div><div class="kpi-value">2</div><div class="kpi-sub">↑ from 1 last qtr</div></div>
+  </div>
+  <div class="btn-row" style="margin-bottom:14px">
+    <button class="btn btn-gold btn-block" onclick="switchTab('postings');setTimeout(openNewPosting,100)">+ New Posting</button>
+    <button class="btn btn-outline btn-block" onclick="switchTab('applications')">Review Applications</button>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">📋 Recent Activity</div></div>
+    <div class="card-body" style="padding:10px 14px">
+      <div class="feed-item"><div class="feed-icon" style="background:var(--green-bg);color:var(--green)">📥</div><div><div class="feed-text"><strong>Carlos Mendez</strong> applied for Painting Crew — Large</div><div class="feed-time">2 hours ago</div></div></div>
+      <div class="feed-item"><div class="feed-icon" style="background:var(--blue-bg);color:var(--blue)">➡️</div><div><div class="feed-text"><strong>Ana Lucia Vega</strong> moved to Field Interview</div><div class="feed-time">Yesterday</div></div></div>
+      <div class="feed-item"><div class="feed-icon" style="background:var(--red-bg);color:var(--red)">❌</div><div><div class="feed-text"><strong>Diego Morales</strong> auto-disqualified — lettered vehicle</div><div class="feed-time">2 days ago</div></div></div>
+      <div class="feed-item"><div class="feed-icon" style="background:var(--green-bg);color:var(--green)">📥</div><div><div class="feed-text"><strong>Roberto Herrera</strong> applied for Painting Crew — Small</div><div class="feed-time">3 days ago</div></div></div>
+      <div class="feed-item"><div class="feed-icon" style="background:var(--orange-bg);color:var(--orange)">⚠️</div><div><div class="feed-text"><strong>Jorge Ramirez</strong> auto-disqualified — no English speaker</div><div class="feed-time">4 days ago</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-postings" data-roles="admin">
+  <button class="btn btn-gold btn-block" style="margin-bottom:14px" onclick="openNewPosting()">+ Create New Posting</button>
+  <div class="card">
+    <div class="posting">
+      <div class="posting-top"><div class="posting-title">Painting Crew — Large Projects</div><span class="badge badge-green">Active</span></div>
+      <span class="badge badge-gold" style="font-size:10px">Subcontractor</span>
+      <div class="posting-channels"><span class="pill">Indeed</span><span class="pill">Craigslist</span><span class="pill">Facebook</span></div>
+      <div class="posting-stats"><span>👥 8 applicants</span><span>📅 14 days active</span></div>
+    </div>
+    <div class="posting">
+      <div class="posting-top"><div class="posting-title">Painting Crew — Small/Residential</div><span class="badge badge-green">Active</span></div>
+      <span class="badge badge-gold" style="font-size:10px">Subcontractor</span>
+      <div class="posting-channels"><span class="pill">Indeed</span><span class="pill">Craigslist</span></div>
+      <div class="posting-stats"><span>👥 5 applicants</span><span>📅 7 days active</span></div>
+    </div>
+    <div class="posting">
+      <div class="posting-top"><div class="posting-title">Specialty Sub — Drywall Texture</div><span class="badge badge-green">Active</span></div>
+      <span class="badge badge-gold" style="font-size:10px">Subcontractor</span>
+      <div class="posting-channels"><span class="pill">Craigslist</span></div>
+      <div class="posting-stats"><span>👥 2 applicants</span><span>📅 3 days active</span></div>
+    </div>
+    <div class="posting">
+      <div class="posting-top"><div class="posting-title">Office Administrator</div><span class="badge badge-yellow">Paused</span></div>
+      <span class="badge badge-blue" style="font-size:10px">Internal W-2</span>
+      <div class="posting-channels"><span class="pill">Indeed</span><span class="pill">LinkedIn</span><span class="pill">ZipRecruiter</span></div>
+      <div class="posting-stats"><span>👥 9 applicants</span><span>📅 21 days active</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-applications" data-roles="admin,office">
+  <div class="filter-bar">
+    <div class="filter-pill active" data-filter="all" onclick="filterApplicants('all',this)">All (6)</div>
+    <div class="filter-pill" data-filter="new" onclick="filterApplicants('new',this)">New (2)</div>
+    <div class="filter-pill" data-filter="qualified" onclick="filterApplicants('qualified',this)">Qualified (2)</div>
+    <div class="filter-pill" data-filter="disqualified" onclick="filterApplicants('disqualified',this)">Disqualified (2)</div>
+    <div class="filter-pill" data-filter="pipeline" onclick="filterApplicants('pipeline',this)">In Pipeline (2)</div>
+  </div>
+  <div class="card" id="applicantList">
+    <div class="applicant" data-status="pipeline" onclick="openApplicantDetail('miguel')">
+      <div class="applicant-top"><div><div class="applicant-name">Miguel Santos</div><div class="applicant-info">Feb 10 · Painting Crew — Large Projects</div></div><span class="badge badge-green">✅ Passed</span></div>
+      <div class="applicant-pills"><span class="pill">12 yrs exp</span><span class="pill" style="background:var(--green-bg);color:var(--green)">Has Insurance</span><span class="pill" style="background:var(--green-bg);color:var(--green)">English ✓</span><span class="pill" style="background:var(--green-bg);color:var(--green)">No Lettering ✓</span></div>
+      <div class="applicant-actions"><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openApplicantDetail('miguel')">Review</button><span class="badge badge-blue" style="margin-left:auto">📞 Phone Screen</span></div>
+    </div>
+    <div class="applicant" data-status="new" onclick="openApplicantDetail('roberto')">
+      <div class="applicant-top"><div><div class="applicant-name">Roberto Herrera</div><div class="applicant-info">Feb 25 · Painting Crew — Small/Residential</div></div><span class="badge badge-green">✅ Passed</span></div>
+      <div class="applicant-pills"><span class="pill">6 yrs exp</span><span class="pill">No Insurance</span><span class="pill" style="background:var(--green-bg);color:var(--green)">English ✓</span><span class="pill" style="background:var(--green-bg);color:var(--green)">No Lettering ✓</span></div>
+      <div class="applicant-actions"><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openApplicantDetail('roberto')">Review</button><button class="btn btn-sm btn-green" onclick="event.stopPropagation();alert('Moved to Pipeline!')">Move to Pipeline</button><button class="btn btn-sm btn-red" onclick="event.stopPropagation();alert('Rejected')">Reject</button></div>
+    </div>
+    <div class="applicant" data-status="disqualified" onclick="openApplicantDetail('diego')">
+      <div class="applicant-top"><div><div class="applicant-name">Diego Morales</div><div class="applicant-info">Feb 20 · Painting Crew — Large Projects</div></div><span class="badge badge-red">❌ Failed</span></div>
+      <div class="applicant-pills"><span class="pill">3 yrs exp</span><span class="pill" style="background:var(--green-bg);color:var(--green)">Has Insurance</span><span class="pill" style="background:var(--green-bg);color:var(--green)">English ✓</span><span class="pill" style="background:var(--red-bg);color:var(--red)">Lettered Vehicle ✗</span></div>
+      <div class="applicant-actions"><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openApplicantDetail('diego')">Review</button><span class="badge badge-red" style="margin-left:auto">Auto-Disqualified</span></div>
+    </div>
+    <div class="applicant" data-status="pipeline" onclick="openApplicantDetail('ana')">
+      <div class="applicant-top"><div><div class="applicant-name">Ana Lucia Vega</div><div class="applicant-info">Feb 5 · Painting Crew — Large Projects</div></div><span class="badge badge-green">✅ Passed</span></div>
+      <div class="applicant-pills"><span class="pill">8 yrs exp</span><span class="pill" style="background:var(--green-bg);color:var(--green)">Has Insurance</span><span class="pill" style="background:var(--green-bg);color:var(--green)">Has WC</span><span class="pill" style="background:var(--green-bg);color:var(--green)">English ✓</span><span class="pill" style="background:var(--green-bg);color:var(--green)">No Lettering ✓</span></div>
+      <div class="applicant-actions"><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openApplicantDetail('ana')">Review</button><span class="badge badge-purple" style="margin-left:auto">🏗 Field Interview</span></div>
+    </div>
+    <div class="applicant" data-status="new" onclick="openApplicantDetail('carlos')">
+      <div class="applicant-top"><div><div class="applicant-name">Carlos Mendez</div><div class="applicant-info">Mar 1 · Painting Crew — Large Projects</div></div><span class="badge badge-green">✅ Passed</span></div>
+      <div class="applicant-pills"><span class="pill">15 yrs exp</span><span class="pill">No Insurance</span><span class="pill" style="background:var(--green-bg);color:var(--green)">English ✓</span><span class="pill" style="background:var(--green-bg);color:var(--green)">No Lettering ✓</span></div>
+      <div class="applicant-actions"><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openApplicantDetail('carlos')">Review</button><button class="btn btn-sm btn-green" onclick="event.stopPropagation();alert('Moved to Pipeline!')">Move to Pipeline</button><button class="btn btn-sm btn-red" onclick="event.stopPropagation();alert('Rejected')">Reject</button></div>
+    </div>
+    <div class="applicant" data-status="disqualified" onclick="openApplicantDetail('jorge')">
+      <div class="applicant-top"><div><div class="applicant-name">Jorge Ramirez</div><div class="applicant-info">Feb 22 · Specialty Sub — Drywall Texture</div></div><span class="badge badge-red">❌ Failed</span></div>
+      <div class="applicant-pills"><span class="pill">2 yrs exp</span><span class="pill">No Insurance</span><span class="pill" style="background:var(--red-bg);color:var(--red)">No English ✗</span><span class="pill" style="background:var(--green-bg);color:var(--green)">No Lettering ✓</span></div>
+      <div class="applicant-actions"><button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openApplicantDetail('jorge')">Review</button><span class="badge badge-red" style="margin-left:auto">Auto-Disqualified</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-pipeline" data-roles="admin,office,field">
+  <div class="pipeline-col" data-stage="phone">
+    <div class="pipeline-header"><div class="pipeline-stage">📞 Phone Screen <span class="pipeline-count">3</span></div></div>
+    <div class="pipeline-card" onclick="openApplicantDetail('miguel')"><div class="pipeline-card-name">Miguel Santos</div><div class="pipeline-card-info">Painting Crew — Large · 5 days in stage</div><div class="pipeline-card-action">Next: Call to verify English & experience →</div></div>
+    <div class="pipeline-card" onclick="openApplicantDetail('roberto')"><div class="pipeline-card-name">Roberto Herrera</div><div class="pipeline-card-info">Painting Crew — Small · 2 days in stage</div><div class="pipeline-card-action">Next: Call to verify English & experience →</div></div>
+    <div class="pipeline-card" onclick="openApplicantDetail('carlos')"><div class="pipeline-card-name">Carlos Mendez</div><div class="pipeline-card-info">Painting Crew — Large · 1 day in stage</div><div class="pipeline-card-action">Next: Call to verify English & experience →</div></div>
+  </div>
+  <div class="pipeline-col" data-stage="field">
+    <div class="pipeline-header"><div class="pipeline-stage">🏗 Field Interview <span class="pipeline-count">1</span></div></div>
+    <div class="pipeline-card" onclick="openApplicantDetail('ana')"><div class="pipeline-card-name">Ana Lucia Vega</div><div class="pipeline-card-info">Painting Crew — Large · 3 days in stage</div><div class="pipeline-card-action">Next: Supervisor on-site meeting, review packets →</div></div>
+  </div>
+  <div class="pipeline-col" data-stage="onboarding">
+    <div class="pipeline-header"><div class="pipeline-stage">📋 Onboarding <span class="pipeline-count">1</span></div></div>
+    <div class="pipeline-card"><div class="pipeline-card-name">Fernando Gutierrez</div><div class="pipeline-card-info">Painting Crew — Large · 2 days in stage</div><div class="pipeline-card-action">Next: Paperwork packet sent, awaiting return →</div></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-screening" data-roles="admin">
+  <div class="screen-section">
+    <div class="screen-section-title">🎨 Skills & Experience</div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Service types handled</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">Interior, Exterior, Cabinet, Deck/Fence, New Construction, Drywall Repair, Wallpaper, Other</div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Years of experience</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Residential / New Construction / Both</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">References — other painting contractors in area</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+  </div>
+  <div class="screen-section">
+    <div class="screen-section-title">⚠️ Requirements <span class="badge badge-red" style="font-size:10px">Knockout</span></div>
+    <div class="screen-q"><div class="screen-q-top"><span class="screen-q-ko">⚠️</span><div class="screen-q-text">English-speaking communicator on site at all times?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">NO = auto-disqualify</div></div>
+    <div class="screen-q"><div class="screen-q-top"><span class="screen-q-ko">⚠️</span><div class="screen-q-text">Willing to wear Nash Painting t-shirts?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">NO = auto-disqualify</div></div>
+    <div class="screen-q"><div class="screen-q-top"><span class="screen-q-ko">⚠️</span><div class="screen-q-text">Agree not to wear competing company apparel?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">Sherwin-Williams, Hoover, Benjamin Moore shirts OK. NO = auto-disqualify</div></div>
+    <div class="screen-q"><div class="screen-q-top"><span class="screen-q-ko">⚠️</span><div class="screen-q-text">Vehicle NOT lettered with own company name?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">NO = auto-disqualify</div></div>
+  </div>
+  <div class="screen-section">
+    <div class="screen-section-title">📋 Insurance & Logistics <span class="badge badge-gray" style="font-size:10px">Informational</span></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Liability insurance?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">Not required. Uninsured crews covered on Nash policy at adjusted rate</div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Workers compensation?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="screen-q-note">Not required. Uninsured crews covered on Nash policy at adjusted rate</div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Reliable transportation?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Own tools & equipment?</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+    <div class="screen-q"><div class="screen-q-top"><div class="screen-q-text">Crew size</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div></div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-settings" data-roles="admin">
+  <div class="card">
+    <div class="card-header"><div class="card-title">🔗 Job Board Connections</div></div>
+    <div class="setting-row"><div class="setting-label">Indeed</div><div class="setting-status"><div class="status-dot green"></div>Connected</div></div>
+    <div class="setting-row"><div class="setting-label">ZipRecruiter</div><div class="setting-status"><div class="status-dot green"></div>Connected</div></div>
+    <div class="setting-row"><div class="setting-label">LinkedIn</div><div class="setting-status"><div class="status-dot green"></div>Connected</div></div>
+    <div class="setting-row"><div class="setting-label">Glassdoor</div><div class="setting-status"><div class="status-dot gray"></div>Not Connected</div></div>
+    <div class="setting-row"><div class="setting-label">Craigslist</div><div class="setting-status"><div class="status-dot green"></div>Connected</div></div>
+    <div class="setting-row"><div class="setting-label">Facebook Jobs</div><div class="setting-status"><div class="status-dot green"></div>Connected</div></div>
+    <div class="setting-row"><div class="setting-label">Nextdoor</div><div class="setting-status"><div class="status-dot gray"></div>Not Connected</div></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <div class="card-header"><div class="card-title">📤 Default Distribution</div></div>
+    <div class="card-body">
+      <div class="form-group"><div class="form-label">Subcontractor Postings</div><div class="check-grid"><label class="form-check"><input type="checkbox" checked> Indeed</label><label class="form-check"><input type="checkbox" checked> Craigslist</label><label class="form-check"><input type="checkbox" checked> Facebook</label><label class="form-check"><input type="checkbox"> LinkedIn</label><label class="form-check"><input type="checkbox"> ZipRecruiter</label><label class="form-check"><input type="checkbox"> Nextdoor</label></div></div>
+      <div class="form-group"><div class="form-label">Internal Positions</div><div class="check-grid"><label class="form-check"><input type="checkbox" checked> Indeed</label><label class="form-check"><input type="checkbox" checked> LinkedIn</label><label class="form-check"><input type="checkbox" checked> ZipRecruiter</label><label class="form-check"><input type="checkbox"> Glassdoor</label><label class="form-check"><input type="checkbox"> Facebook</label><label class="form-check"><input type="checkbox"> Craigslist</label></div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <div class="card-header"><div class="card-title">📧 Auto-Response Templates</div></div>
+    <div class="card-body" style="padding:10px 14px">
+      <div class="template-card" onclick="alert('Edit template: Application Received')"><div class="template-card-title">Application Received</div><div class="template-card-preview">Thank you for your interest in working with Nash Painting. We've received your application and will review it within...</div></div>
+      <div class="template-card" onclick="alert('Edit template: Disqualified')"><div class="template-card-title">Disqualified</div><div class="template-card-preview">Thank you for applying. Unfortunately, your application does not meet our current requirements at this time...</div></div>
+      <div class="template-card" onclick="alert('Edit template: Moved to Phone Screen')"><div class="template-card-title">Moved to Phone Screen</div><div class="template-card-preview">Great news! We'd like to schedule a brief phone call to discuss your experience. Someone from our team will reach out...</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <div class="card-header"><div class="card-title">🔔 Notifications</div></div>
+    <div class="setting-row"><div class="setting-label">New application alert</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Applicant disqualified</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Pipeline stage change</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="setting-row"><div class="setting-label">Weekly hiring summary</div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+</div>
+
+</div>
+
+<div class="overlay-bg" id="newPostingBg" onclick="closeNewPosting()"></div>
+<div class="drawer" id="newPostingDrawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header"><div class="drawer-title">Create New Posting</div><button class="drawer-close" onclick="closeNewPosting()">✕</button></div>
+  <div class="drawer-body">
+    <div class="form-group"><div class="form-label">Posting Type</div><select class="form-select" id="postingType" onchange="onPostingTypeChange()"><option value="crew-large">Painting Crew (Large)</option><option value="crew-small">Painting Crew (Small)</option><option value="specialty">Specialty Sub</option><option value="internal">Internal Position</option></select></div>
+    <div class="form-group specialty-picker" id="specialtyPicker"><div class="form-label">Specialty Skill</div><div class="check-grid"><label class="form-check"><input type="checkbox"> Wallpaper</label><label class="form-check"><input type="checkbox"> Drywall Texture</label><label class="form-check"><input type="checkbox"> Stucco</label><label class="form-check"><input type="checkbox"> Epoxy</label><label class="form-check"><input type="checkbox"> Cabinet Refinishing</label><label class="form-check"><input type="checkbox"> Deck Staining</label><label class="form-check"><input type="checkbox"> Pressure Washing</label><label class="form-check"><input type="checkbox"> Other</label></div></div>
+    <div class="form-group"><div class="form-label">Title</div><input class="form-input" type="text" id="postingTitle" value="Painting Crew — Large Projects"></div>
+    <div class="form-group"><div class="form-label">Description</div><textarea class="form-textarea" rows="4">Nash Painting is seeking experienced painting subcontractor crews for large residential and light commercial projects in the Nashville area. Must have own tools, reliable transportation, and a crew of 2-4 painters.</textarea></div>
+    <div class="form-group"><div class="form-label">Distribution Channels</div><div class="check-grid"><label class="form-check"><input type="checkbox" checked> Indeed</label><label class="form-check"><input type="checkbox"> ZipRecruiter</label><label class="form-check"><input type="checkbox"> LinkedIn</label><label class="form-check"><input type="checkbox"> Glassdoor</label><label class="form-check"><input type="checkbox" checked> Craigslist</label><label class="form-check"><input type="checkbox" checked> Facebook Jobs</label><label class="form-check"><input type="checkbox"> Nextdoor</label></div></div>
+    <div class="form-group" style="display:flex;align-items:center;justify-content:space-between"><div><div style="font-size:13px;font-weight:600">Pre-screening questions</div><div style="font-size:11px;color:var(--text-sec)">Enabled by default for subcontractor roles</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+  <div class="drawer-footer"><button class="btn btn-outline" style="flex:1" onclick="closeNewPosting()">Cancel</button><button class="btn btn-gold" style="flex:1" onclick="closeNewPosting();alert('Posting created & distributed!')">Publish</button></div>
+</div>
+
+<div class="overlay-bg" id="detailBg" onclick="closeDetail()"></div>
+<div class="drawer" id="detailDrawer" style="max-height:95vh">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header"><div class="drawer-title" id="detailName">Applicant</div><button class="drawer-close" onclick="closeDetail()">✕</button></div>
+  <div class="drawer-body" id="detailBody"></div>
+  <div class="drawer-footer" id="detailFooter"></div>
+</div>
+
+<script>
+const applicants={miguel:{name:'Miguel Santos',phone:'(615) 555-0142',email:'m.santos@email.com',date:'Feb 10, 2026',posting:'Painting Crew — Large Projects',status:'pipeline',stage:'Phone Screen',yrs:12,insurance:true,wc:false,english:true,tshirts:true,noCompete:true,noLettering:true,transport:true,tools:true,crewSize:4,services:['Interior','Exterior','New Construction','Drywall Repair'],type:'Both',references:'Worked with ProPaint Nashville (2018-2022), ABC Coatings (2015-2018)',screening:'passed',failReason:'',timeline:[{date:'Feb 10',text:'Application received via Indeed'},{date:'Feb 11',text:'Auto-screening: PASSED'},{date:'Feb 12',text:'Moved to Phone Screen'}],notes:'Seems very experienced. Has large crew.'},roberto:{name:'Roberto Herrera',phone:'(615) 555-0298',email:'r.herrera@email.com',date:'Feb 25, 2026',posting:'Painting Crew — Small/Residential',status:'new',stage:'New',yrs:6,insurance:false,wc:false,english:true,tshirts:true,noCompete:true,noLettering:true,transport:true,tools:true,crewSize:2,services:['Interior','Exterior','Cabinet'],type:'Residential',references:'Independent — new to Nashville area',screening:'passed',failReason:'',timeline:[{date:'Feb 25',text:'Application received via Craigslist'},{date:'Feb 25',text:'Auto-screening: PASSED'}],notes:''},diego:{name:'Diego Morales',phone:'(615) 555-0371',email:'d.morales@email.com',date:'Feb 20, 2026',posting:'Painting Crew — Large Projects',status:'disqualified',stage:'Disqualified',yrs:3,insurance:true,wc:false,english:true,tshirts:true,noCompete:true,noLettering:false,transport:true,tools:true,crewSize:3,services:['Interior','Exterior'],type:'Residential',references:'Morales Painting LLC — own business',screening:'failed',failReason:'Vehicle lettered with own company name',timeline:[{date:'Feb 20',text:'Application received via Indeed'},{date:'Feb 20',text:'Auto-screening: FAILED — lettered vehicle'},{date:'Feb 20',text:'Auto-disqualified, rejection email sent'}],notes:'Has own painting company. Vehicle has "Morales Painting" lettering.'},ana:{name:'Ana Lucia Vega',phone:'(615) 555-0519',email:'ana.vega@email.com',date:'Feb 5, 2026',posting:'Painting Crew — Large Projects',status:'pipeline',stage:'Field Interview',yrs:8,insurance:true,wc:true,english:true,tshirts:true,noCompete:true,noLettering:true,transport:true,tools:true,crewSize:3,services:['Interior','Exterior','Cabinet','Deck/Fence'],type:'Both',references:'Nashville Brush Co (2019-2024), Music City Painters (2017-2019)',screening:'passed',failReason:'',timeline:[{date:'Feb 5',text:'Application received via Facebook Jobs'},{date:'Feb 5',text:'Auto-screening: PASSED'},{date:'Feb 7',text:'Moved to Phone Screen'},{date:'Feb 12',text:'Phone screen completed — excellent'},{date:'Feb 14',text:'Moved to Field Interview'}],notes:'Very professional. Has insurance + WC. Strong references. Schedule field visit.'},carlos:{name:'Carlos Mendez',phone:'(615) 555-0687',email:'c.mendez@email.com',date:'Mar 1, 2026',posting:'Painting Crew — Large Projects',status:'new',stage:'New',yrs:15,insurance:false,wc:false,english:true,tshirts:true,noCompete:true,noLettering:true,transport:true,tools:true,crewSize:5,services:['Interior','Exterior','New Construction','Drywall Repair','Wallpaper'],type:'Both',references:'15+ years independent. Worked with Turner Construction, Skanska on commercial jobs.',screening:'passed',failReason:'',timeline:[{date:'Mar 1',text:'Application received via Indeed'},{date:'Mar 1',text:'Auto-screening: PASSED'}],notes:''},jorge:{name:'Jorge Ramirez',phone:'(615) 555-0823',email:'j.ramirez@email.com',date:'Feb 22, 2026',posting:'Specialty Sub — Drywall Texture',status:'disqualified',stage:'Disqualified',yrs:2,insurance:false,wc:false,english:false,tshirts:true,noCompete:true,noLettering:true,transport:true,tools:false,crewSize:2,services:['Drywall Repair'],type:'Residential',references:'None provided',screening:'failed',failReason:'No English-speaking communicator on site',timeline:[{date:'Feb 22',text:'Application received via Craigslist'},{date:'Feb 22',text:'Auto-screening: FAILED — no English speaker'},{date:'Feb 22',text:'Auto-disqualified, rejection email sent'}],notes:'Only Spanish speakers on crew. Cannot meet English requirement.'}};
+
+function switchTab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));const tab=document.querySelector('.tab[data-tab="'+t+'"]');if(tab)tab.classList.add('active');const c=document.getElementById('tab-'+t);if(c)c.classList.add('active')}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+
+function switchRole(role){document.querySelectorAll('.tab').forEach(t=>{t.style.display=t.dataset.roles.split(',').includes(role)?'':'none'});document.querySelectorAll('.tab-content').forEach(c=>{if(!c.dataset.roles.split(',').includes(role))c.classList.remove('active')});const a=document.querySelector('.tab.active');if(!a||a.style.display==='none'){const f=document.querySelector('.tab:not([style*="display: none"])');if(f)switchTab(f.dataset.tab)}if(role==='field'){document.querySelectorAll('.pipeline-col').forEach(c=>{c.style.display=(c.dataset.stage==='phone'||c.dataset.stage==='onboarding')?'none':''})}else{document.querySelectorAll('.pipeline-col').forEach(c=>c.style.display='')}}
+
+function filterApplicants(f,el){document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.applicant').forEach(a=>{if(f==='all'){a.style.display='';return}if(f==='qualified'){a.style.display=a.dataset.status==='new'?'':'none'}else{a.style.display=a.dataset.status===f?'':'none'}})}
+
+function openNewPosting(){document.getElementById('newPostingBg').classList.add('open');document.getElementById('newPostingDrawer').classList.add('open')}
+function closeNewPosting(){document.getElementById('newPostingBg').classList.remove('open');document.getElementById('newPostingDrawer').classList.remove('open')}
+function onPostingTypeChange(){const t=document.getElementById('postingType').value;document.getElementById('specialtyPicker').classList.toggle('show',t==='specialty');const titles={'crew-large':'Painting Crew — Large Projects','crew-small':'Painting Crew — Small/Residential','specialty':'Specialty Sub — ','internal':''};document.getElementById('postingTitle').value=titles[t]||''}
+
+function openApplicantDetail(id){const a=applicants[id];if(!a)return;document.getElementById('detailName').textContent=a.name;document.getElementById('detailBg').classList.add('open');document.getElementById('detailDrawer').classList.add('open');const chk=v=>v?'<span style="color:var(--green)">✅ Yes</span>':'<span style="color:var(--red)">❌ No</span>';let h='<div style="margin-bottom:12px"><div style="font-size:13px;color:var(--text-sec)">📞 '+a.phone+' · ✉️ '+a.email+'</div><div style="font-size:13px;color:var(--text-sec);margin-top:2px">Applied: '+a.date+' · '+a.posting+'</div><div style="margin-top:6px">'+(a.screening==='passed'?'<span class="badge badge-green">✅ Screening Passed</span>':'<span class="badge badge-red">❌ Failed — '+a.failReason+'</span>')+'</div></div>';h+='<div class="detail-section"><div class="detail-section-title">Screening Results</div><div class="detail-row"><span class="detail-row-label">English speaker on site</span><span class="detail-row-value">'+chk(a.english)+'</span></div><div class="detail-row"><span class="detail-row-label">Wear Nash t-shirts</span><span class="detail-row-value">'+chk(a.tshirts)+'</span></div><div class="detail-row"><span class="detail-row-label">No competing apparel</span><span class="detail-row-value">'+chk(a.noCompete)+'</span></div><div class="detail-row"><span class="detail-row-label">Vehicle not lettered</span><span class="detail-row-value">'+chk(a.noLettering)+'</span></div></div>';h+='<div class="detail-section"><div class="detail-section-title">Skills & Experience</div><div class="detail-row"><span class="detail-row-label">Years of experience</span><span class="detail-row-value">'+a.yrs+'</span></div><div class="detail-row"><span class="detail-row-label">Services</span><span class="detail-row-value">'+a.services.join(', ')+'</span></div><div class="detail-row"><span class="detail-row-label">Project type</span><span class="detail-row-value">'+a.type+'</span></div><div class="detail-row"><span class="detail-row-label">Crew size</span><span class="detail-row-value">'+a.crewSize+'</span></div></div>';h+='<div class="detail-section"><div class="detail-section-title">Insurance & Logistics</div><div class="detail-row"><span class="detail-row-label">Liability insurance</span><span class="detail-row-value">'+chk(a.insurance)+'</span></div><div class="detail-row"><span class="detail-row-label">Workers comp</span><span class="detail-row-value">'+chk(a.wc)+'</span></div><div class="detail-row"><span class="detail-row-label">Reliable transport</span><span class="detail-row-value">'+chk(a.transport)+'</span></div><div class="detail-row"><span class="detail-row-label">Own tools</span><span class="detail-row-value">'+chk(a.tools)+'</span></div></div>';h+='<div class="detail-section"><div class="detail-section-title">References</div><div style="font-size:13px;color:var(--text-sec)">'+a.references+'</div></div>';h+='<div class="detail-section"><div class="detail-section-title">Notes</div><textarea class="notes-area" placeholder="Add internal notes...">'+a.notes+'</textarea></div>';h+='<div class="detail-section"><div class="detail-section-title">Timeline</div>'+a.timeline.map(t=>'<div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-text">'+t.text+'</div><div class="timeline-date">'+t.date+'</div></div></div>').join('')+'</div>';document.getElementById('detailBody').innerHTML=h;let f='';if(a.status==='new'){f='<button class="btn btn-green" style="flex:1" onclick="alert(\'Moved to Phone Screen!\');closeDetail()">Move to Pipeline</button><button class="btn btn-red" style="flex:1" onclick="alert(\'Rejected\');closeDetail()">Reject</button>'}else if(a.status==='pipeline'){const nx=a.stage==='Phone Screen'?'Field Interview':a.stage==='Field Interview'?'Onboarding':'Hired';f='<button class="btn btn-green" style="flex:1" onclick="alert(\'Moved to '+nx+'!\');closeDetail()">→ '+nx+'</button><button class="btn btn-red" style="flex:1" onclick="alert(\'Rejected\');closeDetail()">Reject</button>'}else{f='<button class="btn btn-outline" style="flex:1" onclick="closeDetail()">Close</button>'}document.getElementById('detailFooter').innerHTML=f}
+function closeDetail(){document.getElementById('detailBg').classList.remove('open');document.getElementById('detailDrawer').classList.remove('open')}
+</script>
+</body>
+</html>
