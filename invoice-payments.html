@@ -179,6 +179,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <button class="tab-btn" onclick="switchTab('outstanding',this)">💰 Outstanding (4)</button>
     <button class="tab-btn" onclick="switchTab('overdue',this)">⚠️ Overdue (3)</button>
     <button class="tab-btn" onclick="switchTab('progress',this)">📊 Progress (2)</button>
+    <button class="tab-btn" onclick="switchTab('checks',this)">📸 Checks (2)</button>
     <button class="tab-btn" onclick="switchTab('paid',this)">✅ Paid (6)</button>
   </div>
 
@@ -541,6 +542,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
   </div>
 
+  <!-- TAB: Check Images to Process -->
+  <div id="tab-checks" class="tab-content">
+    <div style="background:var(--yellow-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:16px">📸</span>
+      <div><strong style="color:var(--yellow)">2 check images waiting</strong><br><span style="color:var(--text-sec)">OCR pre-filled — verify & submit ACH</span></div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--yellow)">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Thompson, Sarah</div>
+            <div class="card-address">INV-1253 · $6,250.00</div>
+          </div>
+          <span class="badge badge-yellow">NEW · 12 min ago</span>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;margin:10px 0;text-align:center;cursor:pointer" onclick="openCheckProcess('thompson')">
+          <div style="font-size:32px;margin-bottom:4px">🏦</div>
+          <div style="font-size:12px;color:var(--text-sec)">Check image from Sarah Thompson</div>
+          <div style="font-size:11px;color:var(--blue);font-weight:600;margin-top:4px">Tap to view & process →</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Uploaded via customer portal · Payment method: Check Image</div>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--yellow)">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Mitchell, David</div>
+            <div class="card-address">INV-1254 · $4,800.00</div>
+          </div>
+          <span class="badge badge-yellow">NEW · 3 hrs ago</span>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;margin:10px 0;text-align:center;cursor:pointer" onclick="openCheckProcess('mitchell')">
+          <div style="font-size:32px;margin-bottom:4px">🏦</div>
+          <div style="font-size:12px;color:var(--text-sec)">Check image from David Mitchell</div>
+          <div style="font-size:11px;color:var(--blue);font-weight:600;margin-top:4px">Tap to view & process →</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Uploaded via customer portal · Payment method: Check Image</div>
+      </div>
+    </div>
+  </div>
+
   <!-- TAB: Paid -->
   <div id="tab-paid" class="tab-content">
     <div class="collected-banner">
@@ -657,6 +700,80 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
+<!-- OVERLAY: Process Check Image -->
+<div class="overlay" id="overlay-check">
+  <div class="drawer" style="max-height:92vh">
+    <div class="drawer-handle"></div>
+    <h3>📸 Process Check Image</h3>
+    
+    <div class="drawer-row" style="display:flex;justify-content:space-between;margin-bottom:12px">
+      <div><div class="drawer-label">Customer</div><div class="drawer-value" id="chk-customer">Sarah Thompson</div></div>
+      <div style="text-align:right"><div class="drawer-label">Invoice</div><div class="drawer-value" id="chk-invoice">INV-1253</div></div>
+    </div>
+    <div class="drawer-row" style="margin-bottom:14px">
+      <div class="drawer-label">Invoice Amount</div>
+      <div class="drawer-value" id="chk-inv-amount">$6,250.00</div>
+    </div>
+
+    <!-- Mock check image -->
+    <div style="background:linear-gradient(135deg,#f5f0e8,#ebe4d4);border:2px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;position:relative">
+      <div style="position:absolute;top:8px;right:10px;font-size:9px;background:var(--green-bg);color:var(--green);padding:2px 8px;border-radius:10px;font-weight:700">OCR SCANNED</div>
+      <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">FIRST TENNESSEE BANK</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600" id="chk-name-display">Sarah Thompson</div>
+        <div style="font-size:12px;font-weight:600" id="chk-num-display">Check #4892</div>
+      </div>
+      <div style="font-size:22px;font-weight:700;text-align:center;margin:12px 0;color:var(--navy)" id="chk-amount-display">$6,250.00</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-sec);margin-top:12px;font-family:monospace">
+        <span id="chk-routing-display">⑆ 064000020</span>
+        <span id="chk-acct-display">⑆ 2847103956</span>
+        <span id="chk-checkno-display">4892</span>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <span style="font-size:10px;color:var(--blue);font-weight:600;cursor:pointer">📷 View full check image</span>
+      </div>
+    </div>
+
+    <!-- OCR pre-filled fields -->
+    <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:14px;font-size:11px;display:flex;align-items:center;gap:6px">
+      <span>🤖</span>
+      <span><strong style="color:var(--green)">OCR pre-filled</strong> — verify all fields match the check image before submitting</span>
+    </div>
+
+    <div class="form-field">
+      <label>Routing Number</label>
+      <input type="text" id="chk-routing" value="064000020" style="font-family:monospace;font-size:16px;letter-spacing:1px">
+    </div>
+    <div class="form-field">
+      <label>Account Number</label>
+      <input type="text" id="chk-acct" value="2847103956" style="font-family:monospace;font-size:16px;letter-spacing:1px">
+    </div>
+    <div style="display:flex;gap:10px">
+      <div class="form-field" style="flex:1">
+        <label>Check Number</label>
+        <input type="text" id="chk-checkno" value="4892">
+      </div>
+      <div class="form-field" style="flex:1">
+        <label>Amount</label>
+        <input type="text" id="chk-amount" value="$6,250.00" style="font-weight:700">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Account Holder Name</label>
+      <input type="text" id="chk-holder" value="Sarah Thompson">
+    </div>
+
+    <!-- Verification checkbox -->
+    <label style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:14px;cursor:pointer">
+      <input type="checkbox" id="chk-verify" style="width:20px;height:20px;margin-top:2px;accent-color:var(--navy);flex-shrink:0" onchange="document.getElementById('chk-submit-btn').disabled=!this.checked;document.getElementById('chk-submit-btn').style.opacity=this.checked?'1':'0.5'">
+      <span style="font-size:12px;font-weight:600;line-height:1.4">I have verified that the routing number, account number, and amount match the check image</span>
+    </label>
+
+    <button class="btn btn-gold btn-full" id="chk-submit-btn" disabled style="padding:14px;font-size:15px;opacity:0.5" onclick="closeOverlay('overlay-check');showToast('ACH payment submitted — $6,250.00 processing via Stripe')">Submit ACH Payment →</button>
+    <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="closeOverlay('overlay-check')">Cancel</button>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;box-shadow:var(--shadow-md);z-index:300;display:none;white-space:nowrap"></div>
 
@@ -694,6 +811,32 @@ function closeOverlay(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.overlay').forEach(function(o){
   o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open')});
 });
+var checkData={
+  thompson:{customer:'Sarah Thompson',invoice:'INV-1253',amount:'$6,250.00',routing:'064000020',acct:'2847103956',checkno:'4892',bank:'FIRST TENNESSEE BANK'},
+  mitchell:{customer:'David Mitchell',invoice:'INV-1254',amount:'$4,800.00',routing:'064008637',acct:'1093847562',checkno:'7201',bank:'REGIONS BANK'}
+};
+function openCheckProcess(key){
+  var d=checkData[key];if(!d)return;
+  document.getElementById('chk-customer').textContent=d.customer;
+  document.getElementById('chk-invoice').textContent=d.invoice;
+  document.getElementById('chk-inv-amount').textContent=d.amount;
+  document.getElementById('chk-name-display').textContent=d.customer;
+  document.getElementById('chk-num-display').textContent='Check #'+d.checkno;
+  document.getElementById('chk-amount-display').textContent=d.amount;
+  document.getElementById('chk-routing-display').textContent='⑆ '+d.routing;
+  document.getElementById('chk-acct-display').textContent='⑆ '+d.acct;
+  document.getElementById('chk-checkno-display').textContent=d.checkno;
+  document.getElementById('chk-routing').value=d.routing;
+  document.getElementById('chk-acct').value=d.acct;
+  document.getElementById('chk-checkno').value=d.checkno;
+  document.getElementById('chk-amount').value=d.amount;
+  document.getElementById('chk-holder').value=d.customer;
+  document.getElementById('chk-verify').checked=false;
+  document.getElementById('chk-submit-btn').disabled=true;
+  document.getElementById('chk-submit-btn').style.opacity='0.5';
+  document.getElementById('chk-submit-btn').onclick=function(){closeOverlay('overlay-check');showToast('ACH payment submitted — '+d.amount+' processing via Stripe')};
+  document.getElementById('overlay-check').classList.add('open');
+}
 function showToast(msg){
   var t=document.getElementById('toast');
   t.textContent=msg;t.style.display='block';
