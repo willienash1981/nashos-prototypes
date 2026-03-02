@@ -179,7 +179,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <button class="tab-btn" onclick="switchTab('outstanding',this)">💰 Outstanding (4)</button>
     <button class="tab-btn" onclick="switchTab('overdue',this)">⚠️ Overdue (3)</button>
     <button class="tab-btn" onclick="switchTab('progress',this)">📊 Progress (2)</button>
-    <button class="tab-btn" onclick="switchTab('checks',this)">📸 Checks (2)</button>
+    <button class="tab-btn" onclick="switchTab('checks',this)">📸 Check Images (2)</button>
+    <button class="tab-btn" onclick="switchTab('deposits',this)">🏦 Deposits (1)</button>
     <button class="tab-btn" onclick="switchTab('paid',this)">✅ Paid (6)</button>
   </div>
 
@@ -292,6 +293,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </div>
         <div class="card-actions">
           <button class="btn btn-gold btn-sm" onclick="openRecordPayment('Rodriguez, Maria','INV-1247',8450)">Record Payment</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('upl-customer').textContent='Maria Rodriguez';document.getElementById('upl-invoice').textContent='INV-1247';document.getElementById('overlay-upload-check').classList.add('open')">📸 Upload Check</button>
         </div>
       </div>
     </div>
@@ -584,6 +586,86 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
   </div>
 
+  <!-- TAB: Field Check Deposits -->
+  <div id="tab-deposits" class="tab-content">
+    <div style="background:var(--blue-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:16px">🏦</span>
+      <div><strong style="color:var(--blue)">1 deposit to confirm</strong><br><span style="color:var(--text-sec)">Submitted by field staff — verify & mark paid</span></div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <div class="card-body">
+        <div class="card-row">
+          <div>
+            <div class="card-customer">Anderson, Kevin</div>
+            <div class="card-address">INV-1240 · $12,800.00</div>
+          </div>
+          <span class="badge badge-blue">PENDING</span>
+        </div>
+        <div class="card-meta">
+          <span>Submitted by <strong>Carlos M.</strong> (Field Sup)</span>
+          <span>45 min ago</span>
+        </div>
+        <div style="display:flex;gap:8px;margin:10px 0">
+          <div style="flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center;cursor:pointer" onclick="showToast('Opening check image...')">
+            <div style="font-size:24px;margin-bottom:2px">🏦</div>
+            <div style="font-size:10px;color:var(--text-sec);font-weight:600">Check Photo</div>
+          </div>
+          <div style="flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center;cursor:pointer" onclick="showToast('Opening deposit slip...')">
+            <div style="font-size:24px;margin-bottom:2px">🧾</div>
+            <div style="font-size:10px;color:var(--text-sec);font-weight:600">Deposit Slip</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+            <span>Check #3847</span><span>$12,800.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <span>Deposited at U.S. Bank</span><span>Today, 3:15 PM</span>
+          </div>
+        </div>
+        <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:10px;font-size:11px;display:flex;align-items:center;gap:6px">
+          <span>💡</span>
+          <span>U.S. Bank same-day deposit — clears midnight tonight</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-gold" onclick="showToast('Invoice INV-1240 marked as paid ✓')">✓ Confirm & Mark Paid</button>
+          <button class="btn btn-outline btn-sm" onclick="showToast('Message sent to Carlos M.')">Message Carlos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Already confirmed deposits (recent) -->
+    <div style="font-size:12px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;padding:14px 0 6px">Recently Confirmed</div>
+    <div class="card">
+      <div class="card-body" style="padding:10px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;font-weight:600">Cooper, Brian</div>
+            <div style="font-size:11px;color:var(--text-sec)">INV-1232 · Check #1094 · Submitted by Larry S.</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:700;color:var(--green)">$3,850</div>
+            <div style="font-size:10px;color:var(--green)">Confirmed ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body" style="padding:10px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;font-weight:600">Whitfield, Donna</div>
+            <div style="font-size:11px;color:var(--text-sec)">INV-1238 · Check #4851 · Submitted by Marcus T.</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:700;color:var(--green)">$5,600</div>
+            <div style="font-size:10px;color:var(--green)">Confirmed ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TAB: Paid -->
   <div id="tab-paid" class="tab-content">
     <div class="collected-banner">
@@ -771,6 +853,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
     <button class="btn btn-gold btn-full" id="chk-submit-btn" disabled style="padding:14px;font-size:15px;opacity:0.5" onclick="closeOverlay('overlay-check');showToast('ACH payment submitted — $6,250.00 processing via Stripe')">Submit ACH Payment →</button>
     <button class="btn btn-outline btn-full" style="margin-top:8px" onclick="closeOverlay('overlay-check')">Cancel</button>
+  </div>
+</div>
+
+<!-- OVERLAY: Upload Check Image (office received via text/email) -->
+<div class="overlay" id="overlay-upload-check">
+  <div class="drawer">
+    <div class="drawer-handle"></div>
+    <h3>📸 Upload Check Image</h3>
+    <div style="font-size:12px;color:var(--text-sec);margin-bottom:14px">For checks received via text or email. Upload the image and we'll OCR the details.</div>
+    
+    <div class="drawer-row" style="display:flex;justify-content:space-between;margin-bottom:14px">
+      <div><div class="drawer-label">Customer</div><div class="drawer-value" id="upl-customer">—</div></div>
+      <div style="text-align:right"><div class="drawer-label">Invoice</div><div class="drawer-value" id="upl-invoice">—</div></div>
+    </div>
+
+    <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:30px 16px;text-align:center;margin-bottom:14px;cursor:pointer;background:var(--bg)" onclick="this.innerHTML='<div style=\'font-size:32px;margin-bottom:6px\'>✅</div><div style=\'font-size:13px;font-weight:600;color:var(--green)\'>check-image-4892.jpg uploaded</div><div style=\'font-size:11px;color:var(--text-sec);margin-top:4px\'>OCR scanning...</div>';setTimeout(function(){showToast('OCR complete — routing & account pre-filled');closeOverlay('overlay-upload-check');openCheckProcess('thompson')},1500)">
+      <div style="font-size:32px;margin-bottom:6px">📷</div>
+      <div style="font-size:13px;font-weight:600;color:var(--navy)">Tap to upload check image</div>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:4px">From camera roll, text message, or email attachment</div>
+    </div>
+
+    <button class="btn btn-outline btn-full" onclick="closeOverlay('overlay-upload-check')">Cancel</button>
   </div>
 </div>
 
