@@ -619,37 +619,58 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     <div class="card-title" style="margin:0">🏦 <span data-i18n="checkReceived">Check Received</span></div>
     <span class="perm-note">🔒 Field Sup / Sales only</span>
   </div>
-  <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px" data-i18n="checkDesc">Customer handed you a check? Snap photos below and submit to office for processing.</div>
-  
-  <div class="chk-upload-area" id="chk-check-upload" onclick="simulateCheckUpload(this,'check')">
-    <div style="font-size:28px;margin-bottom:4px">📸</div>
-    <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapCheck">Snap Check Photo</div>
-    <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapCheckHint">Front of check — we'll read the details</div>
-  </div>
-  
-  <div class="chk-upload-area" id="chk-slip-upload" onclick="simulateCheckUpload(this,'slip')">
-    <div style="font-size:28px;margin-bottom:4px">🧾</div>
-    <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapSlip">Snap Deposit Slip</div>
-    <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapSlipHint">After depositing at the bank</div>
+
+  <!-- STEP 1: Snap the check immediately -->
+  <div id="chk-step1">
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px" data-i18n="checkDescStep1">Customer handed you a check? Snap a photo NOW before you forget — you can add the deposit slip later.</div>
+    
+    <div class="chk-upload-area" id="chk-check-upload" onclick="simulateCheckUpload(this,'check')">
+      <div style="font-size:28px;margin-bottom:4px">📸</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapCheck">Snap Check Photo</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapCheckHint">Front of check — do this first!</div>
+    </div>
+
+    <div class="chk-field">
+      <label data-i18n="checkAmountLabel">Amount on Check</label>
+      <input type="text" placeholder="e.g. $6,250.00" id="chk-wo-amount" oninput="updateStep1Submit()">
+    </div>
+    <div class="chk-field">
+      <label data-i18n="checkNumLabel">Check Number <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="text" placeholder="e.g. 4892" id="chk-wo-checkno">
+    </div>
+
+    <button class="chk-submit-btn disabled" id="chk-step1-submit" onclick="completeStep1()">
+      <span data-i18n="saveCheckPhoto">Save Check — Add Deposit Slip Later</span>
+    </button>
   </div>
 
-  <div class="chk-field">
-    <label data-i18n="checkNumLabel">Check Number</label>
-    <input type="text" placeholder="e.g. 4892" id="chk-wo-checkno">
-  </div>
-  <div class="chk-field">
-    <label data-i18n="checkAmountLabel">Amount on Check</label>
-    <input type="text" placeholder="e.g. $6,250.00" id="chk-wo-amount">
-  </div>
+  <!-- STEP 2: Add deposit slip (shows after step 1, or for pending deposits) -->
+  <div id="chk-step2" style="display:none">
+    <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:18px">✅</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--green)" data-i18n="checkSaved">Check photo saved</div>
+        <div style="font-size:11px;color:var(--text-dim)" id="chk-saved-detail">$6,250.00 · Check #4892</div>
+      </div>
+    </div>
 
-  <label class="chk-verify-label">
-    <input type="checkbox" id="chk-wo-verify" onchange="updateCheckSubmit()">
-    <span data-i18n="checkVerify">I have deposited this check at the bank and uploaded both photos</span>
-  </label>
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px" data-i18n="checkDescStep2">Now deposit the check at the bank and upload the deposit slip to finalize.</div>
 
-  <button class="chk-submit-btn disabled" id="chk-wo-submit" onclick="submitCheckDeposit()">
-    <span data-i18n="submitToOffice">Submit to Office</span>
-  </button>
+    <div class="chk-upload-area" id="chk-slip-upload" onclick="simulateCheckUpload(this,'slip')">
+      <div style="font-size:28px;margin-bottom:4px">🧾</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapSlip">Snap Deposit Slip</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapSlipHint">After depositing at the bank</div>
+    </div>
+
+    <label class="chk-verify-label">
+      <input type="checkbox" id="chk-wo-verify" onchange="updateCheckSubmit()">
+      <span data-i18n="checkVerify">I have deposited this check at the bank</span>
+    </label>
+
+    <button class="chk-submit-btn disabled" id="chk-wo-submit" onclick="submitCheckDeposit()">
+      <span data-i18n="submitToOffice">Submit to Office</span>
+    </button>
+  </div>
 </div>
 
 <div class="footer">Nash Painting · Nashville, TN<br>© 2026 · Powered by NashOS</div>
@@ -1215,31 +1236,48 @@ function simulateCheckUpload(el, type) {
     el.innerHTML = '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Deposit slip captured</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Tap to retake</div>';
   }
   el.classList.add('has-photo');
-  updateCheckSubmit();
+  if (type === 'check') updateStep1Submit();
+  if (type === 'slip') updateCheckSubmit();
 }
+
+// Step 1: Just get the check photo + amount saved
+function updateStep1Submit() {
+  var hasCheck = checkPhotos.check;
+  var hasAmt = document.getElementById('chk-wo-amount').value.trim().length > 0;
+  var btn = document.getElementById('chk-step1-submit');
+  btn.className = (hasCheck && hasAmt) ? 'chk-submit-btn ready' : 'chk-submit-btn disabled';
+}
+function completeStep1() {
+  var amt = document.getElementById('chk-wo-amount').value || '';
+  var num = document.getElementById('chk-wo-checkno').value || '';
+  var detail = amt;
+  if (num) detail += ' · Check #' + num;
+  document.getElementById('chk-saved-detail').textContent = detail;
+  document.getElementById('chk-step1').style.display = 'none';
+  document.getElementById('chk-step2').style.display = 'block';
+  showToast('✅ Check photo saved — add deposit slip when ready');
+}
+
+// Step 2: Deposit slip + verify + submit
 function updateCheckSubmit() {
   var verified = document.getElementById('chk-wo-verify').checked;
-  var hasCheck = checkPhotos.check;
   var hasSlip = checkPhotos.slip;
-  var hasNum = document.getElementById('chk-wo-checkno').value.trim().length > 0;
-  var hasAmt = document.getElementById('chk-wo-amount').value.trim().length > 0;
   var btn = document.getElementById('chk-wo-submit');
-  if (verified && hasCheck && hasSlip) {
-    btn.className = 'chk-submit-btn ready';
-  } else {
-    btn.className = 'chk-submit-btn disabled';
-  }
+  btn.className = (verified && hasSlip) ? 'chk-submit-btn ready' : 'chk-submit-btn disabled';
 }
 function submitCheckDeposit() {
   var amt = document.getElementById('chk-wo-amount').value || '$—';
   showToast('✅ Check deposit submitted to office — ' + amt);
-  // Reset
-  document.getElementById('chk-wo-verify').checked = false;
-  document.getElementById('chk-wo-submit').className = 'chk-submit-btn disabled';
+  // Reset back to step 1
+  document.getElementById('chk-step2').style.display = 'none';
+  document.getElementById('chk-step1').style.display = 'block';
+  checkPhotos = { check: false, slip: false };
+  document.getElementById('chk-check-upload').innerHTML = '<div style="font-size:28px;margin-bottom:4px">📸</div><div style="font-size:13px;font-weight:600;color:var(--text-bright)">Snap Check Photo</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Front of check — do this first!</div>';
+  document.getElementById('chk-check-upload').classList.remove('has-photo');
+  document.getElementById('chk-wo-amount').value = '';
+  document.getElementById('chk-wo-checkno').value = '';
+  document.getElementById('chk-step1-submit').className = 'chk-submit-btn disabled';
 }
-// Listen for input changes on check fields
-document.getElementById('chk-wo-checkno').addEventListener('input', updateCheckSubmit);
-document.getElementById('chk-wo-amount').addEventListener('input', updateCheckSubmit);
 
 </script>
 </body>
