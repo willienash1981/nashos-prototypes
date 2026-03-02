@@ -17,6 +17,22 @@
   --border: #334155; --card: #1e293b;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
+/* Check deposit (field sup/salesman only) */
+.check-deposit-card { background:var(--card); border:1px solid var(--border); border-radius:12px; margin:12px; padding:16px; border-left:4px solid #c8a85c; }
+.check-deposit-card .perm-note { font-size:10px; color:var(--text-dim); background:var(--navy-mid); padding:3px 8px; border-radius:10px; display:inline-flex; align-items:center; gap:4px; }
+.chk-upload-area { border:2px dashed var(--border); border-radius:10px; padding:20px 16px; text-align:center; cursor:pointer; margin:8px 0; transition:all 0.15s; }
+.chk-upload-area:active { background:var(--navy-mid); }
+.chk-upload-area.has-photo { border-color:var(--green); border-style:solid; background:var(--green-bg); }
+.chk-field { margin-bottom:10px; }
+.chk-field label { display:block; font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; }
+.chk-field input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--navy-mid); color:var(--text); font-family:inherit; }
+.chk-field input:focus { outline:none; border-color:#c8a85c; }
+.chk-field input::placeholder { color:var(--text-dim); }
+.chk-submit-btn { width:100%; padding:12px; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+.chk-submit-btn.ready { background:#c8a85c; color:#1a2332; }
+.chk-submit-btn.disabled { background:var(--navy-mid); color:var(--text-dim); pointer-events:none; }
+.chk-verify-label { display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--navy-mid); border-radius:8px; margin-bottom:12px; cursor:pointer; font-size:12px; color:var(--text); }
+.chk-verify-label input { width:18px; height:18px; margin-top:2px; flex-shrink:0; accent-color:#c8a85c; }
 body { background:var(--navy); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.5; max-width:640px; margin:0 auto; padding-bottom:80px; }
 a { color:var(--accent-light); text-decoration:none; }
 
@@ -597,6 +613,45 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="photo-total" id="photo-total">📊 Total: <strong>3 photos</strong> uploaded</div>
 </div>
 
+<!-- CHECK DEPOSIT — Field Supervisor & Salesman only (hidden from subs) -->
+<div class="check-deposit-card" id="check-deposit-section">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+    <div class="card-title" style="margin:0">🏦 <span data-i18n="checkReceived">Check Received</span></div>
+    <span class="perm-note">🔒 Field Sup / Sales only</span>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px" data-i18n="checkDesc">Customer handed you a check? Snap photos below and submit to office for processing.</div>
+  
+  <div class="chk-upload-area" id="chk-check-upload" onclick="simulateCheckUpload(this,'check')">
+    <div style="font-size:28px;margin-bottom:4px">📸</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapCheck">Snap Check Photo</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapCheckHint">Front of check — we'll read the details</div>
+  </div>
+  
+  <div class="chk-upload-area" id="chk-slip-upload" onclick="simulateCheckUpload(this,'slip')">
+    <div style="font-size:28px;margin-bottom:4px">🧾</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapSlip">Snap Deposit Slip</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapSlipHint">After depositing at the bank</div>
+  </div>
+
+  <div class="chk-field">
+    <label data-i18n="checkNumLabel">Check Number</label>
+    <input type="text" placeholder="e.g. 4892" id="chk-wo-checkno">
+  </div>
+  <div class="chk-field">
+    <label data-i18n="checkAmountLabel">Amount on Check</label>
+    <input type="text" placeholder="e.g. $6,250.00" id="chk-wo-amount">
+  </div>
+
+  <label class="chk-verify-label">
+    <input type="checkbox" id="chk-wo-verify" onchange="updateCheckSubmit()">
+    <span data-i18n="checkVerify">I have deposited this check at the bank and uploaded both photos</span>
+  </label>
+
+  <button class="chk-submit-btn disabled" id="chk-wo-submit" onclick="submitCheckDeposit()">
+    <span data-i18n="submitToOffice">Submit to Office</span>
+  </button>
+</div>
+
 <div class="footer">Nash Painting · Nashville, TN<br>© 2026 · Powered by NashOS</div>
 
 <div class="toast" id="toast"></div>
@@ -746,6 +801,16 @@ const translations = {
     startLastJob: 'último: 3',
     startDone: '✅ ¡Lista de inicio completa!',
     startCustomMen: '¿Cuántos hombres?',
+    checkReceived: 'Cheque Recibido',
+    checkDesc: '¿El cliente le dio un cheque? Tome fotos abajo y envíe a la oficina.',
+    snapCheck: 'Foto del Cheque',
+    snapCheckHint: 'Frente del cheque',
+    snapSlip: 'Foto del Recibo de Depósito',
+    snapSlipHint: 'Después de depositar en el banco',
+    checkNumLabel: 'Número de Cheque',
+    checkAmountLabel: 'Monto del Cheque',
+    checkVerify: 'He depositado este cheque en el banco y subí ambas fotos',
+    submitToOffice: 'Enviar a la Oficina',
     startDmgCount: '{n} fotos de daños',
     startBefCount: '{n} fotos de antes',
     smartLink: '🔗 Orden de Trabajo en Vivo — Enlace Directo',
@@ -1137,6 +1202,45 @@ function startCheckComplete() {
 }
 
 startInit();
+
+// ============================================================
+// Check Deposit (Field Sup / Salesman only)
+// ============================================================
+var checkPhotos = { check: false, slip: false };
+function simulateCheckUpload(el, type) {
+  checkPhotos[type] = true;
+  if (type === 'check') {
+    el.innerHTML = '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Check photo captured</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Tap to retake</div>';
+  } else {
+    el.innerHTML = '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Deposit slip captured</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Tap to retake</div>';
+  }
+  el.classList.add('has-photo');
+  updateCheckSubmit();
+}
+function updateCheckSubmit() {
+  var verified = document.getElementById('chk-wo-verify').checked;
+  var hasCheck = checkPhotos.check;
+  var hasSlip = checkPhotos.slip;
+  var hasNum = document.getElementById('chk-wo-checkno').value.trim().length > 0;
+  var hasAmt = document.getElementById('chk-wo-amount').value.trim().length > 0;
+  var btn = document.getElementById('chk-wo-submit');
+  if (verified && hasCheck && hasSlip) {
+    btn.className = 'chk-submit-btn ready';
+  } else {
+    btn.className = 'chk-submit-btn disabled';
+  }
+}
+function submitCheckDeposit() {
+  var amt = document.getElementById('chk-wo-amount').value || '$—';
+  showToast('✅ Check deposit submitted to office — ' + amt);
+  // Reset
+  document.getElementById('chk-wo-verify').checked = false;
+  document.getElementById('chk-wo-submit').className = 'chk-submit-btn disabled';
+}
+// Listen for input changes on check fields
+document.getElementById('chk-wo-checkno').addEventListener('input', updateCheckSubmit);
+document.getElementById('chk-wo-amount').addEventListener('input', updateCheckSubmit);
+
 </script>
 </body>
 </html>
