@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Crew Management</title>
+<style>
+:root {
+  --navy: #1B2A4A; --navy-light: #2A3D5F;
+  --gold: #C4A962; --gold-light: #D4BE82;
+  --bg: #F5F3EF; --white: #FFFFFF;
+  --border: #E2DFD8; --text: #1B2A4A;
+  --text-sec: #6B7280; --text-muted: #9CA3AF;
+  --green: #16A34A; --green-bg: #F0FDF4;
+  --red: #DC2626; --red-bg: #FEF2F2;
+  --yellow: #F59E0B; --yellow-bg: #FFFBEB;
+  --blue: #2563EB; --blue-bg: #EFF6FF;
+  --radius: 12px; --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.topbar { position:sticky; top:0; z-index:100; background:var(--navy); color:#fff; padding:0 24px; height:56px; display:flex; align-items:center; justify-content:space-between; }
+.topbar .logo { font-size:20px; font-weight:700; letter-spacing:-.5px; }
+.topbar .logo span { color:var(--gold); }
+.topbar .subtitle { font-size:13px; color:rgba(255,255,255,.6); margin-left:12px; }
+.topbar-right { display:flex; align-items:center; gap:16px; }
+.topbar .date { font-size:13px; color:rgba(255,255,255,.5); }
+.role-switcher { background:var(--navy-light); color:#fff; border:1px solid rgba(255,255,255,.15); border-radius:var(--radius-sm); padding:6px 12px; font-size:13px; cursor:pointer; font-family:inherit; }
+.role-switcher option { background:var(--navy); }
+.container { max-width:1280px; margin:0 auto; padding:24px; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:24px; }
+.kpi-card { background:var(--white); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); border:1px solid var(--border); }
+.kpi-card .kpi-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text-sec); margin-bottom:4px; }
+.kpi-card .kpi-value { font-size:28px; font-weight:700; color:var(--text); }
+.kpi-card .kpi-sub { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.kpi-card.admin-only { position:relative; }
+.kpi-card .admin-badge { position:absolute; top:12px; right:12px; background:var(--navy); color:var(--gold); font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:.5px; }
+.kpi-card .kpi-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:8px; }
+.filters-bar { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:20px; align-items:center; }
+.filters-bar select { border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 12px; font-size:13px; background:var(--white); color:var(--text); font-family:inherit; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; border:none; font-family:inherit; transition:all .15s; }
+.btn-primary { background:var(--navy); color:#fff; }
+.btn-primary:hover { background:var(--navy-light); }
+.btn-gold { background:var(--gold); color:var(--navy); }
+.btn-gold:hover { background:var(--gold-light); }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-outline:hover { background:var(--white); border-color:var(--text-muted); }
+.btn-sm { padding:5px 10px; font-size:12px; }
+.table-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:var(--bg); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text-sec); padding:12px 16px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+td { padding:14px 16px; border-bottom:1px solid var(--border); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(196,169,98,.04); }
+.crew-name-link { color:var(--navy); font-weight:600; cursor:pointer; text-decoration:none; }
+.crew-name-link:hover { color:var(--gold); text-decoration:underline; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-green { background:var(--green-bg); color:var(--green); }
+.badge-yellow { background:var(--yellow-bg); color:var(--yellow); }
+.badge-red { background:var(--red-bg); color:var(--red); }
+.badge-blue { background:var(--blue-bg); color:var(--blue); }
+.badge-navy { background:var(--navy); color:#fff; }
+.badge-muted { background:#F3F4F6; color:var(--text-sec); }
+.cap-badge { display:inline-block; padding:1px 6px; border-radius:3px; font-size:10px; font-weight:700; background:#F3F4F6; color:var(--text-sec); margin:1px 2px; letter-spacing:.3px; }
+.status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+.status-dot.active { background:var(--green); }
+.status-dot.hold { background:var(--red); }
+.score-green { color:var(--green); font-weight:700; }
+.score-yellow { color:var(--yellow); font-weight:700; }
+.score-red { color:var(--red); font-weight:700; }
+.profile-view { display:none; }
+.profile-view.active { display:block; }
+.list-view { display:none; }
+.list-view.active { display:block; }
+.back-link { display:inline-flex; align-items:center; gap:6px; color:var(--text-sec); font-size:14px; cursor:pointer; margin-bottom:16px; font-weight:500; }
+.back-link:hover { color:var(--navy); }
+.profile-header { background:var(--white); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:20px; display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; }
+.profile-avatar { width:72px; height:72px; border-radius:50%; background:var(--navy); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:700; flex-shrink:0; }
+.profile-info { flex:1; min-width:200px; }
+.profile-info h2 { font-size:22px; margin-bottom:4px; }
+.profile-info .meta { font-size:13px; color:var(--text-sec); display:flex; flex-wrap:wrap; gap:16px; margin-top:4px; }
+.profile-stats { display:flex; gap:24px; flex-wrap:wrap; align-items:center; }
+.profile-stat { text-align:center; }
+.profile-stat .stat-value { font-size:24px; font-weight:700; }
+.profile-stat .stat-label { font-size:11px; color:var(--text-sec); text-transform:uppercase; letter-spacing:.5px; }
+.quality-ring { width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; position:relative; }
+.quality-ring::before { content:''; position:absolute; inset:0; border-radius:50%; border:4px solid var(--border); }
+.quality-ring.green::before { border-color:var(--green); }
+.quality-ring.yellow::before { border-color:var(--yellow); }
+.tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:24px; overflow-x:auto; }
+.tab { padding:12px 20px; font-size:14px; font-weight:500; color:var(--text-sec); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; white-space:nowrap; transition:all .15s; }
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--navy); border-bottom-color:var(--gold); font-weight:600; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.card { background:var(--white); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:16px; }
+.card h3 { font-size:16px; margin-bottom:12px; }
+.card h4 { font-size:14px; font-weight:600; margin-bottom:8px; color:var(--text-sec); }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.progress-bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+.progress-bar .fill { height:100%; border-radius:4px; transition:width .3s; }
+.progress-bar .fill.green { background:var(--green); }
+.progress-bar .fill.gold { background:var(--gold); }
+.progress-bar .fill.navy { background:var(--navy); }
+.bar-chart { display:flex; align-items:flex-end; gap:8px; height:120px; padding-top:8px; }
+.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+.bar-col .bar { width:100%; max-width:40px; border-radius:4px 4px 0 0; transition:height .3s; }
+.bar-col .bar-label { font-size:10px; color:var(--text-muted); text-align:center; }
+.bar-col .bar-value { font-size:10px; font-weight:600; color:var(--text-sec); }
+.stacked-bar { display:flex; height:24px; border-radius:var(--radius-sm); overflow:hidden; margin:8px 0; }
+.stacked-bar .seg { height:100%; }
+.score-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); }
+.score-row:last-child { border-bottom:none; }
+.score-row .score-label { width:160px; font-size:13px; font-weight:500; flex-shrink:0; }
+.score-row .score-bar-wrap { flex:1; }
+.score-row .score-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.score-row .score-bar .fill { height:100%; border-radius:3px; }
+.score-row .score-weight { width:50px; text-align:right; font-size:12px; color:var(--text-muted); }
+.score-row .score-val { width:45px; text-align:right; font-size:13px; font-weight:600; }
+.toggle { width:40px; height:22px; border-radius:11px; background:var(--border); cursor:pointer; position:relative; transition:background .2s; display:inline-block; }
+.toggle.on { background:var(--green); }
+.toggle::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.2); transition:transform .2s; }
+.toggle.on::after { transform:translateX(18px); }
+input[type=range] { -webkit-appearance:none; width:100%; height:4px; background:var(--border); border-radius:2px; outline:none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--navy); cursor:pointer; }
+.cap-row { display:grid; grid-template-columns:160px 60px 60px 60px 1fr 120px; gap:12px; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.cap-row.cap-header { font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-sec); border-bottom:2px solid var(--border); }
+.doc-card { display:flex; align-items:center; gap:16px; padding:16px; background:var(--white); border-radius:var(--radius-sm); border:1px solid var(--border); }
+.doc-icon { width:40px; height:40px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.doc-icon.green { background:var(--green-bg); }
+.doc-icon.yellow { background:var(--yellow-bg); }
+.doc-icon.red { background:var(--red-bg); }
+.doc-info { flex:1; }
+.doc-info .doc-name { font-weight:600; font-size:14px; }
+.doc-info .doc-exp { font-size:12px; color:var(--text-sec); }
+.doc-actions { display:flex; gap:8px; }
+.incident-card { border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:12px; overflow:hidden; }
+.incident-header { padding:16px; cursor:pointer; display:flex; align-items:center; gap:12px; }
+.incident-header:hover { background:rgba(0,0,0,.02); }
+.incident-detail { padding:0 16px 16px; display:none; border-top:1px solid var(--border); }
+.incident-detail.open { display:block; padding-top:16px; }
+.incident-arrow { transition:transform .2s; font-size:12px; color:var(--text-muted); }
+.incident-arrow.open { transform:rotate(90deg); }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--white); border-radius:var(--radius); width:90%; max-width:640px; max-height:85vh; overflow-y:auto; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+.modal h3 { margin-bottom:16px; }
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:12px; font-weight:600; color:var(--text-sec); margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+.form-group input, .form-group select, .form-group textarea { width:100%; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 12px; font-size:14px; font-family:inherit; background:var(--white); }
+.form-group textarea { resize:vertical; min-height:60px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+.review-card { padding:12px 0; border-bottom:1px solid var(--border); }
+.review-card:last-child { border-bottom:none; }
+.stars { color:var(--gold); letter-spacing:1px; }
+.review-text { font-style:italic; color:var(--text-sec); font-size:13px; margin-top:4px; }
+.review-meta { font-size:11px; color:var(--text-muted); margin-top:4px; }
+.advisory-panel { background:var(--blue-bg); border:1px solid #BFDBFE; border-radius:var(--radius); padding:16px; }
+.advisory-panel h4 { color:var(--blue); margin-bottom:8px; }
+.advisory-option { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--white); border-radius:var(--radius-sm); margin-bottom:8px; border:1px solid var(--border); }
+.advisory-option:last-child { margin-bottom:0; }
+.advisory-option .adv-label { font-weight:600; font-size:13px; }
+.advisory-option .adv-amount { font-size:15px; font-weight:700; }
+.basecamp-status { display:flex; align-items:center; gap:8px; }
+.basecamp-dot { width:10px; height:10px; border-radius:50%; background:var(--green); }
+.hidden { display:none !important; }
+@media(max-width:768px) {
+  .container { padding:16px; }
+  .kpi-row { grid-template-columns:1fr 1fr; }
+  .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
+  .profile-header { flex-direction:column; }
+  .profile-stats { width:100%; justify-content:space-around; }
+  .cap-row { grid-template-columns:1fr; gap:6px; }
+  .cap-row.cap-header { display:none; }
+  .filters-bar { flex-direction:column; }
+  .tab { padding:10px 14px; font-size:13px; }
+  .form-row { grid-template-columns:1fr; }
+  th,td { padding:10px 12px; font-size:13px; }
+  .topbar { padding:0 16px; }
+  .topbar .subtitle { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div style="display:flex;align-items:center;">
+    <div class="logo">Nash<span>OS</span></div>
+    <div class="subtitle">Crew Management</div>
+  </div>
+  <div class="topbar-right">
+    <div class="date">Mar 1, 2026</div>
+    <select class="role-switcher" id="roleSwitcher" onchange="switchRole(this.value)">
+      <option value="admin">👑 Owner / Admin</option>
+      <option value="office">📋 Office Manager (Barry)</option>
+      <option value="field">🔧 Field Supervisor</option>
+    </select>
+  </div>
+</div>
+<div class="container">
+<div id="listView" class="list-view active">
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-icon" style="background:var(--blue-bg);">👥</div><div class="kpi-label">Total Active Crews</div><div class="kpi-value">5</div><div class="kpi-sub">1 on hold</div></div>
+    <div class="kpi-card"><div class="kpi-icon" style="background:var(--green-bg);">⭐</div><div class="kpi-label">Avg Quality Score</div><div class="kpi-value">8.3<span style="font-size:14px;color:var(--text-muted);">/10</span></div><div class="kpi-sub">↑ 0.2 vs last quarter</div></div>
+    <div class="kpi-card"><div class="kpi-icon" style="background:var(--yellow-bg);">💰</div><div class="kpi-label">Avg Production $/Day</div><div class="kpi-value">$1,075</div><div class="kpi-sub">Across active crews</div></div>
+    <div class="kpi-card"><div class="kpi-icon" style="background:var(--red-bg);">⚠️</div><div class="kpi-label">Compliance Issues</div><div class="kpi-value" style="color:var(--red);">2</div><div class="kpi-sub">1 expired, 1 expiring soon</div></div>
+    <div class="kpi-card admin-only" data-admin="true"><div class="admin-badge">Admin Only</div><div class="kpi-icon" style="background:#FEF2F2;">🔒</div><div class="kpi-label">Total Active Debt</div><div class="kpi-value">$3,150</div><div class="kpi-sub">3 crews with balances</div></div>
+  </div>
+  <div class="filters-bar">
+    <select><option>All Statuses</option><option>Active</option><option>Hold</option><option>Inactive</option></select>
+    <select><option>All Services</option><option>Interior</option><option>Exterior</option><option>Cabinets</option><option>Deck &amp; Fence</option><option>Carpentry</option></select>
+    <select><option>All Compliance</option><option>Current</option><option>Expiring Soon</option><option>Expired</option></select>
+    <select><option>Sort: Name A-Z</option><option>Sort: Quality ↓</option><option>Sort: Production ↓</option><option>Sort: Debt ↓</option></select>
+    <div style="flex:1;"></div>
+    <button class="btn btn-gold">+ Add Crew</button>
+  </div>
+  <div class="table-card">
+    <table>
+      <thead><tr><th>Crew Name</th><th>Status</th><th>Quality</th><th>$/Day</th><th>Capabilities</th><th>Compliance</th><th class="admin-col" data-admin="true">Active Debt</th></tr></thead>
+      <tbody>
+        <tr><td><a class="crew-name-link" onclick="showProfile('carlos')">Carlos Rivera</a></td><td><span class="status-dot active"></span>Active</td><td><span class="score-green">8.7</span></td><td>$1,250</td><td><span class="cap-badge">INT</span><span class="cap-badge">EXT</span><span class="cap-badge">D&amp;F</span><span class="cap-badge">CLR</span></td><td><span class="badge badge-green">✅ Current</span></td><td class="admin-col" data-admin="true" style="color:var(--text-sec);">$1,400</td></tr>
+        <tr><td><a class="crew-name-link" onclick="showProfile('javier')">Javier Moreno</a></td><td><span class="status-dot active"></span>Active</td><td><span class="score-green">9.1</span></td><td>$1,100</td><td><span class="cap-badge">INT</span><span class="cap-badge">EXT</span><span class="cap-badge">CARP</span></td><td><span class="badge badge-green">✅ Current</span></td><td class="admin-col" data-admin="true">—</td></tr>
+        <tr><td><a class="crew-name-link" onclick="showProfile('mike')">Mike Torres</a></td><td><span class="status-dot active"></span>Active</td><td><span class="score-green">8.3</span></td><td>$1,050</td><td><span class="cap-badge">CAB-B</span><span class="cap-badge">CAB-D</span></td><td><span class="badge badge-green">✅ Current</span></td><td class="admin-col" data-admin="true">—</td></tr>
+        <tr><td><a class="crew-name-link" onclick="showProfile('ricardo')">Ricardo Peña</a></td><td><span class="status-dot active"></span>Active</td><td><span class="score-yellow">7.9</span></td><td>$980</td><td><span class="cap-badge">INT</span><span class="cap-badge">EXT</span><span class="cap-badge">D&amp;F</span></td><td><span class="badge badge-yellow">⚠️ GL exp 45d</span></td><td class="admin-col" data-admin="true" style="color:var(--yellow);">$750</td></tr>
+        <tr><td><a class="crew-name-link" onclick="showProfile('luis')">Luis Herrera</a></td><td><span class="status-dot active"></span>Active</td><td><span class="score-green">8.5</span></td><td>$1,180</td><td><span class="cap-badge">INT</span><span class="cap-badge">EXT</span><span class="cap-badge">SEMI</span><span class="cap-badge">FLR</span></td><td><span class="badge badge-green">✅ Current</span></td><td class="admin-col" data-admin="true" style="color:var(--text-sec);">$1,000</td></tr>
+        <tr><td><a class="crew-name-link" onclick="showProfile('diego')">Diego Santos</a></td><td><span class="status-dot hold"></span>Hold</td><td><span class="score-yellow">7.2</span></td><td>$890</td><td><span class="cap-badge">INT</span><span class="cap-badge">EXT</span></td><td><span class="badge badge-red">❌ WC Expired</span></td><td class="admin-col" data-admin="true">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="profileView" class="profile-view">
+  <div class="back-link" onclick="showList()">← Back to Crew List</div>
+  <div class="profile-header">
+    <div class="profile-avatar">CR</div>
+    <div class="profile-info">
+      <h2>Carlos Rivera</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin:6px 0;">
+        <span class="badge badge-green">✅ Active</span>
+        <span class="badge badge-muted">Since Jan 2023</span>
+        <span class="badge badge-muted">English / Spanish</span>
+        <span class="badge badge-muted">36% Pay Rate</span>
+      </div>
+      <div class="meta"><span>📞 (615) 555-0142</span><span>📧 carlos@crpainting.com</span></div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="quality-ring green">8.7</div><div class="stat-label">Quality</div></div>
+      <div class="profile-stat"><div class="stat-value">$1,250</div><div class="stat-label">$/Day</div></div>
+      <div class="profile-stat"><div class="stat-value">34</div><div class="stat-label">Jobs (90d)</div></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="profileTabs">
+    <div class="tab active" data-tab="overview" onclick="switchTab('overview')">Overview</div>
+    <div class="tab" data-tab="quality" onclick="switchTab('quality')">Quality &amp; Reviews</div>
+    <div class="tab" data-tab="capabilities" onclick="switchTab('capabilities')">Capabilities</div>
+    <div class="tab" data-tab="compliance" onclick="switchTab('compliance')">Compliance</div>
+    <div class="tab admin-tab" data-admin="true" data-tab="debt" onclick="switchTab('debt')">🔒 Debt Ledger</div>
+    <div class="tab" data-tab="basecamp" onclick="switchTab('basecamp')">Basecamp</div>
+  </div>
+
+  <!-- Overview Tab -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Production Metrics <span style="font-size:12px;color:var(--text-muted);">(90 days)</span></h3>
+        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+          <div><span style="font-size:12px;color:var(--text-sec);">Jobs</span><br><strong>34</strong></div>
+          <div><span style="font-size:12px;color:var(--text-sec);">On-Time %</span><br><strong>88%</strong></div>
+          <div><span style="font-size:12px;color:var(--text-sec);">Avg Variance</span><br><strong>+0.3 days</strong></div>
+          <div><span style="font-size:12px;color:var(--text-sec);">Trend</span><br><strong style="color:var(--green);">↑ +0.4</strong></div>
+        </div>
+        <h4>Revenue/Day by Service</h4>
+        <div class="bar-chart">
+          <div class="bar-col"><div class="bar-value">$850</div><div class="bar" style="height:61%;background:var(--navy);"></div><div class="bar-label">INT</div></div>
+          <div class="bar-col"><div class="bar-value">$1,400</div><div class="bar" style="height:100%;background:var(--gold);"></div><div class="bar-label">EXT</div></div>
+          <div class="bar-col"><div class="bar-value">$600</div><div class="bar" style="height:43%;background:var(--navy-light);"></div><div class="bar-label">D&amp;F</div></div>
+          <div class="bar-col"><div class="bar-value">$950</div><div class="bar" style="height:68%;background:var(--gold-light);"></div><div class="bar-label">CLR</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Revenue &amp; Financials <span style="font-size:12px;color:var(--text-muted);">(90 days)</span></h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div><div style="font-size:12px;color:var(--text-sec);">Total Revenue</div><div style="font-size:22px;font-weight:700;">$127,500</div></div>
+          <div><div style="font-size:12px;color:var(--text-sec);">Gross Profit</div><div style="font-size:22px;font-weight:700;color:var(--green);">$70,400</div></div>
+          <div><div style="font-size:12px;color:var(--text-sec);">Crew Pay (36%)</div><div style="font-size:16px;font-weight:600;">$45,900</div></div>
+          <div><div style="font-size:12px;color:var(--text-sec);">Material POs</div><div style="font-size:16px;font-weight:600;">$11,200</div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div style="font-size:12px;color:var(--text-sec);margin-bottom:4px;">GP% — 55.2%</div>
+          <div class="progress-bar"><div class="fill green" style="width:55.2%;"></div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="stacked-bar">
+            <div class="seg" style="width:36%;background:var(--navy);" title="Pay 36%"></div>
+            <div class="seg" style="width:8.8%;background:var(--gold);" title="Materials 8.8%"></div>
+            <div class="seg" style="width:55.2%;background:var(--green);" title="GP 55.2%"></div>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;"><span>Pay 36%</span><span>Mat 9%</span><span>GP 55%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Active Jobs</h3>
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:16px;border:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div style="font-weight:600;">Johnson Exterior</div><div style="font-size:12px;color:var(--text-sec);">1234 Oak Hill Dr, Nashville</div></div>
+          <span class="badge badge-blue">In Progress</span>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:space-between;font-size:13px;"><span>Value: <strong>$30,000</strong></span><span>Day <strong>29</strong> of 30</span></div>
+        <div class="progress-bar" style="margin-top:8px;"><div class="fill navy" style="width:97%;"></div></div>
+        <div style="margin-top:8px;text-align:right;"><button class="btn btn-sm btn-outline">View Job →</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Recent Purchase Orders</h3>
+      <table style="font-size:13px;">
+        <thead><tr><th>PO #</th><th>Vendor</th><th>Amount</th><th>Date</th><th>Job</th></tr></thead>
+        <tbody>
+          <tr><td>#PO-1847</td><td>Hoover Paint (Cool Springs)</td><td>$2,340</td><td>Feb 28</td><td>Johnson Exterior</td></tr>
+          <tr><td>#PO-1832</td><td>Hoover Paint (Green Hills)</td><td>$1,890</td><td>Feb 25</td><td>Johnson Exterior</td></tr>
+          <tr><td>#PO-1801</td><td>Sherwin-Williams</td><td>$960</td><td>Feb 18</td><td>Adams Interior</td></tr>
+          <tr><td>#PO-1789</td><td>Hoover Paint (Cool Springs)</td><td>$3,200</td><td>Feb 12</td><td>Baker D&amp;F</td></tr>
+          <tr><td>#PO-1775</td><td>ProSupply Nashville</td><td>$450</td><td>Feb 8</td><td>Baker D&amp;F</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Quality Tab -->
+  <div id="tab-quality" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Quality Score Breakdown</h3>
+        <div style="text-align:center;margin-bottom:16px;"><div class="quality-ring green" style="width:80px;height:80px;font-size:26px;margin:0 auto;">8.7</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Overall Score</div></div>
+        <div class="score-row"><span class="score-label">Customer Survey</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:90%;background:var(--green);"></div></div></div><span class="score-val">90</span><span class="score-weight">25%</span></div>
+        <div class="score-row"><span class="score-label">Callbacks</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:85%;background:var(--green);"></div></div></div><span class="score-val">85</span><span class="score-weight">20%</span></div>
+        <div class="score-row"><span class="score-label">Punch List</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:82%;background:var(--green);"></div></div></div><span class="score-val">82</span><span class="score-weight">15%</span></div>
+        <div class="score-row"><span class="score-label">Supervisor Walk</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:88%;background:var(--green);"></div></div></div><span class="score-val">88</span><span class="score-weight">10%</span></div>
+        <div class="score-row"><span class="score-label">Photo Compliance</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:92%;background:var(--green);"></div></div></div><span class="score-val">92</span><span class="score-weight">10%</span></div>
+        <div class="score-row"><span class="score-label">On-Time</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:78%;background:var(--yellow);"></div></div></div><span class="score-val">78</span><span class="score-weight">10%</span></div>
+        <div class="score-row"><span class="score-label">Cleanliness</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:95%;background:var(--green);"></div></div></div><span class="score-val">95</span><span class="score-weight">5%</span></div>
+        <div class="score-row"><span class="score-label">Check-In</span><div class="score-bar-wrap"><div class="score-bar"><div class="fill" style="width:80%;background:var(--green);"></div></div></div><span class="score-val">80</span><span class="score-weight">5%</span></div>
+        <div style="margin-top:16px;">
+          <h4>Weighted Composition</h4>
+          <div class="stacked-bar" style="height:28px;">
+            <div class="seg" style="width:26%;background:#16A34A;"></div>
+            <div class="seg" style="width:19.5%;background:#22C55E;"></div>
+            <div class="seg" style="width:14.1%;background:#4ADE80;"></div>
+            <div class="seg" style="width:10.1%;background:#86EFAC;"></div>
+            <div class="seg" style="width:10.6%;background:#1B2A4A;"></div>
+            <div class="seg" style="width:9%;background:#C4A962;"></div>
+            <div class="seg" style="width:5.5%;background:#D4BE82;"></div>
+            <div class="seg" style="width:4.6%;background:#2A3D5F;"></div>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+            <span style="color:#16A34A;">■</span>Survey 22.5 <span style="color:#22C55E;">■</span>Callbacks 17.0 <span style="color:#4ADE80;">■</span>Punch 12.3 <span style="color:#86EFAC;">■</span>Walk 8.8 <span style="color:#1B2A4A;">■</span>Photo 9.2 <span style="color:#C4A962;">■</span>On-Time 7.8 <span style="color:#D4BE82;">■</span>Clean 4.75 <span style="color:#2A3D5F;">■</span>Check-In 4.0
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Recent Customer Reviews</h3>
+        <div style="font-size:14px;margin-bottom:12px;">Average: <strong>4.8/5</strong> <span class="stars">★★★★★</span></div>
+        <div class="review-card"><div class="stars">★★★★★</div><div class="review-text">"Carlos and his crew did an amazing job on our interior. Very professional, clean, and the quality is outstanding."</div><div class="review-meta">— Sarah M., Feb 22, 2026 · Johnson Exterior</div></div>
+        <div class="review-card"><div class="stars">★★★★★</div><div class="review-text">"Excellent work on our deck refinishing. Came back looking brand new. Highly recommend!"</div><div class="review-meta">— Tom B., Feb 10, 2026 · Baker D&amp;F</div></div>
+        <div class="review-card"><div class="stars">★★★★☆</div><div class="review-text">"Great quality overall. Minor touch-ups needed on one wall but they came right back to fix it."</div><div class="review-meta">— Lisa K., Jan 28, 2026 · Adams Interior</div></div>
+        <div class="review-card"><div class="stars">★★★★★</div><div class="review-text">"Best painting crew we've ever hired. Attention to detail is incredible."</div><div class="review-meta">— David R., Jan 15, 2026 · Peters Color Change</div></div>
+        <h3 style="margin-top:24px;">Callback History</h3>
+        <table style="font-size:13px;">
+          <thead><tr><th>Date</th><th>Job</th><th>Issue</th><th>Resolution</th><th>Days</th></tr></thead>
+          <tbody>
+            <tr><td>Jan 30</td><td>Adams Interior</td><td>Touch-up on dining wall</td><td>Completed same day</td><td>0</td></tr>
+            <tr><td>Dec 12</td><td>Wilson Exterior</td><td>Drip on window frame</td><td>Fixed next visit</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capabilities Tab -->
+  <div id="tab-capabilities" class="tab-content">
+    <div class="card">
+      <h3>Capability Matrix</h3>
+      <p style="font-size:13px;color:var(--text-sec);margin-bottom:16px;">Toggle qualifications and tiers. <span class="badge badge-yellow">⚠️ Mismatch Warning:</span> If a crew is marked Qualified but has no recent jobs in that service type, NashOS flags it for review.</p>
+      <div class="cap-row cap-header"><div>Service Type</div><div style="text-align:center;">Qualified</div><div style="text-align:center;">PP+</div><div style="text-align:center;">Value</div><div>Price Range</div><div>Notes</div></div>
+      <div class="cap-row"><div style="font-weight:600;">Interior</div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-sec);">$3K — $35K</span><br><input type="range" min="0" max="50000" value="35000"></div><div><input type="text" value="Primary service" style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Exterior</div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-sec);">$3K — $20K</span><br><input type="range" min="0" max="50000" value="20000"></div><div><input type="text" value="Value tier only" style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Cabinet Body</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Cabinet Doors</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Deck &amp; Fence</div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-sec);">$0 — $8K</span><br><input type="range" min="0" max="20000" value="8000"></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Semi-Transparent</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Carpentry</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Drywall</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Floor Coatings</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Popcorn</div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-muted);">N/A</span></div><div><input type="text" placeholder="Notes..." style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+      <div class="cap-row"><div style="font-weight:600;">Color Changes</div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div style="text-align:center;"><span class="toggle on" onclick="this.classList.toggle('on')"></span></div><div><span style="font-size:12px;color:var(--text-sec);">$3K — $35K</span><br><input type="range" min="0" max="50000" value="35000"></div><div><input type="text" value="Strong color match skills" style="width:100%;border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:12px;"></div></div>
+    </div>
+  </div>
+
+  <!-- Compliance Tab -->
+  <div id="tab-compliance" class="tab-content">
+    <div class="card">
+      <h3>Onboarding Packet</h3>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+        <div class="progress-bar" style="flex:1;"><div class="fill green" style="width:100%;"></div></div>
+        <span style="font-size:13px;font-weight:600;color:var(--green);">100% Complete</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);">All documents received and verified. Annual renewal due Jan 2027.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;">
+      <div class="doc-card"><div class="doc-icon green">📋</div><div class="doc-info"><div class="doc-name">General Liability (GL)</div><div class="doc-exp">Expires: Aug 15, 2026 · <strong style="color:var(--green);">167 days</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+      <div class="doc-card"><div class="doc-icon green">🛡️</div><div class="doc-info"><div class="doc-name">Workers' Comp (WC)</div><div class="doc-exp">Expires: Aug 15, 2026 · <strong style="color:var(--green);">167 days</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+      <div class="doc-card"><div class="doc-icon green">📄</div><div class="doc-info"><div class="doc-name">W-9</div><div class="doc-exp">On file · <strong style="color:var(--green);">Current</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+      <div class="doc-card"><div class="doc-icon green">📝</div><div class="doc-info"><div class="doc-name">Subcontractor Agreement</div><div class="doc-exp">Signed: Jan 10, 2023 · <strong style="color:var(--green);">Current</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+      <div class="doc-card"><div class="doc-icon green">✅</div><div class="doc-info"><div class="doc-name">Rules of Conduct</div><div class="doc-exp">Signed: Jan 10, 2023 · <strong style="color:var(--green);">Current</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+      <div class="doc-card"><div class="doc-icon green">🪪</div><div class="doc-info"><div class="doc-name">Driver's License</div><div class="doc-exp">Expires: Mar 22, 2028 · <strong style="color:var(--green);">752 days</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+      <div class="doc-card"><div class="doc-icon green">💳</div><div class="doc-info"><div class="doc-name">Offers &amp; Payments Agreement</div><div class="doc-exp">Signed: Jan 10, 2023 · <strong style="color:var(--green);">Current</strong></div></div><div class="doc-actions"><button class="btn btn-sm btn-outline">View</button><button class="btn btn-sm btn-outline">Upload</button></div></div>
+    </div>
+  </div>
+
+  <!-- Debt Ledger Tab -->
+  <div id="tab-debt" class="tab-content">
+    <div class="grid-3" style="margin-bottom:20px;">
+      <div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;">Active Incidents</div><div style="font-size:32px;font-weight:700;">1</div></div>
+      <div class="card"><div style="font-size:12px;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;">Total Owed</div><div style="font-size:24px;font-weight:700;">$2,150</div><div style="font-size:12px;color:var(--text-sec);">Recovered: $750</div><div class="progress-bar" style="margin-top:6px;"><div class="fill green" style="width:34.9%;"></div></div></div>
+      <div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;">Recovery Rate</div><div style="font-size:32px;font-weight:700;color:var(--green);">34.9%</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3>Incidents</h3>
+        <button class="btn btn-primary log-incident-btn" onclick="document.getElementById('incidentModal').classList.add('open')">+ Log New Incident</button>
+      </div>
+      <div class="incident-card">
+        <div class="incident-header" onclick="toggleIncident(this)">
+          <span class="incident-arrow">▶</span>
+          <div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><strong>#12</strong><span class="badge badge-red">ACTIVE</span><span class="badge badge-navy">SILENT</span><span class="badge badge-muted">Property Damage</span><span style="font-size:12px;color:var(--text-muted);">Dec 5, 2025</span></div><div style="font-size:13px;margin-top:4px;">Mineral spirits on hardwood floor</div></div>
+          <div style="text-align:right;"><div style="font-size:14px;font-weight:700;">$1,400 remaining</div><div style="font-size:11px;color:var(--text-muted);">$600 / $2,000 recovered</div></div>
+        </div>
+        <div class="incident-detail" id="incident-12">
+          <div class="grid-4" style="margin-bottom:12px;">
+            <div><span style="font-size:11px;color:var(--text-sec);">Cost to Nash</span><br><strong>$2,000</strong></div>
+            <div><span style="font-size:11px;color:var(--text-sec);">Target Recovery</span><br><strong>$2,000</strong></div>
+            <div><span style="font-size:11px;color:var(--text-sec);">Recovered</span><br><strong style="color:var(--green);">$600</strong></div>
+            <div><span style="font-size:11px;color:var(--text-sec);">Remaining</span><br><strong style="color:var(--red);">$1,400</strong></div>
+          </div>
+          <div class="progress-bar" style="margin-bottom:12px;"><div class="fill green" style="width:30%;"></div></div>
+          <div style="font-size:13px;color:var(--text-sec);"><strong>Internal Notes:</strong> Crew spilled mineral spirits on client's hardwood floor in entryway. Floor had to be refinished. Insurance did not cover. Deducting silently from offers over time.<br><strong>Supporting Docs:</strong> floor-damage-photos.zip, refinishing-invoice.pdf, homeowner-claim.pdf</div>
+        </div>
+      </div>
+      <div class="incident-card">
+        <div class="incident-header" onclick="toggleIncident(this)">
+          <span class="incident-arrow">▶</span>
+          <div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><strong>#15</strong><span class="badge badge-green">RESOLVED</span><span class="badge badge-blue">TRANSPARENT</span><span class="badge badge-muted">Property Damage</span><span style="font-size:12px;color:var(--text-muted);">Jan 18, 2026</span></div><div style="font-size:13px;margin-top:4px;">Broken porch light fixture</div></div>
+          <div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:var(--green);">$0 remaining</div><div style="font-size:11px;color:var(--text-muted);">$150 / $150 recovered</div></div>
+        </div>
+        <div class="incident-detail" id="incident-15">
+          <div class="grid-4" style="margin-bottom:12px;">
+            <div><span style="font-size:11px;color:var(--text-sec);">Cost to Nash</span><br><strong>$150</strong></div>
+            <div><span style="font-size:11px;color:var(--text-sec);">Target Recovery</span><br><strong>$150</strong></div>
+            <div><span style="font-size:11px;color:var(--text-sec);">Recovered</span><br><strong style="color:var(--green);">$150</strong></div>
+            <div><span style="font-size:11px;color:var(--text-sec);">Remaining</span><br><strong>$0</strong></div>
+          </div>
+          <div class="progress-bar" style="margin-bottom:12px;"><div class="fill green" style="width:100%;"></div></div>
+          <div style="font-size:13px;color:var(--text-sec);"><strong>Acknowledgment:</strong> Carlos acknowledged the damage and agreed to full deduction from next offer.<br><strong>Internal Notes:</strong> Light fixture broken during ladder setup. Carlos agreed immediately, deducted from next payment.<br><strong>Supporting Docs:</strong> fixture-receipt.pdf</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Recovery History</h3>
+      <table style="font-size:13px;">
+        <thead><tr><th>Date</th><th>Job</th><th>Amount</th><th>Mode</th><th>Applied By</th><th>Balance</th></tr></thead>
+        <tbody>
+          <tr><td>Feb 24, 2026</td><td>Johnson Exterior</td><td>$200</td><td><span class="badge badge-navy">Silent</span></td><td>System</td><td>$1,400</td></tr>
+          <tr><td>Feb 10, 2026</td><td>Baker D&amp;F</td><td>$200</td><td><span class="badge badge-navy">Silent</span></td><td>System</td><td>$1,600</td></tr>
+          <tr><td>Jan 22, 2026</td><td>Adams Interior</td><td>$150</td><td><span class="badge badge-blue">Transparent</span></td><td>Barry</td><td>$1,800</td></tr>
+          <tr><td>Jan 22, 2026</td><td>Adams Interior</td><td>$200</td><td><span class="badge badge-navy">Silent</span></td><td>System</td><td>$1,950</td></tr>
+          <tr><td>Dec 20, 2025</td><td>Williams Int</td><td>—</td><td><span class="badge badge-navy">Silent</span></td><td>System</td><td>$2,150</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="advisory-panel">
+      <h4>💡 Deduction Advisory — Sample Job: Thompson Interior ($18,500)</h4>
+      <p style="font-size:12px;color:var(--text-sec);margin-bottom:12px;">Suggested silent deductions for Incident #12 based on job value and remaining balance of $1,400:</p>
+      <div class="advisory-option"><div><div class="adv-label">🟢 Conservative</div><div style="font-size:11px;color:var(--text-sec);">1% of crew pay · Minimal crew impact</div></div><div class="adv-amount">$66.60</div></div>
+      <div class="advisory-option" style="border-color:var(--gold);"><div><div class="adv-label">🟡 Moderate (Recommended)</div><div style="font-size:11px;color:var(--text-sec);">3% of crew pay · Standard recovery pace</div></div><div class="adv-amount">$199.80</div></div>
+      <div class="advisory-option"><div><div class="adv-label">🔴 Aggressive</div><div style="font-size:11px;color:var(--text-sec);">5% of crew pay · Fast recovery, higher crew impact</div></div><div class="adv-amount">$333.00</div></div>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:8px;">Crew pay for this job: $6,660 (36%). Barry can accept a suggestion or enter a custom amount.</div>
+    </div>
+  </div>
+
+  <!-- Basecamp Tab -->
+  <div id="tab-basecamp" class="tab-content">
+    <div class="card">
+      <h3>Basecamp Integration</h3>
+      <div class="basecamp-status" style="margin-bottom:16px;"><div class="basecamp-dot"></div><span style="font-size:14px;font-weight:500;">Connected</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">Last synced: Today, 4:32 PM</span></div>
+      <div style="margin-bottom:16px;"><a href="#" style="color:var(--blue);font-weight:500;font-size:14px;">Open Carlos Rivera's Basecamp Page →</a></div>
+      <div class="form-group"><label>Basecamp Notes</label><textarea style="min-height:100px;">Carlos is responsive on Basecamp. Prefers to receive job details through Basecamp messages rather than text. Schedule coordination is handled through his Basecamp calendar.</textarea></div>
+      <div style="margin-top:12px;">
+        <h4>Sync Log</h4>
+        <table style="font-size:13px;">
+          <thead><tr><th>Time</th><th>Event</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>4:32 PM</td><td>Job schedule sync</td><td><span class="badge badge-green">Success</span></td></tr>
+            <tr><td>2:15 PM</td><td>PO notification sent</td><td><span class="badge badge-green">Success</span></td></tr>
+            <tr><td>9:00 AM</td><td>Daily check-in reminder</td><td><span class="badge badge-green">Success</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Incident Modal -->
+<div class="modal-overlay" id="incidentModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3>Log New Incident</h3>
+      <span style="cursor:pointer;font-size:20px;color:var(--text-muted);" onclick="document.getElementById('incidentModal').classList.remove('open')">✕</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Crew</label><input type="text" value="Carlos Rivera" disabled style="background:var(--bg);"></div>
+      <div class="form-group"><label>Job</label><select><option>Johnson Exterior — $30,000</option><option>Baker D&amp;F — $8,500</option><option>Adams Interior — $12,000</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" value="2026-03-01"></div>
+      <div class="form-group"><label>Category</label><select><option>Property Damage</option><option>Material Waste</option><option>Rework Required</option><option>Equipment Damage</option><option>Customer Complaint</option><option>Other</option></select></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea placeholder="Describe the incident in detail..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Cost to Nash</label><input type="text" placeholder="$0.00"></div>
+      <div class="form-group"><label>Target Recovery <span style="font-weight:400;text-transform:none;letter-spacing:0;">(may be less than cost)</span></label><input type="text" placeholder="$0.00"></div>
+    </div>
+    <div class="form-group">
+      <label>Recoupment Mode</label>
+      <div style="display:flex;gap:16px;margin-top:4px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;text-transform:none;letter-spacing:0;"><input type="radio" name="recoup" value="transparent" checked> Transparent — crew knows</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;text-transform:none;letter-spacing:0;"><input type="radio" name="recoup" value="silent"> Silent — deducted from offers</label>
+      </div>
+    </div>
+    <div class="form-group"><label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;"><input type="checkbox"> Crew has acknowledged this incident</label></div>
+    <div class="form-group"><label>Acknowledgment Notes</label><textarea placeholder="Notes about crew's response..."></textarea></div>
+    <div class="form-group"><label>Internal Notes</label><textarea placeholder="Internal-only notes..."></textarea></div>
+    <div class="form-group">
+      <label>Supporting Documents</label>
+      <div style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:24px;text-align:center;color:var(--text-muted);font-size:13px;cursor:pointer;">📎 Drop files here or click to upload<br><span style="font-size:11px;">Photos, invoices, estimates (PDF, JPG, PNG)</span></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('incidentModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="document.getElementById('incidentModal').classList.remove('open')">Log Incident</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showProfile(crew) {
+  document.getElementById('listView').classList.remove('active');
+  document.getElementById('profileView').classList.add('active');
+  window.scrollTo(0,0);
+}
+function showList() {
+  document.getElementById('profileView').classList.remove('active');
+  document.getElementById('listView').classList.add('active');
+  window.scrollTo(0,0);
+}
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelector('[data-tab="'+name+'"]').classList.add('active');
+}
+function toggleIncident(header) {
+  var d=header.nextElementSibling, a=header.querySelector('.incident-arrow');
+  d.classList.toggle('open'); a.classList.toggle('open');
+}
+function switchRole(role) {
+  var admins=document.querySelectorAll('[data-admin="true"]');
+  var logBtns=document.querySelectorAll('.log-incident-btn');
+  if(role==='admin'){
+    admins.forEach(function(e){e.classList.remove('hidden');});
+    logBtns.forEach(function(e){e.classList.remove('hidden');});
+  } else if(role==='office'){
+    admins.forEach(function(e){e.classList.remove('hidden');});
+    logBtns.forEach(function(e){e.classList.add('hidden');});
+  } else {
+    admins.forEach(function(e){e.classList.add('hidden');});
+    logBtns.forEach(function(e){e.classList.add('hidden');});
+    if(document.getElementById('tab-debt').classList.contains('active')) switchTab('overview');
+  }
+}
+</script>
+</body>
+</html>
