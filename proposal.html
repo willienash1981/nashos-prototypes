@@ -245,13 +245,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="pkg-title">Choose Your Package</div>
   <div class="pkg-row">
     <div class="pkg-card" data-pkg="value" onclick="setPkg('value')"><div class="pkg-label">Value</div><div class="pkg-price" id="pvP"></div><div class="pkg-desc">Quality products, standard prep</div></div>
-    <div class="pkg-card active" data-pkg="standard" onclick="setPkg('standard')"><div class="pkg-label">Standard</div><div class="pkg-price" id="psP"></div><div class="pkg-desc">Premium products, elite prep</div></div>
+    <div class="pkg-card active" data-pkg="standard" onclick="setPkg('standard')"><div class="pkg-label">Premium</div><div class="pkg-price" id="psP"></div><div class="pkg-desc">Premium products, elite prep</div></div>
     <div class="pkg-card" data-pkg="premium" onclick="setPkg('premium')"><div class="pkg-label">Premium+</div><div class="pkg-price" id="ppP"></div><div class="pkg-desc">White-glove, highest grade</div></div>
   </div>
   <div class="pkg-compare"><div class="pkg-compare-btn" onclick="toggleCmp()"><span id="cmpA">▶</span> Compare Packages</div></div>
   <div class="compare-panel" id="cmpPanel">
-    <div class="cmp-row hdr"><div class="cmp-c"></div><div class="cmp-c">Value</div><div class="cmp-c">Standard</div><div class="cmp-c">Premium+</div></div>
-    <div class="cmp-row"><div class="cmp-c">Prep</div><div class="cmp-c">Standard</div><div class="cmp-c">Elite</div><div class="cmp-c">White-Glove</div></div>
+    <div class="cmp-row hdr"><div class="cmp-c"></div><div class="cmp-c">Value</div><div class="cmp-c">Premium</div><div class="cmp-c">Premium+</div></div>
+    <div class="cmp-row"><div class="cmp-c">Prep</div><div class="cmp-c">Premium</div><div class="cmp-c">Elite</div><div class="cmp-c">White-Glove</div></div>
     <div class="cmp-row"><div class="cmp-c">Wall Paint</div><div class="cmp-c">ProMar 200</div><div class="cmp-c">Cashmere</div><div class="cmp-c">Emerald</div></div>
     <div class="cmp-row"><div class="cmp-c">Trim Paint</div><div class="cmp-c">ProMar 200</div><div class="cmp-c">Advance</div><div class="cmp-c">Emerald Ure.</div></div>
     <div class="cmp-row"><div class="cmp-c">Ext Paint</div><div class="cmp-c">SuperPaint</div><div class="cmp-c">Element Guard</div><div class="cmp-c">Duration</div></div>
@@ -320,7 +320,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <div class="bottom">
   <div class="bot-row">
-    <div><div class="bot-label" id="botLabel">Standard · Full Scope</div><div class="bot-saved" id="botSaved"></div></div>
+    <div><div class="bot-label" id="botLabel">Premium · Full Scope</div><div class="bot-saved" id="botSaved"></div></div>
     <div class="bot-price" id="botPrice"></div>
   </div>
   <div style="display:flex;gap:8px">
@@ -456,7 +456,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="ap-sub">Sign to accept the proposal, contract terms, and payment commitment</div>
 
     <div class="sig-summary">
-      <div class="sig-sum-row"><span>Package</span><span id="sigPkg">Standard</span></div>
+      <div class="sig-sum-row"><span>Package</span><span id="sigPkg">Premium</span></div>
       <div class="sig-sum-row"><span>Services</span><span id="sigSvcs">4 service types</span></div>
       <div class="sig-sum-row"><span>Payment method</span><span id="sigPay">ACH</span></div>
       <div class="sig-sum-total"><span>Total</span><span id="sigTotal">$0</span></div>
@@ -859,7 +859,7 @@ function render(){
 
   // Bottom
   document.getElementById('botPrice').textContent = fmt(tot);
-  const pkName = {value:'Value',standard:'Standard',premium:'Premium Plus'}[pkg];
+  const pkName = {value:'Value',standard:'Premium',premium:'Premium Plus'}[pkg];
   const onSecs = SECTIONS.filter(s => s.on).length;
   const totSecs = SECTIONS.length;
   const optOn = OPTIONALS.filter(o => o.on).length;
@@ -869,7 +869,7 @@ function render(){
   document.getElementById('botLabel').textContent = bl;
   document.getElementById('botSaved').textContent = '';
 
-  const wt = {value:'5-Year Warranty',standard:'10-Year Warranty',premium:'Lifetime Warranty'};
+  const wt = {value:'2-Year Warranty (Interior/Exterior Paint)',standard:'10-Year Warranty',premium:'10-Year Warranty'};
   document.getElementById('warTitle').textContent = wt[pkg];
 
   renderProjDetails();
@@ -1027,7 +1027,7 @@ function nextAcceptStep(){
 
   // Populate next step data
   if(acceptStep===2){
-    const pkName={value:'Value',standard:'Standard',premium:'Premium Plus'}[pkg];
+    const pkName={value:'Value',standard:'Premium',premium:'Premium Plus'}[pkg];
     const payLabels={'ach':'ACH (no fees)','check-hand':'Check to supervisor','check-photo':'Check photo','cc':'Credit card (+3%)','mail':'Mailed check'};
     document.getElementById('sigPkg').textContent=pkName;
     const onSecs=SECTIONS.filter(s=>s.on).length;
@@ -1060,7 +1060,7 @@ function showPdfToast(){
     toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:12px;padding:24px 20px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:200;max-width:320px;width:90%;text-align:center';
     document.body.appendChild(toast);
   }
-  const pkName = {value:'Value',standard:'Standard',premium:'Premium Plus'}[pkg];
+  const pkName = {value:'Value',standard:'Premium',premium:'Premium Plus'}[pkg];
   toast.innerHTML = `
     <div style="font-size:36px;margin-bottom:8px">📄</div>
     <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px">Download Proposal PDF</div>

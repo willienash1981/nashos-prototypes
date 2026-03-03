@@ -363,8 +363,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
             <div class="pkg-row">
               <span class="pkg-label">Pkg:</span>
               <span class="chip" data-pkg="value" onclick="setPkg('int','value',this)">Value</span>
-              <span class="chip active" data-pkg="standard" onclick="setPkg('int','standard',this)">●Standard</span>
-              <span class="chip" data-pkg="premium" onclick="setPkg('int','premium',this)">Premium+</span>
+              <span class="chip active" data-pkg="premium" onclick="setPkg('int','premium',this)">●Premium</span>
+              <span class="chip" data-pkg="premium" onclick="setPkg('int','premium',this)">Premium Plus</span>
             </div>
             <span class="type-ctrl-sep"></span>
             <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Standard ▼</option><option>Heavy</option><option>Restoration</option></select>
@@ -523,11 +523,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
             <div class="pkg-row">
               <span class="pkg-label">Pkg:</span>
               <span class="chip" onclick="setPkg('ext','value',this)">Value</span>
-              <span class="chip active" onclick="setPkg('ext','standard',this)">●Standard</span>
-              <span class="chip" onclick="setPkg('ext','premium',this)">Premium+</span>
+              <span class="chip active" onclick="setPkg('ext','premium',this)">●Premium</span>
+              <span class="chip" onclick="setPkg('ext','premium',this)">Premium Plus</span>
             </div>
             <span class="type-ctrl-sep"></span>
-            <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Heavy ▼</option><option>Standard</option><option>Restoration</option></select>
+            <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Heavy ▼</option><option>Premium</option><option>Restoration</option></select>
             <select class="section-adjust-select" onchange="toast('Section adjust: '+this.value)"><option>0%</option><option>+5%</option><option>+10%</option><option>−5%</option></select>
           </div>
           <div class="instance-card" onclick="toggleInstance(this)">
@@ -715,8 +715,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
             <div class="pkg-row">
               <span class="pkg-label">Pkg:</span>
               <span class="chip" onclick="toast('Value selected')">Value</span>
-              <span class="chip active" onclick="toast('Standard selected')">●Standard</span>
-              <span class="chip" onclick="toast('Premium+ selected')">Premium+</span>
+              <span class="chip active" onclick="toast('Premium selected')">●Premium</span>
+              <span class="chip" onclick="toast('Premium+ selected')">Premium Plus</span>
             </div>
             <span class="type-ctrl-sep"></span>
             <select class="prep-select" onchange="toast('Prep: '+this.value)"><option>Standard ▼</option><option>Heavy</option></select>
@@ -1026,7 +1026,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <div class="adjust-panel">
     <h3>Global Estimate Adjustment</h3>
     <div class="adjust-slider-row">
-      <input type="range" class="adjust-slider" id="adjustSlider" min="0" max="25" value="0" oninput="updateAdjust()">
+      <input type="range" class="adjust-slider" id="adjustSlider" min="-25" max="25" value="0" oninput="updateAdjust()">
       <span class="adjust-val" id="adjustVal">0%</span>
     </div>
     <div class="adjust-preview" id="adjustPreview">No adjustment — Total: $19,174</div>
@@ -1312,7 +1312,7 @@ function setPkg(group, pkg, el) {
 
   // Update prices for interior group
   if (group === 'int') {
-    const multipliers = { value: 0.75, standard: 1, premium: 1.25 };
+    const multipliers = { value: 0.60, premium: 1, 'premium-plus': 2.10 };
     const m = multipliers[pkg];
     const basePrices = [1480, 1890, 1060, 780, 620, 420];
     let sum = 0;

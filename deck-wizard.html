@@ -316,6 +316,10 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 
   <div class="card">
     <div class="q-label">Condition notes & color details for customer</div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label style="font-weight:600;font-size:13px;margin-bottom:4px;display:block">Stain Color</label>
+      <input type="text" id="stainColor" placeholder="e.g., TWP 1501 Cedartone, Cabot 3002 Mahogany" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit">
+    </div>
     <textarea id="deck-notes" placeholder="Document deck condition, color selections, railing finish details, etc." style="width:100%;min-height:80px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
     <div class="calc-note">Include condition details for reference when processing submitted colors</div>
   </div>
@@ -434,6 +438,7 @@ function assess() {
   };
   const pName = productNames[product] || product;
   const icon = cardClass === 'error' ? '🚫' : cardClass === 'warn' ? '⚠️' : '✅';
+  const isLocked = product === 'superdeck-locked';
 
   document.getElementById('recProduct').textContent = `${icon} Recommended: ${pName}`;
   document.getElementById('recReason').textContent = reason;
@@ -442,12 +447,33 @@ function assess() {
 
   let dhtml = '';
   disclaimers.forEach(d => { dhtml += `<div class="disclaimer ${d.t}">${d.m}</div>`; });
+  // Estimator override for severe/locked conditions
+  if (isLocked) {
+    dhtml += `<div class="disclaimer warning" style="margin-top:8px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="overrideLock" onchange="handleProductOverride(this.checked)">
+        <span>⚡ <strong>Estimator Override:</strong> I've assessed the deck and want to use Solid Stain instead of SuperDeck</span>
+      </label>
+    </div>`;
+  }
   document.getElementById('disclaimers').innerHTML = dhtml;
 
   // productLabel removed (colors section deleted)
 
   state.product = product;
   state.productName = pName;
+}
+
+// ── Product Override Handler ──
+function handleProductOverride(checked) {
+  if (checked) {
+    state.product = 'solid';
+    state.productName = 'Solid Stain (ESTIMATOR OVERRIDE)';
+    document.getElementById('recProduct').textContent = '⚡ Override: Solid Stain (was SuperDeck)';
+  } else {
+    // Re-run recommendation
+    runAssessment();
+  }
 }
 
 // ── Additional Surface Toggles ──

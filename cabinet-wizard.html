@@ -176,7 +176,7 @@ const RATES = {
   bore_fill:118.00, extra_color:300.00
 };
 const COAT_2_MULT = 0.67;
-const PKG = { Standard:1.0, 'Premium+':2.10 };
+const PKG = { Premium:1.0, 'Premium Plus':2.10 };
 const LOC_PRESETS = ['Kitchen','Master Bath Vanity','Hall Bath Vanity','Powder Room','Laundry','Butler\'s Pantry','Den/Office','Island','Wet Bar'];
 
 // ---- STATE ----
@@ -187,7 +187,7 @@ const state = {
   color: '',
   locations: [mkLocation('Kitchen')],
   hardware: { knobs:'keep', knobCount:0, hinges:'keep', hingeCount:0, boreFill:false, boreCount:0 },
-  pkg: 'Standard'
+  pkg: 'Premium'
 };
 
 function mkLocation(name) {
@@ -386,10 +386,10 @@ function render() {
   // Step 4: Package
   h+=`<div class="card"><div class="card-title">④ Package</div>`;
   h+=`<div class="pills">`;
-  h+=`<div class="pill${state.pkg==='Standard'?' active':''}" onclick="setPkg('Standard')" style="flex:1">Standard (1.0×)</div>`;
-  h+=`<div class="pill${state.pkg==='Premium+'?' active':''}" onclick="setPkg('Premium+')" style="flex:1">Premium+ (2.10×)</div>`;
+  h+=`<div class="pill${state.pkg==='Premium'?' active':''}" onclick="setPkg('Premium')" style="flex:1">Premium (1.0×)</div>`;
+  h+=`<div class="pill${state.pkg==='Premium Plus'?' active':''}" onclick="setPkg('Premium Plus')" style="flex:1">Premium Plus (2.10×)</div>`;
   h+=`</div>`;
-  if(state.pkg==='Premium+') h+=`<div class="info-note">Enhanced prep, grain filling, premium protocols, 10-Year + Lifetime Touchups warranty</div>`;
+  if(state.pkg==='Premium Plus') h+=`<div class="info-note">Enhanced prep, grain filling, premium protocols, 10-Year + Lifetime Touchups warranty</div>`;
   h+=`</div>`;
 
   document.getElementById('app').innerHTML=h;

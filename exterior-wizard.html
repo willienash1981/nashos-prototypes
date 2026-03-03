@@ -197,7 +197,7 @@ const HEIGHT_MULTS = {'1-Story':1.0,'2-Story':1.54,'3-Story+':2.0};
 // Per-story rates for siding blended calc
 const STORY_LABOR = [1.0, 1.54, 2.0]; // 1st, 2nd, 3rd
 const SECTION_NAMES = ['Front','Front Left','Front Right','Back','Back Left','Back Right','Left Side','Right Side','Garage','Porch','Deck Area','Shed','Detached Garage'];
-const PKG_MULTS = {Value:0.60,Standard:1.00,'Premium+':2.10};
+const PKG_MULTS = {Value:0.60,Premium:1.00,'Premium Plus':2.10};
 const PREP_MULTS = {Standard:1.0,Heavy:1.35,Restoration:2.50};
 
 function mkSiding(type='Hardiplank',sf=0,height='1-Story',stain=false,romaBio=false,incl1st=true,incl2nd=true){return{type,sf,height,stain,romaBio,incl1st,incl2nd}}
@@ -228,7 +228,7 @@ function mkSection(name=''){
     caulkingOn:false,caulkingOverride:null,
     primerOn:false,primerOverride:null,
     pwSkip:false,pwSkipNote:'',
-    pkg:'Standard',prep:'Standard',
+    pkg:'Premium',prep:'Standard',
     notes:''
   };
 }
@@ -276,7 +276,7 @@ let editingIdx=-1;
 
 // ---- PRICING ----
 function calcSidingEntry(e,pkg,prep){
-  const rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85;
+  let rate=e.type==='Brick'&&e.romaBio?2.50:SIDING_RATES[e.type]||1.85; if(e.stain) rate=Math.max(rate,2.03); // stain: 175SF/hr production rate → higher base
   const pm=PKG_MULTS[pkg],pp=PREP_MULTS[prep];
   if(e.height==='1-Story') return e.sf*rate*1.0*pm*pp;
   if(e.height==='2-Story'){
@@ -461,7 +461,7 @@ function renderForm(){
 
   // 6. Package
   h+=`<div class="card fade-in"><div class="card-title">📦 Package</div><div class="pkg-chips">
-    ${['Value','Standard','Premium+'].map(p=>`<span class="chip${s.pkg===p?' active':''}" onclick="s().pkg='${p}';renderForm()">${p}<br><small>${PKG_MULTS[p]}×</small></span>`).join('')}</div></div>`;
+    ${['Value','Premium','Premium Plus'].map(p=>`<span class="chip${s.pkg===p?' active':''}" onclick="s().pkg='${p}';renderForm()">${p}<br><small>${PKG_MULTS[p]}×</small></span>`).join('')}</div></div>`;
 
   // 7. Prep
   h+=`<div class="card fade-in"><div class="card-title">🔧 Prep Level</div><div class="prep-chips">
