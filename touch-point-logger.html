@@ -347,12 +347,19 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <span id="form-job-addr">456 Oak Ave, Nashville 37205</span> · <span id="form-job-phase">In Progress</span>
   </div>
 
+  <!-- Quick log button — one tap and done -->
+  <button class="submit-btn" onclick="submitTouchPoint()" style="margin:12px 12px 0;width:calc(100% - 24px);background:var(--green);font-size:16px;padding:16px;">📍 Log Touch Point — One Tap ✓</button>
+  <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px 0 8px;">That's it! Or add details below 👇</div>
+
+  <div style="margin:0 12px;height:1px;background:var(--border);"></div>
+  <div style="text-align:center;font-size:11px;font-weight:600;color:var(--text-light);padding:8px 0 4px;text-transform:uppercase;letter-spacing:.5px;">Optional details</div>
+
   <!-- Type -->
   <div class="form-card">
-    <div class="form-label">What type of visit?</div>
+    <div class="form-label">What type of visit? <span style="font-weight:400;color:var(--text-light);">(optional)</span></div>
     <div class="type-pills" id="type-pills">
       <button class="type-pill" onclick="pickType(this)">🏠 Pre-job visit</button>
-      <button class="type-pill active" onclick="pickType(this)">👷 Mid-job check-in</button>
+      <button class="type-pill" onclick="pickType(this)">👷 Mid-job check-in</button>
       <button class="type-pill" onclick="pickType(this)">🚶 Walkthrough</button>
       <button class="type-pill" onclick="pickType(this)">📞 Post-completion</button>
       <button class="type-pill" onclick="pickType(this)">🔧 Issue resolution</button>
@@ -364,22 +371,22 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
   <div class="form-card">
     <div class="toggle-row">
       <div>
-        <div style="font-size:13px;font-weight:600;">Customer was present</div>
+        <div style="font-size:13px;font-weight:600;">Customer was present <span style="font-weight:400;color:var(--text-light);font-size:11px;">(optional)</span></div>
         <div style="font-size:11px;color:var(--text-light);">Interactions with customer count more</div>
       </div>
-      <div class="toggle on" onclick="this.classList.toggle('on');this.querySelector('.knob').style.left=this.classList.contains('on')?'22px':'2px'"><div class="knob" style="left:22px;"></div></div>
+      <div class="toggle" onclick="this.classList.toggle('on');this.querySelector('.knob').style.left=this.classList.contains('on')?'22px':'2px'"><div class="knob"></div></div>
     </div>
   </div>
 
   <!-- Interaction quality -->
   <div class="form-card">
-    <div class="form-label">How did it go?</div>
+    <div class="form-label">How did it go? <span style="font-weight:400;color:var(--text-light);">(optional)</span></div>
     <div class="emoji-selector">
       <span class="emoji-opt" onclick="pickEmoji(this,1)">😐</span>
       <span class="emoji-opt" onclick="pickEmoji(this,2)">😊</span>
-      <span class="emoji-opt active" onclick="pickEmoji(this,3)">🤩</span>
+      <span class="emoji-opt" onclick="pickEmoji(this,3)">🤩</span>
     </div>
-    <div style="text-align:center;font-size:11px;color:var(--text-light);margin-top:2px;" id="emoji-label">Great interaction!</div>
+    <div style="text-align:center;font-size:11px;color:var(--text-light);margin-top:2px;" id="emoji-label">Tap to rate</div>
   </div>
 
   <!-- Quick note -->
@@ -397,8 +404,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     </div>
   </div>
 
-  <button class="submit-btn" onclick="submitTouchPoint()">Log Touch Point ✓</button>
-  <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px;">Takes less than 30 seconds</div>
+  <button class="submit-btn" onclick="submitTouchPoint()" style="background:var(--navy);">Log with Details ✓</button>
 
 </div>
 

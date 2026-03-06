@@ -17,6 +17,13 @@
   --border: #334155; --card: #1e293b;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
+/* Touch point pills & emojis (field sup/salesman only) */
+.tp-pill { padding:5px 10px; border-radius:14px; border:1px solid rgba(255,255,255,.2); background:transparent; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--text-dim); transition:all .15s; }
+.tp-pill:active { transform:scale(.95); }
+.tp-pill.active { background:#10B981; color:#fff; border-color:#10B981; }
+.tp-emoji { font-size:26px; padding:4px 12px; cursor:pointer; opacity:.35; filter:grayscale(80%); transition:all .15s; }
+.tp-emoji:active { transform:scale(1.15); }
+.tp-emoji.active { opacity:1; filter:grayscale(0%); transform:scale(1.1); }
 /* Check deposit (field sup/salesman only) */
 .check-deposit-card { background:var(--card); border:1px solid var(--border); border-radius:12px; margin:12px; padding:16px; border-left:4px solid #c8a85c; }
 .check-deposit-card .perm-note { font-size:10px; color:var(--text-dim); background:var(--navy-mid); padding:3px 8px; border-radius:10px; display:inline-flex; align-items:center; gap:4px; }
@@ -611,6 +618,64 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   </div>
 
   <div class="photo-total" id="photo-total">📊 Total: <strong>3 photos</strong> uploaded</div>
+</div>
+
+<!-- TOUCH POINT — Field Supervisor & Salesman only (hidden from subs) -->
+<div class="check-deposit-card" id="touch-point-section" style="border-left-color:#10B981;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+    <div class="card-title" style="margin:0">📍 <span data-i18n="touchPoint">Touch Point</span></div>
+    <span class="perm-note">🔒 Field Sup / Sales only</span>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Log a customer interaction — just tap the button. Add details if you want.</div>
+
+  <!-- Quick log state -->
+  <div id="tp-ready">
+    <button onclick="showTpDetails()" style="width:100%;padding:14px;background:#10B981;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;">
+      📍 Log Touch Point ✓
+    </button>
+    <div style="text-align:center;margin-top:6px;">
+      <span onclick="showTpDetails()" style="font-size:11px;color:var(--text-dim);cursor:pointer;text-decoration:underline;">+ Add details (optional)</span>
+    </div>
+
+    <!-- Touch point count for this job -->
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;">
+      <div style="font-size:11px;color:var(--text-dim);flex:1;">This job: <strong style="color:#fff;">3 touch points</strong></div>
+      <div style="height:6px;flex:2;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:60%;background:linear-gradient(90deg,#A8A9AD,#C0C0C0);border-radius:3px;"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text-dim);">2 more for ⭐</div>
+    </div>
+  </div>
+
+  <!-- Expanded details (hidden by default) -->
+  <div id="tp-details" style="display:none;margin-top:10px;">
+    <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;">TYPE (optional)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;" id="tp-type-pills">
+      <button class="tp-pill" onclick="pickTpType(this)">🏠 Pre-job</button>
+      <button class="tp-pill" onclick="pickTpType(this)">👷 Check-in</button>
+      <button class="tp-pill" onclick="pickTpType(this)">🚶 Walkthrough</button>
+      <button class="tp-pill" onclick="pickTpType(this)">📞 Follow-up</button>
+      <button class="tp-pill" onclick="pickTpType(this)">🔧 Issue</button>
+    </div>
+
+    <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;">HOW'D IT GO? (optional)</div>
+    <div style="display:flex;gap:0;justify-content:center;margin-bottom:10px;">
+      <span class="tp-emoji" onclick="pickTpEmoji(this)">😐</span>
+      <span class="tp-emoji" onclick="pickTpEmoji(this)">😊</span>
+      <span class="tp-emoji" onclick="pickTpEmoji(this)">🤩</span>
+    </div>
+
+    <textarea placeholder="Quick note (optional)..." style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;font-family:inherit;resize:none;min-height:50px;"></textarea>
+
+    <button onclick="logTouchPoint()" style="width:100%;margin-top:8px;padding:12px;background:#10B981;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Log with Details ✓</button>
+  </div>
+
+  <!-- Success state (shown after logging) -->
+  <div id="tp-success" style="display:none;text-align:center;padding:12px 0;">
+    <div style="font-size:28px;margin-bottom:4px;">✓</div>
+    <div style="font-size:14px;font-weight:700;color:#10B981;">Touch point logged! 🎉</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">4 total on this job — Silver!</div>
+  </div>
 </div>
 
 <!-- CHECK DEPOSIT — Field Supervisor & Salesman only (hidden from subs) -->
@@ -1278,6 +1343,35 @@ function submitCheckDeposit() {
   document.getElementById('chk-wo-checkno').value = '';
   document.getElementById('chk-step1-submit').className = 'chk-submit-btn disabled';
 }
+
+// ══════════════════════════════════════
+// TOUCH POINT (field sup / salesman only)
+// ══════════════════════════════════════
+function showTpDetails() {
+  document.getElementById('tp-details').style.display = 'block';
+}
+function pickTpType(el) {
+  document.querySelectorAll('#tp-type-pills .tp-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+function pickTpEmoji(el) {
+  document.querySelectorAll('.tp-emoji').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+}
+function logTouchPoint() {
+  document.getElementById('tp-ready').style.display = 'none';
+  document.getElementById('tp-details').style.display = 'none';
+  document.getElementById('tp-success').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('tp-success').style.display = 'none';
+    document.getElementById('tp-ready').style.display = 'block';
+  }, 3000);
+}
+// Quick log (the green button) — same as logTouchPoint but from the main button
+document.querySelector('#touch-point-section #tp-ready button').addEventListener('click', function(e) {
+  e.preventDefault();
+  logTouchPoint();
+});
 
 </script>
 </body>
