@@ -239,11 +239,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="logo">Nash <span>Painting</span></div>
   <div class="header-info">
     <span class="label" data-i18n="jobAddress">Job Address</span>
-    <a class="value" href="https://maps.apple.com/?address=4+Strawberry+Hill,Nashville,TN+37215">4 Strawberry Hill, Nashville, TN 37215 📍</a>
+    <a class="value" href="https://maps.apple.com/?address=2841+Tyne+Blvd,Nashville,TN+37215">2841 Tyne Blvd, Nashville, TN 37215 📍</a>
     <span class="label" data-i18n="customer">Customer</span>
-    <span class="value">Gail Greil</span>
+    <span class="value">Robert & Sarah Thompson</span>
     <span class="label" data-i18n="jobCrew">Job # / Crew</span>
-    <span class="value">WO-40618331 · Carlos Villanueva</span>
+    <span class="value">WO-50281947 · Carlos Rodriguez</span>
   </div>
 </div>
 
@@ -270,8 +270,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     <div class="start-crew-btns" id="start-men-btns">
       <button class="start-crew-btn" data-val="1">1</button>
       <button class="start-crew-btn" data-val="2">2</button>
-      <button class="start-crew-btn active" data-val="3">3</button>
-      <button class="start-crew-btn" data-val="4">4</button>
+      <button class="start-crew-btn" data-val="3">3</button>
+      <button class="start-crew-btn active" data-val="4">4</button>
       <button class="start-crew-btn" data-val="5">5</button>
       <button class="start-crew-btn" data-val="6">6</button>
       <button class="start-crew-btn" data-val="7">7</button>
@@ -290,23 +290,23 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 <div class="card">
   <div class="progress-wrap">
     <div class="progress-header">
-      <span class="day" data-i18n="dayTracker">Day 3 of 5</span>
-      <span class="pct">60%</span>
+      <span class="day" data-i18n="dayTracker">Day 5 of 12</span>
+      <span class="pct">42%</span>
     </div>
-    <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div>
   </div>
   <div class="dates">
-    <div><span data-i18n="started">Started</span>: <strong>Mon Feb 23</strong></div>
-    <div><span data-i18n="scheduledFinish">Scheduled finish</span>: <strong>Fri Feb 27</strong></div>
-    <div class="estimate"><span data-i18n="yourEstimate">Your estimate</span>: <strong>Thu Feb 26</strong> ✅</div>
+    <div><span data-i18n="started">Started</span>: <strong>Mon Feb 17</strong></div>
+    <div><span data-i18n="scheduledFinish">Scheduled finish</span>: <strong>Fri Feb 28</strong></div>
+    <div class="estimate"><span data-i18n="yourEstimate">Your estimate</span>: <strong>Thu Feb 27</strong> ✅</div>
   </div>
 </div>
 
 <!-- Daily Update — Todo Style -->
 <div class="card" id="daily-update-card">
   <div id="daily-form">
-    <div class="card-title">📋 <span data-i18n="dailyUpdate">Daily Update</span> — Wed Feb 25</div>
-    <div class="yesterday-summary" data-i18n="yesterdaySummary" style="margin-top:0;margin-bottom:10px;padding-top:0;border-top:none;">Yesterday: 3 men, est. finish Thu Feb 26 ✓</div>
+    <div class="card-title">📋 <span data-i18n="dailyUpdate">Daily Update</span> — Fri Feb 21</div>
+    <div class="yesterday-summary" data-i18n="yesterdaySummary" style="margin-top:0;margin-bottom:10px;padding-top:0;border-top:none;">Yesterday: 4 men, est. finish Thu Feb 27 ✓</div>
 
     <div class="todo-progress" id="todo-progress">
       <div class="todo-progress-bar"><div class="todo-progress-fill" id="todo-progress-fill" style="width:0%"></div></div>
@@ -321,8 +321,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
           <div class="headcount-btns">
             <button class="hc-btn" data-val="1">1</button>
             <button class="hc-btn" data-val="2">2</button>
-            <button class="hc-btn active" data-val="3">3</button>
-            <button class="hc-btn" data-val="4">4</button>
+            <button class="hc-btn" data-val="3">3</button>
+            <button class="hc-btn active" data-val="4">4</button>
             <button class="hc-btn" data-val="5">5</button>
             <button class="hc-btn" data-val="6">6</button>
             <button class="hc-btn" data-val="7">7</button>
@@ -335,7 +335,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
         <div class="todo-check" id="check-finish" onclick="toggleTodo('finish')"></div>
         <div class="todo-body">
           <div class="todo-label" data-i18n="whenFinish">When do you think you'll finish?</div>
-          <input type="date" id="est-date" value="2026-02-26">
+          <input type="date" id="est-date" value="2026-02-27">
         </div>
       </div>
 
@@ -376,76 +376,59 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 <!-- Estimator Notes (above scope so crew reads these FIRST) -->
 <div class="card" style="border-left:3px solid var(--yellow);">
   <div class="card-title">📝 <span data-i18n="estimatorNotes">Estimator Notes</span></div>
-  <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px"><span data-i18n="from">From</span>: <strong>Larry Morrison</strong></div>
-  <div class="work-note" data-i18n="estimatorWarning">⚠️ Gutter and downspout color is NOT finalized yet. Customer is choosing between a lighter shade of Cityscape and a completely different accent. <strong>Do not spray gutters/downspouts until I confirm the color.</strong> Everything else is good to go. Call me if questions: 615-829-6858.</div>
-  <div style="font-size:13px;color:var(--text-dim);margin-top:8px" data-i18n="estimatorTip">Start with fascia, trim, and deck work. Save gutters/downspouts for last.</div>
+  <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px"><span data-i18n="from">From</span>: <strong>Larry</strong></div>
+  <div class="work-note" data-i18n="estimatorWarning">⚠️ This is a BIG job — 4 service types. <strong>IMPORTANT SEQUENCING:</strong><br>1) Carpentry repairs FIRST (porch rot + fascia + window sills)<br>2) Pressure wash all exterior surfaces<br>3) Exterior painting<br>4) Cabinet doors removed Day 1 — bring to shop for spray. Boxes rolled on-site.<br>5) Interior painting last — work room by room, master bedroom first<br>6) Cabinet doors reinstalled Day 10</div>
+  <div style="font-size:13px;color:var(--text-dim);margin-top:8px" data-i18n="estimatorTip">⚠️ Customer is very engaged — Robert works from home and may ask questions. Be friendly but don't let it slow you down. Call me with any scope questions: 615-829-6858.</div>
 </div>
 
 <!-- Scope of Work -->
 <div class="card">
-  <div class="card-title">🎨 <span data-i18n="scopeOfWork">Scope of Work</span></div>
+  <div class="card-title">🎨 <span data-i18n="scopeOfWork">Scope of Work</span> — <span style="color:var(--yellow)">4 Service Types</span></div>
 
   <div class="scope-section">
-    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="exteriorPainting">Exterior Painting</span> <span class="count">13 items ▶</span></div>
+    <div class="scope-header" onclick="toggleScope(this)">🔨 Carpentry Repairs <span class="count">3 items ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface" data-i18n="frontFascia">Front Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="leftFascia">Left Side Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="rightFascia">Right Side Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="backFascia">Back Fascia Boards</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="frontPorchCeiling">Front Porch Ceiling</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="garageDoorTrim">Garage Door Trim</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="frontEntryDoor">Front Entry Door</div><span class="tag tag-labor">Brush</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="guttersFront">Gutters — Front</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="guttersBack">Gutters — Back</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="downspoutsAll">Downspouts (all)</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="garageDoors2">Garage Doors (2)</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="shuttersAll">Shutters (all)</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="windowTrimAll">Window Trim (all)</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="work-note" data-i18n="gutterNote">⚠️ Gutters & downspouts — color TBD, lighter accent. Confirm with Larry before spraying.</div>
+      <div class="scope-item"><div class="surface">Front Porch Rot Repair</div><span class="tag tag-labor">Splice · 3 boards</span><span class="tag tag-product">PVC Lumber</span></div>
+      <div class="scope-item"><div class="surface">Fascia Board Replacement</div><span class="tag tag-labor">Full piece · 2 boards (7'+)</span><span class="tag tag-product">Pressure-treated</span></div>
+      <div class="scope-item"><div class="surface">Window Sill Repair (2 sills)</div><span class="tag tag-labor">Epoxy fill · sand</span><span class="tag tag-product">Primed + painted to match</span></div>
+      <div class="work-note">⚠️ DO FIRST — before pressure washing or painting. Carpentry must cure before primer.</div>
     </div>
   </div>
 
   <div class="scope-section">
-    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="backLeftPorch">Back Left Screened Porch</span> <span class="count">3 items ▶</span></div>
+    <div class="scope-header" onclick="toggleScope(this)">🏡 Exterior Painting <span class="count">6 items ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface" data-i18n="porchCeiling">Porch Ceiling</div><span class="tag tag-labor">Spray</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="screenFrame">Screen Frame</div><span class="tag tag-labor">Brush</span><span class="tag tag-product">BM Ultra Spec</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="porchRailing">Porch Railing</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Ultra Spec</span></div>
+      <div class="scope-item"><div class="surface">Pressure Washing</div><span class="tag tag-labor">3700 PSI · 2,800 SF</span><span class="tag tag-product">All coated surfaces</span></div>
+      <div class="scope-item"><div class="surface">Siding</div><span class="tag tag-labor">Spray + backroll · 2 coats · 2,200 SF</span><span class="tag tag-product">BM Element Guard Satin</span></div>
+      <div class="scope-item"><div class="surface">Trim & Fascia</div><span class="tag tag-labor">Brush · 2 coats · 180 LF</span><span class="tag tag-product">BM Advance</span></div>
+      <div class="scope-item"><div class="surface">Soffit & Eaves</div><span class="tag tag-labor">Spray · 2 coats · 340 SF</span><span class="tag tag-product">BM Advance</span></div>
+      <div class="scope-item"><div class="surface">Shutters (8)</div><span class="tag tag-labor">Spray · 2 coats</span><span class="tag tag-product">BM Advance</span></div>
+      <div class="scope-item"><div class="surface">Garage Door (2-car)</div><span class="tag tag-labor">Spray + backroll · 2 coats</span><span class="tag tag-product">BM Advance</span></div>
+      <div class="work-note">Pressure wash FIRST, then paint. Siding is spray + backroll. Trim/fascia is brush only.</div>
     </div>
   </div>
 
   <div class="scope-section">
-    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="mainDeck">Main Deck</span> <span class="count">2 items ▶</span></div>
+    <div class="scope-header" onclick="toggleScope(this)">🏠 Interior Painting <span class="count">7 rooms ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface" data-i18n="deckFloor">Deck Floor</div><span class="tag tag-labor" data-i18n="stainRollBack">Stain — Roll & Back-brush</span><span class="tag tag-product">BM Woodluxe</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="deckRailing">Deck Railing</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Woodluxe</span></div>
+      <div class="scope-item"><div class="surface">Master Bedroom</div><span class="tag tag-labor">Walls, ceiling, baseboards, 4 doors, 1 closet · 2 coats walls, 2 coats ceiling, 1 coat trim</span></div>
+      <div class="scope-item"><div class="surface">Living Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, crown, mantle, 2 doors · 2 coats walls, 2 coats ceiling, 2 coats crown</span></div>
+      <div class="scope-item"><div class="surface">Dining Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, chair rail, 1 door · 2 coats walls, 1 coat ceiling, 1 coat trim</span></div>
+      <div class="scope-item"><div class="surface">Kitchen</div><span class="tag tag-labor">Walls, ceiling, baseboards, 1 door · 2 coats walls, 1 coat ceiling, 1 coat trim · Moisture-rated ceiling</span></div>
+      <div class="scope-item"><div class="surface">Hallway</div><span class="tag tag-labor">Walls, ceiling, baseboards, 3 doors · 2 coats walls, 1 coat ceiling, 1 coat baseboards</span></div>
+      <div class="scope-item"><div class="surface">Foyer</div><span class="tag tag-labor">Walls, ceiling, baseboards, front door (interior side), 1 closet · 2 coats walls, 1 coat ceiling, 1 coat trim</span></div>
+      <div class="scope-item"><div class="surface">Powder Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, 1 door · 2 coats walls, 1 coat ceiling, 1 coat trim</span></div>
+      <div class="work-note">Work room by room. Start with master bedroom. Products: SW Cashmere Satin (walls), BM Advance Semi-Gloss (trim/doors).</div>
     </div>
   </div>
 
   <div class="scope-section">
-    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="backRightDeck">Back Right Deck</span> <span class="count">2 items ▶</span></div>
+    <div class="scope-header" onclick="toggleScope(this)">🪵 Cabinet Refinishing <span class="count">2 items ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface" data-i18n="deckFloor">Deck Floor</div><span class="tag tag-labor" data-i18n="stainRollBack">Stain — Roll & Back-brush</span><span class="tag tag-product">BM Woodluxe</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="deckRailing">Deck Railing</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Woodluxe</span></div>
+      <div class="scope-item"><div class="surface">Kitchen Cabinets</div><span class="tag tag-labor">42 doors/drawers · Spray in booth · P+2 coats</span><span class="tag tag-product">Renner 2k Poly</span></div>
+      <div class="scope-item"><div class="surface">Master Bath Vanity</div><span class="tag tag-labor">6 doors/drawers · Spray in booth · P+2 coats</span><span class="tag tag-product">Renner 2k Poly</span></div>
+      <div class="work-note">⚠️ Remove doors Day 1 → shop spray → reinstall Day 10. Boxes rolled on-site. 1 color (White Dove).</div>
     </div>
-  </div>
-
-  <div class="scope-section">
-    <div class="scope-header" onclick="toggleScope(this)"><span data-i18n="lowerDeck">Lower Deck</span> <span class="count">2 items ▶</span></div>
-    <div class="scope-items">
-      <div class="scope-item"><div class="surface" data-i18n="deckFloor">Deck Floor</div><span class="tag tag-labor" data-i18n="stainRollBack">Stain — Roll & Back-brush</span><span class="tag tag-product">BM Woodluxe</span></div>
-      <div class="scope-item"><div class="surface" data-i18n="deckRailing">Deck Railing</div><span class="tag tag-labor">Brush & Roll</span><span class="tag tag-product">BM Woodluxe</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- Change Orders (right after scope so it's not missed) -->
-<div class="card">
-  <div class="card-title">📝 <span data-i18n="changeOrders">Change Orders</span></div>
-  <div><span class="co-badge">CO-1</span></div>
-  <div class="co-item">
-    <strong data-i18n="coBoardTitle">Deck Board Replacement</strong><br>
-    <span style="color:var(--text-dim);font-size:12px" data-i18n="coBoardDesc">Replace 12 damaged composite deck boards on lower deck before staining. Added by Larry Morrison.</span>
   </div>
 </div>
 
@@ -454,46 +437,85 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="card-title">🎨 <span data-i18n="colorSelections">Color Selections</span></div>
   <div class="color-entry">
     <div class="color-swatch">
-      <div class="swatch" style="background:#868B8E"></div>
+      <div class="swatch" style="background:#8E8D88"></div>
       <div class="swatch-info">
-        <div class="swatch-name">Cityscape <span class="color-code">SW 7067</span></div>
-        <div class="swatch-use" data-i18n="colorUseTrim">Trim, Fascia, Deck</div>
+        <div class="swatch-name">Grizzle Gray <span class="color-code">SW 7068</span></div>
+        <div class="swatch-use">Interior Walls — All Rooms</div>
       </div>
     </div>
-    <div class="sheen-badge sheen-satin" data-i18n="sheenSatin">Satin</div>
+    <div class="sheen-badge sheen-satin">Satin</div>
   </div>
   <div class="color-entry">
     <div class="color-swatch">
-      <div class="swatch" style="background:#868B8E"></div>
+      <div class="swatch" style="background:#F3EADB"></div>
       <div class="swatch-info">
-        <div class="swatch-name">Cityscape <span class="color-code">SW 7067</span></div>
-        <div class="swatch-use" data-i18n="colorUseDeckStain">Deck Stain — Semi-Transparent</div>
+        <div class="swatch-name">Creamy <span class="color-code">SW 7012</span></div>
+        <div class="swatch-use">Interior Ceilings</div>
       </div>
     </div>
-    <div class="sheen-badge sheen-semitrans" data-i18n="sheenSemiTrans">Semi-Transparent</div>
+    <div class="sheen-badge sheen-flat">Flat</div>
   </div>
   <div class="color-entry">
     <div class="color-swatch">
-      <div class="swatch" style="background:#B0B8BF"></div>
+      <div class="swatch" style="background:#F1F0EA"></div>
       <div class="swatch-info">
-        <div class="swatch-name" data-i18n="tbdLighter">TBD — Lighter Accent</div>
-        <div class="swatch-use" data-i18n="colorUseGutters">Gutters, Downspouts, Garage Doors</div>
+        <div class="swatch-name">Extra White <span class="color-code">SW 7006</span></div>
+        <div class="swatch-use">Interior Trim, Doors, Crown Molding</div>
       </div>
     </div>
-    <div class="sheen-badge sheen-satin" data-i18n="sheenSatin">Satin</div>
+    <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
   </div>
-  <div class="work-note" data-i18n="colorWarning">⚠️ Gutter/downspout color not finalized. Do NOT spray until Larry confirms.</div>
+  <div class="color-entry">
+    <div class="color-swatch">
+      <div class="swatch" style="background:#C2B9A7"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Revere Pewter <span class="color-code">HC-172</span></div>
+        <div class="swatch-use">Exterior Siding</div>
+      </div>
+    </div>
+    <div class="sheen-badge sheen-satin">Satin</div>
+  </div>
+  <div class="color-entry">
+    <div class="color-swatch">
+      <div class="swatch" style="background:#F3EDE3"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">White Dove <span class="color-code">OC-17</span></div>
+        <div class="swatch-use">Exterior Trim, Garage Door, Cabinets</div>
+      </div>
+    </div>
+    <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
+  </div>
+  <div class="color-entry">
+    <div class="color-swatch">
+      <div class="swatch" style="background:#353535"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Wrought Iron <span class="color-code">2134-20</span></div>
+        <div class="swatch-use">Shutters</div>
+      </div>
+    </div>
+    <div class="sheen-badge sheen-satin">Satin</div>
+  </div>
+  <div class="color-entry">
+    <div class="color-swatch">
+      <div class="swatch" style="background:#4A5568"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Gentleman's Gray <span class="color-code">BM 1648</span></div>
+        <div class="swatch-use">Front Door</div>
+      </div>
+    </div>
+    <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
+  </div>
 </div>
 
 <!-- Site Access -->
 <div class="card">
   <div class="card-title">📍 <span data-i18n="siteAccess">Site Access & Instructions</span></div>
-  <div class="access-item"><span class="icon">🚧</span> <span data-i18n="accessGate">Gate guard opens at <strong>8:00 AM</strong></span></div>
-  <div class="access-item"><span class="icon">🅿️</span> <span data-i18n="accessParking">Park at the <strong>tennis courts</strong></span></div>
-  <div class="access-item danger"><span class="icon">❌</span> <strong data-i18n="accessRestroom">No restroom on site</strong></div>
-  <div class="access-item warn"><span class="icon">⚠️</span> <strong data-i18n="accessDog">Don't let the dog out!</strong></div>
-  <div class="access-item"><span class="icon">📅</span> <span data-i18n="accessSaturday">Saturday work ends at <strong>2:00 PM</strong></span></div>
-  <div class="access-item warn"><span class="icon">⚠️</span> <span data-i18n="accessFood"><strong>No food in yard</strong> — dog safety</span></div>
+  <div class="access-item"><span class="icon">🏠</span> <span>Robert works from home — <strong>ring doorbell on arrival</strong></span></div>
+  <div class="access-item"><span class="icon">🅿️</span> <span>Park in driveway or street — <strong>keep left side clear for family car</strong></span></div>
+  <div class="access-item"><span class="icon">🔑</span> <span>Side gate code: <strong>4827</strong> — access to backyard & deck</span></div>
+  <div class="access-item warn"><span class="icon">⚠️</span> <strong>2 dogs — keep gates closed!</strong> Ask Robert to kennel them before backyard work.</div>
+  <div class="access-item"><span class="icon">🚻</span> <span>Restroom: use <strong>powder room</strong> (first floor, off foyer) — remove shoes</span></div>
+  <div class="access-item"><span class="icon">📅</span> <span>No Saturday work — neighborhood HOA restriction</span></div>
 </div>
 
 <!-- Materials -->
@@ -501,13 +523,22 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="card-title">📦 <span data-i18n="materialsPickup">Materials Pickup</span></div>
   <table class="mat-table">
     <tr><th data-i18n="thProduct">Product</th><th data-i18n="thSpec">Spec / Color</th><th data-i18n="thQty">Qty</th></tr>
-    <tr><td>BM Ultra Spec</td><td>Cityscape SW 7067</td><td>8 gal</td></tr>
-    <tr><td>BM Advance</td><td>TBD Lighter Accent</td><td>4 gal</td></tr>
-    <tr><td>BM Woodluxe</td><td>Cityscape SW 7067</td><td>6 gal</td></tr>
-    <tr><td>Screen Material</td><td>Standard mesh</td><td>1 roll</td></tr>
-    <tr><td>Deck Boards</td><td>Composite — match existing</td><td>12 pcs</td></tr>
+    <tr><td>SW Cashmere Satin</td><td>Grizzle Gray SW 7068</td><td>12 gal</td></tr>
+    <tr><td>SW Cashmere Flat</td><td>Creamy SW 7012 (ceilings)</td><td>4 gal</td></tr>
+    <tr><td>BM Advance Semi-Gloss</td><td>Extra White SW 7006 (trim/doors)</td><td>4 gal</td></tr>
+    <tr><td>BM Element Guard Satin</td><td>Revere Pewter HC-172 (siding)</td><td>10 gal</td></tr>
+    <tr><td>BM Advance</td><td>White Dove OC-17 (ext trim/garage)</td><td>5 gal</td></tr>
+    <tr><td>BM Advance</td><td>Wrought Iron 2134-20 (shutters)</td><td>2 gal</td></tr>
+    <tr><td>BM Advance</td><td>Gentleman's Gray 1648 (front door)</td><td>1 qt</td></tr>
+    <tr><td>Renner 2k Polyurethane</td><td>White Dove OC-17 (cabinets)</td><td>3 gal</td></tr>
+    <tr><td>Primer (interior)</td><td>Multi-surface</td><td>4 gal</td></tr>
+    <tr><td>Primer (exterior)</td><td>Multi-surface</td><td>3 gal</td></tr>
+    <tr><td>PVC Lumber</td><td>Porch rot repair</td><td>3 boards</td></tr>
+    <tr><td>Pressure-treated lumber</td><td>Fascia replacement · 7'+ boards</td><td>2 pcs</td></tr>
+    <tr><td>Epoxy wood filler</td><td>Window sill repair</td><td>1 kit</td></tr>
+    <tr><td>Caulk, sundries</td><td>Assorted</td><td>—</td></tr>
   </table>
-  <div class="mat-pickup">📞 <a href="tel:+16158296858">615-829-6858</a> <span data-i18n="matPickupNote">for paint pickup — mention <strong>Job 40618331</strong></span></div>
+  <div class="mat-pickup">📞 <a href="tel:+16158296858">615-829-6858</a> <span data-i18n="matPickupNote">for paint pickup — mention <strong>Job 50281947</strong></span></div>
 </div>
 
 <!-- Photos -->
@@ -639,11 +670,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 
     <!-- Touch point count for this job -->
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;">
-      <div style="font-size:11px;color:var(--text-dim);flex:1;">This job: <strong style="color:#fff;">3 touch points</strong></div>
+      <div style="font-size:11px;color:var(--text-dim);flex:1;">This job: <strong style="color:#fff;">4 touch points</strong></div>
       <div style="height:6px;flex:2;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
-        <div style="height:100%;width:60%;background:linear-gradient(90deg,#A8A9AD,#C0C0C0);border-radius:3px;"></div>
+        <div style="height:100%;width:80%;background:linear-gradient(90deg,#A8A9AD,#C0C0C0);border-radius:3px;"></div>
       </div>
-      <div style="font-size:10px;color:var(--text-dim);">2 more for ⭐</div>
+      <div style="font-size:10px;color:var(--text-dim);">1 more for ⭐</div>
     </div>
   </div>
 
