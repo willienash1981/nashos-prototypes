@@ -199,6 +199,73 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
   <!-- ═══ Everything below here hides when damaged ═══ -->
   <div id="main-content">
 
+  <!-- ═══ Card 1B: Alternative Options (auto-appears for moderate/restoration) ═══ -->
+  <div class="card" id="alt-options-card" style="display:none; border:2px solid var(--gold);">
+    <div class="card-header" style="background:linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);">
+      <span class="icon">⚖️</span>
+      <h2>Offer Customer Alternatives?</h2>
+    </div>
+    <div class="card-body">
+      <div style="font-size:12px;color:var(--text-light);margin-bottom:10px;line-height:1.5;">
+        This door's condition means the outcome isn't guaranteed with standard service. Give the customer a choice between approaches.
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div style="font-size:13px;font-weight:600;">Present both options on proposal</div>
+          <div style="font-size:11px;color:var(--text-light);">Customer must choose before accepting</div>
+        </div>
+        <div class="toggle on" id="alt-toggle" onclick="toggleAlternatives()"><div class="knob" style="left:22px;"></div></div>
+      </div>
+
+      <div id="alt-preview" style="margin-top:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">CUSTOMER WILL SEE:</div>
+
+        <!-- Option A -->
+        <div id="alt-option-a" style="border:2px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:all .15s;" onclick="setRecommended('a')">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div id="alt-radio-a" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--gold);"></div>
+              </div>
+              <span style="font-size:13px;font-weight:700;color:var(--navy);">Option A: Standard Stain & Seal</span>
+            </div>
+            <span id="alt-badge-a" style="font-size:9px;font-weight:700;background:var(--gold);color:var(--navy);padding:2px 6px;border-radius:8px;">★ RECOMMENDED</span>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px;" id="alt-price-a">$690</div>
+          <div style="font-size:11px;color:var(--text-light);line-height:1.5;">Light sanding + stain + 3 coats PROLUXE® finish. Extra sanding on lower 1/3.</div>
+          <div style="margin-top:6px;padding:6px 8px;background:#FFF8E1;border-left:3px solid var(--orange);border-radius:0 6px 6px 0;font-size:11px;color:#92400E;line-height:1.4;">
+            ⚠️ Color match not guaranteed — wood grain damage may cause uneven stain absorption. We'll do our best, but some variation is expected.
+          </div>
+        </div>
+
+        <!-- Option B -->
+        <div id="alt-option-b" style="border:2px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s;" onclick="setRecommended('b')">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div id="alt-radio-b" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;">
+                <div style="width:10px;height:10px;border-radius:50%;background:transparent;"></div>
+              </div>
+              <span style="font-size:13px;font-weight:700;color:var(--navy);">Option B: Full Restoration</span>
+            </div>
+            <span id="alt-badge-b" style="font-size:9px;font-weight:700;background:transparent;color:transparent;padding:2px 6px;border-radius:8px;">★ RECOMMENDED</span>
+          </div>
+          <div style="font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px;" id="alt-price-b">$2,426</div>
+          <div style="font-size:11px;color:var(--text-light);line-height:1.5;">
+            Full strip to bare wood + complete refinish. Includes door R&R (remove, plywood in opening, shop refinish, reinstall).
+          </div>
+          <div style="margin-top:6px;padding:6px 8px;background:var(--green-bg);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:#065F46;line-height:1.4;">
+            ✅ Best possible color match — starts from bare wood. Premium outcome.
+          </div>
+        </div>
+
+        <div class="info-box blue" style="margin-top:10px;">
+          ⓘ Neither option is included in the estimate total until the customer selects one on the proposal. Tap an option above to set which is recommended.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ Card 2: Door Count ═══ -->
   <div class="card">
     <div class="card-header">
@@ -711,11 +778,16 @@ function recalc() {
   const ec = effectiveCondition();
   const pct = surchargePercent();
 
+  // Update alternative options card
+  updateAlternativeOptions();
+
   // Running total
-  document.getElementById('rtTotal').textContent = fmt(gt);
+  const showingAlts = shouldShowAlternatives() && altOffered;
+  document.getElementById('rtTotal').textContent = showingAlts ? '⚖️ Alternative' : fmt(gt);
   const doorCount = 1 + additionalDoors + sidelights + transoms;
   const bundleText = bundled ? (extraTrips() === 0 ? 'Bundled ✓' : extraTrips() + ' extra trip' + (extraTrips()!==1?'s':'')) : 'Standalone';
-  document.getElementById('rtDetail').textContent = `${doorCount} door${doorCount!==1?'s':''} · ${ec === 'fiberglass' ? 'Fiberglass' : ec.charAt(0).toUpperCase()+ec.slice(1)} · ${bundleText}`;
+  const altText = showingAlts ? ' · Customer chooses' : '';
+  document.getElementById('rtDetail').textContent = `${doorCount} door${doorCount!==1?'s':''} · ${ec === 'fiberglass' ? 'Fiberglass' : ec.charAt(0).toUpperCase()+ec.slice(1)} · ${bundleText}${altText}`;
 
   // Counter prices
   const mainPrice = R.mainDoor + (R.mainDoor * pct);
@@ -807,6 +879,93 @@ function renderSummary() {
 
   html += '</div>';
   el.innerHTML = html;
+}
+
+// ══════════════════════════════════════
+// ALTERNATIVE OPTIONS
+// ══════════════════════════════════════
+let altOffered = true;  // default ON when card is visible
+let altRecommended = 'a'; // which option is recommended
+
+function shouldShowAlternatives() {
+  if (doorType !== 'wood') return false;
+  const c = effectiveCondition();
+  return c === 'moderate' || c === 'restoration';
+}
+
+function toggleAlternatives() {
+  altOffered = !altOffered;
+  const tog = document.getElementById('alt-toggle');
+  tog.classList.toggle('on', altOffered);
+  tog.querySelector('.knob').style.left = altOffered ? '22px' : '2px';
+  document.getElementById('alt-preview').style.display = altOffered ? 'block' : 'none';
+  recalc();
+}
+
+function setRecommended(which) {
+  altRecommended = which;
+  // Update radio visuals
+  const radioA = document.getElementById('alt-radio-a');
+  const radioB = document.getElementById('alt-radio-b');
+  const badgeA = document.getElementById('alt-badge-a');
+  const badgeB = document.getElementById('alt-badge-b');
+  const optA = document.getElementById('alt-option-a');
+  const optB = document.getElementById('alt-option-b');
+
+  if (which === 'a') {
+    radioA.style.borderColor = 'var(--gold)';
+    radioA.querySelector('div').style.background = 'var(--gold)';
+    radioB.style.borderColor = 'var(--border)';
+    radioB.querySelector('div').style.background = 'transparent';
+    badgeA.style.background = 'var(--gold)';
+    badgeA.style.color = 'var(--navy)';
+    badgeB.style.background = 'transparent';
+    badgeB.style.color = 'transparent';
+    optA.style.borderColor = 'var(--gold)';
+    optB.style.borderColor = 'var(--border)';
+  } else {
+    radioB.style.borderColor = 'var(--gold)';
+    radioB.querySelector('div').style.background = 'var(--gold)';
+    radioA.style.borderColor = 'var(--border)';
+    radioA.querySelector('div').style.background = 'transparent';
+    badgeB.style.background = 'var(--gold)';
+    badgeB.style.color = 'var(--navy)';
+    badgeA.style.background = 'transparent';
+    badgeA.style.color = 'transparent';
+    optB.style.borderColor = 'var(--gold)';
+    optA.style.borderColor = 'var(--border)';
+  }
+}
+
+function updateAlternativeOptions() {
+  const card = document.getElementById('alt-options-card');
+  if (!shouldShowAlternatives()) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+
+  // Calculate Option A price: standard + moderate surcharge (service only, no trip/RR)
+  const doorCount = 1 + additionalDoors;
+  const sidelightCount = sidelights + transoms;
+  const baseService = R.mainDoor + (additionalDoors * R.additional) + ((sidelights + transoms) * R.sidelight);
+  const moderatePrice = baseService + (baseService * 0.20); // always moderate surcharge for option A
+
+  // Calculate Option B price: full restoration (2×) + R&R per door
+  const restorationPrice = baseService + (baseService * 1.00); // 2× total
+  const rrForAllDoors = (1 + additionalDoors) * R.doorRR; // R&R for every door
+  const optionBTotal = restorationPrice + rrForAllDoors;
+
+  document.getElementById('alt-price-a').textContent = fmt(moderatePrice);
+  document.getElementById('alt-price-b').textContent = fmt(optionBTotal);
+
+  // Auto-set recommended based on condition
+  const ec = effectiveCondition();
+  if (ec === 'restoration') {
+    setRecommended('b');
+  } else {
+    setRecommended('a');
+  }
 }
 
 // ══════════════════════════════════════

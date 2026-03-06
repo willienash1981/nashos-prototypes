@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NashOS — Touch Points</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6A;
+  --gold: #C4A962;
+  --gold-light: #D4C182;
+  --bg: #F5F3EF;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #6B7280;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --red: #EF4444;
+  --orange: #F59E0B;
+  --orange-bg: #FFFBEB;
+  --blue: #3B82F6;
+  --blue-bg: #EFF6FF;
+  --border: #E5E7EB;
+  --radius: 12px;
+  --bronze: #CD7F32;
+  --silver: #A8A9AD;
+  --gold-medal: #FFD700;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { overflow-x:hidden; width:100%; }
+body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:30px; overflow-x:hidden; }
+
+/* Topbar */
+.topbar { background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.topbar h1 { font-size:16px; font-weight:700; flex:1; }
+.streak-badge { background:linear-gradient(135deg, #FF6B35, #F7931E); color:#fff; font-size:11px; font-weight:700; padding:3px 8px; border-radius:12px; display:flex; align-items:center; gap:3px; animation: pulse-glow 2s ease-in-out infinite; }
+@keyframes pulse-glow { 0%,100%{box-shadow:0 0 4px rgba(255,107,53,.3)} 50%{box-shadow:0 0 12px rgba(255,107,53,.6)} }
+
+/* Stats banner */
+.stats-banner { background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color:#fff; margin:8px 12px; border-radius:var(--radius); padding:12px 14px; }
+.stats-row { display:flex; justify-content:space-between; align-items:center; }
+.stats-main { font-size:13px; font-weight:600; line-height:1.4; }
+.stats-main strong { color:var(--gold); }
+.stats-trend { font-size:11px; color:var(--green); font-weight:600; display:flex; align-items:center; gap:2px; }
+.stats-sub { display:flex; gap:16px; margin-top:8px; font-size:11px; opacity:.8; }
+.stats-sub span { display:flex; align-items:center; gap:3px; }
+
+/* Cards */
+.card { background:var(--card); border-radius:var(--radius); margin:8px 12px; box-shadow:0 1px 4px rgba(0,0,0,.08); overflow:hidden; transition: transform .15s; }
+.card:active { transform:scale(.98); }
+.card-tap { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+
+/* Job card */
+.job-card-inner { padding:12px 14px; }
+.job-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+.job-name { font-size:14px; font-weight:700; color:var(--navy); }
+.job-addr { font-size:11px; color:var(--text-light); margin-top:1px; }
+.job-phase { font-size:10px; font-weight:700; padding:2px 8px; border-radius:8px; text-transform:uppercase; letter-spacing:.3px; }
+.phase-pre { background:#EFF6FF; color:#2563EB; }
+.phase-active { background:#ECFDF5; color:#059669; }
+.phase-complete { background:#F3F4F6; color:#6B7280; }
+
+/* Touch point bar */
+.tp-bar-wrap { margin:8px 0; }
+.tp-bar-label { display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; }
+.tp-bar-label .count { font-weight:700; color:var(--navy); }
+.tp-bar-label .target { color:var(--text-light); }
+.tp-bar { height:8px; background:#F3F4F6; border-radius:4px; overflow:hidden; position:relative; }
+.tp-bar-fill { height:100%; border-radius:4px; transition:width .5s ease, background .3s; }
+.tp-bar-fill.bronze { background:linear-gradient(90deg, var(--bronze), #D4954A); }
+.tp-bar-fill.silver { background:linear-gradient(90deg, var(--silver), #C0C0C0); }
+.tp-bar-fill.gold { background:linear-gradient(90deg, var(--gold-medal), #FFE44D); }
+
+.tp-medal { font-size:12px; margin-left:4px; }
+
+/* Last touch point */
+.job-last { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-light); margin-top:4px; }
+
+/* Log button */
+.log-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:10px; background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color:#fff; border:none; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; border-top:1px solid #F3F4F6; transition:all .15s; }
+.log-btn:active { filter:brightness(1.2); }
+
+/* Gold border for gold-standard jobs */
+.card.gold-standard { border:2px solid var(--gold-medal); }
+.gold-badge { position:absolute; top:8px; right:8px; font-size:16px; }
+
+/* ═══ SCREEN 2: Log Form ═══ */
+.screen { display:none; }
+.screen.active { display:block; }
+
+.form-header { background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; }
+.form-header .back { font-size:20px; cursor:pointer; padding:2px 4px; }
+.form-header h2 { font-size:15px; font-weight:700; flex:1; }
+
+.form-card { background:var(--card); border-radius:var(--radius); margin:8px 12px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.form-label { font-size:12px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+
+/* Type pills */
+.type-pills { display:flex; flex-wrap:wrap; gap:6px; }
+.type-pill { padding:8px 12px; border-radius:20px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--text); transition:all .15s; }
+.type-pill:active { transform:scale(.95); }
+.type-pill.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+
+/* Customer present toggle */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:4px 0; }
+.toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.toggle.on { background:var(--green); }
+.toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+.toggle.on .knob { left:22px; }
+
+/* Emoji selector */
+.emoji-selector { display:flex; gap:0; justify-content:center; margin:4px 0; }
+.emoji-opt { font-size:32px; padding:8px 16px; cursor:pointer; border-radius:12px; transition:all .15s; opacity:.4; filter:grayscale(80%); }
+.emoji-opt:active { transform:scale(1.2); }
+.emoji-opt.active { opacity:1; filter:grayscale(0%); transform:scale(1.15); }
+
+/* Note textarea */
+.note-area { width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:10px; font-size:13px; font-family:inherit; resize:none; min-height:70px; }
+.note-area:focus { outline:none; border-color:var(--gold); }
+
+/* Photo btn */
+.photo-btn-row { display:flex; gap:8px; }
+.photo-btn { display:flex; align-items:center; gap:4px; padding:8px 14px; border-radius:10px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); }
+
+/* Big submit */
+.submit-btn { display:block; width:calc(100% - 24px); margin:12px auto; padding:14px; background:var(--green); color:#fff; border:none; border-radius:var(--radius); font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
+.submit-btn:active { transform:scale(.97); filter:brightness(1.1); }
+
+/* ═══ SCREEN 3: Timeline ═══ */
+.timeline-score { text-align:center; padding:16px 14px 8px; }
+.score-label { font-size:12px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; }
+.score-bar-outer { height:12px; background:#F3F4F6; border-radius:6px; margin:8px 0; overflow:hidden; }
+.score-bar-inner { height:100%; border-radius:6px; transition:width .6s ease; }
+.score-text { font-size:13px; font-weight:700; }
+
+.tl-entry { display:flex; gap:10px; padding:0 14px; margin-bottom:0; }
+.tl-line { display:flex; flex-direction:column; align-items:center; width:24px; flex-shrink:0; }
+.tl-dot { width:12px; height:12px; border-radius:50%; border:2px solid var(--navy); background:#fff; flex-shrink:0; z-index:1; }
+.tl-dot.salesman { border-color:var(--blue); background:var(--blue-bg); }
+.tl-dot.supervisor { border-color:var(--green); background:var(--green-bg); }
+.tl-dot.owner { border-color:var(--gold); background:#FFFBEB; }
+.tl-stem { width:2px; flex:1; background:var(--border); min-height:12px; }
+.tl-content { flex:1; padding-bottom:16px; }
+.tl-date { font-size:10px; color:var(--text-light); font-weight:600; }
+.tl-person { font-size:12px; font-weight:700; color:var(--navy); margin-top:1px; }
+.tl-role-badge { font-size:9px; font-weight:700; padding:1px 5px; border-radius:4px; margin-left:4px; }
+.tl-role-badge.salesman { background:var(--blue-bg); color:#2563EB; }
+.tl-role-badge.supervisor { background:var(--green-bg); color:#059669; }
+.tl-role-badge.owner { background:#FFFBEB; color:#92400E; }
+.tl-type { font-size:11px; color:var(--text-light); margin-top:1px; }
+.tl-note { font-size:12px; color:var(--text); margin-top:4px; line-height:1.4; background:#F9FAFB; padding:6px 8px; border-radius:6px; border-left:3px solid var(--border); }
+.tl-review { background:linear-gradient(135deg, #FFFBEB, #FEF3C7); border:1.5px solid var(--gold); border-radius:10px; padding:10px 12px; margin:0 14px 16px 48px; }
+.tl-review-stars { color:var(--gold-medal); font-size:14px; letter-spacing:1px; }
+.tl-review-text { font-size:12px; color:var(--text); margin-top:4px; line-height:1.4; font-style:italic; }
+
+/* ═══ Celebration overlay ═══ */
+.celebration { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(27,42,74,.85); z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+.celebration.show { opacity:1; pointer-events:auto; }
+.celebration .check { width:80px; height:80px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; font-size:40px; animation:pop-in .4s cubic-bezier(.175,.885,.32,1.275); }
+.celebration .msg { color:#fff; font-size:18px; font-weight:700; margin-top:16px; }
+.celebration .sub { color:rgba(255,255,255,.7); font-size:13px; margin-top:6px; }
+@keyframes pop-in { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+
+/* Confetti */
+.confetti-piece { position:fixed; width:8px; height:8px; z-index:201; pointer-events:none; animation:confetti-fall 1.5s ease-out forwards; }
+@keyframes confetti-fall {
+  0% { transform:translateY(0) rotate(0deg); opacity:1; }
+  100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
+}
+
+/* Milestone banner */
+.milestone { background:linear-gradient(135deg, var(--gold), #FFE44D); color:var(--navy); margin:8px 12px; border-radius:var(--radius); padding:10px 14px; display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; animation:slide-down .4s ease; }
+.milestone .dismiss { margin-left:auto; font-size:16px; cursor:pointer; opacity:.6; }
+@keyframes slide-down { 0%{transform:translateY(-20px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══════════════════════════════ -->
+<!-- SCREEN 1: ACTIVE JOBS LIST     -->
+<!-- ═══════════════════════════════ -->
+<div class="screen active" id="screen-list">
+
+  <div class="topbar">
+    <h1>📍 My Touch Points</h1>
+    <div class="streak-badge">🔥 5 streak</div>
+  </div>
+
+  <!-- Milestone banner -->
+  <div class="milestone" id="milestone-banner">
+    🏅 50th touch point this quarter! You're a customer champion.
+    <span class="dismiss" onclick="this.parentElement.style.display='none'">✕</span>
+  </div>
+
+  <!-- Weekly stats -->
+  <div class="stats-banner">
+    <div class="stats-row">
+      <div class="stats-main">This week: <strong>6 touch points</strong> across 3 jobs</div>
+      <div class="stats-trend">↑ 18%</div>
+    </div>
+    <div class="stats-sub">
+      <span>🏆 Best month: 42</span>
+      <span>📊 Avg: 3.8/job</span>
+      <span>⭐ 4.9 review avg</span>
+    </div>
+  </div>
+
+  <!-- Job 1: Gold Standard -->
+  <div class="card gold-standard card-tap" style="position:relative;">
+    <div class="job-card-inner" onclick="showTimeline(0)">
+      <div class="job-top">
+        <div>
+          <div class="job-name">Johnson Residence</div>
+          <div class="job-addr">456 Oak Ave, Nashville 37205</div>
+        </div>
+        <span class="job-phase phase-active">In Progress</span>
+      </div>
+      <div class="tp-bar-wrap">
+        <div class="tp-bar-label">
+          <span class="count">7 touch points <span class="tp-medal">⭐</span></span>
+          <span class="target">Gold Standard!</span>
+        </div>
+        <div class="tp-bar"><div class="tp-bar-fill gold" style="width:100%;"></div></div>
+      </div>
+      <div class="job-last">
+        <span>Last: Post-completion follow-up · 2 days ago</span>
+        <span style="color:var(--gold-medal);">⭐⭐⭐⭐⭐</span>
+      </div>
+    </div>
+    <button class="log-btn" onclick="event.stopPropagation();showForm(0)">+ Log Touch Point</button>
+  </div>
+
+  <!-- Job 2: Silver -->
+  <div class="card card-tap">
+    <div class="job-card-inner" onclick="showTimeline(1)">
+      <div class="job-top">
+        <div>
+          <div class="job-name">Garcia Exterior</div>
+          <div class="job-addr">789 Elm St, Brentwood 37027</div>
+        </div>
+        <span class="job-phase phase-active">In Progress</span>
+      </div>
+      <div class="tp-bar-wrap">
+        <div class="tp-bar-label">
+          <span class="count">3 touch points</span>
+          <span class="target">2 more for gold</span>
+        </div>
+        <div class="tp-bar"><div class="tp-bar-fill silver" style="width:60%;"></div></div>
+      </div>
+      <div class="job-last">
+        <span>Last: Mid-job check-in · yesterday</span>
+      </div>
+    </div>
+    <button class="log-btn" onclick="event.stopPropagation();showForm(1)">+ Log Touch Point</button>
+  </div>
+
+  <!-- Job 3: Bronze -->
+  <div class="card card-tap">
+    <div class="job-card-inner" onclick="showTimeline(2)">
+      <div class="job-top">
+        <div>
+          <div class="job-name">Williams Kitchen Cabinets</div>
+          <div class="job-addr">321 Pine Ave, Franklin 37064</div>
+        </div>
+        <span class="job-phase phase-pre">Pre-Job</span>
+      </div>
+      <div class="tp-bar-wrap">
+        <div class="tp-bar-label">
+          <span class="count">1 touch point</span>
+          <span class="target">4 more for gold</span>
+        </div>
+        <div class="tp-bar"><div class="tp-bar-fill bronze" style="width:20%;"></div></div>
+      </div>
+      <div class="job-last">
+        <span>Last: Initial estimate · 5 days ago</span>
+      </div>
+    </div>
+    <button class="log-btn" onclick="event.stopPropagation();showForm(2)">+ Log Touch Point</button>
+  </div>
+
+  <!-- Job 4: Empty — needs attention -->
+  <div class="card card-tap" style="border-left:3px solid var(--orange);">
+    <div class="job-card-inner" onclick="showTimeline(3)">
+      <div class="job-top">
+        <div>
+          <div class="job-name">Park Residence</div>
+          <div class="job-addr">567 Maple Dr, Nashville 37215</div>
+        </div>
+        <span class="job-phase phase-active">In Progress</span>
+      </div>
+      <div class="tp-bar-wrap">
+        <div class="tp-bar-label">
+          <span class="count" style="color:var(--orange);">0 touch points ⚠️</span>
+          <span class="target">Job started 3 days ago</span>
+        </div>
+        <div class="tp-bar"><div class="tp-bar-fill bronze" style="width:0%;"></div></div>
+      </div>
+      <div class="job-last">
+        <span style="color:var(--orange);font-weight:600;">No visits since sale — stop by!</span>
+      </div>
+    </div>
+    <button class="log-btn" onclick="event.stopPropagation();showForm(3)" style="background:linear-gradient(135deg, var(--orange), #D97706);">+ Log Your First Touch Point!</button>
+  </div>
+
+  <!-- Job 5: Completed -->
+  <div class="card card-tap" style="opacity:.7;">
+    <div class="job-card-inner" onclick="showTimeline(4)">
+      <div class="job-top">
+        <div>
+          <div class="job-name">Thompson Deck</div>
+          <div class="job-addr">890 Cedar Ln, Nolensville 37135</div>
+        </div>
+        <span class="job-phase phase-complete">Complete</span>
+      </div>
+      <div class="tp-bar-wrap">
+        <div class="tp-bar-label">
+          <span class="count">4 touch points</span>
+          <span class="target">Silver — 1 short of gold</span>
+        </div>
+        <div class="tp-bar"><div class="tp-bar-fill silver" style="width:80%;"></div></div>
+      </div>
+      <div class="job-last">
+        <span>Completed Feb 28 · No follow-up yet</span>
+        <span style="color:var(--blue);font-weight:600;font-size:10px;cursor:pointer;" onclick="event.stopPropagation();showForm(4)">Follow up →</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- SCREEN 2: LOG TOUCH POINT       -->
+<!-- ═══════════════════════════════ -->
+<div class="screen" id="screen-form">
+
+  <div class="form-header">
+    <span class="back" onclick="showList()">←</span>
+    <h2 id="form-job-name">Log Touch Point</h2>
+  </div>
+
+  <div style="background:var(--navy-light);color:#fff;padding:6px 16px;font-size:11px;">
+    <span id="form-job-addr">456 Oak Ave, Nashville 37205</span> · <span id="form-job-phase">In Progress</span>
+  </div>
+
+  <!-- Type -->
+  <div class="form-card">
+    <div class="form-label">What type of visit?</div>
+    <div class="type-pills" id="type-pills">
+      <button class="type-pill" onclick="pickType(this)">🏠 Pre-job visit</button>
+      <button class="type-pill active" onclick="pickType(this)">👷 Mid-job check-in</button>
+      <button class="type-pill" onclick="pickType(this)">🚶 Walkthrough</button>
+      <button class="type-pill" onclick="pickType(this)">📞 Post-completion</button>
+      <button class="type-pill" onclick="pickType(this)">🔧 Issue resolution</button>
+      <button class="type-pill" onclick="pickType(this)">💬 Other</button>
+    </div>
+  </div>
+
+  <!-- Customer present -->
+  <div class="form-card">
+    <div class="toggle-row">
+      <div>
+        <div style="font-size:13px;font-weight:600;">Customer was present</div>
+        <div style="font-size:11px;color:var(--text-light);">Interactions with customer count more</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on');this.querySelector('.knob').style.left=this.classList.contains('on')?'22px':'2px'"><div class="knob" style="left:22px;"></div></div>
+    </div>
+  </div>
+
+  <!-- Interaction quality -->
+  <div class="form-card">
+    <div class="form-label">How did it go?</div>
+    <div class="emoji-selector">
+      <span class="emoji-opt" onclick="pickEmoji(this,1)">😐</span>
+      <span class="emoji-opt" onclick="pickEmoji(this,2)">😊</span>
+      <span class="emoji-opt active" onclick="pickEmoji(this,3)">🤩</span>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--text-light);margin-top:2px;" id="emoji-label">Great interaction!</div>
+  </div>
+
+  <!-- Quick note -->
+  <div class="form-card">
+    <div class="form-label">Quick note <span style="font-weight:400;color:var(--text-light);">(optional)</span></div>
+    <textarea class="note-area" placeholder="Walked the house with both Johnsons, answered questions about prep on south-facing siding..."></textarea>
+  </div>
+
+  <!-- Photo -->
+  <div class="form-card">
+    <div class="form-label">Photo <span style="font-weight:400;color:var(--text-light);">(optional)</span></div>
+    <div class="photo-btn-row">
+      <button class="photo-btn" onclick="alert('Camera (prototype)')">📷 Take Photo</button>
+      <button class="photo-btn" onclick="alert('Gallery (prototype)')">🖼️ From Library</button>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="submitTouchPoint()">Log Touch Point ✓</button>
+  <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px;">Takes less than 30 seconds</div>
+
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- SCREEN 3: TIMELINE              -->
+<!-- ═══════════════════════════════ -->
+<div class="screen" id="screen-timeline">
+
+  <div class="form-header">
+    <span class="back" onclick="showList()">←</span>
+    <h2>Johnson Residence</h2>
+  </div>
+
+  <div style="background:var(--navy-light);color:#fff;padding:6px 16px;font-size:11px;">
+    456 Oak Ave, Nashville 37205 · $54,000 Interior + Exterior
+  </div>
+
+  <!-- Score -->
+  <div class="timeline-score">
+    <div class="score-label">Touch Point Score</div>
+    <div class="score-bar-outer">
+      <div class="score-bar-inner" style="width:100%;background:linear-gradient(90deg, var(--gold-medal), #FFE44D);"></div>
+    </div>
+    <div class="score-text" style="color:var(--gold-medal);">⭐ Gold Standard — 7 touch points (avg for $50K+ jobs: 3.2)</div>
+  </div>
+
+  <!-- Correlation callout -->
+  <div style="background:var(--green-bg);margin:0 12px 12px;padding:10px 12px;border-radius:10px;font-size:12px;color:#065F46;display:flex;align-items:center;gap:6px;">
+    📊 Your high-touch jobs average <strong>4.8⭐</strong> reviews vs <strong>3.9⭐</strong> on low-touch
+  </div>
+
+  <!-- Timeline entries -->
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot salesman"></div><div class="tl-stem"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 10, 2026 · 10:30 AM</div>
+      <div class="tl-person">Larry <span class="tl-role-badge salesman">Salesman</span></div>
+      <div class="tl-type">🏠 Initial estimate visit</div>
+      <div class="tl-note">Full walkthrough with both Johnsons. 14 rooms interior + full exterior. Very engaged — asked great questions about prep process.</div>
+    </div>
+  </div>
+
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot salesman"></div><div class="tl-stem"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 14, 2026 · 2:15 PM</div>
+      <div class="tl-person">Larry <span class="tl-role-badge salesman">Salesman</span></div>
+      <div class="tl-type">🏠 Pre-job visit</div>
+      <div class="tl-note">Walked the house with both Johnsons, answered questions about prep on south-facing siding. She's excited about Cityscape color choice.</div>
+    </div>
+  </div>
+
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot supervisor"></div><div class="tl-stem"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 17, 2026 · 8:45 AM</div>
+      <div class="tl-person">Jeff <span class="tl-role-badge supervisor">Supervisor</span> <span style="font-size:9px;color:var(--text-light);">auto from snapshot</span></div>
+      <div class="tl-type">👷 Day 1 job snapshot</div>
+      <div class="tl-note">Met Mrs. Johnson, showed her the crew setup. 4 men on site. Crew arrived 7:50 AM.</div>
+    </div>
+  </div>
+
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot supervisor"></div><div class="tl-stem"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 18, 2026 · 9:10 AM</div>
+      <div class="tl-person">Jeff <span class="tl-role-badge supervisor">Supervisor</span> <span style="font-size:9px;color:var(--text-light);">auto from snapshot</span></div>
+      <div class="tl-type">👷 Day 2 job snapshot</div>
+    </div>
+  </div>
+
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot salesman"></div><div class="tl-stem"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 19, 2026 · 11:00 AM</div>
+      <div class="tl-person">Larry <span class="tl-role-badge salesman">Salesman</span></div>
+      <div class="tl-type">👷 Mid-job check-in · 🤩</div>
+      <div class="tl-note">Stopped by, customer is very happy with progress. Talked about their deck for spring — potential $8K add-on.</div>
+    </div>
+  </div>
+
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot owner"></div><div class="tl-stem"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 21, 2026 · 3:30 PM</div>
+      <div class="tl-person">Bill <span class="tl-role-badge owner">Owner</span></div>
+      <div class="tl-type">🚶 Final walkthrough · 🤩</div>
+      <div class="tl-note">Final walkthrough with both Johnsons. They love it. He said we're their painters for life. Hot referral potential.</div>
+    </div>
+  </div>
+
+  <div class="tl-entry">
+    <div class="tl-line"><div class="tl-dot salesman"></div><div class="tl-stem" style="background:transparent;"></div></div>
+    <div class="tl-content">
+      <div class="tl-date">Feb 28, 2026 · 10:00 AM</div>
+      <div class="tl-person">Larry <span class="tl-role-badge salesman">Salesman</span></div>
+      <div class="tl-type">📞 Post-completion follow-up · 🤩</div>
+      <div class="tl-note">Called to check in. Everything looks great. Left a review on Google unprompted.</div>
+    </div>
+  </div>
+
+  <!-- Review correlation -->
+  <div class="tl-review">
+    <div class="tl-review-stars">★★★★★</div>
+    <div class="tl-review-text">"Nash Painting was incredible. From the first estimate visit to the final walkthrough, we felt like they truly cared about our home. Bill even stopped by personally. Best painting experience we've ever had."</div>
+    <div style="font-size:10px;color:var(--text-light);margin-top:6px;">— Google Review, Mar 2 · <strong style="color:var(--green);">7 touch points → 5⭐ review</strong></div>
+  </div>
+
+</div>
+
+<!-- ═══ Celebration Overlay ═══ -->
+<div class="celebration" id="celebration">
+  <div class="check">✓</div>
+  <div class="msg">Touch point logged! 🎉</div>
+  <div class="sub" id="celeb-sub">Johnson Residence — 8 total · still Gold Standard ⭐</div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+const jobData = [
+  { name:'Johnson Residence', addr:'456 Oak Ave, Nashville 37205', phase:'In Progress', tp:7 },
+  { name:'Garcia Exterior', addr:'789 Elm St, Brentwood 37027', phase:'In Progress', tp:3 },
+  { name:'Williams Kitchen Cabinets', addr:'321 Pine Ave, Franklin 37064', phase:'Pre-Job', tp:1 },
+  { name:'Park Residence', addr:'567 Maple Dr, Nashville 37215', phase:'In Progress', tp:0 },
+  { name:'Thompson Deck', addr:'890 Cedar Ln, Nolensville 37135', phase:'Complete', tp:4 }
+];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showList() { showScreen('screen-list'); }
+
+function showForm(jobIdx) {
+  const job = jobData[jobIdx];
+  document.getElementById('form-job-name').textContent = job.name;
+  document.getElementById('form-job-addr').textContent = job.addr;
+  document.getElementById('form-job-phase').textContent = job.phase;
+  showScreen('screen-form');
+}
+
+function showTimeline(jobIdx) {
+  // In production, this would load dynamic data. For prototype, always shows Johnson timeline.
+  showScreen('screen-timeline');
+}
+
+// ══════════════════════════════════════
+// FORM INTERACTIONS
+// ══════════════════════════════════════
+function pickType(el) {
+  document.querySelectorAll('#type-pills .type-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function pickEmoji(el, level) {
+  document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  const labels = { 1:'Neutral', 2:'Good interaction', 3:'Great interaction!' };
+  document.getElementById('emoji-label').textContent = labels[level];
+}
+
+// ══════════════════════════════════════
+// SUBMIT + CELEBRATION
+// ══════════════════════════════════════
+function submitTouchPoint() {
+  const celeb = document.getElementById('celebration');
+  celeb.classList.add('show');
+  spawnConfetti();
+
+  setTimeout(() => {
+    celeb.classList.remove('show');
+    showList();
+  }, 2000);
+}
+
+function spawnConfetti() {
+  const colors = ['#C4A962','#FFD700','#10B981','#3B82F6','#EF4444','#F59E0B','#8B5CF6'];
+  for (let i = 0; i < 30; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-10px';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+    piece.style.width = (4 + Math.random()*6) + 'px';
+    piece.style.height = (4 + Math.random()*6) + 'px';
+    piece.style.animationDelay = (Math.random() * .5) + 's';
+    piece.style.animationDuration = (1 + Math.random()) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2500);
+  }
+}
+</script>
+</body>
+</html>
