@@ -945,22 +945,42 @@ function updateAlternativeOptions() {
   }
   card.style.display = '';
 
-  // Calculate Option A price: standard + moderate surcharge (service only, no trip/RR)
-  const doorCount = 1 + additionalDoors;
-  const sidelightCount = sidelights + transoms;
+  // Calculate prices for both alternatives
   const baseService = R.mainDoor + (additionalDoors * R.additional) + ((sidelights + transoms) * R.sidelight);
-  const moderatePrice = baseService + (baseService * 0.20); // always moderate surcharge for option A
+  const trip = tripCharge();
 
-  // Calculate Option B price: full restoration (2×) + R&R per door
-  const restorationPrice = baseService + (baseService * 1.00); // 2× total
-  const rrForAllDoors = (1 + additionalDoors) * R.doorRR; // R&R for every door
-  const optionBTotal = restorationPrice + rrForAllDoors;
+  // Option A: current condition pricing (moderate or restoration) — standard service, no R&R
+  // This is what the wizard is already calculating: service + surcharge + trip
+  const currentSurcharge = surchargePercent();
+  const optionAService = baseService + (baseService * currentSurcharge);
+  const optionATotal = optionAService + trip;
 
-  document.getElementById('alt-price-a').textContent = fmt(moderatePrice);
+  // Option B: full restoration (2×) + R&R per door + trip — the premium path
+  const restorationService = baseService * 2; // 2× base = full restoration
+  const rrForAllDoors = (1 + additionalDoors) * R.doorRR;
+  const optionBTotal = restorationService + rrForAllDoors + trip;
+
+  document.getElementById('alt-price-a').textContent = fmt(optionATotal);
   document.getElementById('alt-price-b').textContent = fmt(optionBTotal);
 
-  // Auto-set recommended based on condition
+  // Update Option A label based on condition
   const ec = effectiveCondition();
+  const optALabel = document.querySelector('#alt-option-a .tl-person, #alt-option-a span[style*="font-weight:700"][style*="color:var(--navy)"]');
+  const labelA = ec === 'restoration' ? 'Option A: Stain & Seal (On-Site)' : 'Option A: Standard Stain & Seal';
+  // Update description too
+  const descA = ec === 'restoration'
+    ? 'Full strip to bare wood + complete refinish — done on-site, doors stay on hinges.'
+    : 'Light sanding + stain + 3 coats PROLUXE® finish. Extra sanding on lower 1/3.';
+  // Find and update the label and description spans
+  const optAEl = document.getElementById('alt-option-a');
+  const spans = optAEl.querySelectorAll('span');
+  spans.forEach(s => {
+    if (s.textContent.includes('Option A:')) s.textContent = labelA;
+  });
+  const descEl = optAEl.querySelectorAll('div[style*="font-size:11px"][style*="color:var(--text-light)"]');
+  if (descEl.length > 0) descEl[0].textContent = descA;
+
+  // Auto-set recommended based on condition
   if (ec === 'restoration') {
     setRecommended('b');
   } else {
