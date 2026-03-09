@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Live Work Order — WO-40618331</title>
+<title>Live Work Order — WO-50281947</title>
 <style>
 :root {
   --navy: #1a2332; --navy-light: #243044; --navy-mid: #2a3a52;
@@ -17,34 +17,20 @@
   --border: #334155; --card: #1e293b;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-/* Touch point pills & emojis (field sup/salesman only) */
-.tp-pill { padding:5px 10px; border-radius:14px; border:1px solid rgba(255,255,255,.2); background:transparent; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--text-dim); transition:all .15s; }
-.tp-pill:active { transform:scale(.95); }
-.tp-pill.active { background:#10B981; color:#fff; border-color:#10B981; }
-.tp-emoji { font-size:26px; padding:4px 12px; cursor:pointer; opacity:.35; filter:grayscale(80%); transition:all .15s; }
-.tp-emoji:active { transform:scale(1.15); }
-.tp-emoji.active { opacity:1; filter:grayscale(0%); transform:scale(1.1); }
-/* Check deposit (field sup/salesman only) */
-.check-deposit-card { background:var(--card); border:1px solid var(--border); border-radius:12px; margin:12px; padding:16px; border-left:4px solid #c8a85c; }
-.check-deposit-card .perm-note { font-size:10px; color:var(--text-dim); background:var(--navy-mid); padding:3px 8px; border-radius:10px; display:inline-flex; align-items:center; gap:4px; }
-.chk-upload-area { border:2px dashed var(--border); border-radius:10px; padding:20px 16px; text-align:center; cursor:pointer; margin:8px 0; transition:all 0.15s; }
-.chk-upload-area:active { background:var(--navy-mid); }
-.chk-upload-area.has-photo { border-color:var(--green); border-style:solid; background:var(--green-bg); }
-.chk-field { margin-bottom:10px; }
-.chk-field label { display:block; font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; }
-.chk-field input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--navy-mid); color:var(--text); font-family:inherit; }
-.chk-field input:focus { outline:none; border-color:#c8a85c; }
-.chk-field input::placeholder { color:var(--text-dim); }
-.chk-submit-btn { width:100%; padding:12px; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-.chk-submit-btn.ready { background:#c8a85c; color:#1a2332; }
-.chk-submit-btn.disabled { background:var(--navy-mid); color:var(--text-dim); pointer-events:none; }
-.chk-verify-label { display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--navy-mid); border-radius:8px; margin-bottom:12px; cursor:pointer; font-size:12px; color:var(--text); }
-.chk-verify-label input { width:18px; height:18px; margin-top:2px; flex-shrink:0; accent-color:#c8a85c; }
-body { background:var(--navy); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.5; max-width:640px; margin:0 auto; padding-bottom:80px; }
+body { background:var(--navy); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.5; max-width:640px; margin:0 auto; padding-bottom:100px; }
 a { color:var(--accent-light); text-decoration:none; }
 
+/* ── ROLE SWITCHER ── */
+.role-bar { background:#111827; padding:6px 16px; display:flex; align-items:center; justify-content:space-between; font-size:12px; }
+.role-bar .role-label { color:var(--text-dim); }
+.role-toggle { display:flex; border-radius:8px; overflow:hidden; border:1px solid var(--border); }
+.role-btn { padding:5px 12px; background:var(--navy-mid); color:var(--text-dim); border:none; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; }
+.role-btn.active { background:var(--accent); color:#fff; }
+
+/* ── SMART LINK BADGE ── */
 .smart-link-badge { background:var(--navy-mid); text-align:center; padding:6px; font-size:12px; color:var(--text-dim); letter-spacing:0.5px; }
 
+/* ── HEADER ── */
 .header { padding:16px; border-bottom:1px solid var(--border); position:relative; }
 .header .logo { font-size:18px; font-weight:700; color:var(--text-bright); margin-bottom:8px; }
 .header .logo span { color:var(--accent); }
@@ -52,71 +38,24 @@ a { color:var(--accent-light); text-decoration:none; }
 .header-info a { display:inline; }
 .header-info .label { color:var(--text-dim); font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; display:block; }
 .header-info .value { color:var(--text); font-size:14px; }
-
-/* Language Toggle */
 .lang-toggle { position:absolute; top:12px; right:16px; display:flex; border-radius:8px; overflow:hidden; border:2px solid var(--border); font-size:13px; font-weight:600; z-index:10; }
 .lang-btn { padding:6px 10px; cursor:pointer; background:var(--navy-mid); color:var(--text-dim); border:none; font-size:13px; font-weight:600; font-family:inherit; transition:all 0.15s; display:flex; align-items:center; gap:4px; }
 .lang-btn.active { background:var(--accent); color:#fff; }
 
+/* ── QUICK ACTION BAR ── */
+.quick-bar { display:flex; gap:8px; padding:10px 12px; background:var(--navy-light); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50; }
+.quick-btn { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 6px; border-radius:10px; border:1px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:11px; font-weight:600; cursor:pointer; transition:all .15s; font-family:inherit; }
+.quick-btn .qb-icon { font-size:20px; }
+.quick-btn:active { transform:scale(.96); background:var(--navy); }
+.quick-btn.sup-only { border-color:rgba(168,85,247,0.4); }
+.quick-btn.sup-only .qb-icon { }
+
+/* ── CARDS ── */
 .card { background:var(--card); border:1px solid var(--border); border-radius:12px; margin:12px; padding:16px; }
 .card-title { font-size:15px; font-weight:600; color:var(--text-bright); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.perm-note { font-size:10px; color:var(--text-dim); background:var(--navy-mid); padding:3px 8px; border-radius:10px; display:inline-flex; align-items:center; gap:4px; }
 
-.progress-wrap { margin-bottom:8px; }
-.progress-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
-.progress-header .day { font-size:18px; font-weight:700; color:var(--text-bright); }
-.progress-header .pct { font-size:14px; color:var(--green); font-weight:600; }
-.progress-bar { height:10px; background:var(--navy-mid); border-radius:5px; overflow:hidden; }
-.progress-fill { height:100%; background:var(--green); border-radius:5px; transition:width 0.5s; }
-.progress-fill.amber { background:var(--yellow); }
-.dates { font-size:13px; color:var(--text-dim); margin-top:8px; }
-.dates div { margin:2px 0; }
-.dates .estimate { color:var(--green); }
-
-.headcount-btns { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 12px; }
-.hc-btn { width:44px; height:44px; border-radius:10px; border:2px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:16px; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
-.hc-btn.active { border-color:var(--accent); background:rgba(59,130,246,0.2); color:var(--accent-light); }
-.hc-custom { font-size:14px; }
-
-.field-label { font-size:13px; color:var(--text-dim); margin-bottom:4px; margin-top:12px; }
-input[type="date"], textarea { width:100%; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-size:14px; font-family:inherit; }
-textarea { min-height:60px; resize:vertical; }
-input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
-
-.btn-submit { width:100%; padding:14px; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; margin-top:14px; transition:all 0.2s; }
-.btn-green { background:var(--green); color:#fff; }
-.btn-green:active { transform:scale(0.98); }
-
-.yesterday-summary { font-size:12px; color:var(--text-dim); margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
-
-/* Daily Update — Todo Style */
-.todo-item { display:flex; align-items:flex-start; gap:12px; padding:14px 12px; margin:0 -12px; border-radius:10px; background:var(--navy-mid); margin-bottom:8px; }
-.todo-item:last-child { margin-bottom:0; }
-.todo-check { width:28px; height:28px; border-radius:8px; border:2.5px solid rgba(148,163,184,0.5); background:transparent; flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; cursor:pointer; transition:all 0.2s; }
-.todo-check:active { transform:scale(0.9); }
-.todo-check.done { border-color:var(--green); background:var(--green); }
-.todo-check.done::after { content:'✓'; color:#fff; font-size:16px; font-weight:800; }
-.todo-body { flex:1; min-width:0; }
-.todo-label { font-size:14px; font-weight:600; color:var(--text-bright); margin-bottom:6px; }
-.todo-sublabel { font-size:12px; color:var(--text-dim); margin-bottom:6px; }
-.todo-item .headcount-btns { margin:4px 0 0; }
-.todo-item input[type="date"] { margin-top:4px; }
-.todo-item textarea { margin-top:4px; min-height:48px; }
-.todo-progress { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12px; color:var(--text-dim); }
-.todo-progress-bar { flex:1; height:6px; background:rgba(51,65,85,0.5); border-radius:3px; overflow:hidden; }
-.todo-progress-fill { height:100%; background:var(--green); border-radius:3px; transition:width 0.3s; }
-
-.submitted-state { text-align:center; padding:20px 0; }
-.submitted-state .check { font-size:40px; margin-bottom:8px; }
-.submitted-state .msg { color:var(--green); font-weight:600; font-size:16px; }
-.submitted-state .detail { color:var(--text-dim); font-size:13px; margin-top:6px; }
-.submitted-state .edit-link { color:var(--accent-light); font-size:13px; margin-top:10px; display:inline-block; cursor:pointer; }
-
-.collapsible-header { cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none; }
-.collapsible-header .arrow { transition:transform 0.2s; font-size:12px; color:var(--text-dim); }
-.collapsible-header .arrow.open { transform:rotate(180deg); }
-.collapsible-body { overflow:hidden; max-height:0; transition:max-height 0.3s ease; }
-.collapsible-body.open { max-height:500px; }
-
+/* ── CREW SCORE ── */
 .score-big { font-size:28px; font-weight:700; color:var(--yellow); text-align:center; margin:12px 0 4px; }
 .score-row { display:flex; align-items:center; gap:8px; margin:8px 0; font-size:13px; }
 .score-row .score-label { width:110px; color:var(--text-dim); flex-shrink:0; }
@@ -125,78 +64,14 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .score-bar-fill { height:100%; border-radius:4px; background:var(--green); }
 .score-bar-fill.mid { background:var(--yellow); }
 .score-motivation { font-size:12px; color:var(--text-dim); text-align:center; margin-top:10px; font-style:italic; }
+.collapsible-header { cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none; }
+.collapsible-header .arrow { transition:transform 0.2s; font-size:12px; color:var(--text-dim); }
+.collapsible-header .arrow.open { transform:rotate(180deg); }
+.collapsible-body { overflow:hidden; max-height:0; transition:max-height 0.3s ease; }
+.collapsible-body.open { max-height:500px; }
 
-.scope-section { border-bottom:1px solid var(--border); }
-.scope-section:last-child { border-bottom:none; }
-.scope-header { padding:12px 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:14px; color:var(--text-bright); user-select:none; }
-.scope-header .count { font-size:12px; color:var(--text-dim); font-weight:400; }
-.scope-items { max-height:0; overflow:hidden; transition:max-height 0.3s; }
-.scope-items.open { max-height:2000px; }
-.scope-item { padding:8px 0; border-top:1px solid rgba(51,65,85,0.5); font-size:13px; }
-.scope-item .surface { color:var(--text); }
-.tag { display:inline-block; font-size:11px; padding:2px 6px; border-radius:4px; margin:2px 2px 0 0; }
-.tag-labor { background:rgba(59,130,246,0.15); color:var(--accent-light); }
-.tag-product { background:rgba(168,85,247,0.15); color:var(--purple); }
-.work-note { background:var(--yellow-bg); border-left:3px solid var(--yellow); padding:8px 10px; border-radius:0 6px 6px 0; font-size:12px; color:var(--yellow); margin:8px 0; }
-
-.color-swatch { display:flex; align-items:center; gap:10px; margin:8px 0; }
-.swatch { width:36px; height:36px; border-radius:8px; border:2px solid var(--border); flex-shrink:0; }
-.swatch-info .swatch-name { font-size:14px; color:var(--text); font-weight:500; }
-.swatch-info .swatch-use { font-size:12px; color:var(--text-dim); }
-
-.access-item { display:flex; align-items:flex-start; gap:8px; padding:6px 0; font-size:13px; }
-.access-item .icon { font-size:16px; flex-shrink:0; }
-.access-item.warn { color:var(--yellow); }
-.access-item.danger { color:var(--red); }
-
-.mat-table { width:100%; font-size:13px; border-collapse:collapse; }
-.mat-table th { text-align:left; color:var(--text-dim); font-size:11px; text-transform:uppercase; padding:6px 4px; border-bottom:1px solid var(--border); }
-.mat-table td { padding:6px 4px; border-bottom:1px solid rgba(51,65,85,0.4); color:var(--text); }
-.mat-pickup { background:var(--accent); color:#fff; text-align:center; padding:10px; border-radius:8px; margin-top:12px; font-size:13px; font-weight:500; }
-.mat-pickup a { color:#fff; text-decoration:underline; }
-
-.photo-btns { display:flex; gap:8px; margin-bottom:8px; }
-.photo-btn { flex:1; padding:12px; border:2px dashed var(--border); border-radius:10px; background:var(--navy-mid); color:var(--text); font-size:13px; text-align:center; cursor:pointer; transition:all 0.15s; }
-.photo-btn:active { border-color:var(--accent); background:rgba(59,130,246,0.1); }
-.photo-thumbs { display:flex; gap:6px; flex-wrap:wrap; min-height:0; }
-.photo-thumb { width:48px; height:48px; border-radius:6px; }
-.photo-total { font-size:12px; color:var(--text-dim); margin-top:8px; padding:10px 0 0; border-top:1px solid var(--border); }
-
-.photo-section { border-bottom:1px solid var(--border); }
-.photo-section:last-of-type { border-bottom:none; }
-.photo-section-header { display:flex; align-items:center; justify-content:space-between; padding:12px 0; cursor:pointer; }
-.photo-section-header > div { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-.photo-section-icon { font-size:16px; }
-.photo-section-name { font-size:13px; font-weight:600; color:var(--text-bright); }
-.photo-section-hint { font-size:12px; color:var(--red); font-weight:600; }
-.photo-section-count { font-size:12px; font-weight:700; color:var(--text-dim); background:var(--navy-mid); padding:2px 10px; border-radius:10px; min-width:28px; text-align:center; }
-.photo-section-body { display:none; padding-bottom:12px; }
-.photo-section-body.open { display:block; }
-.photo-section-desc { font-size:12px; color:var(--text-dim); line-height:1.5; margin-bottom:10px; padding:8px 10px; background:rgba(59,130,246,0.06); border-radius:6px; border-left:3px solid var(--accent); }
-.photo-section-damage .photo-section-header { }
-.photo-section-damage .photo-section-desc { border-left-color:var(--red); background:var(--red-bg); color:var(--red); }
-.photo-section-damage .photo-section-count { color:var(--red); }
-
-.co-badge { display:inline-block; background:var(--orange-bg); color:var(--orange); font-size:11px; font-weight:600; padding:2px 8px; border-radius:4px; }
-
-.color-entry { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 0; border-bottom:1px solid var(--border); }
-.color-entry:last-of-type { border-bottom:none; }
-.color-code { color:var(--text-dim); font-size:12px; font-weight:400; }
-.sheen-badge { padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; white-space:nowrap; flex-shrink:0; letter-spacing:0.3px; }
-.sheen-flat { background:rgba(148,163,184,0.15); color:#94a3b8; border:1px solid rgba(148,163,184,0.3); }
-.sheen-matte { background:rgba(148,163,184,0.15); color:#94a3b8; border:1px solid rgba(148,163,184,0.3); }
-.sheen-eggshell { background:rgba(234,179,8,0.12); color:#eab308; border:1px solid rgba(234,179,8,0.3); }
-.sheen-satin { background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); }
-.sheen-semigloss { background:rgba(168,85,247,0.12); color:#a855f7; border:1px solid rgba(168,85,247,0.3); }
-.sheen-gloss { background:rgba(236,72,153,0.12); color:#ec4899; border:1px solid rgba(236,72,153,0.3); }
-.sheen-semitrans { background:rgba(34,197,94,0.12); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
-.co-item { font-size:13px; margin-top:8px; }
-
-.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--navy-light); border:1px solid var(--border); color:var(--text); padding:10px 20px; border-radius:10px; font-size:13px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:100; }
-.toast.show { opacity:1; }
-
-/* Job Start Banner */
-.start-banner { background:var(--orange-bg); border:2px solid var(--orange); border-radius:12px; margin:10px; padding:14px; }
+/* ── JOB START BANNER ── */
+.start-banner { background:var(--orange-bg); border:2px solid var(--orange); border-radius:12px; margin:10px 12px; padding:14px; }
 .start-banner.complete { border-color:var(--green); background:var(--green-bg); }
 .start-title { font-size:15px; font-weight:700; color:var(--orange); display:flex; align-items:center; gap:6px; margin-bottom:2px; }
 .start-banner.complete .start-title { color:var(--green); }
@@ -204,14 +79,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .start-btns { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
 .start-cam-btn { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:10px; border:none; cursor:pointer; font-family:inherit; font-size:14px; font-weight:600; transition:all 0.15s; width:100%; text-align:left; }
 .start-cam-btn.dmg { background:var(--orange); color:#fff; }
-.start-cam-btn.dmg:hover { background:#ea580c; }
 .start-cam-btn.bef { background:var(--accent); color:#fff; }
-.start-cam-btn.bef:hover { background:var(--accent-light); }
 .start-cam-btn .cam-icon { font-size:22px; flex-shrink:0; }
 .start-cam-btn .cam-label { flex:1; }
 .start-cam-btn .cam-count { font-size:12px; opacity:0.85; }
 .start-cam-btn.has-photos { opacity:0.7; }
-.start-cam-btn.has-photos .cam-label { text-decoration:line-through; }
 .start-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
 .start-row-label { font-size:13px; color:var(--text-dim); width:85px; flex-shrink:0; }
 .start-crew-btns { display:flex; gap:5px; flex-wrap:wrap; flex:1; }
@@ -221,14 +93,193 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .start-date-input { flex:1; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:8px 10px; color:var(--text); font-size:14px; font-family:inherit; }
 .start-date-input::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 .start-done { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--green); font-weight:600; }
-.start-last { font-size:11px; color:var(--text-dim); margin-left:auto; }
 
+/* ── DAY TRACKER ── */
+.progress-wrap { margin-bottom:8px; }
+.progress-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.progress-header .day { font-size:18px; font-weight:700; color:var(--text-bright); }
+.progress-header .pct { font-size:14px; color:var(--green); font-weight:600; }
+.progress-bar { height:10px; background:var(--navy-mid); border-radius:5px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--green); border-radius:5px; transition:width 0.5s; }
+.dates { font-size:13px; color:var(--text-dim); margin-top:8px; }
+.dates div { margin:2px 0; }
+.dates .estimate { color:var(--green); }
+
+/* ── SCOPE ── */
+.scope-section { border-bottom:1px solid var(--border); }
+.scope-section:last-child { border-bottom:none; }
+.scope-header { padding:12px 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:14px; color:var(--text-bright); user-select:none; }
+.scope-header .count { font-size:12px; color:var(--text-dim); font-weight:400; }
+.scope-items { max-height:0; overflow:hidden; transition:max-height 0.3s; }
+.scope-items.open { max-height:3000px; }
+.scope-item { padding:8px 0; border-top:1px solid rgba(51,65,85,0.5); font-size:13px; display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+.scope-item-left { flex:1; }
+.scope-item .surface { color:var(--text); }
+.tag { display:inline-block; font-size:11px; padding:2px 6px; border-radius:4px; margin:2px 2px 0 0; }
+.tag-labor { background:rgba(59,130,246,0.15); color:var(--accent-light); }
+.tag-product { background:rgba(168,85,247,0.15); color:var(--purple); }
+.work-note { background:var(--yellow-bg); border-left:3px solid var(--yellow); padding:8px 10px; border-radius:0 6px 6px 0; font-size:12px; color:var(--yellow); margin:8px 0; }
+.photo-badge-btn { display:flex; align-items:center; gap:3px; font-size:11px; font-weight:600; color:var(--accent-light); background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:6px; padding:3px 7px; cursor:pointer; white-space:nowrap; flex-shrink:0; margin-top:2px; font-family:inherit; }
+
+/* ── COLORS ── */
+.color-entry { padding:10px 0; border-bottom:1px solid var(--border); }
+.color-entry:last-of-type { border-bottom:none; }
+.color-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.color-swatch { display:flex; align-items:center; gap:10px; }
+.swatch { width:36px; height:36px; border-radius:8px; border:2px solid var(--border); flex-shrink:0; }
+.swatch-info .swatch-name { font-size:14px; color:var(--text); font-weight:500; }
+.swatch-info .swatch-use { font-size:12px; color:var(--text-dim); }
+.color-code { color:var(--text-dim); font-size:12px; font-weight:400; }
+.sheen-badge { padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; white-space:nowrap; flex-shrink:0; letter-spacing:0.3px; }
+.sheen-flat { background:rgba(148,163,184,0.15); color:#94a3b8; border:1px solid rgba(148,163,184,0.3); }
+.sheen-satin { background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); }
+.sheen-semigloss { background:rgba(168,85,247,0.12); color:#a855f7; border:1px solid rgba(168,85,247,0.3); }
+.sheen-gloss { background:rgba(236,72,153,0.12); color:#ec4899; border:1px solid rgba(236,72,153,0.3); }
+.product-badge { display:inline-block; margin-top:5px; font-size:11px; font-weight:600; color:var(--orange); background:var(--orange-bg); border:1px solid rgba(249,115,22,0.3); border-radius:5px; padding:2px 8px; }
+
+/* ── SITE ACCESS ── */
+.access-item { display:flex; align-items:flex-start; gap:8px; padding:6px 0; font-size:13px; }
+.access-item .icon { font-size:16px; flex-shrink:0; }
+.access-item.warn { color:var(--yellow); }
+.access-item.danger { color:var(--red); }
+
+/* ── MATERIALS ── */
+.mat-table { width:100%; font-size:13px; border-collapse:collapse; }
+.mat-table th { text-align:left; color:var(--text-dim); font-size:11px; text-transform:uppercase; padding:6px 4px; border-bottom:1px solid var(--border); }
+.mat-table td { padding:6px 4px; border-bottom:1px solid rgba(51,65,85,0.4); color:var(--text); }
+.mat-pickup { background:var(--accent); color:#fff; text-align:center; padding:10px; border-radius:8px; margin-top:12px; font-size:13px; font-weight:500; }
+.mat-pickup a { color:#fff; text-decoration:underline; }
+
+/* ── PHOTO TABS ── */
+.photo-tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:12px; }
+.photo-tab { flex:1; padding:9px 4px; text-align:center; font-size:12px; font-weight:600; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; position:relative; }
+.photo-tab.active { color:var(--accent-light); border-bottom-color:var(--accent); }
+.photo-tab .tab-count { display:inline-block; background:var(--navy-mid); border-radius:8px; padding:1px 6px; font-size:10px; margin-left:3px; }
+.photo-tab.active .tab-count { background:rgba(59,130,246,0.2); color:var(--accent-light); }
+.photo-panel { display:none; }
+.photo-panel.active { display:block; }
+.photo-panel-desc { font-size:12px; color:var(--text-dim); margin-bottom:10px; padding:8px 10px; background:rgba(59,130,246,0.06); border-radius:6px; border-left:3px solid var(--accent); display:none; }
+.photo-panel-desc.show { display:block; }
+.photo-info-btn { font-size:11px; color:var(--text-dim); cursor:pointer; margin-bottom:8px; display:inline-flex; align-items:center; gap:3px; }
+.photo-grid { display:flex; gap:6px; flex-wrap:wrap; min-height:48px; margin-bottom:10px; }
+.photo-thumb { width:64px; height:64px; border-radius:8px; flex-shrink:0; }
+.photo-actions { display:flex; gap:8px; }
+.photo-action-btn { flex:1; padding:10px; border:2px dashed var(--border); border-radius:10px; background:var(--navy-mid); color:var(--text); font-size:13px; text-align:center; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+.photo-action-btn:active { border-color:var(--accent); }
+.photo-damage-desc { border-left-color:var(--red) !important; }
+
+/* ── CHANGE ORDERS ── */
+.co-badge { display:inline-block; background:var(--orange-bg); color:var(--orange); font-size:11px; font-weight:600; padding:2px 8px; border-radius:4px; }
+.co-item { background:var(--navy-mid); border-radius:10px; padding:12px; margin-bottom:8px; }
+.co-item-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.co-item-title { font-size:14px; font-weight:600; color:var(--text-bright); }
+.co-item-meta { font-size:12px; color:var(--text-dim); margin-top:2px; }
+.co-status { font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px; }
+.co-approved { background:var(--green-bg); color:var(--green); border:1px solid rgba(34,197,94,0.3); }
+.co-pending { background:var(--yellow-bg); color:var(--yellow); border:1px solid rgba(234,179,8,0.3); }
+.co-price { font-size:15px; font-weight:700; color:var(--text-bright); margin-top:6px; }
+
+/* ── TOAST ── */
+.toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:var(--navy-light); border:1px solid var(--border); color:var(--text); padding:10px 20px; border-radius:10px; font-size:13px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:200; white-space:nowrap; }
+.toast.show { opacity:1; }
+
+/* ── ESTIMATOR NOTES ── */
+.work-note-green { background:var(--green-bg); border-left:3px solid var(--green); padding:8px 10px; border-radius:0 6px 6px 0; font-size:12px; color:var(--green); margin:8px 0; }
+
+/* ── MODAL / PANEL SYSTEM ── */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s; }
+.overlay.show { opacity:1; pointer-events:all; }
+.panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%); width:100%; max-width:640px; background:var(--navy-light); border-radius:18px 18px 0 0; z-index:101; transition:transform .3s ease; max-height:90vh; overflow-y:auto; padding-bottom:24px; }
+.panel.show { transform:translateX(-50%) translateY(0); }
+.panel-header { display:flex; justify-content:space-between; align-items:center; padding:16px 16px 8px; border-bottom:1px solid var(--border); }
+.panel-title { font-size:16px; font-weight:700; color:var(--text-bright); display:flex; align-items:center; gap:8px; }
+.panel-close { background:var(--navy-mid); border:none; color:var(--text-dim); font-size:18px; width:32px; height:32px; border-radius:50%; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; }
+.panel-body { padding:16px; }
+
+/* Touch point pills */
+.tp-pill { padding:5px 10px; border-radius:14px; border:1px solid rgba(255,255,255,.2); background:transparent; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--text-dim); transition:all .15s; }
+.tp-pill.active { background:#10B981; color:#fff; border-color:#10B981; }
+.tp-emoji { font-size:26px; padding:4px 12px; cursor:pointer; opacity:.35; filter:grayscale(80%); transition:all .15s; }
+.tp-emoji.active { opacity:1; filter:grayscale(0%); transform:scale(1.1); }
+
+/* Check deposit */
+.chk-upload-area { border:2px dashed var(--border); border-radius:10px; padding:20px 16px; text-align:center; cursor:pointer; margin:8px 0; transition:all 0.15s; }
+.chk-upload-area.has-photo { border-color:var(--green); border-style:solid; background:var(--green-bg); }
+.chk-field { margin-bottom:10px; }
+.chk-field label { display:block; font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; }
+.chk-field input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--navy-mid); color:var(--text); font-family:inherit; }
+.chk-submit-btn { width:100%; padding:12px; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+.chk-submit-btn.ready { background:#c8a85c; color:#1a2332; }
+.chk-submit-btn.disabled { background:var(--navy-mid); color:var(--text-dim); pointer-events:none; }
+.chk-verify-label { display:flex; align-items:flex-start; gap:10px; padding:10px; background:var(--navy-mid); border-radius:8px; margin-bottom:12px; cursor:pointer; font-size:12px; color:var(--text); }
+.chk-verify-label input { width:18px; height:18px; margin-top:2px; flex-shrink:0; accent-color:#c8a85c; }
+
+/* Change order modal */
+.co-type-pills { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.co-type-pill { padding:6px 12px; border-radius:20px; border:1px solid var(--border); background:var(--navy-mid); color:var(--text-dim); font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; }
+.co-type-pill.active { border-color:var(--accent); background:rgba(59,130,246,0.15); color:var(--accent-light); }
+.co-field { margin-bottom:12px; }
+.co-field label { display:block; font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px; }
+.co-field input, .co-field textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--navy-mid); color:var(--text); font-family:inherit; }
+.co-field textarea { min-height:60px; resize:vertical; }
+
+/* Line-item photo modal */
+.li-photo-grid { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+.li-photo-thumb { width:80px; height:80px; border-radius:8px; }
+
+/* Daily Update FAB */
+.daily-fab { position:fixed; bottom:20px; right:16px; z-index:90; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.daily-fab-btn { display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--accent); color:#fff; border:none; border-radius:24px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 16px rgba(59,130,246,0.4); transition:all .15s; }
+.daily-fab-btn.done { background:var(--green); box-shadow:0 4px 16px rgba(34,197,94,0.3); }
+.daily-fab-btn.pending { background:var(--orange); box-shadow:0 4px 16px rgba(249,115,22,0.3); }
+.daily-fab-btn:active { transform:scale(.96); }
+
+/* Daily Update form inside panel */
+.headcount-btns { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 12px; }
+.hc-btn { width:44px; height:44px; border-radius:10px; border:2px solid var(--border); background:var(--navy-mid); color:var(--text); font-size:16px; font-weight:600; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; font-family:inherit; }
+.hc-btn.active { border-color:var(--accent); background:rgba(59,130,246,0.2); color:var(--accent-light); }
+.hc-custom { font-size:14px; }
+.field-label { font-size:13px; color:var(--text-dim); margin-bottom:4px; margin-top:12px; }
+input[type="date"], textarea { width:100%; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-size:14px; font-family:inherit; }
+textarea { min-height:60px; resize:vertical; }
+input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
+.btn-submit { width:100%; padding:14px; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; margin-top:14px; transition:all 0.2s; font-family:inherit; }
+.btn-green { background:var(--green); color:#fff; }
+.btn-green:active { transform:scale(0.98); }
+.submitted-state { text-align:center; padding:20px 0; }
+.submitted-state .check { font-size:40px; margin-bottom:8px; }
+.submitted-state .msg { color:var(--green); font-weight:600; font-size:16px; }
+.submitted-state .detail { color:var(--text-dim); font-size:13px; margin-top:6px; }
+.submitted-state .edit-link { color:var(--accent-light); font-size:13px; margin-top:10px; display:inline-block; cursor:pointer; }
+.todo-item { display:flex; align-items:flex-start; gap:12px; padding:14px 12px; border-radius:10px; background:var(--navy-mid); margin-bottom:8px; }
+.todo-check { width:28px; height:28px; border-radius:8px; border:2.5px solid rgba(148,163,184,0.5); background:transparent; flex-shrink:0; display:flex; align-items:center; justify-content:center; margin-top:1px; cursor:pointer; transition:all 0.2s; }
+.todo-check.done { border-color:var(--green); background:var(--green); }
+.todo-check.done::after { content:'✓'; color:#fff; font-size:16px; font-weight:800; }
+.todo-body { flex:1; min-width:0; }
+.todo-label { font-size:14px; font-weight:600; color:var(--text-bright); margin-bottom:6px; }
+.yesterday-summary { font-size:12px; color:var(--text-dim); margin-bottom:10px; }
+
+/* Footer */
 .footer { text-align:center; padding:24px; font-size:11px; color:var(--text-dim); }
+
+/* Role-hidden elements */
+.sup-only-el { transition:all .2s; }
+body.role-crew .sup-only-el { display:none !important; }
+body.role-crew .quick-btn.sup-only { display:none !important; }
 </style>
 </head>
-<body>
+<body class="role-sup">
 
-<div class="smart-link-badge" data-i18n="smartLink">🔗 Live Work Order — Smart Link</div>
+<!-- Role Switcher (prototype demo) -->
+<div class="role-bar">
+  <span class="role-label">👤 Demo Role:</span>
+  <div class="role-toggle">
+    <button class="role-btn" onclick="setRole('crew')">🔧 Crew</button>
+    <button class="role-btn active" onclick="setRole('sup')">👷 Field Sup</button>
+  </div>
+</div>
+
+<div class="smart-link-badge">🔗 Live Work Order — Smart Link</div>
 
 <!-- Header -->
 <div class="header">
@@ -238,35 +289,68 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   </div>
   <div class="logo">Nash <span>Painting</span></div>
   <div class="header-info">
-    <span class="label" data-i18n="jobAddress">Job Address</span>
+    <span class="label">Job Address</span>
     <a class="value" href="https://maps.apple.com/?address=2841+Tyne+Blvd,Nashville,TN+37215">2841 Tyne Blvd, Nashville, TN 37215 📍</a>
-    <span class="label" data-i18n="customer">Customer</span>
-    <span class="value">Robert & Sarah Thompson</span>
-    <span class="label" data-i18n="jobCrew">Job # / Crew</span>
+    <span class="label">Customer</span>
+    <span class="value">Robert &amp; Sarah Thompson</span>
+    <span class="label">Job # / Crew</span>
     <span class="value">WO-50281947 · Carlos Rodriguez</span>
   </div>
 </div>
 
-<!-- Job Start Banner — persistent, non-blocking -->
-<div class="start-banner" id="start-banner">
-  <div class="start-title">⚠️ <span data-i18n="startTitle">New Job — Complete Before Starting</span></div>
-  <div class="start-score" data-i18n="startScore">📊 Completing this earns cooperation score points. Good photos = Nash gear rewards!</div>
+<!-- Quick Action Bar -->
+<div class="quick-bar">
+  <button class="quick-btn" onclick="scrollToPhotos()">
+    <span class="qb-icon">📷</span>
+    <span>Photos</span>
+  </button>
+  <button class="quick-btn sup-only" onclick="openPanel('tp-panel')">
+    <span class="qb-icon">📍</span>
+    <span>Touch Point</span>
+  </button>
+  <button class="quick-btn sup-only" onclick="openPanel('pay-panel')">
+    <span class="qb-icon">💳</span>
+    <span>Receive Payment</span>
+  </button>
+  <button class="quick-btn sup-only" onclick="openPanel('co-new-panel')">
+    <span class="qb-icon">➕</span>
+    <span>Change Order</span>
+  </button>
+</div>
 
+<!-- Crew Score (Field Sup only) -->
+<div class="card sup-only-el">
+  <div class="collapsible-header" onclick="toggleSection(this)">
+    <span class="card-title" style="margin:0">⭐ Your Crew Score: <span style="color:var(--yellow)">82/100</span></span>
+    <span class="arrow">▼</span>
+  </div>
+  <div class="collapsible-body">
+    <div class="score-big">82<span style="font-size:16px;color:var(--text-dim)">/100</span></div>
+    <div class="score-row"><span class="score-label">📋 Daily updates</span><span class="score-pct">95%</span><div class="score-bar"><div class="score-bar-fill" style="width:95%"></div></div></div>
+    <div class="score-row"><span class="score-label">📷 Photo uploads</span><span class="score-pct">88%</span><div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div></div>
+    <div class="score-row"><span class="score-label">📅 Finish accuracy</span><span class="score-pct">68%</span><div class="score-bar"><div class="score-bar-fill mid" style="width:68%"></div></div></div>
+    <div class="score-motivation">Higher score = priority scheduling = less downtime 💪</div>
+  </div>
+</div>
+
+<!-- Job Start Banner -->
+<div class="start-banner" id="start-banner">
+  <div class="start-title">⚠️ New Job — Complete Before Starting</div>
+  <div class="start-score">📊 Completing this earns cooperation score points. Good photos = Nash gear rewards!</div>
   <div class="start-btns">
     <button class="start-cam-btn dmg" id="btn-dmg-photos" onclick="startCamera('damage')">
       <span class="cam-icon">📸</span>
-      <span class="cam-label" data-i18n="startDmgLabel">Pre-Existing Damage Photos</span>
+      <span class="cam-label">Pre-Existing Damage Photos</span>
       <span class="cam-count" id="dmg-count"></span>
     </button>
     <button class="start-cam-btn bef" id="btn-bef-photos" onclick="startCamera('before')">
       <span class="cam-icon">📸</span>
-      <span class="cam-label" data-i18n="startBefLabel">Before Photos — Work Surfaces</span>
+      <span class="cam-label">Before Photos — Work Surfaces</span>
       <span class="cam-count" id="bef-count"></span>
     </button>
   </div>
-
   <div class="start-row">
-    <div class="start-row-label">👷 <span data-i18n="startMenLabel">Men</span></div>
+    <div class="start-row-label">👷 Men</div>
     <div class="start-crew-btns" id="start-men-btns">
       <button class="start-crew-btn" data-val="1">1</button>
       <button class="start-crew-btn" data-val="2">2</button>
@@ -274,14 +358,12 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
       <button class="start-crew-btn active" data-val="4">4</button>
       <button class="start-crew-btn" data-val="5">5</button>
       <button class="start-crew-btn" data-val="6">6</button>
-      <button class="start-crew-btn" data-val="7">7</button>
       <button class="start-crew-btn custom" data-val="custom">✏️</button>
     </div>
-    <span class="start-last" data-i18n="startLastJob">last: 3</span>
+    <span style="font-size:11px;color:var(--text-dim);margin-left:auto">last: 3</span>
   </div>
-
   <div class="start-row">
-    <div class="start-row-label">📅 <span data-i18n="startFinishLabel">Finish</span></div>
+    <div class="start-row-label">📅 Finish</div>
     <input type="date" class="start-date-input" id="start-finish-date">
   </div>
 </div>
@@ -290,107 +372,42 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 <div class="card">
   <div class="progress-wrap">
     <div class="progress-header">
-      <span class="day" data-i18n="dayTracker">Day 5 of 12</span>
+      <span class="day">Day 5 of 12</span>
       <span class="pct">42%</span>
     </div>
     <div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div>
   </div>
   <div class="dates">
-    <div><span data-i18n="started">Started</span>: <strong>Mon Feb 17</strong></div>
-    <div><span data-i18n="scheduledFinish">Scheduled finish</span>: <strong>Fri Feb 28</strong></div>
-    <div class="estimate"><span data-i18n="yourEstimate">Your estimate</span>: <strong>Thu Feb 27</strong> ✅</div>
+    <div>Started: <strong>Mon Feb 17</strong></div>
+    <div>Scheduled finish: <strong>Fri Feb 28</strong></div>
+    <div class="estimate">Your estimate: <strong>Thu Feb 27</strong> ✅</div>
   </div>
 </div>
 
-<!-- Daily Update — Todo Style -->
-<div class="card" id="daily-update-card">
-  <div id="daily-form">
-    <div class="card-title">📋 <span data-i18n="dailyUpdate">Daily Update</span> — Fri Feb 21</div>
-    <div class="yesterday-summary" data-i18n="yesterdaySummary" style="margin-top:0;margin-bottom:10px;padding-top:0;border-top:none;">Yesterday: 4 men, est. finish Thu Feb 27 ✓</div>
-
-    <div class="todo-progress" id="todo-progress">
-      <div class="todo-progress-bar"><div class="todo-progress-fill" id="todo-progress-fill" style="width:0%"></div></div>
-      <span id="todo-progress-text">0 of 2 done</span>
-    </div>
-
-    <div style="margin-top:10px">
-      <div class="todo-item" id="todo-headcount">
-        <div class="todo-check" id="check-headcount" onclick="toggleTodo('headcount')"></div>
-        <div class="todo-body">
-          <div class="todo-label" data-i18n="howMany">How many on site today?</div>
-          <div class="headcount-btns">
-            <button class="hc-btn" data-val="1">1</button>
-            <button class="hc-btn" data-val="2">2</button>
-            <button class="hc-btn" data-val="3">3</button>
-            <button class="hc-btn active" data-val="4">4</button>
-            <button class="hc-btn" data-val="5">5</button>
-            <button class="hc-btn" data-val="6">6</button>
-            <button class="hc-btn" data-val="7">7</button>
-            <button class="hc-btn hc-custom" data-val="custom">✏️</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="todo-item" id="todo-finish">
-        <div class="todo-check" id="check-finish" onclick="toggleTodo('finish')"></div>
-        <div class="todo-body">
-          <div class="todo-label" data-i18n="whenFinish">When do you think you'll finish?</div>
-          <input type="date" id="est-date" value="2026-02-27">
-        </div>
-      </div>
-
-      <div class="todo-item" id="todo-notes">
-        <div class="todo-check" id="check-notes" onclick="toggleTodo('notes')"></div>
-        <div class="todo-body">
-          <div class="todo-label" data-i18n="notesOptional">Notes <span style="font-weight:400;color:var(--text-dim)">(optional)</span></div>
-          <textarea id="crew-notes" data-i18n-placeholder="notesPlaceholder" placeholder="Any issues, progress notes..."></textarea>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-submit btn-green" onclick="submitUpdate()" data-i18n="submitUpdate">✅ Submit Today's Update</button>
-  </div>
-  <div id="daily-submitted" class="submitted-state" style="display:none">
-    <div class="check">✅</div>
-    <div class="msg" data-i18n="updateSubmitted">Update submitted for today</div>
-    <div class="detail" id="submitted-detail"></div>
-    <span class="edit-link" onclick="editUpdate()">✏️ <span data-i18n="edit">Edit</span></span>
-  </div>
-</div>
-
-<!-- Cooperation Score -->
-<div class="card">
-  <div class="collapsible-header" onclick="toggleSection(this)">
-    <span class="card-title" style="margin:0">⭐ <span data-i18n="crewScore">Your Crew Score</span>: 82/100</span>
-    <span class="arrow">▼</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="score-big">82<span style="font-size:16px;color:var(--text-dim)">/100</span></div>
-    <div class="score-row"><span class="score-label">📋 <span data-i18n="dailyUpdates">Daily updates</span></span><span class="score-pct">95%</span><div class="score-bar"><div class="score-bar-fill" style="width:95%"></div></div></div>
-    <div class="score-row"><span class="score-label">📷 <span data-i18n="photoUploads">Photo uploads</span></span><span class="score-pct">88%</span><div class="score-bar"><div class="score-bar-fill" style="width:88%"></div></div></div>
-    <div class="score-row"><span class="score-label">📅 <span data-i18n="finishAccuracy">Finish accuracy</span></span><span class="score-pct">68%</span><div class="score-bar"><div class="score-bar-fill mid" style="width:68%"></div></div></div>
-    <div class="score-motivation" data-i18n="scoreMotivation">Higher score = priority scheduling = less downtime 💪</div>
-  </div>
-</div>
-
-<!-- Estimator Notes (above scope so crew reads these FIRST) -->
+<!-- Estimator Notes -->
 <div class="card" style="border-left:3px solid var(--yellow);">
-  <div class="card-title">📝 <span data-i18n="estimatorNotes">Estimator Notes</span></div>
-  <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px"><span data-i18n="from">From</span>: <strong>Larry</strong></div>
-  <div class="work-note" data-i18n="estimatorWarning">⚠️ This is a BIG job — 4 service types. <strong>IMPORTANT SEQUENCING:</strong><br>1) Carpentry repairs FIRST (porch rot + fascia + window sills)<br>2) Pressure wash all exterior surfaces<br>3) Exterior painting<br>4) Cabinet doors removed Day 1 — bring to shop for spray. Boxes rolled on-site.<br>5) Interior painting last — work room by room, master bedroom first<br>6) Cabinet doors reinstalled Day 10</div>
-  <div style="font-size:13px;color:var(--text-dim);margin-top:8px" data-i18n="estimatorTip">⚠️ Customer is very engaged — Robert works from home and may ask questions. Be friendly but don't let it slow you down. Call me with any scope questions: 615-829-6858.</div>
+  <div class="card-title">📝 Estimator Notes</div>
+  <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">From: <strong>Larry</strong></div>
+  <div class="work-note">⚠️ This is a BIG job — 4 service types. <strong>IMPORTANT SEQUENCING:</strong><br>1) Carpentry repairs FIRST (porch rot + fascia + window sills)<br>2) Pressure wash all exterior surfaces<br>3) Exterior painting<br>4) Cabinet doors removed Day 1 — bring to shop for spray. Boxes rolled on-site.<br>5) Interior painting last — work room by room, master bedroom first<br>6) Cabinet doors reinstalled Day 10</div>
+  <div style="font-size:13px;color:var(--text-dim);margin-top:8px">⚠️ Customer is very engaged — Robert works from home and may ask questions. Be friendly but don't let it slow you down. Call me with any scope questions: 615-829-6858.</div>
 </div>
 
 <!-- Scope of Work -->
 <div class="card">
-  <div class="card-title">🎨 <span data-i18n="scopeOfWork">Scope of Work</span> — <span style="color:var(--yellow)">4 Service Types</span></div>
+  <div class="card-title">🎨 Scope of Work — <span style="color:var(--yellow)">4 Service Types</span></div>
 
   <div class="scope-section">
     <div class="scope-header" onclick="toggleScope(this)">🔨 Carpentry Repairs <span class="count">3 items ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface">Front Porch Rot Repair</div><span class="tag tag-labor">Splice · 3 boards</span><span class="tag tag-product">PVC Lumber</span></div>
-      <div class="scope-item"><div class="surface">Fascia Board Replacement</div><span class="tag tag-labor">Full piece · 2 boards (7'+)</span><span class="tag tag-product">Pressure-treated</span></div>
-      <div class="scope-item"><div class="surface">Window Sill Repair (2 sills)</div><span class="tag tag-labor">Epoxy fill · sand</span><span class="tag tag-product">Primed + painted to match</span></div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Front Porch Rot Repair</div><span class="tag tag-labor">Splice · 3 boards</span><span class="tag tag-product">PVC Lumber</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Fascia Board Replacement</div><span class="tag tag-labor">Full piece · 2 boards (7'+)</span><span class="tag tag-product">Pressure-treated</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Window Sill Repair (2 sills)</div><span class="tag tag-labor">Epoxy fill · sand</span><span class="tag tag-product">Primed + painted to match</span></div>
+      </div>
       <div class="work-note">⚠️ DO FIRST — before pressure washing or painting. Carpentry must cure before primer.</div>
     </div>
   </div>
@@ -398,12 +415,25 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="scope-section">
     <div class="scope-header" onclick="toggleScope(this)">🏡 Exterior Painting <span class="count">6 items ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface">Pressure Washing</div><span class="tag tag-labor">3700 PSI · 2,800 SF</span><span class="tag tag-product">All coated surfaces</span></div>
-      <div class="scope-item"><div class="surface">Siding</div><span class="tag tag-labor">Spray + backroll · 2 coats · 2,200 SF</span><span class="tag tag-product">BM Element Guard Satin</span></div>
-      <div class="scope-item"><div class="surface">Trim & Fascia</div><span class="tag tag-labor">Brush · 2 coats · 180 LF</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface">Soffit & Eaves</div><span class="tag tag-labor">Spray · 2 coats · 340 SF</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface">Shutters (8)</div><span class="tag tag-labor">Spray · 2 coats</span><span class="tag tag-product">BM Advance</span></div>
-      <div class="scope-item"><div class="surface">Garage Door (2-car)</div><span class="tag tag-labor">Spray + backroll · 2 coats</span><span class="tag tag-product">BM Advance</span></div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Pressure Washing</div><span class="tag tag-labor">3700 PSI · 2,800 SF</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Siding</div><span class="tag tag-labor">Spray + backroll · 2 coats · 2,200 SF</span><span class="tag tag-product">BM Element Guard Satin</span></div>
+        <button class="photo-badge-btn" onclick="openLineItemPhotos('Siding — Exterior')">2 📷</button>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Trim &amp; Fascia</div><span class="tag tag-labor">Brush · 2 coats · 180 LF</span><span class="tag tag-product">BM Advance</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Soffit &amp; Eaves</div><span class="tag tag-labor">Spray · 2 coats · 340 SF</span><span class="tag tag-product">BM Advance</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Shutters (8)</div><span class="tag tag-labor">Spray · 2 coats</span><span class="tag tag-product">BM Advance</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Garage Door (2-car)</div><span class="tag tag-labor">Spray + backroll · 2 coats</span><span class="tag tag-product">BM Advance</span></div>
+      </div>
       <div class="work-note">Pressure wash FIRST, then paint. Siding is spray + backroll. Trim/fascia is brush only.</div>
     </div>
   </div>
@@ -411,108 +441,170 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
   <div class="scope-section">
     <div class="scope-header" onclick="toggleScope(this)">🏠 Interior Painting <span class="count">7 rooms ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface">Master Bedroom</div><span class="tag tag-labor">Walls, ceiling, baseboards, 4 doors, 1 closet · 2 coats walls, 2 coats ceiling, 1 coat trim</span></div>
-      <div class="scope-item"><div class="surface">Living Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, crown, mantle, 2 doors · 2 coats walls, 2 coats ceiling, 2 coats crown</span></div>
-      <div class="scope-item"><div class="surface">Dining Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, chair rail, 1 door · 2 coats walls, 1 coat ceiling, 1 coat trim</span></div>
-      <div class="scope-item"><div class="surface">Kitchen</div><span class="tag tag-labor">Walls, ceiling, baseboards, 1 door · 2 coats walls, 1 coat ceiling, 1 coat trim · Moisture-rated ceiling</span></div>
-      <div class="scope-item"><div class="surface">Hallway</div><span class="tag tag-labor">Walls, ceiling, baseboards, 3 doors · 2 coats walls, 1 coat ceiling, 1 coat baseboards</span></div>
-      <div class="scope-item"><div class="surface">Foyer</div><span class="tag tag-labor">Walls, ceiling, baseboards, front door (interior side), 1 closet · 2 coats walls, 1 coat ceiling, 1 coat trim</span></div>
-      <div class="scope-item"><div class="surface">Powder Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, 1 door · 2 coats walls, 1 coat ceiling, 1 coat trim</span></div>
-      <div class="work-note">Work room by room. Start with master bedroom. Products: SW Cashmere Satin (walls), BM Advance Semi-Gloss (trim/doors).</div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Master Bedroom</div><span class="tag tag-labor">Walls, ceiling, baseboards, 4 doors, 1 closet · 2 coats walls</span></div>
+        <button class="photo-badge-btn" onclick="openLineItemPhotos('Master Bedroom')">2 📷</button>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Living Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, crown, mantle, 2 doors</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Dining Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, chair rail, 1 door</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Kitchen</div><span class="tag tag-labor">Walls, ceiling, baseboards, 1 door · Moisture-rated ceiling</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Hallway</div><span class="tag tag-labor">Walls, ceiling, baseboards, 3 doors</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Foyer</div><span class="tag tag-labor">Walls, ceiling, baseboards, front door (interior), 1 closet</span></div>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Powder Room</div><span class="tag tag-labor">Walls, ceiling, baseboards, 1 door</span></div>
+      </div>
+      <div class="work-note">Work room by room. Start with master bedroom.</div>
     </div>
   </div>
 
   <div class="scope-section">
     <div class="scope-header" onclick="toggleScope(this)">🪵 Cabinet Refinishing <span class="count">2 items ▶</span></div>
     <div class="scope-items">
-      <div class="scope-item"><div class="surface">Kitchen Cabinets</div><span class="tag tag-labor">42 doors/drawers · Spray in booth · P+2 coats</span><span class="tag tag-product">Renner 2k Poly</span></div>
-      <div class="scope-item"><div class="surface">Master Bath Vanity</div><span class="tag tag-labor">6 doors/drawers · Spray in booth · P+2 coats</span><span class="tag tag-product">Renner 2k Poly</span></div>
-      <div class="work-note">⚠️ Remove doors Day 1 → shop spray → reinstall Day 10. Boxes rolled on-site. 1 color (White Dove).</div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Kitchen Cabinets</div><span class="tag tag-labor">42 doors/drawers · Spray in booth · P+2 coats</span><span class="tag tag-product">Renner 2k Poly</span></div>
+        <button class="photo-badge-btn" onclick="openLineItemPhotos('Kitchen Cabinets')">2 📷</button>
+      </div>
+      <div class="scope-item">
+        <div class="scope-item-left"><div class="surface">Master Bath Vanity</div><span class="tag tag-labor">6 doors/drawers · Spray in booth · P+2 coats</span><span class="tag tag-product">Renner 2k Poly</span></div>
+      </div>
+      <div class="work-note">⚠️ Remove doors Day 1 → shop spray → reinstall Day 10. Boxes rolled on-site.</div>
     </div>
   </div>
 </div>
 
 <!-- Colors -->
 <div class="card">
-  <div class="card-title">🎨 <span data-i18n="colorSelections">Color Selections</span></div>
+  <div class="card-title">🎨 Color Selections</div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#8E8D88"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">Grizzle Gray <span class="color-code">SW 7068</span></div>
-        <div class="swatch-use">Interior Walls — All Rooms</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#8E8D88"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Grizzle Gray <span class="color-code">SW 7068</span></div>
+          <div class="swatch-use">Interior Walls — All Rooms</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-satin">Satin</div>
     </div>
-    <div class="sheen-badge sheen-satin">Satin</div>
+    <div><span class="product-badge">SW Cashmere Satin</span></div>
   </div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#F3EADB"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">Creamy <span class="color-code">SW 7012</span></div>
-        <div class="swatch-use">Interior Ceilings</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#F3EADB"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Creamy <span class="color-code">SW 7012</span></div>
+          <div class="swatch-use">Interior Ceilings</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-flat">Flat</div>
     </div>
-    <div class="sheen-badge sheen-flat">Flat</div>
+    <div><span class="product-badge">SW Cashmere Flat</span></div>
   </div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#F1F0EA"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">Extra White <span class="color-code">SW 7006</span></div>
-        <div class="swatch-use">Interior Trim, Doors, Crown Molding</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#F1F0EA"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Extra White <span class="color-code">SW 7006</span></div>
+          <div class="swatch-use">Interior Trim, Doors, Crown</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
     </div>
-    <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
+    <div><span class="product-badge">BM Advance Semi-Gloss</span></div>
   </div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#C2B9A7"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">Revere Pewter <span class="color-code">HC-172</span></div>
-        <div class="swatch-use">Exterior Siding</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#C2B9A7"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Revere Pewter <span class="color-code">HC-172</span></div>
+          <div class="swatch-use">Exterior Siding</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-satin">Satin</div>
     </div>
-    <div class="sheen-badge sheen-satin">Satin</div>
+    <div><span class="product-badge">BM Element Guard Satin</span></div>
   </div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#F3EDE3"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">White Dove <span class="color-code">OC-17</span></div>
-        <div class="swatch-use">Exterior Trim, Garage Door, Cabinets</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#F3EDE3"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">White Dove <span class="color-code">OC-17</span></div>
+          <div class="swatch-use">Exterior Trim &amp; Garage Door</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
     </div>
-    <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
+    <div><span class="product-badge">BM Advance Semi-Gloss</span></div>
   </div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#353535"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">Wrought Iron <span class="color-code">2134-20</span></div>
-        <div class="swatch-use">Shutters</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#F3EDE3"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">White Dove <span class="color-code">OC-17</span></div>
+          <div class="swatch-use">Cabinets (Kitchen + Master Bath)</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-gloss">Gloss</div>
     </div>
-    <div class="sheen-badge sheen-satin">Satin</div>
+    <div><span class="product-badge" style="color:var(--purple);background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3)">Renner 2k Polyurethane</span></div>
   </div>
+
   <div class="color-entry">
-    <div class="color-swatch">
-      <div class="swatch" style="background:#4A5568"></div>
-      <div class="swatch-info">
-        <div class="swatch-name">Gentleman's Gray <span class="color-code">BM 1648</span></div>
-        <div class="swatch-use">Front Door</div>
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#353535"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Wrought Iron <span class="color-code">2134-20</span></div>
+          <div class="swatch-use">Shutters</div>
+        </div>
       </div>
+      <div class="sheen-badge sheen-satin">Satin</div>
     </div>
-    <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
+    <div><span class="product-badge">BM Advance</span></div>
+  </div>
+
+  <div class="color-entry">
+    <div class="color-top">
+      <div class="color-swatch">
+        <div class="swatch" style="background:#4A5568"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Gentleman's Gray <span class="color-code">BM 1648</span></div>
+          <div class="swatch-use">Front Door</div>
+        </div>
+      </div>
+      <div class="sheen-badge sheen-semigloss">Semi-Gloss</div>
+    </div>
+    <div><span class="product-badge">BM Advance</span></div>
   </div>
 </div>
 
 <!-- Site Access -->
 <div class="card">
-  <div class="card-title">📍 <span data-i18n="siteAccess">Site Access & Instructions</span></div>
+  <div class="card-title">📍 Site Access &amp; Instructions</div>
   <div class="access-item"><span class="icon">🏠</span> <span>Robert works from home — <strong>ring doorbell on arrival</strong></span></div>
   <div class="access-item"><span class="icon">🅿️</span> <span>Park in driveway or street — <strong>keep left side clear for family car</strong></span></div>
-  <div class="access-item"><span class="icon">🔑</span> <span>Side gate code: <strong>4827</strong> — access to backyard & deck</span></div>
+  <div class="access-item"><span class="icon">🔑</span> <span>Side gate code: <strong>4827</strong> — access to backyard &amp; deck</span></div>
   <div class="access-item warn"><span class="icon">⚠️</span> <strong>2 dogs — keep gates closed!</strong> Ask Robert to kennel them before backyard work.</div>
   <div class="access-item"><span class="icon">🚻</span> <span>Restroom: use <strong>powder room</strong> (first floor, off foyer) — remove shoes</span></div>
   <div class="access-item"><span class="icon">📅</span> <span>No Saturday work — neighborhood HOA restriction</span></div>
@@ -520,9 +612,9 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
 
 <!-- Materials -->
 <div class="card">
-  <div class="card-title">📦 <span data-i18n="materialsPickup">Materials Pickup</span></div>
+  <div class="card-title">📦 Materials Pickup</div>
   <table class="mat-table">
-    <tr><th data-i18n="thProduct">Product</th><th data-i18n="thSpec">Spec / Color</th><th data-i18n="thQty">Qty</th></tr>
+    <tr><th>Product</th><th>Spec / Color</th><th>Qty</th></tr>
     <tr><td>SW Cashmere Satin</td><td>Grizzle Gray SW 7068</td><td>12 gal</td></tr>
     <tr><td>SW Cashmere Flat</td><td>Creamy SW 7012 (ceilings)</td><td>4 gal</td></tr>
     <tr><td>BM Advance Semi-Gloss</td><td>Extra White SW 7006 (trim/doors)</td><td>4 gal</td></tr>
@@ -538,872 +630,557 @@ input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7); }
     <tr><td>Epoxy wood filler</td><td>Window sill repair</td><td>1 kit</td></tr>
     <tr><td>Caulk, sundries</td><td>Assorted</td><td>—</td></tr>
   </table>
-  <div class="mat-pickup">📞 <a href="tel:+16158296858">615-829-6858</a> <span data-i18n="matPickupNote">for paint pickup — mention <strong>Job 50281947</strong></span></div>
+  <div class="mat-pickup">📞 <a href="tel:+16158296858">615-829-6858</a> for paint pickup — mention <strong>Job 50281947</strong></div>
 </div>
 
-<!-- Photos -->
-<div class="card">
-  <div class="card-title">📷 <span data-i18n="photos">Photos</span></div>
+<!-- Photos — Tabbed -->
+<div class="card" id="photos-section">
+  <div class="card-title">📷 Photos</div>
+  <div class="photo-tabs">
+    <div class="photo-tab active" onclick="switchPhotoTab('before',this)">Before <span class="tab-count" id="tab-before-count">0</span></div>
+    <div class="photo-tab" onclick="switchPhotoTab('damage',this)">Damage <span class="tab-count" id="tab-damage-count">0</span></div>
+    <div class="photo-tab" onclick="switchPhotoTab('during',this)">During <span class="tab-count" id="tab-during-count">3</span></div>
+    <div class="photo-tab" onclick="switchPhotoTab('after',this)">After <span class="tab-count" id="tab-after-count">0</span></div>
+  </div>
 
-  <!-- Before Photos — big picture angles for before/after marketing -->
-  <div class="photo-section" style="border-left:3px solid var(--accent);">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">📸</span>
-        <span class="photo-section-name" data-i18n="photoBefore">Before Photos</span>
-        <span class="photo-section-hint" data-i18n="photoBeforeHint">— take Day 1</span>
-      </div>
-      <span class="photo-section-count" id="before-count">0</span>
-    </div>
-    <div class="photo-section-body open">
-      <div class="photo-section-desc" data-i18n="photoBeforeDesc">Wide-angle "before" shots from each side. These become your before & after marketing photos. Stand back, get the whole view.</div>
-      <div style="font-size:12px;color:var(--text-dim);margin:6px 0 10px;line-height:1.5;">
-        <div>🏠 <span data-i18n="beforeFront">House — Front</span></div>
-        <div>🏠 <span data-i18n="beforeBack">House — Back</span></div>
-        <div>🏠 <span data-i18n="beforeLeft">House — Left Side</span></div>
-        <div>🏠 <span data-i18n="beforeRight">House — Right Side</span></div>
-        <div>🪵 <span data-i18n="beforeDeckMain">Main Deck — wide shot</span></div>
-        <div>🪵 <span data-i18n="beforeDeckBack">Back Right Deck — wide shot</span></div>
-        <div>🪵 <span data-i18n="beforeDeckLower">Lower Deck — wide shot</span></div>
-        <div>🚪 <span data-i18n="beforeEntry">Front Entry / Door</span></div>
-        <div>🏗️ <span data-i18n="beforePorch">Screened Porch — wide shot</span></div>
-      </div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('before')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="before-thumbs"></div>
+  <!-- Before -->
+  <div class="photo-panel active" id="panel-before">
+    <span class="photo-info-btn" onclick="togglePhotoDesc('desc-before')">ℹ️ What to shoot</span>
+    <div class="photo-panel-desc" id="desc-before">Wide-angle "before" shots from each side — front, back, left, right. Each deck, porch, and entry. These become before &amp; after marketing photos.</div>
+    <div class="photo-grid" id="grid-before"></div>
+    <div class="photo-actions">
+      <button class="photo-action-btn" onclick="addTabPhoto('before')">📸 Take Photo</button>
+      <button class="photo-action-btn" onclick="showToast('📁 Gallery would open here')">📁 Upload</button>
     </div>
   </div>
 
-  <!-- Pre-Existing Damage -->
-  <div class="photo-section photo-section-damage">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">⚠️</span>
-        <span class="photo-section-name" data-i18n="photoDamage">Pre-Existing Damage</span>
-      </div>
-      <span class="photo-section-count" id="damage-count">0</span>
-    </div>
-    <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoDamageDesc">Close-ups of any damage you find BEFORE starting — cracks, rot, stains, broken boards, scratches. Protects you and Nash.</div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('damage')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="damage-thumbs"></div>
+  <!-- Damage -->
+  <div class="photo-panel" id="panel-damage">
+    <span class="photo-info-btn" onclick="togglePhotoDesc('desc-damage')">ℹ️ What to shoot</span>
+    <div class="photo-panel-desc photo-damage-desc" id="desc-damage">Close-ups of any damage you find BEFORE starting — cracks, rot, stains, broken boards, scratches. Protects you and Nash.</div>
+    <div class="photo-grid" id="grid-damage"></div>
+    <div class="photo-actions">
+      <button class="photo-action-btn" onclick="addTabPhoto('damage')">📸 Take Photo</button>
+      <button class="photo-action-btn" onclick="showToast('📁 Gallery would open here')">📁 Upload</button>
     </div>
   </div>
 
-  <!-- During Job — Work in Progress + Proof of Work -->
-  <div class="photo-section" style="border-left:3px solid var(--purple);">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">🔨</span>
-        <span class="photo-section-name" data-i18n="photoDuring">During Job</span>
-      </div>
-      <span class="photo-section-count" id="during-count">3</span>
+  <!-- During -->
+  <div class="photo-panel" id="panel-during">
+    <span class="photo-info-btn" onclick="togglePhotoDesc('desc-during')">ℹ️ What to shoot</span>
+    <div class="photo-panel-desc" id="desc-during">Proof of work — 1st coat dried before 2nd, wet over dry, spot priming, repairs in progress. Masking, drop cloths, clean organized site.</div>
+    <div class="photo-grid" id="grid-during">
+      <div class="photo-thumb" style="background:var(--accent);opacity:0.6"></div>
+      <div class="photo-thumb" style="background:var(--green);opacity:0.6"></div>
+      <div class="photo-thumb" style="background:var(--purple);opacity:0.6"></div>
     </div>
-    <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoDuringDesc">These photos prove the work was done right. Timestamps are your best friend.</div>
-      <div style="font-size:12px;color:var(--text-dim);margin:6px 0 4px;line-height:1.6;">
-        <div style="font-weight:600;color:var(--text);margin-bottom:4px;" data-i18n="duringProof">🛡️ Proof of Work</div>
-        <div data-i18n="duringCoat1">🎨 1st coat dried — photo BEFORE 2nd coat goes on</div>
-        <div data-i18n="duringCoat2">🎨 2nd coat being applied — wet over dry = proof of 2 coats</div>
-        <div data-i18n="duringPrime">🪣 Spot priming / caulking — photo the prep before it's covered</div>
-        <div data-i18n="duringRepair">🔧 Repairs in progress — wood replacement, patching, sanding</div>
-        <div style="font-weight:600;color:var(--text);margin:8px 0 4px;" data-i18n="duringProfessionalism">✨ Professionalism</div>
-        <div data-i18n="duringMask">🪜 Masking & setup — tape, plastic, ladders, drop cloths</div>
-        <div data-i18n="duringScrape">🧹 Scraping & sanding — show the prep work</div>
-        <div data-i18n="duringSite">📐 Clean organized work site — gear neat, area protected</div>
-      </div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('during')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="during-thumbs">
-        <div class="photo-thumb" style="background:var(--accent);opacity:0.6"></div>
-        <div class="photo-thumb" style="background:var(--green);opacity:0.6"></div>
-        <div class="photo-thumb" style="background:var(--purple);opacity:0.6"></div>
-      </div>
+    <div class="photo-actions">
+      <button class="photo-action-btn" onclick="addTabPhoto('during')">📸 Take Photo</button>
+      <button class="photo-action-btn" onclick="showToast('📁 Gallery would open here')">📁 Upload</button>
     </div>
   </div>
 
-  <!-- After Completion — match your before angles -->
-  <div class="photo-section" style="border-left:3px solid var(--green);">
-    <div class="photo-section-header" onclick="togglePhotoSection(this)">
-      <div>
-        <span class="photo-section-icon">✅</span>
-        <span class="photo-section-name" data-i18n="photoAfter">After Photos</span>
-      </div>
-      <span class="photo-section-count" id="after-count">0</span>
+  <!-- After -->
+  <div class="photo-panel" id="panel-after">
+    <span class="photo-info-btn" onclick="togglePhotoDesc('desc-after')">ℹ️ What to shoot</span>
+    <div class="photo-panel-desc" id="desc-after">Same angles as your before photos. Stand in the same spots — these become your before &amp; after pairs for marketing.</div>
+    <div class="photo-grid" id="grid-after"></div>
+    <div class="photo-actions">
+      <button class="photo-action-btn" onclick="addTabPhoto('after')">📸 Take Photo</button>
+      <button class="photo-action-btn" onclick="showToast('📁 Gallery would open here')">📁 Upload</button>
     </div>
-    <div class="photo-section-body">
-      <div class="photo-section-desc" data-i18n="photoAfterDesc">Same angles as your before photos. Stand in the same spots — these are your before & after pairs.</div>
-      <div class="photo-btns">
-        <div class="photo-btn" onclick="addPhoto('after')">📸 <span data-i18n="takePhoto">Take Photo</span></div>
-        <div class="photo-btn" onclick="showToast(t('galleryToast'))">📁 <span data-i18n="upload">Upload</span></div>
-      </div>
-      <div class="photo-thumbs" id="after-thumbs"></div>
-    </div>
-  </div>
-
-  <div class="photo-total" id="photo-total">📊 Total: <strong>3 photos</strong> uploaded</div>
-</div>
-
-<!-- TOUCH POINT — Field Supervisor & Salesman only (hidden from subs) -->
-<div class="check-deposit-card" id="touch-point-section" style="border-left-color:#10B981;">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-    <div class="card-title" style="margin:0">📍 <span data-i18n="touchPoint">Touch Point</span></div>
-    <span class="perm-note">🔒 Field Sup / Sales only</span>
-  </div>
-  <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Log a customer interaction — just tap the button. Add details if you want.</div>
-
-  <!-- Quick log state -->
-  <div id="tp-ready">
-    <button onclick="showTpDetails()" style="width:100%;padding:14px;background:#10B981;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;">
-      📍 Log Touch Point ✓
-    </button>
-    <div style="text-align:center;margin-top:6px;">
-      <span onclick="showTpDetails()" style="font-size:11px;color:var(--text-dim);cursor:pointer;text-decoration:underline;">+ Add details (optional)</span>
-    </div>
-
-    <!-- Touch point count for this job -->
-    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;">
-      <div style="font-size:11px;color:var(--text-dim);flex:1;">This job: <strong style="color:#fff;">4 touch points</strong></div>
-      <div style="height:6px;flex:2;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
-        <div style="height:100%;width:80%;background:linear-gradient(90deg,#A8A9AD,#C0C0C0);border-radius:3px;"></div>
-      </div>
-      <div style="font-size:10px;color:var(--text-dim);">1 more for ⭐</div>
-    </div>
-  </div>
-
-  <!-- Expanded details (hidden by default) -->
-  <div id="tp-details" style="display:none;margin-top:10px;">
-    <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;">TYPE (optional)</div>
-    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;" id="tp-type-pills">
-      <button class="tp-pill" onclick="pickTpType(this)">🏠 Pre-job</button>
-      <button class="tp-pill" onclick="pickTpType(this)">👷 Check-in</button>
-      <button class="tp-pill" onclick="pickTpType(this)">🚶 Walkthrough</button>
-      <button class="tp-pill" onclick="pickTpType(this)">📞 Follow-up</button>
-      <button class="tp-pill" onclick="pickTpType(this)">🔧 Issue</button>
-    </div>
-
-    <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;">HOW'D IT GO? (optional)</div>
-    <div style="display:flex;gap:0;justify-content:center;margin-bottom:10px;">
-      <span class="tp-emoji" onclick="pickTpEmoji(this)">😐</span>
-      <span class="tp-emoji" onclick="pickTpEmoji(this)">😊</span>
-      <span class="tp-emoji" onclick="pickTpEmoji(this)">🤩</span>
-    </div>
-
-    <textarea placeholder="Quick note (optional)..." style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;font-family:inherit;resize:none;min-height:50px;"></textarea>
-
-    <button onclick="logTouchPoint()" style="width:100%;margin-top:8px;padding:12px;background:#10B981;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Log with Details ✓</button>
-  </div>
-
-  <!-- Success state (shown after logging) -->
-  <div id="tp-success" style="display:none;text-align:center;padding:12px 0;">
-    <div style="font-size:28px;margin-bottom:4px;">✓</div>
-    <div style="font-size:14px;font-weight:700;color:#10B981;">Touch point logged! 🎉</div>
-    <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">4 total on this job — Silver!</div>
   </div>
 </div>
 
-<!-- CHECK DEPOSIT — Field Supervisor & Salesman only (hidden from subs) -->
-<div class="check-deposit-card" id="check-deposit-section">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-    <div class="card-title" style="margin:0">🏦 <span data-i18n="checkReceived">Check Received</span></div>
-    <span class="perm-note">🔒 Field Sup / Sales only</span>
+<!-- Change Orders (Field Sup only) -->
+<div class="card sup-only-el">
+  <div class="card-title" style="justify-content:space-between">
+    <span>➕ Change Orders</span>
+    <span class="perm-note">🔒 Field Sup only</span>
   </div>
 
-  <!-- STEP 1: Snap the check immediately -->
-  <div id="chk-step1">
-    <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px" data-i18n="checkDescStep1">Customer handed you a check? Snap a photo NOW before you forget — you can add the deposit slip later.</div>
-    
-    <div class="chk-upload-area" id="chk-check-upload" onclick="simulateCheckUpload(this,'check')">
-      <div style="font-size:28px;margin-bottom:4px">📸</div>
-      <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapCheck">Snap Check Photo</div>
-      <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapCheckHint">Front of check — do this first!</div>
-    </div>
-
-    <div class="chk-field">
-      <label data-i18n="checkAmountLabel">Amount on Check</label>
-      <input type="text" placeholder="e.g. $6,250.00" id="chk-wo-amount" oninput="updateStep1Submit()">
-    </div>
-    <div class="chk-field">
-      <label data-i18n="checkNumLabel">Check Number <span style="font-weight:400;text-transform:none">(optional)</span></label>
-      <input type="text" placeholder="e.g. 4892" id="chk-wo-checkno">
-    </div>
-
-    <button class="chk-submit-btn disabled" id="chk-step1-submit" onclick="completeStep1()">
-      <span data-i18n="saveCheckPhoto">Save Check — Add Deposit Slip Later</span>
-    </button>
-  </div>
-
-  <!-- STEP 2: Add deposit slip (shows after step 1, or for pending deposits) -->
-  <div id="chk-step2" style="display:none">
-    <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:18px">✅</span>
+  <!-- Existing: Approved -->
+  <div class="co-item">
+    <div class="co-item-header">
       <div>
-        <div style="font-size:13px;font-weight:600;color:var(--green)" data-i18n="checkSaved">Check photo saved</div>
-        <div style="font-size:11px;color:var(--text-dim)" id="chk-saved-detail">$6,250.00 · Check #4892</div>
+        <div class="co-item-title">Additional Caulking — Window Frames</div>
+        <div class="co-item-meta">Added by Jeff Milam · Feb 19</div>
       </div>
+      <span class="co-status co-approved">✅ Approved</span>
     </div>
-
-    <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px" data-i18n="checkDescStep2">Now deposit the check at the bank and upload the deposit slip to finalize.</div>
-
-    <div class="chk-upload-area" id="chk-slip-upload" onclick="simulateCheckUpload(this,'slip')">
-      <div style="font-size:28px;margin-bottom:4px">🧾</div>
-      <div style="font-size:13px;font-weight:600;color:var(--text-bright)" data-i18n="snapSlip">Snap Deposit Slip</div>
-      <div style="font-size:11px;color:var(--text-dim);margin-top:2px" data-i18n="snapSlipHint">After depositing at the bank</div>
-    </div>
-
-    <label class="chk-verify-label">
-      <input type="checkbox" id="chk-wo-verify" onchange="updateCheckSubmit()">
-      <span data-i18n="checkVerify">I have deposited this check at the bank</span>
-    </label>
-
-    <button class="chk-submit-btn disabled" id="chk-wo-submit" onclick="submitCheckDeposit()">
-      <span data-i18n="submitToOffice">Submit to Office</span>
-    </button>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:4px">All 12 window frames needed full caulk bead — not included in original scope. Client approved on-site.</div>
+    <div class="co-price">$320.00</div>
   </div>
+
+  <!-- Existing: Pending -->
+  <div class="co-item">
+    <div class="co-item-header">
+      <div>
+        <div class="co-item-title">Garage Interior Ceiling — Paint</div>
+        <div class="co-item-meta">Added by Jeff Milam · Feb 21</div>
+      </div>
+      <span class="co-status co-pending">⏳ Pending</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:4px">Client asked about garage ceiling while we were there. Sent for approval via text — awaiting response.</div>
+    <div class="co-price">$450.00</div>
+  </div>
+
+  <button onclick="openPanel('co-new-panel')" style="width:100%;padding:12px;margin-top:4px;background:transparent;border:2px dashed var(--border);border-radius:10px;color:var(--text-dim);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;">➕ New Change Order</button>
 </div>
 
 <div class="footer">Nash Painting · Nashville, TN<br>© 2026 · Powered by NashOS</div>
 
+<!-- Daily Update FAB -->
+<div class="daily-fab">
+  <button class="daily-fab-btn pending" id="daily-fab" onclick="openPanel('daily-panel')">
+    📋 Daily Update <span id="daily-fab-badge">⚠️</span>
+  </button>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
 <div class="toast" id="toast"></div>
 
+<!-- ── PANEL: Daily Update ── -->
+<div class="panel" id="daily-panel">
+  <div class="panel-header">
+    <span class="panel-title">📋 Daily Update — Fri Feb 21</span>
+    <button class="panel-close" onclick="closePanel('daily-panel')">×</button>
+  </div>
+  <div class="panel-body">
+    <div id="daily-form">
+      <div class="yesterday-summary">Yesterday: 4 men, est. finish Thu Feb 27 ✓</div>
+      <div class="todo-item">
+        <div class="todo-check" id="check-headcount" onclick="toggleTodo('headcount')"></div>
+        <div class="todo-body">
+          <div class="todo-label">How many on site today?</div>
+          <div class="headcount-btns">
+            <button class="hc-btn" data-val="1">1</button>
+            <button class="hc-btn" data-val="2">2</button>
+            <button class="hc-btn" data-val="3">3</button>
+            <button class="hc-btn active" data-val="4">4</button>
+            <button class="hc-btn" data-val="5">5</button>
+            <button class="hc-btn" data-val="6">6</button>
+            <button class="hc-btn hc-custom" data-val="custom">✏️</button>
+          </div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="todo-check" id="check-finish" onclick="toggleTodo('finish')"></div>
+        <div class="todo-body">
+          <div class="todo-label">When do you think you'll finish?</div>
+          <input type="date" id="est-date" value="2026-02-27">
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="todo-check" id="check-notes" onclick="toggleTodo('notes')"></div>
+        <div class="todo-body">
+          <div class="todo-label">Notes <span style="font-weight:400;color:var(--text-dim)">(optional)</span></div>
+          <textarea id="crew-notes" placeholder="Any issues, progress notes..."></textarea>
+        </div>
+      </div>
+      <button class="btn-submit btn-green" onclick="submitUpdate()">✅ Submit Today's Update</button>
+    </div>
+    <div id="daily-submitted" class="submitted-state" style="display:none">
+      <div class="check">✅</div>
+      <div class="msg">Update submitted for today</div>
+      <div class="detail" id="submitted-detail"></div>
+      <span class="edit-link" onclick="editUpdate()">✏️ Edit</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── PANEL: Touch Point ── -->
+<div class="panel" id="tp-panel">
+  <div class="panel-header">
+    <span class="panel-title">📍 Touch Point <span class="perm-note" style="margin-left:4px">🔒 Field Sup</span></span>
+    <button class="panel-close" onclick="closePanel('tp-panel')">×</button>
+  </div>
+  <div class="panel-body">
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Log a customer interaction. Just tap the button — details are optional.</div>
+    <div id="tp-ready">
+      <button onclick="showTpDetails()" style="width:100%;padding:14px;background:#10B981;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;">
+        📍 Log Touch Point ✓
+      </button>
+      <div style="text-align:center;margin-top:8px;">
+        <span onclick="showTpDetails()" style="font-size:11px;color:var(--text-dim);cursor:pointer;text-decoration:underline">+ Add details (optional)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;">
+        <div style="font-size:11px;color:var(--text-dim);flex:1">This job: <strong style="color:#fff">4 touch points</strong></div>
+        <div style="height:6px;flex:2;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;"><div style="height:100%;width:80%;background:#10B981;border-radius:3px;"></div></div>
+        <div style="font-size:10px;color:var(--text-dim)">1 more for ⭐</div>
+      </div>
+    </div>
+    <div id="tp-details" style="display:none;margin-top:10px;">
+      <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">TYPE (optional)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px" id="tp-type-pills">
+        <button class="tp-pill" onclick="pickTpType(this)">🏠 Pre-job</button>
+        <button class="tp-pill" onclick="pickTpType(this)">👷 Check-in</button>
+        <button class="tp-pill" onclick="pickTpType(this)">🚶 Walkthrough</button>
+        <button class="tp-pill" onclick="pickTpType(this)">📞 Follow-up</button>
+        <button class="tp-pill" onclick="pickTpType(this)">🔧 Issue</button>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">HOW'D IT GO?</div>
+      <div style="display:flex;gap:0;justify-content:center;margin-bottom:12px;">
+        <span class="tp-emoji" onclick="pickTpEmoji(this)">😐</span>
+        <span class="tp-emoji" onclick="pickTpEmoji(this)">😊</span>
+        <span class="tp-emoji" onclick="pickTpEmoji(this)">🤩</span>
+      </div>
+      <textarea placeholder="Quick note (optional)..." style="width:100%;padding:8px 10px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.05);color:#fff;font-size:12px;font-family:inherit;resize:none;min-height:50px;"></textarea>
+      <button onclick="logTouchPoint()" style="width:100%;margin-top:8px;padding:12px;background:#10B981;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Log with Details ✓</button>
+    </div>
+    <div id="tp-success" style="display:none;text-align:center;padding:20px 0;">
+      <div style="font-size:36px;margin-bottom:4px">✓</div>
+      <div style="font-size:14px;font-weight:700;color:#10B981">Touch point logged! 🎉</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:2px">5 total on this job — Silver! ⭐</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PANEL: Receive Payment ── -->
+<div class="panel" id="pay-panel">
+  <div class="panel-header">
+    <span class="panel-title">💳 Receive Payment <span class="perm-note" style="margin-left:4px">🔒 Field Sup</span></span>
+    <button class="panel-close" onclick="closePanel('pay-panel')">×</button>
+  </div>
+  <div class="panel-body">
+    <div id="chk-step1">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Customer handed you a check? Snap a photo NOW before you forget.</div>
+      <div class="chk-upload-area" id="chk-check-upload" onclick="simulateCheckUpload(this,'check')">
+        <div style="font-size:28px;margin-bottom:4px">📸</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-bright)">Snap Check Photo</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">Front of check — do this first!</div>
+      </div>
+      <div class="chk-field">
+        <label>Amount on Check</label>
+        <input type="text" placeholder="e.g. $6,250.00" id="chk-wo-amount" oninput="updateStep1Submit()">
+      </div>
+      <div class="chk-field">
+        <label>Check Number <span style="font-weight:400;text-transform:none">(optional)</span></label>
+        <input type="text" placeholder="e.g. 4892" id="chk-wo-checkno">
+      </div>
+      <button class="chk-submit-btn disabled" id="chk-step1-submit" onclick="completeStep1()">Save Check — Add Deposit Slip Later</button>
+    </div>
+    <div id="chk-step2" style="display:none">
+      <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">✅</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--green)">Check photo saved</div>
+          <div style="font-size:11px;color:var(--text-dim)" id="chk-saved-detail">$6,250.00 · Check #4892</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Now deposit the check and upload the deposit slip to finalize.</div>
+      <div class="chk-upload-area" id="chk-slip-upload" onclick="simulateCheckUpload(this,'slip')">
+        <div style="font-size:28px;margin-bottom:4px">🧾</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-bright)">Snap Deposit Slip</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">After depositing at the bank</div>
+      </div>
+      <label class="chk-verify-label">
+        <input type="checkbox" id="chk-wo-verify" onchange="updateCheckSubmit()">
+        <span>I have deposited this check at the bank</span>
+      </label>
+      <button class="chk-submit-btn disabled" id="chk-wo-submit" onclick="submitCheckDeposit()">Submit to Office</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PANEL: New Change Order ── -->
+<div class="panel" id="co-new-panel">
+  <div class="panel-header">
+    <span class="panel-title">➕ New Change Order</span>
+    <button class="panel-close" onclick="closePanel('co-new-panel')">×</button>
+  </div>
+  <div class="panel-body">
+    <div id="co-form">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Price it out, show the client, get approval right now.</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px">Service Type</div>
+      <div class="co-type-pills">
+        <button class="co-type-pill" onclick="pickCoType(this)">🔨 Carpentry</button>
+        <button class="co-type-pill" onclick="pickCoType(this)">🏠 Interior</button>
+        <button class="co-type-pill" onclick="pickCoType(this)">🏡 Exterior</button>
+        <button class="co-type-pill" onclick="pickCoType(this)">🪵 Cabinet</button>
+      </div>
+      <div class="co-field">
+        <label>Area / Description</label>
+        <textarea placeholder="e.g. Garage interior ceiling — client requested paint, not included in original scope"></textarea>
+      </div>
+      <div class="co-field">
+        <label>Price</label>
+        <input type="text" placeholder="e.g. $450.00" id="co-price-input">
+      </div>
+      <div class="co-field">
+        <label>Notes (optional)</label>
+        <textarea placeholder="Materials needed, special conditions..."></textarea>
+      </div>
+      <button onclick="submitChangeOrder()" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;">📤 Submit for Client Approval</button>
+    </div>
+    <div id="co-success" style="display:none;text-align:center;padding:30px 0;">
+      <div style="font-size:44px;margin-bottom:8px">✅</div>
+      <div style="font-size:16px;font-weight:700;color:var(--green)">Sent for Approval</div>
+      <div style="font-size:13px;color:var(--text-dim);margin-top:8px">Robert Thompson will receive a text with the change order details and a link to approve.</div>
+      <button onclick="resetCoForm()" style="margin-top:20px;padding:10px 20px;background:var(--navy-mid);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">+ Add Another</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PANEL: Line Item Photos ── -->
+<div class="panel" id="li-photo-panel">
+  <div class="panel-header">
+    <span class="panel-title" id="li-photo-title">📷 Estimator Photos</span>
+    <button class="panel-close" onclick="closePanel('li-photo-panel')">×</button>
+  </div>
+  <div class="panel-body">
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">📸 Taken by Larry · Feb 10 — tagged to this line item during estimate</div>
+    <div class="li-photo-grid">
+      <div class="li-photo-thumb" style="background:var(--accent);opacity:0.7"></div>
+      <div class="li-photo-thumb" style="background:var(--navy-mid);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;">🔍</div>
+    </div>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:8px;padding:8px 10px;background:rgba(59,130,246,0.06);border-radius:6px;border-left:3px solid var(--accent)">These are estimate-phase reference photos. Tap to view full size.</div>
+  </div>
+</div>
+
 <script>
-// ============================================================
-// i18n Translation System
-// ============================================================
-const translations = {
-  en: {
-    startTitle: 'New Job — Complete Before Starting',
-    startScore: '📊 Completing this earns cooperation score points. Good photos = Nash gear rewards!',
-    startDmgLabel: 'Pre-Existing Damage Photos',
-    startBefLabel: 'Before Photos — Work Surfaces',
-    startMenLabel: 'Men',
-    startFinishLabel: 'Finish',
-    startLastJob: 'last: 3',
-    startDone: '✅ Start checklist complete!',
-    startCustomMen: 'How many men?',
-    startDmgCount: '{n} damage photos',
-    startBefCount: '{n} before photos',
-    smartLink: '🔗 Live Work Order — Smart Link',
-    jobAddress: 'Job Address',
-    customer: 'Customer',
-    jobCrew: 'Job # / Crew',
-    dayTracker: 'Day 3 of 5',
-    started: 'Started',
-    scheduledFinish: 'Scheduled finish',
-    yourEstimate: 'Your estimate',
-    dailyUpdate: 'Daily Update',
-    howMany: 'How many on site today?',
-    whenFinish: "When do you think you'll finish?",
-    notesOptional: 'Notes (optional)',
-    notesPlaceholder: 'Any issues, progress notes...',
-    submitUpdate: '✅ Submit Today\'s Update',
-    yesterdaySummary: 'Yesterday: 3 men, est. finish Thu Feb 26 ✓',
-    updateSubmitted: 'Update submitted for today',
-    edit: 'Edit',
-    crewScore: 'Your Crew Score',
-    dailyUpdates: 'Daily updates',
-    photoUploads: 'Photo uploads',
-    finishAccuracy: 'Finish accuracy',
-    scoreMotivation: 'Higher score = priority scheduling = less downtime 💪',
-    scopeOfWork: 'Scope of Work',
-    exteriorPainting: 'Exterior Painting',
-    frontFascia: 'Front Fascia Boards',
-    leftFascia: 'Left Side Fascia Boards',
-    rightFascia: 'Right Side Fascia Boards',
-    backFascia: 'Back Fascia Boards',
-    frontPorchCeiling: 'Front Porch Ceiling',
-    garageDoorTrim: 'Garage Door Trim',
-    frontEntryDoor: 'Front Entry Door',
-    guttersFront: 'Gutters — Front',
-    guttersBack: 'Gutters — Back',
-    downspoutsAll: 'Downspouts (all)',
-    garageDoors2: 'Garage Doors (2)',
-    shuttersAll: 'Shutters (all)',
-    windowTrimAll: 'Window Trim (all)',
-    gutterNote: '⚠️ Gutters & downspouts — color TBD, lighter accent. Confirm with Larry before spraying.',
-    backLeftPorch: 'Back Left Screened Porch',
-    porchCeiling: 'Porch Ceiling',
-    screenFrame: 'Screen Frame',
-    porchRailing: 'Porch Railing',
-    mainDeck: 'Main Deck',
-    deckFloor: 'Deck Floor',
-    deckRailing: 'Deck Railing',
-    stainRollBack: 'Stain — Roll & Back-brush',
-    backRightDeck: 'Back Right Deck',
-    lowerDeck: 'Lower Deck',
-    colorSelections: 'Color Selections',
-    colorUseTrim: 'Trim, Fascia, Deck',
-    tbdLighter: 'TBD — Lighter Accent',
-    colorUseGutters: 'Gutters, Downspouts, Garage Doors',
-    colorWarning: '⚠️ Gutter/downspout color not finalized. Do NOT spray until Larry confirms.',
-    siteAccess: 'Site Access & Instructions',
-    accessGate: 'Gate guard opens at <strong>8:00 AM</strong>',
-    accessParking: 'Park at the <strong>tennis courts</strong>',
-    accessRestroom: 'No restroom on site',
-    accessDog: "Don't let the dog out!",
-    accessSaturday: 'Saturday work ends at <strong>2:00 PM</strong>',
-    accessFood: '<strong>No food in yard</strong> — dog safety',
-    materialsPickup: 'Materials Pickup',
-    thProduct: 'Product',
-    thSpec: 'Spec / Color',
-    thQty: 'Qty',
-    matPickupNote: 'for paint pickup — mention <strong>Job 40618331</strong>',
-    photos: 'Photos',
-    takePhoto: 'Take Photo',
-    upload: 'Upload',
-    photoToday: 'Today (3)',
-    photoYesterday: 'Yesterday (5)',
-    photoBefore: 'Before job (2)',
-    photoTotal: '📊 Total: <strong>10 photos</strong> uploaded',
-    changeOrders: 'Change Orders',
-    coBoardTitle: 'Deck Board Replacement',
-    coBoardDesc: 'Replace 12 damaged composite deck boards on lower deck before staining. Added by Larry Morrison.',
-    estimatorNotes: 'Estimator Notes',
-    from: 'From',
-    estimatorWarning: '⚠️ Gutter and downspout color is NOT finalized yet. Customer is choosing between a lighter shade of Cityscape and a completely different accent. <strong>Do not spray gutters/downspouts until I confirm the color.</strong> Everything else is good to go. Call me if questions: 615-829-6858.',
-    estimatorTip: 'Start with fascia, trim, and deck work. Save gutters/downspouts for last.',
-    photoBefore: 'Before Photos',
-    photoBeforeHint: '— take Day 1',
-    photoBeforeDesc: 'Wide-angle "before" shots from each side. These become your before & after marketing photos. Stand back, get the whole view.',
-    beforeFront: 'House — Front',
-    beforeBack: 'House — Back',
-    beforeLeft: 'House — Left Side',
-    beforeRight: 'House — Right Side',
-    beforeDeckMain: 'Main Deck — wide shot',
-    beforeDeckBack: 'Back Right Deck — wide shot',
-    beforeDeckLower: 'Lower Deck — wide shot',
-    beforeEntry: 'Front Entry / Door',
-    beforePorch: 'Screened Porch — wide shot',
-    photoDamage: 'Pre-Existing Damage',
-    photoDamageDesc: 'Close-ups of any damage you find BEFORE starting — cracks, rot, stains, broken boards, scratches. Protects you and Nash.',
-    photoDuring: 'During Job',
-    photoDuringDesc: 'These photos prove the work was done right. Timestamps are your best friend.',
-    duringProof: '🛡️ Proof of Work',
-    duringCoat1: '🎨 1st coat dried — photo BEFORE 2nd coat goes on',
-    duringCoat2: '🎨 2nd coat being applied — wet over dry = proof of 2 coats',
-    duringPrime: '🪣 Spot priming / caulking — photo the prep before it\'s covered',
-    duringRepair: '🔧 Repairs in progress — wood replacement, patching, sanding',
-    duringProfessionalism: '✨ Professionalism',
-    duringMask: '🪜 Masking & setup — tape, plastic, ladders, drop cloths',
-    duringScrape: '🧹 Scraping & sanding — show the prep work',
-    duringSite: '📐 Clean organized work site — gear neat, area protected',
-    photoAfter: 'After Photos',
-    photoAfterDesc: 'Same angles as your before photos. Stand in the same spots — these are your before & after pairs.',
-    sheenSatin: 'Satin',
-    sheenSemiTrans: 'Semi-Transparent',
-    sheenFlat: 'Flat',
-    sheenEggshell: 'Eggshell',
-    sheenSemiGloss: 'Semi-Gloss',
-    sheenGloss: 'Gloss',
-    colorUseDeckStain: 'Deck Stain — Semi-Transparent',
-    cameraToast: '📸 Camera would open here',
-    galleryToast: '📁 Gallery would open here',
-    crewLabel: 'crew',
-    estFinishLabel: 'Est. finish'
-  },
-  es: {
-    startTitle: 'Trabajo Nuevo — Completar Antes de Empezar',
-    startScore: '📊 Completar esto suma puntos a su calificación. ¡Buenas fotos = ropa Nash de regalo!',
-    startDmgLabel: 'Fotos de Daños Preexistentes',
-    startBefLabel: 'Fotos de Antes — Superficies de Trabajo',
-    startMenLabel: 'Hombres',
-    startFinishLabel: 'Terminar',
-    startLastJob: 'último: 3',
-    startDone: '✅ ¡Lista de inicio completa!',
-    startCustomMen: '¿Cuántos hombres?',
-    checkReceived: 'Cheque Recibido',
-    checkDesc: '¿El cliente le dio un cheque? Tome fotos abajo y envíe a la oficina.',
-    snapCheck: 'Foto del Cheque',
-    snapCheckHint: 'Frente del cheque',
-    snapSlip: 'Foto del Recibo de Depósito',
-    snapSlipHint: 'Después de depositar en el banco',
-    checkNumLabel: 'Número de Cheque',
-    checkAmountLabel: 'Monto del Cheque',
-    checkVerify: 'He depositado este cheque en el banco y subí ambas fotos',
-    submitToOffice: 'Enviar a la Oficina',
-    startDmgCount: '{n} fotos de daños',
-    startBefCount: '{n} fotos de antes',
-    smartLink: '🔗 Orden de Trabajo en Vivo — Enlace Directo',
-    jobAddress: 'Dirección del Trabajo',
-    customer: 'Cliente',
-    jobCrew: 'Trabajo # / Equipo',
-    dayTracker: 'Día 3 de 5',
-    started: 'Iniciado',
-    scheduledFinish: 'Finalización programada',
-    yourEstimate: 'Tu estimación',
-    dailyUpdate: 'Actualización Diaria',
-    howMany: '¿Cuántos en el sitio hoy?',
-    whenFinish: '¿Cuándo crees que terminarás?',
-    notesOptional: 'Notas (opcional)',
-    notesPlaceholder: 'Cualquier problema, notas de progreso...',
-    submitUpdate: '✅ Enviar Actualización de Hoy',
-    yesterdaySummary: 'Ayer: 3 hombres, est. finalización Jue Feb 26 ✓',
-    updateSubmitted: 'Actualización enviada para hoy',
-    edit: 'Editar',
-    crewScore: 'Puntuación de tu Equipo',
-    dailyUpdates: 'Actualizaciones diarias',
-    photoUploads: 'Subida de fotos',
-    finishAccuracy: 'Precisión de finalización',
-    scoreMotivation: 'Mayor puntuación = programación prioritaria = menos tiempo sin trabajo 💪',
-    scopeOfWork: 'Alcance del Trabajo',
-    exteriorPainting: 'Pintura Exterior',
-    frontFascia: 'Tablas de Fascia/Alero — Frente',
-    leftFascia: 'Tablas de Fascia/Alero — Lado Izquierdo',
-    rightFascia: 'Tablas de Fascia/Alero — Lado Derecho',
-    backFascia: 'Tablas de Fascia/Alero — Atrás',
-    frontPorchCeiling: 'Techo del Porche Frontal',
-    garageDoorTrim: 'Moldura de Puerta del Garaje',
-    frontEntryDoor: 'Puerta de Entrada Frontal',
-    guttersFront: 'Canaletas — Frente',
-    guttersBack: 'Canaletas — Atrás',
-    downspoutsAll: 'Bajantes (todos)',
-    garageDoors2: 'Puertas del Garaje (2)',
-    shuttersAll: 'Persianas (todas)',
-    windowTrimAll: 'Moldura de Ventana (toda)',
-    gutterNote: '⚠️ Canaletas y bajantes — color por definir, acento más claro. Confirmar con Larry antes de rociar.',
-    backLeftPorch: 'Atrás Izquierda — Porche con Malla',
-    porchCeiling: 'Techo del Porche',
-    screenFrame: 'Marco de Malla',
-    porchRailing: 'Barandal del Porche',
-    mainDeck: 'Terraza Principal',
-    deckFloor: 'Piso de Terraza',
-    deckRailing: 'Barandal de Terraza',
-    stainRollBack: 'Teñir — Rodillo y Repaso con Brocha',
-    backRightDeck: 'Terraza Lateral Derecha',
-    lowerDeck: 'Terraza Inferior',
-    colorSelections: 'Selección de Colores',
-    colorUseTrim: 'Molduras, Fascia, Terraza',
-    tbdLighter: 'Por definir — Acento Más Claro',
-    colorUseGutters: 'Canaletas, Bajantes, Puertas del Garaje',
-    colorWarning: '⚠️ Color de canaletas/bajantes no finalizado. NO rociar hasta que Larry confirme.',
-    siteAccess: 'Acceso al Sitio e Instrucciones',
-    accessGate: 'Guardia del portón abre a las <strong>8:00 AM</strong>',
-    accessParking: 'Estacionar en las <strong>canchas de tenis</strong>',
-    accessRestroom: 'Sin acceso a baño',
-    accessDog: '¡NO dejar salir al perro!',
-    accessSaturday: 'El trabajo del sábado debe terminar a las <strong>2:00 PM</strong>',
-    accessFood: '<strong>NO dejar comida en el patio</strong> — seguridad del perro',
-    materialsPickup: 'Recoger materiales',
-    thProduct: 'Producto',
-    thSpec: 'Especificación / Color',
-    thQty: 'Cant.',
-    matPickupNote: 'para recoger pintura — mencionar <strong>Trabajo 40618331</strong>',
-    photos: 'Fotos',
-    takePhoto: 'Tomar Foto',
-    upload: 'Subir',
-    photoToday: 'Hoy (3)',
-    photoYesterday: 'Ayer (5)',
-    photoBefore: 'Antes del trabajo (2)',
-    photoTotal: '📊 Total: <strong>10 fotos</strong> subidas',
-    changeOrders: 'Órdenes de Cambio',
-    coBoardTitle: 'Reemplazo de Tablas de Terraza',
-    coBoardDesc: 'Reemplazar 12 tablas de terraza compuestas dañadas en la terraza inferior antes de teñir. Agregado por Larry Morrison.',
-    estimatorNotes: 'Notas del Estimador',
-    from: 'De',
-    estimatorWarning: '⚠️ El color de canaletas y bajantes NO está finalizado aún. La cliente está eligiendo entre un tono más claro de Cityscape y un acento completamente diferente. <strong>NO rociar canaletas/bajantes hasta que yo confirme el color.</strong> Todo lo demás está listo. Llámame si hay preguntas: 615-829-6858.',
-    estimatorTip: 'Empezar con fascia, molduras y trabajo de terraza. Dejar canaletas/bajantes para el final.',
-    photoBefore: 'Fotos del Antes',
-    photoBeforeHint: '— tomar Día 1',
-    photoBeforeDesc: 'Fotos amplias del "antes" desde cada lado. Estas se convierten en tus fotos de antes y después para marketing. Aléjate, captura la vista completa.',
-    beforeFront: 'Casa — Frente',
-    beforeBack: 'Casa — Atrás',
-    beforeLeft: 'Casa — Lado Izquierdo',
-    beforeRight: 'Casa — Lado Derecho',
-    beforeDeckMain: 'Terraza Principal — vista amplia',
-    beforeDeckBack: 'Terraza Trasera Derecha — vista amplia',
-    beforeDeckLower: 'Terraza Inferior — vista amplia',
-    beforeEntry: 'Entrada Principal / Puerta',
-    beforePorch: 'Porche con Malla — vista amplia',
-    photoDamage: 'Daño Pre-Existente',
-    photoDamageDesc: 'Fotos de cerca de cualquier daño que encuentres ANTES de empezar — grietas, pudrición, manchas, tablas rotas, rasguños. Te protege a ti y a Nash.',
-    photoDuring: 'Durante el Trabajo',
-    photoDuringDesc: 'Estas fotos prueban que el trabajo se hizo bien. Las marcas de tiempo son tu mejor amigo.',
-    duringProof: '🛡️ Prueba del Trabajo',
-    duringCoat1: '🎨 1ra capa seca — foto ANTES de aplicar 2da capa',
-    duringCoat2: '🎨 2da capa aplicándose — pintura húmeda sobre seca = prueba de 2 capas',
-    duringPrime: '🪣 Imprimado / calafateo — foto de la preparación antes de cubrirla',
-    duringRepair: '🔧 Reparaciones en progreso — reemplazo de madera, parchado, lijado',
-    duringProfessionalism: '✨ Profesionalismo',
-    duringMask: '🪜 Enmascarado y preparación — cinta, plástico, escaleras, lonas',
-    duringScrape: '🧹 Raspado y lijado — mostrar el trabajo de preparación',
-    duringSite: '📐 Sitio de trabajo limpio y organizado — equipo ordenado, área protegida',
-    photoAfter: 'Fotos del Después',
-    photoAfterDesc: 'Mismos ángulos que tus fotos del antes. Párate en los mismos lugares — estos son tus pares de antes y después.',
-    sheenSatin: 'Satinado',
-    sheenSemiTrans: 'Semi-Transparente',
-    sheenFlat: 'Mate',
-    sheenEggshell: 'Cáscara de Huevo',
-    sheenSemiGloss: 'Semi-Brillante',
-    sheenGloss: 'Brillante',
-    colorUseDeckStain: 'Tinte de Terraza — Semi-Transparente',
-    cameraToast: '📸 La cámara se abriría aquí',
-    galleryToast: '📁 La galería se abriría aquí',
-    crewLabel: 'equipo',
-    estFinishLabel: 'Est. finalización'
-  }
-};
-
-let lang = localStorage.getItem('wo-lang') || 'en';
-
-function t(key) {
-  return (translations[lang] && translations[lang][key]) || (translations.en[key]) || key;
+// ── ROLE SWITCHER ──
+function setRole(role) {
+  document.body.className = 'role-' + role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(role === 'sup' ? 'field' : 'crew')));
 }
 
-function setLang(newLang) {
-  lang = newLang;
-  localStorage.setItem('wo-lang', lang);
-  applyTranslations();
-  // Update toggle buttons
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
+// ── LANG (simplified) ──
+let lang = 'en';
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
 }
 
-function applyTranslations() {
-  // Update all data-i18n elements
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (val) el.innerHTML = val;
-  });
-  // Update placeholders
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    el.placeholder = t(key);
-  });
-  // Update page title
-  document.title = lang === 'es' ? 'Orden de Trabajo — WO-40618331' : 'Live Work Order — WO-40618331';
+// ── PANEL SYSTEM ──
+function openPanel(id) {
+  closeAllPanels();
+  document.getElementById(id).classList.add('show');
+  document.getElementById('overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closePanel(id) {
+  document.getElementById(id).classList.remove('show');
+  document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function closeAllPanels() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
-// Apply on load
-document.addEventListener('DOMContentLoaded', () => {
-  setLang(lang);
-});
-
-// ============================================================
-// Original functionality
-// ============================================================
-
-// Headcount buttons
-document.querySelectorAll('.hc-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (btn.dataset.val === 'custom') {
-      const val = prompt(lang === 'es' ? '¿Cuántos hombres en sitio?' : 'How many men on site?');
-      const num = parseInt(val, 10);
-      if (!num || num < 1) return;
-      document.querySelectorAll('.hc-btn').forEach(b => b.classList.remove('active'));
-      btn.textContent = num;
-      btn.dataset.val = String(num);
-      btn.classList.add('active');
-    } else {
-      document.querySelectorAll('.hc-btn').forEach(b => {
-        b.classList.remove('active');
-        if (b.dataset.val === 'custom' && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; }
-      });
-      btn.classList.add('active');
-    }
-  });
-});
-
-// Submit daily update
-function submitUpdate() {
-  const active = document.querySelector('.hc-btn.active');
-  const count = active ? active.dataset.val : '?';
-  const dateVal = document.getElementById('est-date').value;
-  const d = new Date(dateVal + 'T12:00:00');
-  const locale = lang === 'es' ? 'es-US' : 'en-US';
-  const dateStr = d.toLocaleDateString(locale, { weekday:'short', month:'short', day:'numeric' });
-  document.getElementById('submitted-detail').textContent = count + ' ' + t('crewLabel') + ' · ' + t('estFinishLabel') + ' ' + dateStr;
-  document.getElementById('daily-form').style.display = 'none';
-  document.getElementById('daily-submitted').style.display = 'block';
+// ── PHOTOS scroll ──
+function scrollToPhotos() {
+  document.getElementById('photos-section').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
-function editUpdate() {
-  document.getElementById('daily-form').style.display = 'block';
-  document.getElementById('daily-submitted').style.display = 'none';
+// ── PHOTO TABS ──
+const tabCounts = { before:0, damage:0, during:3, after:0 };
+const photoColors = ['#3b82f6','#22c55e','#a855f7','#eab308','#f97316','#ef4444'];
+let photoIdx = 0;
+
+function switchPhotoTab(tab, el) {
+  document.querySelectorAll('.photo-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.photo-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
 }
 
-// Todo-style check toggling for daily update
-function toggleTodo(id) {
-  const el = document.getElementById('check-' + id);
-  el.classList.toggle('done');
-  updateTodoProgress();
+function togglePhotoDesc(id) {
+  document.getElementById(id).classList.toggle('show');
 }
 
-function updateTodoProgress() {
-  // Count required items (headcount + finish). Notes is optional.
-  const required = ['headcount', 'finish'];
-  let done = 0;
-  required.forEach(id => {
-    if (document.getElementById('check-' + id).classList.contains('done')) done++;
-  });
-  const pct = Math.round((done / required.length) * 100);
-  const fill = document.getElementById('todo-progress-fill');
-  const text = document.getElementById('todo-progress-text');
-  if (fill) fill.style.width = pct + '%';
-  if (text) text.textContent = done + ' of ' + required.length + ' done';
+function addTabPhoto(section) {
+  const grid = document.getElementById('grid-' + section);
+  const thumb = document.createElement('div');
+  thumb.className = 'photo-thumb';
+  thumb.style.background = photoColors[photoIdx++ % photoColors.length];
+  thumb.style.opacity = '0.7';
+  grid.appendChild(thumb);
+  tabCounts[section]++;
+  document.getElementById('tab-' + section + '-count').textContent = tabCounts[section];
+  showToast('📸 Photo saved');
 }
 
-// Auto-check todo items when user interacts
-document.addEventListener('DOMContentLoaded', () => {
-  // Auto-check headcount when a button is tapped
-  document.querySelectorAll('#todo-headcount .hc-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.getElementById('check-headcount').classList.add('done');
-      updateTodoProgress();
-    });
-  });
-  // Auto-check finish date when changed
-  const estDate = document.getElementById('est-date');
-  if (estDate) estDate.addEventListener('change', () => {
-    document.getElementById('check-finish').classList.add('done');
-    updateTodoProgress();
-  });
-  // Auto-check notes when user types (optional, doesn't affect progress bar)
-  const crewNotes = document.getElementById('crew-notes');
-  if (crewNotes) crewNotes.addEventListener('input', () => {
-    if (crewNotes.value.trim()) {
-      document.getElementById('check-notes').classList.add('done');
-    } else {
-      document.getElementById('check-notes').classList.remove('done');
-    }
-  });
-});
+function togglePhotoDesc(id) {
+  document.getElementById(id).classList.toggle('show');
+}
 
-// Collapsible sections
+// ── LINE ITEM PHOTOS ──
+function openLineItemPhotos(name) {
+  document.getElementById('li-photo-title').textContent = '📷 ' + name;
+  openPanel('li-photo-panel');
+}
+
+// ── COLLAPSIBLE ──
 function toggleSection(el) {
   const body = el.nextElementSibling;
   const arrow = el.querySelector('.arrow');
   body.classList.toggle('open');
   arrow && arrow.classList.toggle('open');
 }
-
 function toggleScope(el) {
   const items = el.nextElementSibling;
   const count = el.querySelector('.count');
   items.classList.toggle('open');
-  if (count) {
-    count.textContent = count.textContent.replace(/[▼▶]/, items.classList.contains('open') ? '▼' : '▶');
-  }
+  if (count) count.textContent = count.textContent.replace(/[▼▶]/, items.classList.contains('open') ? '▼' : '▶');
 }
 
-// Photo sections
-const photoColors = ['#3b82f6','#22c55e','#a855f7','#eab308','#f97316','#ef4444','#06b6d4','#ec4899'];
-let photoIdx = 0;
-let photoCounts = { before:0, damage:0, during:3, after:0 };
-
-function togglePhotoSection(header) {
-  const body = header.nextElementSibling;
-  body.classList.toggle('open');
+// ── DAILY UPDATE ──
+function submitUpdate() {
+  const active = document.querySelector('#daily-panel .hc-btn.active');
+  const count = active ? active.dataset.val : '?';
+  const dateVal = document.getElementById('est-date').value;
+  const d = new Date(dateVal + 'T12:00:00');
+  const dateStr = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  document.getElementById('submitted-detail').textContent = count + ' crew · Est. finish ' + dateStr;
+  document.getElementById('daily-form').style.display = 'none';
+  document.getElementById('daily-submitted').style.display = 'block';
+  const fab = document.getElementById('daily-fab');
+  fab.className = 'daily-fab-btn done';
+  document.getElementById('daily-fab-badge').textContent = '✅';
+  showToast('✅ Daily update submitted');
+  setTimeout(() => closePanel('daily-panel'), 1200);
+}
+function editUpdate() {
+  document.getElementById('daily-form').style.display = 'block';
+  document.getElementById('daily-submitted').style.display = 'none';
+}
+function toggleTodo(id) {
+  document.getElementById('check-' + id).classList.toggle('done');
 }
 
-function addPhoto(section) {
-  const thumbs = document.getElementById(section + '-thumbs');
-  const color = photoColors[photoIdx % photoColors.length];
-  photoIdx++;
-  const thumb = document.createElement('div');
-  thumb.className = 'photo-thumb';
-  thumb.style.background = color;
-  thumb.style.opacity = '0.7';
-  thumb.style.animation = 'fadeIn 0.3s ease';
-  thumbs.appendChild(thumb);
+// Auto-check todos on interaction
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#daily-panel .hc-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#daily-panel .hc-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('check-headcount').classList.add('done');
+    });
+  });
+  const estDate = document.getElementById('est-date');
+  if (estDate) estDate.addEventListener('change', () => document.getElementById('check-finish').classList.add('done'));
+  const notes = document.getElementById('crew-notes');
+  if (notes) notes.addEventListener('input', () => {
+    document.getElementById('check-notes').classList.toggle('done', notes.value.trim().length > 0);
+  });
+  startInit();
+});
 
-  photoCounts[section] = (photoCounts[section] || 0) + 1;
-  document.getElementById(section + '-count').textContent = photoCounts[section];
-
-  updatePhotoTotal();
-  showToast(t('cameraToast'));
-}
-
-function updatePhotoTotal() {
-  const total = Object.values(photoCounts).reduce((a,b) => a+b, 0);
-  const el = document.getElementById('photo-total');
-  if (lang === 'es') {
-    el.innerHTML = `📊 Total: <strong>${total} fotos</strong> subidas`;
-  } else {
-    el.innerHTML = `📊 Total: <strong>${total} photos</strong> uploaded`;
-  }
-}
-
-// Toast
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// ============================================================
-// Job Start Banner — non-blocking, persistent at top
-// ============================================================
-const START_KEY = 'wo-40618331-start';
-let startDmgCount = 0;
-let startBefCount = 0;
-
+// ── JOB START BANNER ──
+const START_KEY = 'wo-50281947-start';
+let startDmgCount = 0, startBefCount = 0;
 function startInit() {
-  const banner = document.getElementById('start-banner');
   if (localStorage.getItem(START_KEY) === 'done') {
+    const banner = document.getElementById('start-banner');
     banner.classList.add('complete');
-    banner.innerHTML = '<div class="start-done">' + t('startDone') + '</div>';
+    banner.innerHTML = '<div class="start-done">✅ Start checklist complete!</div>';
     return;
   }
-
-  // Set default finish date (7 days from today)
-  const finishInput = document.getElementById('start-finish-date');
-  const def = new Date();
-  def.setDate(def.getDate() + 7);
-  finishInput.value = def.toISOString().slice(0, 10);
-  finishInput.addEventListener('change', startCheckComplete);
-
-  // Men buttons
+  const fin = document.getElementById('start-finish-date');
+  const def = new Date(); def.setDate(def.getDate() + 7);
+  fin.value = def.toISOString().slice(0, 10);
+  fin.addEventListener('change', startCheckComplete);
   document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.dataset.val === 'custom') {
-        const val = prompt(t('startCustomMen'));
-        const num = parseInt(val, 10);
-        if (!num || num < 1) return;
+        const v = prompt('How many men?'); const n = parseInt(v);
+        if (!n || n < 1) return;
         document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(b => b.classList.remove('active'));
-        btn.textContent = num;
-        btn.dataset.val = String(num);
-        btn.classList.add('active');
+        btn.textContent = n; btn.dataset.val = String(n); btn.classList.add('active');
       } else {
-        document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(b => {
-          b.classList.remove('active');
-          if (b.classList.contains('custom') && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; }
-        });
+        document.querySelectorAll('#start-men-btns .start-crew-btn').forEach(b => { b.classList.remove('active'); if (b.classList.contains('custom') && b.textContent !== '✏️') { b.textContent = '✏️'; b.dataset.val = 'custom'; } });
         btn.classList.add('active');
       }
       startCheckComplete();
     });
   });
 }
-
-// Simulate camera opening — in production this opens native camera in burst mode
 function startCamera(type) {
-  // Simulate taking 2-5 photos in a burst
   const count = Math.floor(Math.random() * 4) + 2;
-  if (type === 'damage') {
-    startDmgCount += count;
-    const btn = document.getElementById('btn-dmg-photos');
-    btn.classList.add('has-photos');
-    document.getElementById('dmg-count').textContent = t('startDmgCount').replace('{n}', startDmgCount);
-  } else {
-    startBefCount += count;
-    const btn = document.getElementById('btn-bef-photos');
-    btn.classList.add('has-photos');
-    document.getElementById('bef-count').textContent = t('startBefCount').replace('{n}', startBefCount);
-  }
-  showToast((type === 'damage' ? '⚠️ ' : '📸 ') + count + (lang === 'es' ? ' fotos guardadas' : ' photos saved'));
-  startCheckComplete();
+  if (type === 'damage') { startDmgCount += count; document.getElementById('btn-dmg-photos').classList.add('has-photos'); document.getElementById('dmg-count').textContent = count + ' damage photos'; }
+  else { startBefCount += count; document.getElementById('btn-bef-photos').classList.add('has-photos'); document.getElementById('bef-count').textContent = count + ' before photos'; }
+  showToast('📸 ' + count + ' photos saved'); startCheckComplete();
 }
-
 function startCheckComplete() {
-  const hasDmg = startDmgCount > 0;
-  const hasBef = startBefCount > 0;
-  const hasMen = !!document.querySelector('#start-men-btns .start-crew-btn.active');
-  const hasDate = !!document.getElementById('start-finish-date').value;
-
-  if (hasDmg && hasBef && hasMen && hasDate) {
+  if (startDmgCount > 0 && startBefCount > 0 && document.querySelector('#start-men-btns .start-crew-btn.active') && document.getElementById('start-finish-date').value) {
     localStorage.setItem(START_KEY, 'done');
-    const banner = document.getElementById('start-banner');
-    banner.classList.add('complete');
-    banner.innerHTML = '<div class="start-done">' + t('startDone') + ' — ' + startDmgCount + ' DMG, ' + startBefCount + ' BEF, ' + document.querySelector('#start-men-btns .start-crew-btn.active').dataset.val + ' 👷, ' + document.getElementById('start-finish-date').value + '</div>';
+    const b = document.getElementById('start-banner');
+    b.classList.add('complete');
+    b.innerHTML = '<div class="start-done">✅ Start checklist complete!</div>';
   }
 }
 
-startInit();
-
-// ============================================================
-// Check Deposit (Field Sup / Salesman only)
-// ============================================================
-var checkPhotos = { check: false, slip: false };
+// ── CHECK DEPOSIT ──
+let checkPhotos = { check: false, slip: false };
 function simulateCheckUpload(el, type) {
   checkPhotos[type] = true;
-  if (type === 'check') {
-    el.innerHTML = '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Check photo captured</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Tap to retake</div>';
-  } else {
-    el.innerHTML = '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Deposit slip captured</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Tap to retake</div>';
-  }
+  el.innerHTML = type === 'check'
+    ? '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Check photo captured</div>'
+    : '<div style="font-size:28px;margin-bottom:4px">✅</div><div style="font-size:13px;font-weight:600;color:var(--green)">Deposit slip captured</div>';
   el.classList.add('has-photo');
   if (type === 'check') updateStep1Submit();
   if (type === 'slip') updateCheckSubmit();
 }
-
-// Step 1: Just get the check photo + amount saved
 function updateStep1Submit() {
-  var hasCheck = checkPhotos.check;
-  var hasAmt = document.getElementById('chk-wo-amount').value.trim().length > 0;
-  var btn = document.getElementById('chk-step1-submit');
-  btn.className = (hasCheck && hasAmt) ? 'chk-submit-btn ready' : 'chk-submit-btn disabled';
+  const ok = checkPhotos.check && document.getElementById('chk-wo-amount').value.trim();
+  document.getElementById('chk-step1-submit').className = ok ? 'chk-submit-btn ready' : 'chk-submit-btn disabled';
 }
 function completeStep1() {
-  var amt = document.getElementById('chk-wo-amount').value || '';
-  var num = document.getElementById('chk-wo-checkno').value || '';
-  var detail = amt;
-  if (num) detail += ' · Check #' + num;
-  document.getElementById('chk-saved-detail').textContent = detail;
+  const amt = document.getElementById('chk-wo-amount').value || '';
+  const num = document.getElementById('chk-wo-checkno').value || '';
+  document.getElementById('chk-saved-detail').textContent = amt + (num ? ' · Check #' + num : '');
   document.getElementById('chk-step1').style.display = 'none';
   document.getElementById('chk-step2').style.display = 'block';
-  showToast('✅ Check photo saved — add deposit slip when ready');
 }
-
-// Step 2: Deposit slip + verify + submit
 function updateCheckSubmit() {
-  var verified = document.getElementById('chk-wo-verify').checked;
-  var hasSlip = checkPhotos.slip;
-  var btn = document.getElementById('chk-wo-submit');
-  btn.className = (verified && hasSlip) ? 'chk-submit-btn ready' : 'chk-submit-btn disabled';
+  const ok = document.getElementById('chk-wo-verify').checked && checkPhotos.slip;
+  document.getElementById('chk-wo-submit').className = ok ? 'chk-submit-btn ready' : 'chk-submit-btn disabled';
 }
 function submitCheckDeposit() {
-  var amt = document.getElementById('chk-wo-amount').value || '$—';
-  showToast('✅ Check deposit submitted to office — ' + amt);
-  // Reset back to step 1
+  showToast('✅ Payment submitted to office');
+  closePanel('pay-panel');
+  checkPhotos = { check: false, slip: false };
   document.getElementById('chk-step2').style.display = 'none';
   document.getElementById('chk-step1').style.display = 'block';
-  checkPhotos = { check: false, slip: false };
-  document.getElementById('chk-check-upload').innerHTML = '<div style="font-size:28px;margin-bottom:4px">📸</div><div style="font-size:13px;font-weight:600;color:var(--text-bright)">Snap Check Photo</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">Front of check — do this first!</div>';
-  document.getElementById('chk-check-upload').classList.remove('has-photo');
-  document.getElementById('chk-wo-amount').value = '';
-  document.getElementById('chk-wo-checkno').value = '';
-  document.getElementById('chk-step1-submit').className = 'chk-submit-btn disabled';
 }
 
-// ══════════════════════════════════════
-// TOUCH POINT (field sup / salesman only)
-// ══════════════════════════════════════
-function showTpDetails() {
-  document.getElementById('tp-details').style.display = 'block';
-}
-function pickTpType(el) {
-  document.querySelectorAll('#tp-type-pills .tp-pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-}
-function pickTpEmoji(el) {
-  document.querySelectorAll('.tp-emoji').forEach(e => e.classList.remove('active'));
-  el.classList.add('active');
-}
+// ── TOUCH POINT ──
+function showTpDetails() { document.getElementById('tp-details').style.display = 'block'; }
+function pickTpType(el) { document.querySelectorAll('#tp-type-pills .tp-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); }
+function pickTpEmoji(el) { document.querySelectorAll('.tp-emoji').forEach(e => e.classList.remove('active')); el.classList.add('active'); }
 function logTouchPoint() {
   document.getElementById('tp-ready').style.display = 'none';
   document.getElementById('tp-details').style.display = 'none';
   document.getElementById('tp-success').style.display = 'block';
-  setTimeout(() => {
-    document.getElementById('tp-success').style.display = 'none';
-    document.getElementById('tp-ready').style.display = 'block';
-  }, 3000);
+  showToast('📍 Touch point logged!');
+  setTimeout(() => closePanel('tp-panel'), 2000);
 }
-// Quick log (the green button) — same as logTouchPoint but from the main button
-document.querySelector('#touch-point-section #tp-ready button').addEventListener('click', function(e) {
-  e.preventDefault();
-  logTouchPoint();
-});
 
+// ── CHANGE ORDERS ──
+function pickCoType(el) { document.querySelectorAll('.co-type-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); }
+function submitChangeOrder() {
+  document.getElementById('co-form').style.display = 'none';
+  document.getElementById('co-success').style.display = 'block';
+}
+function resetCoForm() {
+  document.getElementById('co-form').style.display = 'block';
+  document.getElementById('co-success').style.display = 'none';
+  document.querySelectorAll('.co-type-pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('co-price-input').value = '';
+  document.querySelectorAll('#co-new-panel textarea').forEach(t => t.value = '');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
 </script>
 </body>
 </html>
