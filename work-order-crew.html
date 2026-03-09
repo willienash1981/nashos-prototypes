@@ -229,9 +229,9 @@ a { color:var(--accent-light); text-decoration:none; }
 
 /* Daily Update FAB */
 .daily-fab { position:fixed; bottom:20px; right:16px; z-index:90; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
-.daily-fab-btn { display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--accent); color:#fff; border:none; border-radius:24px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 16px rgba(59,130,246,0.4); transition:all .15s; }
-.daily-fab-btn.done { background:var(--green); box-shadow:0 4px 16px rgba(34,197,94,0.3); }
-.daily-fab-btn.pending { background:var(--orange); box-shadow:0 4px 16px rgba(249,115,22,0.3); }
+.daily-fab-btn { display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--navy-mid); color:var(--text-dim); border:1px solid var(--border); border-radius:24px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; box-shadow:0 2px 8px rgba(0,0,0,0.3); transition:all .15s; }
+.daily-fab-btn.done { background:var(--navy-mid); color:#64748b; border-color:rgba(100,116,139,0.4); box-shadow:none; }
+.daily-fab-btn.pending { background:var(--navy-light); color:var(--text); border-color:var(--border); }
 .daily-fab-btn:active { transform:scale(.96); }
 
 /* Daily Update form inside panel */
@@ -751,7 +751,6 @@ body.role-crew .quick-btn.sup-only { display:none !important; }
     <div id="daily-form">
       <div class="yesterday-summary">Yesterday: 4 men, est. finish Thu Feb 27 ✓</div>
       <div class="todo-item">
-        <div class="todo-check" id="check-headcount" onclick="toggleTodo('headcount')"></div>
         <div class="todo-body">
           <div class="todo-label">How many on site today?</div>
           <div class="headcount-btns">
@@ -766,14 +765,12 @@ body.role-crew .quick-btn.sup-only { display:none !important; }
         </div>
       </div>
       <div class="todo-item">
-        <div class="todo-check" id="check-finish" onclick="toggleTodo('finish')"></div>
         <div class="todo-body">
           <div class="todo-label">When do you think you'll finish?</div>
           <input type="date" id="est-date" value="2026-02-27">
         </div>
       </div>
       <div class="todo-item">
-        <div class="todo-check" id="check-notes" onclick="toggleTodo('notes')"></div>
         <div class="todo-body">
           <div class="todo-label">Notes <span style="font-weight:400;color:var(--text-dim)">(optional)</span></div>
           <textarea id="crew-notes" placeholder="Any issues, progress notes..."></textarea>
@@ -891,33 +888,51 @@ body.role-crew .quick-btn.sup-only { display:none !important; }
     <button class="panel-close" onclick="closePanel('co-new-panel')">×</button>
   </div>
   <div class="panel-body">
-    <div id="co-form">
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Price it out, show the client, get approval right now.</div>
+
+    <!-- Step 1: Pick service type -->
+    <div id="co-step1">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">Select the service type to load templates.</div>
       <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px">Service Type</div>
-      <div class="co-type-pills">
-        <button class="co-type-pill" onclick="pickCoType(this)">🔨 Carpentry</button>
-        <button class="co-type-pill" onclick="pickCoType(this)">🏠 Interior</button>
-        <button class="co-type-pill" onclick="pickCoType(this)">🏡 Exterior</button>
-        <button class="co-type-pill" onclick="pickCoType(this)">🪵 Cabinet</button>
+      <div class="co-type-pills" style="flex-direction:column;gap:8px;">
+        <button class="co-type-pill" style="text-align:left;padding:12px 14px;border-radius:10px;font-size:14px;" onclick="loadCoTemplates('carpentry',this)">🔨 Carpentry Repairs</button>
+        <button class="co-type-pill" style="text-align:left;padding:12px 14px;border-radius:10px;font-size:14px;" onclick="loadCoTemplates('interior',this)">🏠 Interior Painting</button>
+        <button class="co-type-pill" style="text-align:left;padding:12px 14px;border-radius:10px;font-size:14px;" onclick="loadCoTemplates('exterior',this)">🏡 Exterior Painting</button>
+        <button class="co-type-pill" style="text-align:left;padding:12px 14px;border-radius:10px;font-size:14px;" onclick="loadCoTemplates('cabinet',this)">🪵 Cabinet Refinishing</button>
       </div>
-      <div class="co-field">
-        <label>Area / Description</label>
-        <textarea placeholder="e.g. Garage interior ceiling — client requested paint, not included in original scope"></textarea>
-      </div>
-      <div class="co-field">
-        <label>Price</label>
-        <input type="text" placeholder="e.g. $450.00" id="co-price-input">
-      </div>
-      <div class="co-field">
-        <label>Notes (optional)</label>
-        <textarea placeholder="Materials needed, special conditions..."></textarea>
-      </div>
-      <button onclick="submitChangeOrder()" style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;">📤 Submit for Client Approval</button>
     </div>
+
+    <!-- Step 2: Template picker + auto-priced line items -->
+    <div id="co-step2" style="display:none">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;cursor:pointer;" onclick="backToCoStep1()">
+        <span style="font-size:18px;color:var(--text-dim)">‹</span>
+        <span id="co-type-label" style="font-size:15px;font-weight:700;color:var(--text-bright)">Carpentry Repairs</span>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px">Select Template Items</div>
+      <div id="co-template-list" style="margin-bottom:14px;"></div>
+      <div class="co-field">
+        <label>Notes / Special Instructions (optional)</label>
+        <textarea id="co-notes" placeholder="Anything the client or office should know..."></textarea>
+      </div>
+
+      <!-- Auto-calculated price summary -->
+      <div id="co-price-summary" style="display:none;background:var(--navy-mid);border-radius:10px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px;">Price Breakdown</div>
+        <div id="co-line-items" style="font-size:13px;color:var(--text-dim);margin-bottom:8px;"></div>
+        <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:600;color:var(--text)">Total</span>
+          <span id="co-total" style="font-size:20px;font-weight:700;color:var(--text-bright)">$0.00</span>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:6px;">Priced using standard rate tables · Premium package</div>
+      </div>
+
+      <button id="co-submit-btn" onclick="submitChangeOrder()" style="width:100%;padding:14px;background:var(--navy-mid);color:var(--text-dim);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;" disabled>📤 Submit for Client Approval</button>
+    </div>
+
+    <!-- Success state -->
     <div id="co-success" style="display:none;text-align:center;padding:30px 0;">
       <div style="font-size:44px;margin-bottom:8px">✅</div>
       <div style="font-size:16px;font-weight:700;color:var(--green)">Sent for Approval</div>
-      <div style="font-size:13px;color:var(--text-dim);margin-top:8px">Robert Thompson will receive a text with the change order details and a link to approve.</div>
+      <div style="font-size:13px;color:var(--text-dim);margin-top:8px;line-height:1.6">Robert Thompson will receive a text with the change order details and a link to approve or decline.</div>
       <button onclick="resetCoForm()" style="margin-top:20px;padding:10px 20px;background:var(--navy-mid);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">+ Add Another</button>
     </div>
   </div>
@@ -1048,9 +1063,7 @@ function editUpdate() {
   document.getElementById('daily-form').style.display = 'block';
   document.getElementById('daily-submitted').style.display = 'none';
 }
-function toggleTodo(id) {
-  document.getElementById('check-' + id).classList.toggle('done');
-}
+
 
 // Auto-check todos on interaction
 document.addEventListener('DOMContentLoaded', () => {
@@ -1160,18 +1173,147 @@ function logTouchPoint() {
   setTimeout(() => closePanel('tp-panel'), 2000);
 }
 
-// ── CHANGE ORDERS ──
-function pickCoType(el) { document.querySelectorAll('.co-type-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); }
+// ── CHANGE ORDERS — Template + Auto-Price ──
+const coTemplates = {
+  carpentry: [
+    { label: 'Wood rot repair (per LF)', unit: 'LF', rate: 18, qty: 1 },
+    { label: 'Fascia board replacement (per board)', unit: 'board', rate: 95, qty: 1 },
+    { label: 'Window sill repair (epoxy)', unit: 'sill', rate: 85, qty: 1 },
+    { label: 'Deck board replacement (per board)', unit: 'board', rate: 55, qty: 1 },
+    { label: 'Caulk & seal (per LF)', unit: 'LF', rate: 4, qty: 1 },
+  ],
+  interior: [
+    { label: 'Additional room — walls & ceiling', unit: 'room', rate: 320, qty: 1 },
+    { label: 'Additional door (both sides)', unit: 'door', rate: 85, qty: 1 },
+    { label: 'Closet interior', unit: 'closet', rate: 145, qty: 1 },
+    { label: 'Ceiling only (per room)', unit: 'room', rate: 160, qty: 1 },
+    { label: 'Accent wall', unit: 'wall', rate: 120, qty: 1 },
+    { label: 'Garage interior ceiling', unit: 'garage', rate: 450, qty: 1 },
+  ],
+  exterior: [
+    { label: 'Additional window trim (per window)', unit: 'window', rate: 45, qty: 1 },
+    { label: 'Soffit section (per 50 SF)', unit: '50 SF', rate: 120, qty: 1 },
+    { label: 'Pressure wash only (per 500 SF)', unit: '500 SF', rate: 80, qty: 1 },
+    { label: 'Shutter (per pair)', unit: 'pair', rate: 95, qty: 1 },
+    { label: 'Downspout (each)', unit: 'each', rate: 35, qty: 1 },
+  ],
+  cabinet: [
+    { label: 'Additional cabinet door', unit: 'door', rate: 65, qty: 1 },
+    { label: 'Drawer front', unit: 'drawer', rate: 45, qty: 1 },
+    { label: 'Cabinet box interior', unit: 'box', rate: 35, qty: 1 },
+  ],
+};
+
+const coTypeLabels = { carpentry:'🔨 Carpentry Repairs', interior:'🏠 Interior Painting', exterior:'🏡 Exterior Painting', cabinet:'🪵 Cabinet Refinishing' };
+let currentCoType = null;
+let selectedCoItems = {};
+
+function loadCoTemplates(type, el) {
+  currentCoType = type;
+  selectedCoItems = {};
+  document.getElementById('co-step1').style.display = 'none';
+  document.getElementById('co-step2').style.display = 'block';
+  document.getElementById('co-type-label').textContent = coTypeLabels[type];
+  document.getElementById('co-price-summary').style.display = 'none';
+  document.getElementById('co-total').textContent = '$0.00';
+  const list = document.getElementById('co-template-list');
+  list.innerHTML = '';
+  coTemplates[type].forEach((item, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--navy-mid);border-radius:10px;margin-bottom:6px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;';
+    row.innerHTML = `
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text-bright)">${item.label}</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">$${item.rate.toFixed(2)} / ${item.unit}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;" onclick="event.stopPropagation()">
+        <button onclick="adjustQty(${i},-1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--navy);color:var(--text);font-size:16px;cursor:pointer;font-family:inherit;display:none;" id="co-minus-${i}">−</button>
+        <span id="co-qty-${i}" style="font-size:13px;font-weight:700;color:var(--accent-light);min-width:20px;text-align:center;display:none;">1</span>
+        <button onclick="adjustQty(${i},1)" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--navy);color:var(--text);font-size:16px;cursor:pointer;font-family:inherit;">+</button>
+      </div>
+      <div id="co-check-${i}" style="font-size:18px;opacity:0">✓</div>
+    `;
+    row.addEventListener('click', () => toggleCoItem(i, row));
+    list.appendChild(row);
+  });
+  updateCoSubmitBtn();
+}
+
+function toggleCoItem(i, row) {
+  if (selectedCoItems[i]) {
+    delete selectedCoItems[i];
+    row.style.borderColor = 'transparent';
+    row.style.background = 'var(--navy-mid)';
+    document.getElementById('co-check-' + i).style.opacity = '0';
+    document.getElementById('co-minus-' + i).style.display = 'none';
+    document.getElementById('co-qty-' + i).style.display = 'none';
+  } else {
+    selectedCoItems[i] = { ...coTemplates[currentCoType][i] };
+    row.style.borderColor = 'var(--accent)';
+    row.style.background = 'rgba(59,130,246,0.08)';
+    document.getElementById('co-check-' + i).style.opacity = '1';
+    document.getElementById('co-minus-' + i).style.display = 'flex';
+    document.getElementById('co-qty-' + i).style.display = 'inline';
+  }
+  updateCoPriceSummary();
+  updateCoSubmitBtn();
+}
+
+function adjustQty(i, delta) {
+  if (!selectedCoItems[i]) return;
+  selectedCoItems[i].qty = Math.max(1, (selectedCoItems[i].qty || 1) + delta);
+  document.getElementById('co-qty-' + i).textContent = selectedCoItems[i].qty;
+  updateCoPriceSummary();
+}
+
+function updateCoPriceSummary() {
+  const items = Object.values(selectedCoItems);
+  if (items.length === 0) { document.getElementById('co-price-summary').style.display = 'none'; return; }
+  document.getElementById('co-price-summary').style.display = 'block';
+  let total = 0;
+  const lines = items.map(item => {
+    const subtotal = item.rate * (item.qty || 1);
+    total += subtotal;
+    return `<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>${item.label}${item.qty > 1 ? ' ×' + item.qty : ''}</span><span style="color:var(--text-bright);font-weight:600">$${subtotal.toFixed(2)}</span></div>`;
+  });
+  document.getElementById('co-line-items').innerHTML = lines.join('');
+  document.getElementById('co-total').textContent = '$' + total.toFixed(2);
+}
+
+function updateCoSubmitBtn() {
+  const hasItems = Object.keys(selectedCoItems).length > 0;
+  const btn = document.getElementById('co-submit-btn');
+  if (hasItems) {
+    btn.style.background = 'var(--accent)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--accent)';
+    btn.removeAttribute('disabled');
+  } else {
+    btn.style.background = 'var(--navy-mid)';
+    btn.style.color = 'var(--text-dim)';
+    btn.style.borderColor = 'var(--border)';
+    btn.setAttribute('disabled', true);
+  }
+}
+
+function backToCoStep1() {
+  document.getElementById('co-step1').style.display = 'block';
+  document.getElementById('co-step2').style.display = 'none';
+}
+
 function submitChangeOrder() {
-  document.getElementById('co-form').style.display = 'none';
+  document.getElementById('co-step1').style.display = 'none';
+  document.getElementById('co-step2').style.display = 'none';
   document.getElementById('co-success').style.display = 'block';
 }
+
 function resetCoForm() {
-  document.getElementById('co-form').style.display = 'block';
+  document.getElementById('co-step1').style.display = 'block';
+  document.getElementById('co-step2').style.display = 'none';
   document.getElementById('co-success').style.display = 'none';
-  document.querySelectorAll('.co-type-pill').forEach(p => p.classList.remove('active'));
-  document.getElementById('co-price-input').value = '';
-  document.querySelectorAll('#co-new-panel textarea').forEach(t => t.value = '');
+  selectedCoItems = {};
+  currentCoType = null;
+  document.getElementById('co-notes').value = '';
 }
 
 // ── TOAST ──
