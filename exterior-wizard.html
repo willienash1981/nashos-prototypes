@@ -229,7 +229,7 @@ function mkSection(name=''){
     railWoodPainted:0,railWoodMetal:0,railMetal:0,
     windowEntries:[mkWindow()],
     windowTrimOnly:0,stormRR:0,stormPaint:0,windowGlaze:0,
-    doors:0,doorsFrontDoor:false,
+    doors:0,doorsFrontDoor:'',
     doorFrame:0,doorFrameNotes:'',
     sidelight:0,crawlDoor:0,
     woodShutters:0,woodShuttersBoth:false,woodShuttersRR:false,
@@ -258,7 +258,7 @@ function demoData(){
   s1.singleTrim=60;
   s1.windowEntries=[mkWindow(6,0),mkWindow(2,8)];
   s1.sidelight=2;
-  s1.doors=1;s1.doorsFrontDoor=true;
+  s1.doors=1;s1.doorsFrontDoor='Front';
   s1.porchColumns=4;
 
   const s2=mkSection('Left Side');
@@ -436,7 +436,7 @@ function sectionSummaryText(s){
   if(s.gutters)parts.push(`Gutters: ${s.gutters} LF`);
   if(s.singleTrim)parts.push(`Trim: ${s.singleTrim} LF`);
   {const wt=s.windowEntries.reduce((a,w)=>a+w.count,0);if(wt)parts.push(`Windows: ${wt}`)}
-  if(s.doors)parts.push(`Doors: ${s.doors}${s.doorsFrontDoor?' (incl. front door)':''}`);
+  if(s.doors)parts.push(`Doors: ${s.doors}${s.doorsFrontDoor?' ('+s.doorsFrontDoor+')':''}`);
   return parts.join('<br>')||'No surfaces';
 }
 function toggleSummary(id){document.getElementById(id).classList.toggle('open')}
@@ -680,10 +680,14 @@ function windowsHTML(sec){
 }
 
 function doorsHTML(sec){
-  return `<div class="srow">
+  return `<div class="srow" style="flex-wrap:wrap;gap:6px">
     <div class="srow-lbl">Doors & Frames <span class="srow-rate">$65/EA</span></div>
-    <div class="srow-checks"><label><input type="checkbox" ${sec.doorsFrontDoor?'checked':''} onchange="s().doorsFrontDoor=this.checked"> Front 📝</label></div>
-    <input class="srow-input${sec.doors?' has-val':''}" type="text" value="${sec.doors||''}" placeholder="EA" oninput="s().doors=parseInt(this.value)||0;updFormPrices()"></div>`;
+    <input class="srow-input${sec.doors?' has-val':''}" type="number" min="0" value="${sec.doors||''}" placeholder="EA" oninput="s().doors=parseInt(this.value)||0;updFormPrices()">
+    ${sec.doors ? `<div style="display:flex;align-items:center;gap:6px;width:100%;padding:0 2px">
+      <span style="font-size:10px;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap">📝 Location note:</span>
+      <input type="text" style="flex:1;padding:5px 8px;font-size:11px;border:1px solid var(--border);border-radius:6px;font-family:inherit" placeholder="e.g. Front door, Side entry…" value="${esc(sec.doorsFrontDoor?'Front':'')}" oninput="s().doorsFrontDoor=this.value;updFormPrices()">
+    </div>` : ''}
+  </div>`;
 }
 
 function doorFrameHTML(sec){
