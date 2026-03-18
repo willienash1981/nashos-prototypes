@@ -888,19 +888,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   </div>
   <div class="mini-body">
     <div class="fin-option">
-      <div><div class="fin-name">Acorn</div><div class="fin-desc">0% for 12 months (free tier)</div></div>
+      <div><div class="fin-name">Acorn</div><div class="fin-desc">0% for 12 months — no cost to Nash</div></div>
       <span class="info-tag tag-green">Free</span>
     </div>
-    <div class="fin-option">
-      <div><div class="fin-name">EnerBank Tier 1</div><div class="fin-desc">0% for 18 months</div></div>
-      <span class="info-tag tag-blue">Popular</span>
-    </div>
-    <div class="fin-option">
-      <div><div class="fin-name">EnerBank Tier 2</div><div class="fin-desc">4.99% for 60 months</div></div>
-    </div>
+    <div style="font-size:11px;color:var(--text-light);margin:6px 0 2px;font-style:italic">💡 Promo financing tiers (EnerBank / SAC) are available via the Specials tool when needed to close.</div>
     <div class="fin-toggle-row">
-      <span>Include financing options on proposal</span>
-      <div class="toggle on" onclick="this.classList.toggle('on');toast(this.classList.contains('on')?'Financing included':'Financing excluded')">
+      <span>Include Acorn financing on proposal</span>
+      <div class="toggle on" onclick="this.classList.toggle('on');toast(this.classList.contains('on')?'Acorn financing included on proposal':'Acorn financing excluded from proposal')">
         <div class="toggle-knob"></div>
       </div>
     </div>
