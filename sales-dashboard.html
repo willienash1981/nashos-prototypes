@@ -106,6 +106,8 @@
 
   /* Commission Grid */
   .comm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .pay-tab{padding:4px 10px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-dim);transition:all .2s}
+  .pay-tab.active{background:var(--accent);color:#fff}
   .comm-item { text-align: center; padding: 12px 8px; background: var(--navy-mid); border-radius: 8px; }
   .comm-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
   .comm-val { font-size: 20px; font-weight: 700; color: var(--text-bright); }
@@ -301,8 +303,15 @@
         <option>Year to Date</option>
         <option>Last Year Comparison</option>
       </select>
-      <button class="btn-primary">+ New Estimate</button>
+      <button class="btn-primary" onclick="startNewEstimate()">+ New Estimate</button>
     </div>
+  </div>
+  <!-- Pay Visibility Toggle -->
+  <div style="background:var(--navy-mid);border-bottom:1px solid rgba(255,255,255,0.06);padding:6px 20px;display:flex;align-items:center;justify-content:flex-end;gap:10px">
+    <span style="font-size:11px;color:var(--text-dim)">Pay Details:</span>
+    <button id="pay-toggle" onclick="togglePayVisibility()" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:var(--text-bright);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer">
+      👁 Shown
+    </button>
   </div>
 
   <div class="content">
@@ -420,105 +429,68 @@
       <!-- Commission -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">💰 Commission — February</span>
-          <a class="card-action">View Full Detail →</a>
+          <span class="card-title">💰 My Pay</span>
+          <div style="display:flex;gap:4px;background:rgba(255,255,255,0.06);border-radius:8px;padding:3px" id="pay-tab-bar">
+            <button class="pay-tab active" onclick="switchPayTab('progress',this)">Progress</button>
+            <button class="pay-tab" onclick="switchPayTab('detail',this)">Details</button>
+          </div>
         </div>
         <div class="card-body">
-          <div id="comm-hidden" style="text-align:center;padding:18px 0;">
-            <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px;">Commission details are hidden for privacy</div>
-            <button onclick="document.getElementById('comm-hidden').style.display='none';document.getElementById('comm-detail').style.display='block';" style="background:var(--accent);color:white;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer;">Show Commission</button>
-          </div>
-          <div id="comm-detail" style="display:none;">
-          <div class="comm-grid">
-            <div class="comm-item">
-              <div class="comm-label">MTD Earned</div>
-              <div class="comm-val" style="color:var(--green)">$2,847</div>
-              <div class="comm-sub">5 jobs</div>
+          <!-- Progress Tab -->
+          <div id="pay-progress-tab">
+            <div style="margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright)">Monthly Goal</span>
+                <span id="progress-pct" style="font-size:12px;color:var(--accent)">72%</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill" style="width:72%"></div></div>
+              <div id="progress-sub" style="font-size:11px;color:var(--text-dim);margin-top:4px">$54K of $75K target</div>
             </div>
-            <div class="comm-item">
-              <div class="comm-label">QTD Earned</div>
-              <div class="comm-val">$5,412</div>
-              <div class="comm-sub">Jan + Feb</div>
+            <div style="margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright)">🏆 Bonus Qualify</span>
+                <span style="font-size:12px;color:var(--accent)">65%</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill" style="width:65%;background:linear-gradient(90deg,var(--accent),#F59E0B)"></div></div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:4px">65% to Q1 bonus threshold</div>
             </div>
-            <div class="comm-item">
-              <div class="comm-label">YTD Earned</div>
-              <div class="comm-val">$5,412</div>
-              <div class="comm-sub">↑ 18% vs last yr</div>
+            <div style="margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:12px;font-weight:600;color:var(--text-bright)">GP Gate</span>
+                <span style="font-size:12px;color:var(--green)">✅ 48.2%</span>
+              </div>
+              <div class="goal-bar"><div class="goal-fill" style="width:100%;background:var(--green)"></div></div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Above 40% gate — commission eligible</div>
             </div>
-          </div>
-          <div class="comm-grid" style="margin-bottom:12px;">
-            <div class="comm-item">
-              <div class="comm-label">Paid</div>
-              <div class="comm-val">$2,565</div>
-              <div class="comm-sub">Jan disbursed</div>
-            </div>
-            <div class="comm-item">
-              <div class="comm-label">Pending</div>
-              <div class="comm-val" style="color:var(--yellow)">$2,847</div>
-              <div class="comm-sub">Awaiting payment</div>
-            </div>
-            <div class="comm-item">
-              <div class="comm-label">Projected</div>
-              <div class="comm-val" style="color:var(--text-dim)">$1,285</div>
-              <div class="comm-sub">Pipeline × 58% rate</div>
+            <div id="pay-hidden-msg" style="margin-top:16px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.08);text-align:center">
+              <div style="font-size:12px;color:var(--text-dim)">Dollar amounts hidden</div>
+              <button onclick="document.getElementById('pay-toggle').click()" style="background:var(--accent);color:white;border:none;padding:5px 14px;border-radius:6px;font-size:11px;cursor:pointer;margin-top:6px">Show Pay Details</button>
             </div>
           </div>
-          </div>
-          <!-- Quarterly Bonus Tracker -->
-          <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
-            <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🏆 Quarterly Bonus — Q1 2026</div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
-              <span>Q1 GP Target</span>
-              <span style="color:var(--text-bright);font-weight:600;">$115,710</span>
+          <!-- Details Tab -->
+          <div id="pay-detail-tab" style="display:none">
+            <div id="comm-hidden">
+              <div style="font-size:13px;color:var(--text-dim);margin-bottom:8px;">Commission details hidden</div>
+              <button onclick="document.getElementById('pay-toggle').click()" style="background:var(--accent);color:white;border:none;padding:8px 20px;border-radius:6px;font-size:13px;cursor:pointer;">Show Commission</button>
             </div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
-              <span>GP Achieved (QTD)</span>
-              <span style="color:var(--green);font-weight:600;">$47,250</span>
+            <div id="comm-detail" style="display:none">
+              <div class="comm-grid">
+                <div class="comm-cell"><div class="comm-label">Earned MTD</div><div class="comm-value">$1,890</div></div>
+                <div class="comm-cell"><div class="comm-label">Paid MTD</div><div class="comm-value">$1,200</div></div>
+                <div class="comm-cell"><div class="comm-label">Pending</div><div class="comm-value comm-pending">$690</div></div>
+                <div class="comm-cell"><div class="comm-label">YTD Total</div><div class="comm-value">$3,240</div></div>
+              </div>
+              <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08)">
+                <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">🏆 Q1 Bonus Tracker</div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                  <span style="font-size:12px;color:var(--text-dim)">Q1 Revenue Sold</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--text-bright)">$100,500 / $150,000</span>
+                </div>
+                <div class="goal-bar"><div class="goal-fill" style="width:67%;background:linear-gradient(90deg,var(--accent),#F59E0B)"></div></div>
+                <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Tier 1 bonus: $500 at $125K · Tier 2: $1,500 at $150K</div>
+                <div style="font-size:11px;color:var(--accent);margin-top:4px">~$56 projected if pace holds (Tier 1)</div>
+              </div>
             </div>
-            <div class="goal-bar" style="margin-bottom:6px;height:8px;">
-              <div class="goal-fill blue" style="width:40.8%"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);">
-              <span>40.8% to target</span>
-              <span>Pace: <span style="color:var(--green)">$118.5K projected</span></span>
-            </div>
-            <!-- Tier visualization -->
-            <div style="margin-top:10px;display:flex;gap:3px;height:6px;">
-              <div style="flex:100;background:var(--accent);border-radius:3px;opacity:0.7;" title="Target: $115,710"></div>
-              <div style="flex:10;background:var(--green);border-radius:3px;opacity:0.3;" title="Tier 1 (+10%): 2%"></div>
-              <div style="flex:10;background:var(--green);border-radius:3px;opacity:0.15;" title="Tier 2 (+20%): 4%"></div>
-              <div style="flex:10;background:var(--green);border-radius:3px;opacity:0.08;" title="Tier 3 (+30%): 6%"></div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);margin-top:3px;">
-              <span>Target</span><span>+10% (2%)</span><span>+20% (4%)</span><span>+30% (6%)</span>
-            </div>
-            <div style="font-size:11px;color:var(--text-dim);margin-top:8px;">
-              Projected bonus: <strong style="color:var(--text-bright)">~$56</strong> if pace holds (Tier 1 on ~$2.8K over)
-            </div>
-          </div>
-          <!-- YTD Close Rate Gauge -->
-          <div style="text-align:center;padding:6px 0 10px;border-top:1px solid var(--border);margin-top:4px;">
-            <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">YTD CLOSE RATE</div>
-            <svg class="gauge-svg" viewBox="0 0 140 80">
-              <path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
-              <path d="M 15 70 A 55 55 0 0 1 125 70" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="172.8" stroke-dashoffset="76"/>
-              <defs><linearGradient id="gaugeGrad"><stop offset="0%" stop-color="#ef4444"/><stop offset="50%" stop-color="#eab308"/><stop offset="100%" stop-color="#22c55e"/></linearGradient></defs>
-              <!-- Needle -->
-              <line x1="70" y1="70" x2="88" y2="32" stroke="var(--text-bright)" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="70" cy="70" r="4" fill="var(--text-bright)"/>
-              <text x="15" y="78" font-size="8" fill="var(--text-dim)">0%</text>
-              <text x="115" y="78" font-size="8" fill="var(--text-dim)">100%</text>
-            </svg>
-            <div style="font-size:26px;font-weight:700;color:var(--text-bright);margin-top:-4px;">56%</div>
-          </div>
-          <!-- Recent Deals -->
-          <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px;">
-            <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;padding:0 0;">Recent Deals</div>
-            <div class="comm-deal"><span class="name">Cooper Cabinets</span><span>$12,400 <span class="gp-ok">55% ✅</span></span><span class="val" style="color:var(--green)">$352.00</span></div>
-            <div class="comm-deal"><span class="name">Johnson Exterior</span><span>$10,330 <span class="gp-ok">47% ✅</span></span><span class="val" style="color:var(--green)">$243.18</span></div>
-            <div class="comm-deal"><span class="name">Smith Kitchen</span><span>$5,200 <span class="gp-ok">52% ✅</span></span><span class="val" style="color:var(--yellow)">$134.68 pending</span></div>
-            <div class="comm-deal"><span class="name">Williams Interior</span><span>$7,100 <span class="gp-bad">38% 🔴</span></span><span class="val" style="color:var(--red)">$0 — below gate</span></div>
-            <div class="comm-deal"><span class="name">Garcia Exterior</span><span>$3,800 <span class="gp-ok">44% ✅</span></span><span class="val" style="color:var(--green)">$86.12</span></div>
           </div>
         </div>
       </div>
@@ -671,7 +643,7 @@
     <!-- Today's Schedule -->
     <div class="card" style="margin-bottom:20px;">
       <div class="card-header">
-        <span class="card-title">📅 Today's Schedule</span>
+        <span class="card-title">📅 Sales Appointments — Today</span>
         <span style="font-size:12px;color:var(--text-dim)">Tue, Feb 17 · 3 appointments</span>
       </div>
       <div class="sched-item">
@@ -1050,5 +1022,55 @@
   </div>
 </div>
 
+<script>
+let payVisible = true;
+
+function togglePayVisibility() {
+  payVisible = !payVisible;
+  const btn = document.getElementById('pay-toggle');
+  const hiddenMsg = document.getElementById('pay-hidden-msg');
+  const commHidden = document.getElementById('comm-hidden');
+  const commDetail = document.getElementById('comm-detail');
+
+  if (payVisible) {
+    btn.innerHTML = '👁 Shown';
+    if (hiddenMsg) hiddenMsg.style.display = 'block';
+  } else {
+    btn.innerHTML = '🙈 Hidden';
+    if (hiddenMsg) hiddenMsg.style.display = 'block';
+    if (commDetail) commDetail.style.display = 'none';
+    if (commHidden) commHidden.style.display = 'block';
+  }
+}
+
+function switchPayTab(tab, btn) {
+  document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pay-progress-tab').style.display = tab === 'progress' ? '' : 'none';
+  document.getElementById('pay-detail-tab').style.display = tab === 'detail' ? '' : 'none';
+}
+
+function startNewEstimate() {
+  const sheet = document.createElement('div');
+  sheet.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end';
+  sheet.innerHTML = `
+    <div style="background:#1B2B4B;width:100%;border-radius:20px 20px 0 0;padding:20px">
+      <div style="width:40px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 16px"></div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:16px">New Estimate — Pick Service</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <button onclick="this.closest('[style*=fixed]').remove();window.location='/nashos-prototypes/estimate-builder.html'" style="padding:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-size:13px;cursor:pointer;text-align:left">🏠 Interior</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="padding:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-size:13px;cursor:pointer;text-align:left">🏡 Exterior</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="padding:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-size:13px;cursor:pointer;text-align:left">🗄️ Cabinets</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="padding:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-size:13px;cursor:pointer;text-align:left">🪵 Deck</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="padding:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-size:13px;cursor:pointer;text-align:left">🔨 Carpentry</button>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="padding:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-size:13px;cursor:pointer;text-align:left">🚪 Wood Door</button>
+      </div>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:rgba(255,255,255,0.5);font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+  `;
+  document.body.appendChild(sheet);
+  sheet.addEventListener('click', e => { if (e.target === sheet) sheet.remove(); });
+}
+</script>
 </body>
 </html>
