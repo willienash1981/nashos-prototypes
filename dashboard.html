@@ -176,6 +176,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* ─── SEC LABEL ─── */
 .sec-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px;padding-left:2px}
 
+/* ─── CREW GP ─── */
+.crew-gp{font-size:11px;font-weight:600;color:var(--green);margin-top:2px}
+
+/* ─── CALENDAR TABS ─── */
+.cal-tabs{display:flex;gap:4px;background:var(--bg);border-radius:8px;padding:3px}
+.cal-tab{padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
+.cal-tab.active{background:var(--navy);color:#fff}
+.cal-panel{}
+.sch-time{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:65px}
+.sch-body{flex:1}
+.sch-title{font-size:13px;font-weight:600}
+.sch-sub{font-size:11px;color:var(--text-muted)}
+
+/* ─── BADGES ─── */
+.b-r{background:#FEE2E2;color:#991B1B}
+.b-p{background:#F3E8FF;color:#6B21A8}
+.b-orange{background:#FEF3C7;color:#92400E}
+
 /* ─── MISC ─── */
 .hidden{display:none!important}@media(max-width:480px){.hide-mobile{display:none}}
 .stars{color:var(--gold);font-size:15px;letter-spacing:2px}
@@ -221,7 +239,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ADMIN KPIs -->
 <div class="kpi-strip" data-r="admin">
   <div class="kpi hl"><div class="kpi-icon">📈</div><div class="kpi-lbl">Weekly Production</div><div class="kpi-val">$22,400</div><div class="kpi-sub">of $25K target — 89.6%</div><div class="prog"><div class="prog-fill gold-f" style="width:89.6%"></div></div><div class="kpi-trend up">↑ 8% vs last week</div></div>
-  <div class="kpi hl"><div class="kpi-icon">💰</div><div class="kpi-lbl">February Revenue</div><div class="kpi-val">$89,200</div><div class="kpi-sub">Pace: $99K · Target: $100K</div><div class="prog"><div class="prog-fill green-f" style="width:89%"></div></div><div class="kpi-trend up">↑ 12% vs Jan</div></div>
+  <div class="kpi hl" style="min-width:100%">
+    <div class="kpi-icon">💰</div>
+    <div class="kpi-lbl">February Revenue</div>
+    <div style="display:flex;gap:16px;margin-top:4px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Invoiced</div>
+        <div class="kpi-val" style="font-size:20px">$89,200</div>
+        <div class="kpi-sub">Billed to clients</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div>
+        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Assumed</div>
+        <div class="kpi-val" style="font-size:20px;color:var(--green)">$119,380</div>
+        <div class="kpi-sub">+$30,180 active jobs (60%)</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div>
+        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Forecasted</div>
+        <div class="kpi-val" style="font-size:20px;color:var(--navy)">$134,500</div>
+        <div class="kpi-sub">Pipeline + scheduled · 12 days left</div>
+      </div>
+    </div>
+    <div class="prog" style="margin-top:10px"><div class="prog-fill green-f" style="width:89%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-sec);margin-top:3px">
+      <span>$0</span><span>Target: $100K</span>
+    </div>
+    <div class="kpi-trend up" style="margin-top:6px">↑ 12% vs January · Forecast tracking 34% above target</div>
+  </div>
   <div class="kpi"><div class="kpi-icon">📊</div><div class="kpi-lbl">Gross Profit %</div><div class="kpi-val">48.2%</div><div class="kpi-sub">Target: ≥45% · Gate: ≥40%</div><div class="kpi-trend up">↑ 1.2% vs Jan</div></div>
   <div class="kpi"><div class="kpi-icon">🏗️</div><div class="kpi-lbl">Active Jobs</div><div class="kpi-val">7</div><div class="kpi-sub">5 crews out today</div><div class="kpi-trend flat">→ Same as last wk</div></div>
   <div class="kpi"><div class="kpi-icon">💵</div><div class="kpi-lbl">Cash Expected (7d)</div><div class="kpi-val">$45,200</div><div class="kpi-sub">2 completing, 1 invoiced</div><div class="kpi-trend up">↑ Strong week</div></div>
@@ -409,13 +454,67 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="card">
     <div class="card-h"><div class="card-t">🔧 Active Crews</div><a class="card-a">All Jobs →</a></div>
     <div class="card-b" style="padding:0">
-      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5 · $30K</div><div class="crew-addr">1234 Oak Rd, Nashville · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
-      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3 · $18K</div><div class="crew-addr">567 Maple Dr, Brentwood · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
-      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie</div><span class="badge b-b">Finishing 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4 · $12.4K</div><div class="crew-addr">321 Pine Ave · Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
-      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2 · $8K</div><div class="crew-addr">890 Cedar Ln · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div></div>
-      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men</div><span class="badge b-g">On Sched</span></div><div class="crew-job">Park Interior — Day 2 of 3 · $6.5K</div><div class="crew-addr">555 Maple Dr · Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5 · $30K</div><div class="crew-gp">Est. GP: $18,000 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">1234 Oak Rd, Nashville · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3 · $18K</div><div class="crew-gp">Est. GP: $10,800 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">567 Maple Dr, Brentwood · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie</div><span class="badge b-b">Finishing 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4 · $12.4K</div><div class="crew-gp">Est. GP: $7,440 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">321 Pine Ave · Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2 · $8K</div><div class="crew-gp">Est. GP: $4,800 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">890 Cedar Ln · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men</div><span class="badge b-g">On Sched</span></div><div class="crew-job">Park Interior — Day 2 of 3 · $6.5K</div><div class="crew-gp">Est. GP: $3,900 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">555 Maple Dr · Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div></div>
     </div>
   </div>
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div class="card-h">
+      <div class="card-t">⚠️ Jobs Trending Over Budget</div>
+      <a class="card-a" style="color:var(--red)">Review All →</a>
+    </div>
+    <div class="card-b" style="padding:0">
+      <!-- Over-budget job 1 -->
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Johnson Exterior</div>
+            <div style="font-size:11px;color:var(--text-sec)">Carlos · $30K bid · Day 3 of 5</div>
+          </div>
+          <span class="badge b-r">+18% over</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;font-size:11px">
+          <span>Bid: <strong>$30,000</strong></span>
+          <span>·</span>
+          <span>Actual pace: <strong style="color:var(--red)">$35,400</strong></span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">Crew hours running 22% over. Extra prep on north-side rot discovered day 2.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button onclick="logReason('johnson','bad-bid')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Bad Bid</button>
+          <button onclick="logReason('johnson','missed-scope')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Missed Scope</button>
+          <button onclick="logReason('johnson','client-changes')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Client Changes</button>
+          <button onclick="logReason('johnson','material-cost')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Material Cost</button>
+          <button onclick="logReason('johnson','other')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Other</button>
+        </div>
+      </div>
+      <!-- Over-budget job 2 -->
+      <div style="padding:12px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Garcia Deck</div>
+            <div style="font-size:11px;color:var(--text-sec)">Team B · $8K bid · Day 2 (rain delay)</div>
+          </div>
+          <span class="badge b-y">+8% risk</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;font-size:11px">
+          <span>Bid: <strong>$8,000</strong></span>
+          <span>·</span>
+          <span>Pace w/ delay: <strong style="color:var(--orange,#F97316)">$8,640</strong></span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">Rain delay adding +1 day. If weather holds tomorrow, back on track. Watching.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button onclick="logReason('garcia','bad-bid')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Bad Bid</button>
+          <button onclick="logReason('garcia','missed-scope')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Missed Scope</button>
+          <button onclick="logReason('garcia','weather')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Weather</button>
+          <button onclick="logReason('garcia','other')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Other</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-h"><div class="card-t">📋 Pipeline</div><span style="font-size:12px;color:var(--text-sec)">4 active · $26,430</span></div>
     <div class="card-b" style="padding:0">
@@ -862,11 +961,50 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="g2" data-r="admin,office,sales,field">
   <!-- Schedule -->
   <div class="card" data-r="admin,office,sales">
-    <div class="card-h"><div class="card-t">📅 Today's Schedule</div><a class="card-a">Calendar →</a></div>
-    <div class="card-b" style="padding:0">
-      <div class="sch"><div class="sch-tm">10:00 AM</div><div class="sch-d"><div class="sch-c">Chen Residence</div><div class="sch-adr">789 Elm St, Franklin · ~22 min</div><div class="sch-tp">Estimate — Cabinets · Larry</div></div><div class="sch-act">Start Wizard →</div></div>
-      <div class="sch"><div class="sch-tm">2:00 PM</div><div class="sch-d"><div class="sch-c">Davis Property</div><div class="sch-adr">321 Pine Ave, Brentwood · ~15 min</div><div class="sch-tp">Re-measure — Exterior · Larry</div></div><div class="sch-act">View Estimate →</div></div>
-      <div class="sch"><div class="sch-tm">4:00 PM</div><div class="sch-d"><div class="sch-c">Park Residence</div><div class="sch-adr">555 Maple Dr, Spring Hill · ~25 min</div><div class="sch-tp">Estimate — Interior · Larry</div></div><div class="sch-act">Start Wizard →</div></div>
+    <div class="card-h">
+      <div class="cal-tabs">
+        <button class="cal-tab active" onclick="switchCal('production',this)">🔧 Production</button>
+        <button class="cal-tab" onclick="switchCal('sales',this)">📅 Sales</button>
+      </div>
+      <a class="card-a" id="cal-link">Production Schedule →</a>
+    </div>
+
+    <!-- Production Calendar -->
+    <div id="cal-production" class="cal-panel" style="padding:0">
+      <div class="sch">
+        <div class="sch-time">7:00 AM</div>
+        <div class="sch-body"><div class="sch-title">Carlos crew → Johnson Exterior</div><div class="sch-sub">Start day 3 · 1234 Oak Rd, Nashville</div></div>
+        <span class="badge b-g">Active</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">7:30 AM</div>
+        <div class="sch-body"><div class="sch-title">Javier crew → Smith Interior</div><div class="sch-sub">Start day 1 · 567 Maple Dr, Brentwood</div></div>
+        <span class="badge b-g">Active</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">4:00 PM</div>
+        <div class="sch-body"><div class="sch-title">Williams Cabinets — Final walkthrough</div><div class="sch-sub">Mike &amp; Julie finishing · 321 Pine Ave</div></div>
+        <span class="badge b-b">Completing 🏁</span>
+      </div>
+    </div>
+
+    <!-- Sales Calendar -->
+    <div id="cal-sales" class="cal-panel" style="display:none;padding:0">
+      <div class="sch">
+        <div class="sch-time">9:00 AM</div>
+        <div class="sch-body"><div class="sch-title">Estimate — Martinez Exterior</div><div class="sch-sub">Larry Morrison · 892 Hillwood Dr, Nashville</div></div>
+        <span class="badge b-p">Estimate</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">11:00 AM</div>
+        <div class="sch-body"><div class="sch-title">Follow-up Call — Thompson</div><div class="sch-sub">Proposal sent 3 days ago · $28K interior</div></div>
+        <span class="badge b-y">Follow-up</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">2:00 PM</div>
+        <div class="sch-body"><div class="sch-title">Estimate — Kim Deck + Exterior</div><div class="sch-sub">Bill Nishanian · 445 Fieldstone Way, Franklin</div></div>
+        <span class="badge b-p">Estimate</span>
+      </div>
     </div>
   </div>
   <div class="card" data-r="field" style="display:none">
@@ -1233,6 +1371,38 @@ function switchRole(role) {
     `<div class="sr"><span class="sr-l" style="color:${v ? 'var(--green)' : 'var(--red)'}">${k}</span></div>`
   ).join('');
 
+  // Calendar tab visibility per role
+  const prodTab = document.querySelector('.cal-tab[onclick*="production"]');
+  const salesTab = document.querySelector('.cal-tab[onclick*="sales"]');
+  if (prodTab && salesTab) {
+    if (role === 'sales') {
+      prodTab.style.display = 'none';
+      salesTab.style.display = '';
+      salesTab.classList.add('active');
+      prodTab.classList.remove('active');
+      const calProd = document.getElementById('cal-production');
+      const calSales = document.getElementById('cal-sales');
+      if (calProd) calProd.style.display = 'none';
+      if (calSales) calSales.style.display = '';
+      const calLink = document.getElementById('cal-link');
+      if (calLink) calLink.textContent = 'Sales Calendar →';
+    } else if (role === 'field') {
+      salesTab.style.display = 'none';
+      prodTab.style.display = '';
+      prodTab.classList.add('active');
+      salesTab.classList.remove('active');
+      const calProd = document.getElementById('cal-production');
+      const calSales = document.getElementById('cal-sales');
+      if (calProd) calProd.style.display = '';
+      if (calSales) calSales.style.display = 'none';
+      const calLink = document.getElementById('cal-link');
+      if (calLink) calLink.textContent = 'Production Schedule →';
+    } else {
+      prodTab.style.display = '';
+      salesTab.style.display = '';
+    }
+  }
+
   // Action items count
   const alerts = document.querySelectorAll(`.al[data-r*="${role}"]`);
   const ac = document.getElementById('acount');
@@ -1243,6 +1413,28 @@ function switchRole(role) {
 document.querySelectorAll('.role-btn').forEach(btn => {
   btn.addEventListener('click', () => switchRole(btn.dataset.role));
 });
+
+// Calendar tab switcher
+function switchCal(type, btn) {
+  document.querySelectorAll('.cal-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.cal-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('cal-' + type).style.display = '';
+  btn.classList.add('active');
+  document.getElementById('cal-link').textContent = type === 'production' ? 'Production Schedule →' : 'Sales Calendar →';
+}
+
+// Over-budget reason logger
+function logReason(job, reason) {
+  const labels = {'bad-bid':'Bad Bid','missed-scope':'Missed Scope','client-changes':'Client Changes','material-cost':'Material Cost','weather':'Weather','other':'Other'};
+  toast('📝 ' + labels[reason] + ' logged for ' + job);
+}
+function toast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1B2B4B;color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;z-index:9999;white-space:nowrap;pointer-events:none';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
 
 // Commission tap-to-reveal
 document.getElementById('comm-kpi')?.addEventListener('click', function() {
