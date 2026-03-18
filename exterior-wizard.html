@@ -168,6 +168,21 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 .calc-numpad .calc-eq:active { background:var(--gold-light); }
 .calc-numpad .calc-clr { color:var(--red); font-weight:800; }
 .calc-numpad .calc-del { color:var(--text-light); }
+
+/* Exterior Photo section */
+.ext-photo-card { background:var(--card); border-radius:var(--radius); margin:12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.ext-photo-title { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.ext-photo-row { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; margin-bottom:8px; }
+.ext-thumb-wrap { position:relative; }
+.ext-thumb { width:72px; height:72px; border-radius:8px; object-fit:cover; border:1.5px solid var(--border); cursor:pointer; }
+.ext-remove { position:absolute; top:-4px; right:-4px; width:20px; height:20px; border-radius:50%; background:var(--red); color:#fff; border:none; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.ext-photo-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.ext-photo-btn { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); transition:all .15s; }
+.ext-photo-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
+.ext-photo-badge { display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:600; color:var(--gold); background:rgba(196,169,98,.1); border:1px solid rgba(196,169,98,.3); border-radius:10px; padding:2px 7px; margin-left:4px; }
+/* Photo lightbox */
+.lightbox { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.lightbox img { max-width:95%; max-height:90vh; border-radius:8px; }
 </style>
 </head>
 <body>
@@ -229,7 +244,8 @@ function mkSection(name=''){
     primerOn:false,primerOverride:null,
     pwSkip:false,pwSkipNote:'',
     pkg:'Premium',prep:'Standard',
-    notes:''
+    notes:'',
+    photos:[]
   };
 }
 
@@ -402,6 +418,7 @@ function renderList(){
         <span class="check">✅</span>
         <div class="info"><div class="name">${s.name||'Untitled'}</div><div class="sub">Saved ${s.savedTime||'—'}</div></div>
         <span class="price">${fmt(p)}</span>
+        ${(s.photos&&s.photos.length)?`<span class="ext-photo-badge">${s.photos.length} 📷</span>`:''}
         <button class="edit-btn" onclick="event.stopPropagation();editSection(${i})">Edit</button>
       </div>
       <div class="section-summary" id="${sumId}">${sectionSummaryText(s)}</div>
@@ -442,6 +459,25 @@ function renderForm(){
   h+=`<div class="card fade-in"><div class="card-title">Section Name</div>
     <input type="text" id="secName" value="${esc(s.name)}" placeholder="e.g. Front Elevation" oninput="s().name=this.value;updForm()">
     <div class="chips" style="margin-top:8px">${SECTION_NAMES.map(n=>`<span class="chip chip-sm" onclick="document.getElementById('secName').value='${n}';s().name='${n}';updForm()">${n}</span>`).join('')}</div></div>`;
+
+
+  // 1b. Section Photos
+  if(!s.photos) s.photos=[];
+  h+=`<div class="ext-photo-card fade-in">
+    <div class="ext-photo-title">📷 Section Photos <span style="font-size:11px;font-weight:400;color:var(--text-light)">(tap to view)</span></div>
+    <div class="ext-photo-row">`;
+  s.photos.forEach((ph,i) => {
+    h+=`<div class="ext-thumb-wrap">
+      <img class="ext-thumb" src="${ph.src}" onclick="extShowPhoto('${ph.src.replace(/'/g,"\\'")}')">
+      <button class="ext-remove" onclick="extRemovePhoto(${i})">✕</button>
+    </div>`;
+  });
+  h+=`</div>
+    <div class="ext-photo-actions">
+      <button class="ext-photo-btn" onclick="extCapturePhoto()">📷 Take Photo</button>
+      <button class="ext-photo-btn" onclick="extPickPhoto()">🖼️ From Library</button>
+    </div>
+  </div>`;
 
   // 2. Siding
   h+=`<div class="card fade-in"><div class="card-title">🏠 Siding</div><div id="sidingEntries">`;
@@ -938,6 +974,49 @@ function saveAndBack(){
 // Init
 _groupId=0;
 renderList();
+
+// -- Exterior section photos --
+function extCapturePhoto() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
+  inp.onchange = e => extHandlePhoto(e.target.files[0]);
+  inp.click();
+}
+function extPickPhoto() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => extHandlePhoto(e.target.files[0]);
+  inp.click();
+}
+function extHandlePhoto(file) {
+  if (!file) return;
+  const sec = s();
+  if (!sec.photos) sec.photos = [];
+  const secName = sec.name || 'Exterior';
+  const reader = new FileReader();
+  reader.onload = e => {
+    sec.photos.push({ src: e.target.result, caption: 'Exterior - ' + secName });
+    renderForm();
+  };
+  reader.readAsDataURL(file);
+}
+function extRemovePhoto(i) {
+  const sec = s();
+  if (sec.photos) { sec.photos.splice(i,1); renderForm(); }
+}
+function extShowPhoto(src) {
+  let lb = document.getElementById('ext-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'ext-lightbox';
+    lb.className = 'lightbox';
+    lb.onclick = () => lb.classList.add('hidden');
+    document.body.appendChild(lb);
+  }
+  lb.innerHTML = '<img src="'+src+'">';
+  lb.classList.remove('hidden');
+}
+
 </script>
 </body>
 </html>

@@ -140,6 +140,18 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 .bottom-bar .label { font-size:11px; opacity:.8; }
 .bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
 .bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+
+/* Line-item photo mini sheet */
+.li-photo-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:var(--card); border-radius:16px 16px 0 0; box-shadow:0 -4px 20px rgba(0,0,0,.15); z-index:250; padding:16px; display:none; }
+.li-photo-sheet.open { display:block; }
+.li-photo-sheet-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.4); z-index:249; display:none; }
+.li-photo-sheet-overlay.open { display:block; }
+.li-photo-sheet-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.li-photo-sheet-title { font-size:14px; font-weight:700; color:var(--navy); }
+.li-photo-sheet-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-light); padding:4px 8px; }
+.li-photo-btn-row { display:flex; gap:6px; margin-top:8px; }
+.li-photo-count { display:inline-flex; align-items:center; gap:2px; font-size:10px; font-weight:700; color:var(--gold); background:rgba(196,169,98,.15); border-radius:8px; padding:1px 5px; margin-left:4px; }
+
 .hidden { display:none !important; }
 </style>
 </head>
@@ -210,6 +222,20 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 <div id="picker-overlay" class="picker-overlay hidden" onclick="if(event.target===this)closePicker()"></div>
 
 <!-- Lightbox (hidden) -->
+
+<div class="li-photo-sheet-overlay" id="li-sheet-overlay" onclick="closeLiPhotoSheet()"></div>
+<div class="li-photo-sheet" id="li-photo-sheet">
+  <div class="li-photo-sheet-header">
+    <div class="li-photo-sheet-title" id="li-sheet-title">📷 Item Photos</div>
+    <button class="li-photo-sheet-close" onclick="closeLiPhotoSheet()">✕</button>
+  </div>
+  <div class="photo-row" id="li-sheet-thumbs"></div>
+  <div class="li-photo-btn-row">
+    <button class="photo-btn" onclick="liCapturePhoto()"><span class="ico">📷</span> Take Photo</button>
+    <button class="photo-btn" onclick="liPickPhoto()"><span class="ico">🖼️</span> From Library</button>
+  </div>
+</div>
+
 <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
 
 <script>
@@ -333,6 +359,75 @@ function removePhoto(locId, photoIdx) {
   }
 }
 
+
+// ── Line-Item Photos ──
+let liSheetLocId = null, liSheetItemId = null;
+
+function openLiPhotoSheet(locId, itemId) {
+  liSheetLocId = locId; liSheetItemId = itemId;
+  const loc = locations.find(l => l.id === locId);
+  const li = loc && loc.items.find(i => i.itemId === itemId);
+  const item = ITEMS_MAP[itemId];
+  if (!li) return;
+  if (!li.photos) li.photos = [];
+  document.getElementById('li-sheet-title').textContent = '📷 ' + (item ? item.name : itemId);
+  renderLiSheetThumbs(li.photos);
+  document.getElementById('li-photo-sheet').classList.add('open');
+  document.getElementById('li-sheet-overlay').classList.add('open');
+}
+function closeLiPhotoSheet() {
+  document.getElementById('li-photo-sheet').classList.remove('open');
+  document.getElementById('li-sheet-overlay').classList.remove('open');
+  liSheetLocId = null; liSheetItemId = null;
+}
+function renderLiSheetThumbs(photos) {
+  const row = document.getElementById('li-sheet-thumbs');
+  row.innerHTML = photos.map((ph, i) =>
+    `<div class="photo-thumb-wrap">
+      <img class="photo-thumb" src="${ph.src}" onclick="showPhoto('${ph.src.replace(/'/g,"\'")}')">
+      <button class="photo-remove" onclick="liRemovePhoto(${i})">✕</button>
+    </div>`
+  ).join('');
+}
+function liCapturePhoto() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
+  inp.onchange = e => liHandlePhotoFile(e.target.files[0]);
+  inp.click();
+}
+function liPickPhoto() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => liHandlePhotoFile(e.target.files[0]);
+  inp.click();
+}
+function liHandlePhotoFile(file) {
+  if (!file) return;
+  const loc = locations.find(l => l.id === liSheetLocId);
+  const li = loc && loc.items.find(i => i.itemId === liSheetItemId);
+  if (!li) return;
+  if (!li.photos) li.photos = [];
+  const locLabel = loc.label || 'Location';
+  const item = ITEMS_MAP[liSheetItemId];
+  const caption = locLabel + ' - ' + (item ? item.name : liSheetItemId);
+  const reader = new FileReader();
+  reader.onload = e => {
+    li.photos.push({ src: e.target.result, caption });
+    renderLiSheetThumbs(li.photos);
+    renderAll();
+  };
+  reader.readAsDataURL(file);
+}
+function liRemovePhoto(i) {
+  const loc = locations.find(l => l.id === liSheetLocId);
+  const li = loc && loc.items.find(it => it.itemId === liSheetItemId);
+  if (li && li.photos) {
+    li.photos.splice(i, 1);
+    renderLiSheetThumbs(li.photos);
+    renderAll();
+  }
+}
+
 function showPhoto(src) {
   const lb = document.getElementById('lightbox');
   lb.innerHTML = `<img src="${src}">`;
@@ -400,7 +495,7 @@ function addItem(locId, itemId) {
   if (existing) {
     existing.qty += 1;
   } else {
-    loc.items.push({ itemId, qty: 1 });
+    loc.items.push({ itemId, qty: 1, photos: [] });
   }
   closePicker();
   renderAll();
@@ -536,6 +631,7 @@ function renderAll() {
           <span class="li-unit">${item.unit}</span>
         </div>
         <div class="li-cost ${cost===0?'zero':''}">$${cost.toLocaleString()}</div>
+        <button class="li-photo-cam" title="Photos" onclick="openLiPhotoSheet(${loc.id},'${item.id}')" style="background:none;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;padding:3px 6px;font-size:14px;position:relative;">${li.photos&&li.photos.length?`<span class="li-photo-count">${li.photos.length}</span>`:''}📷</button>
         <button class="li-remove" onclick="removeItem(${loc.id},'${item.id}')">✕</button>
       </div>`;
     });

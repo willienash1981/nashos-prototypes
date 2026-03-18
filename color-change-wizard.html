@@ -103,6 +103,23 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 .bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
 .bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
 .hidden { display:none !important; }
+
+/* Job Photos */
+.job-photo-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,.06); max-width:calc(100% - 24px); }
+.job-photo-title { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.jp-photo-row { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; margin-bottom:8px; min-height:0; }
+.jp-thumb-wrap { position:relative; }
+.jp-thumb { width:72px; height:72px; border-radius:8px; object-fit:cover; border:1.5px solid var(--border); cursor:pointer; }
+.jp-remove { position:absolute; top:-4px; right:-4px; width:20px; height:20px; border-radius:50%; background:var(--red,#EF4444); color:#fff; border:none; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.jp-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+.jp-btn { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); transition:all .15s; }
+.jp-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
+.jp-btn .ico { font-size:14px; }
+.jp-caption { width:100%; padding:6px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:12px; font-family:inherit; margin-top:6px; }
+.jp-caption:focus { outline:none; border-color:var(--gold); }
+/* Photo lightbox */
+.lightbox { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.lightbox img { max-width:95%; max-height:90vh; border-radius:8px; }
 </style>
 </head>
 <body>
@@ -260,6 +277,20 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 <!-- Lightbox -->
 <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
 
+
+  <!-- JOB PHOTOS -->
+  <div class="step-header"><h2><span class="num" style="background:var(--gold);color:var(--navy);font-size:13px;width:24px;height:24px">📷</span> Job Photos</h2></div>
+  <div class="job-photo-card">
+    <div class="job-photo-title">📸 Color Change Photos</div>
+    <div class="jp-photo-row" id="jp-thumb-row"></div>
+    <div class="jp-actions">
+      <button class="jp-btn" onclick="jpCapture()"><span class="ico">📷</span> Take Photo</button>
+      <button class="jp-btn" onclick="jpPick()"><span class="ico">🖼️</span> From Library</button>
+    </div>
+    <input class="jp-caption" id="jp-caption" type="text" placeholder="Caption (e.g. Color Change - Front door, Color Change - Accent wall)">
+  </div>
+  <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+
 <!-- Bottom Bar -->
 <div class="bottom-bar">
   <div>
@@ -389,6 +420,46 @@ function esc(s) {
 
 // Init
 calc();
+
+// -- Job Photos --
+const jobPhotos = [];
+function jpCapture() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
+  inp.onchange = e => jpHandleFile(e.target.files[0]);
+  inp.click();
+}
+function jpPick() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => jpHandleFile(e.target.files[0]);
+  inp.click();
+}
+function jpHandleFile(file) {
+  if (!file) return;
+  const caption = document.getElementById('jp-caption').value || 'Color Change Photo';
+  const reader = new FileReader();
+  reader.onload = e => {
+    jobPhotos.push({ src: e.target.result, caption: caption });
+    document.getElementById('jp-caption').value = '';
+    jpRender();
+  };
+  reader.readAsDataURL(file);
+}
+function jpRemove(i) { jobPhotos.splice(i,1); jpRender(); }
+function jpRender() {
+  const row = document.getElementById('jp-thumb-row');
+  if (!row) return;
+  row.innerHTML = jobPhotos.map(function(p,i) {
+    return '<div class="jp-thumb-wrap"><img class="jp-thumb" src="'+p.src+'" onclick="jpShow(this.src)" title="'+p.caption+'"><button class="jp-remove" onclick="jpRemove('+i+')">\u2715</button></div>';
+  }).join('');
+}
+function jpShow(src) {
+  const lb = document.getElementById('lightbox');
+  lb.innerHTML = '<img src="'+src+'">';
+  lb.classList.remove('hidden');
+}
+
 </script>
 </body>
 </html>
