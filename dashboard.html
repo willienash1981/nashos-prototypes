@@ -560,47 +560,52 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="card-b" style="padding:0">
       <!-- Over-budget job 1 -->
       <div style="padding:12px 16px;border-bottom:1px solid var(--bg)">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
           <div>
             <div style="font-size:13px;font-weight:700">Johnson Exterior</div>
             <div style="font-size:11px;color:var(--text-sec)">Carlos · $30K bid · Day 3 of 5</div>
           </div>
           <span class="badge b-r">+18% over</span>
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;font-size:11px">
-          <span>Bid: <strong>$30,000</strong></span>
-          <span>·</span>
-          <span>Actual pace: <strong style="color:var(--red)">$35,400</strong></span>
+        <!-- What's over — specific flags -->
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FEF2F2;border-radius:6px;padding:5px 8px">
+            <span style="color:#7F1D1D">⏱ Days on site</span>
+            <span><strong style="color:var(--red)">3 of 5 used · pace = 6.5 days</strong> (bid: 5)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FEF2F2;border-radius:6px;padding:5px 8px">
+            <span style="color:#7F1D1D">💰 Labor cost</span>
+            <span><strong style="color:var(--red)">$21,200 paced</strong> vs $18,000 bid</span>
+          </div>
         </div>
-        <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">Crew hours running 22% over. Extra prep on north-side rot discovered day 2.</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button onclick="logReason('johnson','bad-bid')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Bad Bid</button>
-          <button onclick="logReason('johnson','missed-scope')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Missed Scope</button>
-          <button onclick="logReason('johnson','client-changes')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Client Changes</button>
-          <button onclick="logReason('johnson','material-cost')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Material Cost</button>
-          <button onclick="logReason('johnson','other')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Other</button>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text-sec)">Extra prep on north-side rot discovered day 2.</div>
+          <button onclick="toast('Opening Johnson Exterior work order…')" style="font-size:11px;padding:5px 12px;border-radius:6px;border:none;background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap;margin-left:10px">Review Job →</button>
         </div>
       </div>
       <!-- Over-budget job 2 -->
       <div style="padding:12px 16px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
           <div>
             <div style="font-size:13px;font-weight:700">Garcia Deck</div>
             <div style="font-size:11px;color:var(--text-sec)">Team B · $8K bid · Day 2 (rain delay)</div>
           </div>
           <span class="badge b-y">+8% risk</span>
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;font-size:11px">
-          <span>Bid: <strong>$8,000</strong></span>
-          <span>·</span>
-          <span>Pace w/ delay: <strong style="color:var(--orange,#F97316)">$8,640</strong></span>
+        <!-- What's at risk -->
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FFFBEB;border-radius:6px;padding:5px 8px">
+            <span style="color:#78350F">⏱ Days on site</span>
+            <span><strong style="color:#D97706">Rain delay +1d</strong> → 3 days total (bid: 2)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FFFBEB;border-radius:6px;padding:5px 8px">
+            <span style="color:#78350F">💰 Cost pace</span>
+            <span><strong style="color:#D97706">$8,640 projected</strong> vs $8,000 bid (+8%)</span>
+          </div>
         </div>
-        <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">Rain delay adding +1 day. If weather holds tomorrow, back on track. Watching.</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button onclick="logReason('garcia','bad-bid')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Bad Bid</button>
-          <button onclick="logReason('garcia','missed-scope')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Missed Scope</button>
-          <button onclick="logReason('garcia','weather')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Weather</button>
-          <button onclick="logReason('garcia','other')" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Other</button>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text-sec)">Weather clears tomorrow — back on track if so.</div>
+          <button onclick="toast('Opening Garcia Deck work order…')" style="font-size:11px;padding:5px 12px;border-radius:6px;border:none;background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap;margin-left:10px">Review Job →</button>
         </div>
       </div>
     </div>
