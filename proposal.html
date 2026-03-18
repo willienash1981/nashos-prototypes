@@ -77,12 +77,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .room.excluded .room-detail{color:var(--g300)}
 
 /* Surface modifier drawer */
-.surf-drawer{border-top:1px solid var(--g200);background:var(--g50)}
-.surf-drawer-toggle{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 20px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.surf-drawer-toggle:active{background:var(--g100)}
-.surf-drawer-icon{font-size:13px;color:var(--g500)}
-.surf-drawer-label{font-size:11px;font-weight:600;color:var(--blue);flex:1}
-.surf-drawer-arrow{font-size:10px;color:var(--blue);transition:transform .2s}
+.surf-drawer{border-top:2px solid var(--g200);margin-top:4px}
+.surf-drawer-toggle{display:flex;align-items:center;gap:10px;padding:11px 14px 11px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border-radius:10px;margin:8px 12px 4px;border:1.5px solid #BFDBFE}
+.surf-drawer-toggle:active{background:#DBEAFE}
+.surf-drawer-icon{font-size:18px;flex-shrink:0}
+.surf-drawer-label-wrap{flex:1}
+.surf-drawer-label{font-size:13px;font-weight:700;color:#1D4ED8;display:block}
+.surf-drawer-sublabel{font-size:11px;color:#3B82F6;margin-top:1px;display:block}
+.surf-drawer-arrow{font-size:12px;color:#1D4ED8;transition:transform .2s;font-weight:700}
 .surf-drawer-arrow.open{transform:rotate(180deg)}
 .surf-body{display:none;padding:4px 12px 10px 20px}
 .surf-body.open{display:block}
@@ -780,12 +782,12 @@ function render(){
       const drawerOpen = sec._surfExp;
       h += `<div class="surf-drawer">`;
       h += `<div class="surf-drawer-toggle" onclick="togSurfDrawer('${sec.id}')">`;
-      h += `<div class="surf-drawer-icon">⚙</div>`;
-      h += `<div class="surf-drawer-label">Customize Surfaces</div>`;
+      h += `<div class="surf-drawer-icon">💰</div>`;
+      h += `<div class="surf-drawer-label-wrap"><span class="surf-drawer-label">See Per-Surface Breakdown</span><span class="surf-drawer-sublabel">Remove surfaces you don't need for additional savings</span></div>`;
       h += `<div class="surf-drawer-arrow ${drawerOpen?'open':''}">▼</div>`;
       h += `</div>`;
       h += `<div class="surf-body ${drawerOpen?'open':''}">`;
-      h += `<div class="surf-hint">Toggle surfaces across all rooms in this section</div>`;
+      h += `<div class="surf-hint">Uncheck any surface to remove it from all rooms in this section and reduce your total.</div>`;
       h += `<div class="surf-chips">`;
 
       // Figure out which surface types actually have data in at least one room
