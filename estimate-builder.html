@@ -1145,6 +1145,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <div class="disc-pct" style="color:var(--blue)">Full price</div>
       </div>
       <div class="disc-desc">Enhanced financing to close. Full revenue preserved — Nash absorbs fee.</div>
+      <div style="display:inline-flex;align-items:center;gap:4px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:#856404;margin:4px 0 0">⚠️ Cannot combine with discounts</div>
       <div style="margin:8px 0 0">
         <label style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;background:var(--card);margin-bottom:3px;font-size:11px;cursor:pointer;border:1px solid var(--border)" onclick="event.stopPropagation()">
           <input type="radio" name="finChoice" value="sac12" checked style="accent-color:var(--gold)">
@@ -1388,7 +1389,7 @@ const SPECIALS = {
   repeat:    { name: 'Repeat Customer', pct: 5, type: 'discount', badge: '🔄' },
   winter:    { name: 'Winter Interior', pct: 0, type: 'menu', badge: '❄️', menuLabel: 'Pick Your Perk (4 options)', maxCost: '~11.75%' },
   referral:  { name: 'Referral', pct: 5, type: 'discount', badge: '🤝' },
-  financing: { name: 'Promo Financing', pct: 0, type: 'financing', badge: '💳' }
+  financing: { name: 'Promo Financing', pct: 0, type: 'financing', badge: '💳', excludesDiscounts: true }
 };
 
 const FIN_TIERS = {
@@ -1406,6 +1407,20 @@ function getDeployMode() {
 }
 
 function selectDiscount(id) {
+  const incoming = SPECIALS[id];
+  const current = activeDiscount ? SPECIALS[activeDiscount] : null;
+
+  // Block: trying to add a discount when promo financing (excludesDiscounts) is active
+  if (current && current.excludesDiscounts && id !== activeDiscount && incoming && incoming.type === 'discount') {
+    toast('⚠️ Promo Financing cannot be combined with discounts. Remove financing first.');
+    return;
+  }
+  // Block: trying to add promo financing when a discount is already active
+  if (incoming && incoming.excludesDiscounts && id !== activeDiscount && current && current.type === 'discount') {
+    toast('⚠️ Promo Financing cannot be combined with discounts. Remove the discount first.');
+    return;
+  }
+
   if (activeDiscount === id) { activeDiscount = null; } else { activeDiscount = id; }
 
   document.querySelectorAll('.disc-card:not(.unavailable)').forEach(c => c.classList.remove('selected'));
