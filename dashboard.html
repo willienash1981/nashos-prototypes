@@ -183,6 +183,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .cal-tabs{display:flex;gap:4px;background:var(--bg);border-radius:8px;padding:3px}
 .cal-tab{padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
 .cal-tab.active{background:var(--navy);color:#fff}
+.office-tab{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
+.office-tab.active{background:var(--navy);color:#fff}
+.office-admin-only{}
 .cal-panel{}
 .sch-time{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:65px}
 .sch-body{flex:1}
@@ -356,8 +359,92 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ─── OFFICE: Operations + POs ─── -->
 <div class="g2" data-r="office">
   <div class="card">
-    <div class="card-h"><div class="card-t">🔧 Today's Operations</div><a class="card-a">All Jobs →</a></div>
-    <div class="card-b" style="padding:0">
+    <div class="card-h" style="padding-bottom:8px">
+      <div style="display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px">
+        <button class="office-tab active" onclick="switchOfficeTab('priority',this)">🏃 Priority Clients</button>
+        <button class="office-tab" onclick="switchOfficeTab('crews',this)">🔧 Active Crews</button>
+      </div>
+      <a class="card-a" id="office-link">View All →</a>
+    </div>
+    <!-- Priority Clients Tab -->
+    <div id="office-priority" style="padding:0">
+      <!-- URGENT -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🔴 Urgent — Ready to Schedule</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#EF4444;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Chen, David — Cabinets</div>
+          <div style="font-size:11px;color:var(--text-sec)">$12,400 · Accepted 5 days ago · No start date</div>
+        </div>
+        <button onclick="toast('Schedule logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Schedule</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#EF4444;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Martinez Family — Exterior</div>
+          <div style="font-size:11px;color:var(--text-sec)">$28,000 · Accepted 2 days ago · No start date</div>
+        </div>
+        <button onclick="toast('Schedule logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Schedule</button>
+      </div>
+      <!-- COMPLETING THIS WEEK -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟡 Completing This Week</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Williams — Cabinets</div>
+          <div style="font-size:11px;color:var(--text-sec)">Finishing TODAY · Invoice pending</div>
+        </div>
+        <button onclick="toast('Send Invoice logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Send Invoice</button>
+      </div>
+      <!-- NEEDS ATTENTION -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟠 Needs Attention</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F97316;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Chen, David — Onboarding</div>
+          <div style="font-size:11px;color:var(--text-sec)">No color selections (10 days stalled)</div>
+        </div>
+        <button onclick="toast('Follow Up logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Follow Up</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F97316;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Park — Pre-project Checklist</div>
+          <div style="font-size:11px;color:var(--text-sec)">Checklist incomplete</div>
+        </div>
+        <button onclick="toast('Follow Up logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Follow Up</button>
+      </div>
+      <!-- UNPAID 7+ DAYS -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🔵 Unpaid 7+ Days</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Thompson</div>
+          <div style="font-size:11px;color:var(--text-sec)">$8,200 invoice · 12 days overdue</div>
+        </div>
+        <button onclick="toast('Call logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Call</button>
+      </div>
+      <!-- DECISION PENDING -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">⚪ Decision Pending</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#9CA3AF;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Rivera — Interior</div>
+          <div style="font-size:11px;color:var(--text-sec)">$19,800 · Proposal sent 8 days ago</div>
+        </div>
+        <button onclick="toast('Follow Up logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Follow Up</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#9CA3AF;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Kim — Deck</div>
+          <div style="font-size:11px;color:var(--text-sec)">$11,200 · Proposal sent 3 days ago</div>
+        </div>
+        <button onclick="toast('Follow Up logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Follow Up</button>
+      </div>
+    </div>
+    <!-- Active Crews Tab -->
+    <div id="office-crews" style="padding:0;display:none">
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5</div><div class="crew-addr">1234 Oak Rd, Nashville · Sup: Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Just Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3</div><div class="crew-addr">567 Maple Dr, Brentwood</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie — 2</div><span class="badge b-b">Finishing Today 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4</div><div class="crew-addr">321 Pine Ave, Nashville · Sup: Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
@@ -971,6 +1058,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="cal-tabs">
         <button class="cal-tab active" onclick="switchCal('production',this)">🔧 Production</button>
         <button class="cal-tab" onclick="switchCal('sales',this)">📅 Sales</button>
+        <button class="cal-tab office-admin-only" onclick="switchCal('schedule',this)">📋 Schedule</button>
       </div>
       <a class="card-a" id="cal-link">Production Schedule →</a>
     </div>
@@ -991,6 +1079,52 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div class="sch-time">4:00 PM</div>
         <div class="sch-body"><div class="sch-title">Williams Cabinets — Final walkthrough</div><div class="sch-sub">Mike &amp; Julie finishing · 321 Pine Ave</div></div>
         <span class="badge b-b">Completing 🏁</span>
+      </div>
+    </div>
+
+    <!-- Schedule Crew Tab -->
+    <div id="cal-schedule" class="cal-panel" style="display:none">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg)">
+        <div style="font-size:12px;font-weight:600;margin-bottom:10px">Book a Crew</div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:11px;color:var(--text-sec);display:block;margin-bottom:4px">Job / Client</label>
+          <select style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:inherit">
+            <option>🔴 Chen, David — Cabinets $12,400 (unscheduled)</option>
+            <option>🔴 Martinez Family — Exterior $28,000 (unscheduled)</option>
+            <option>Rivera — Interior $19,800 (pipeline)</option>
+          </select>
+        </div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:11px;color:var(--text-sec);display:block;margin-bottom:4px">Assign Crew</label>
+          <select style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:inherit">
+            <option>Carlos — 3 men (free Mon 2/24)</option>
+            <option>Javier — 2 men (free Tue 2/25)</option>
+            <option>Roberto — 2 men (free Wed 2/26)</option>
+            <option>Mike &amp; Julie — 2 (free Thu 2/27)</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;color:var(--text-sec);display:block;margin-bottom:4px">Start Date</label>
+          <input type="date" value="2026-02-24" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:inherit;box-sizing:border-box">
+        </div>
+        <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center">
+          <label style="font-size:11px;color:var(--text-sec);white-space:nowrap">Est. Days:</label>
+          <input type="number" value="3" min="1" max="30" style="width:60px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:inherit">
+          <span style="font-size:11px;color:var(--text-sec)">Mon 2/24 → Wed 2/26</span>
+        </div>
+        <button onclick="toast('✅ Chen Cabinets booked — Carlos crew, Mon 2/24');switchCal('production',document.querySelector(\'.cal-tab\'))" style="width:100%;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">
+          📅 Book on Production Calendar
+        </button>
+      </div>
+      <div style="padding:10px 16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Crew Availability</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span>Carlos — 3 men</span><span style="color:var(--green);font-weight:600">Free Mon 2/24</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span>Javier — 2 men</span><span style="color:var(--green);font-weight:600">Free Tue 2/25</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span>Roberto — 2 men</span><span style="color:var(--green);font-weight:600">Free Wed 2/26</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span>Mike &amp; Julie</span><span style="color:var(--text-sec)">Booked through 2/27</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span>Team B</span><span style="color:var(--yellow)">Rain delay — resume Fri</span></div>
+        </div>
       </div>
     </div>
 
@@ -1380,32 +1514,43 @@ function switchRole(role) {
   // Calendar tab visibility per role
   const prodTab = document.querySelector('.cal-tab[onclick*="production"]');
   const salesTab = document.querySelector('.cal-tab[onclick*="sales"]');
+  const schedTab = document.querySelector('.cal-tab.office-admin-only');
   if (prodTab && salesTab) {
     if (role === 'sales') {
       prodTab.style.display = 'none';
       salesTab.style.display = '';
+      if (schedTab) schedTab.style.display = 'none';
       salesTab.classList.add('active');
       prodTab.classList.remove('active');
+      if (schedTab) schedTab.classList.remove('active');
       const calProd = document.getElementById('cal-production');
       const calSales = document.getElementById('cal-sales');
+      const calSched = document.getElementById('cal-schedule');
       if (calProd) calProd.style.display = 'none';
       if (calSales) calSales.style.display = '';
+      if (calSched) calSched.style.display = 'none';
       const calLink = document.getElementById('cal-link');
       if (calLink) calLink.textContent = 'Sales Calendar →';
     } else if (role === 'field') {
       salesTab.style.display = 'none';
       prodTab.style.display = '';
+      if (schedTab) schedTab.style.display = 'none';
       prodTab.classList.add('active');
       salesTab.classList.remove('active');
+      if (schedTab) schedTab.classList.remove('active');
       const calProd = document.getElementById('cal-production');
       const calSales = document.getElementById('cal-sales');
+      const calSched = document.getElementById('cal-schedule');
       if (calProd) calProd.style.display = '';
       if (calSales) calSales.style.display = 'none';
+      if (calSched) calSched.style.display = 'none';
       const calLink = document.getElementById('cal-link');
       if (calLink) calLink.textContent = 'Production Schedule →';
     } else {
+      // admin or office — show all 3 tabs
       prodTab.style.display = '';
       salesTab.style.display = '';
+      if (schedTab) schedTab.style.display = '';
     }
   }
 
@@ -1424,9 +1569,20 @@ document.querySelectorAll('.role-btn').forEach(btn => {
 function switchCal(type, btn) {
   document.querySelectorAll('.cal-panel').forEach(p => p.style.display = 'none');
   document.querySelectorAll('.cal-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('cal-' + type).style.display = '';
+  const panel = document.getElementById('cal-' + type);
+  if (panel) panel.style.display = '';
   btn.classList.add('active');
-  document.getElementById('cal-link').textContent = type === 'production' ? 'Production Schedule →' : 'Sales Calendar →';
+  const links = {production:'Production Schedule →', sales:'Sales Calendar →', schedule:'Full Calendar →'};
+  const calLink = document.getElementById('cal-link');
+  if (calLink) calLink.textContent = links[type] || 'Full Schedule →';
+}
+
+// Office tab switcher
+function switchOfficeTab(tab, btn) {
+  document.querySelectorAll('.office-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('office-priority').style.display = tab === 'priority' ? '' : 'none';
+  document.getElementById('office-crews').style.display = tab === 'crews' ? '' : 'none';
 }
 
 // Over-budget reason logger
