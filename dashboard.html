@@ -239,38 +239,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ADMIN KPIs -->
 <div class="kpi-strip" data-r="admin">
   <div class="kpi hl"><div class="kpi-icon">📈</div><div class="kpi-lbl">Weekly Production</div><div class="kpi-val">$22,400</div><div class="kpi-sub">of $25K target — 89.6%</div><div class="prog"><div class="prog-fill gold-f" style="width:89.6%"></div></div><div class="kpi-trend up">↑ 8% vs last week</div></div>
-  <div class="kpi hl" style="min-width:100%">
-    <div class="kpi-icon">💰</div>
-    <div class="kpi-lbl">February Revenue</div>
-    <div style="display:flex;gap:16px;margin-top:4px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Invoiced</div>
-        <div class="kpi-val" style="font-size:20px">$89,200</div>
-        <div class="kpi-sub">Billed to clients</div>
-      </div>
-      <div style="width:1px;background:var(--border)"></div>
-      <div>
-        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Assumed</div>
-        <div class="kpi-val" style="font-size:20px;color:var(--green)">$119,380</div>
-        <div class="kpi-sub">+$30,180 active jobs (60%)</div>
-      </div>
-      <div style="width:1px;background:var(--border)"></div>
-      <div>
-        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Forecasted</div>
-        <div class="kpi-val" style="font-size:20px;color:var(--navy)">$134,500</div>
-        <div class="kpi-sub">Pipeline + scheduled · 12 days left</div>
-      </div>
-    </div>
-    <div class="prog" style="margin-top:10px"><div class="prog-fill green-f" style="width:89%"></div></div>
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-sec);margin-top:3px">
-      <span>$0</span><span>Target: $100K</span>
-    </div>
-    <div class="kpi-trend up" style="margin-top:6px">↑ 12% vs January · Forecast tracking 34% above target</div>
-  </div>
   <div class="kpi"><div class="kpi-icon">📊</div><div class="kpi-lbl">Gross Profit %</div><div class="kpi-val">48.2%</div><div class="kpi-sub">Target: ≥45% · Gate: ≥40%</div><div class="kpi-trend up">↑ 1.2% vs Jan</div></div>
   <div class="kpi"><div class="kpi-icon">🏗️</div><div class="kpi-lbl">Active Jobs</div><div class="kpi-val">7</div><div class="kpi-sub">5 crews out today</div><div class="kpi-trend flat">→ Same as last wk</div></div>
   <div class="kpi"><div class="kpi-icon">💵</div><div class="kpi-lbl">Cash Expected (7d)</div><div class="kpi-val">$45,200</div><div class="kpi-sub">2 completing, 1 invoiced</div><div class="kpi-trend up">↑ Strong week</div></div>
   <div class="kpi"><div class="kpi-icon">⭐</div><div class="kpi-lbl">NPS Score</div><div class="kpi-val">72</div><div class="kpi-sub">22 surveys this month</div><div class="kpi-trend up">↑ +4 vs trailing 30d</div></div>
+</div>
+
+<!-- February Revenue — full width row -->
+<div data-r="admin" style="display:block">
+  <div class="kpi hl" style="display:flex;align-items:center;gap:0;padding:16px 18px;margin-bottom:22px;flex-wrap:nowrap">
+    <div style="margin-right:20px;flex-shrink:0">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">💰 February Revenue</div>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:2px">vs $100K target</div>
+      <div class="prog" style="margin-top:8px;width:120px"><div class="prog-fill green-f" style="width:89%"></div></div>
+      <div style="font-size:10px;color:var(--text-sec);margin-top:2px">89% of target</div>
+    </div>
+    <div style="width:1px;background:var(--border);align-self:stretch;margin:0 20px;flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Invoiced</div>
+      <div class="kpi-val" style="font-size:24px;line-height:1.1">$89,200</div>
+      <div class="kpi-sub">Billed to clients</div>
+    </div>
+    <div style="width:1px;background:var(--border);align-self:stretch;margin:0 20px;flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Assumed</div>
+      <div class="kpi-val" style="font-size:24px;line-height:1.1;color:var(--green)">$119,380</div>
+      <div class="kpi-sub">Invoiced + 60% active jobs</div>
+    </div>
+    <div style="width:1px;background:var(--border);align-self:stretch;margin:0 20px;flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Forecasted</div>
+      <div class="kpi-val" style="font-size:24px;line-height:1.1;color:var(--navy)">$134,500</div>
+      <div class="kpi-sub">Pipeline + scheduled · 12 days left</div>
+    </div>
+    <div style="margin-left:20px;flex-shrink:0;text-align:right">
+      <div class="kpi-trend up">↑ 12% vs Jan</div>
+      <div style="font-size:10px;color:var(--text-sec);margin-top:4px">Forecast +34% above target</div>
+    </div>
+  </div>
 </div>
 
 <!-- OFFICE KPIs -->
