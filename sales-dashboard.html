@@ -310,7 +310,7 @@
   <div style="background:var(--navy-mid);border-bottom:1px solid rgba(255,255,255,0.06);padding:6px 20px;display:flex;align-items:center;justify-content:flex-end;gap:10px">
     <span style="font-size:11px;color:var(--text-dim)">Pay Details:</span>
     <button id="pay-toggle" onclick="togglePayVisibility()" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:var(--text-bright);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer">
-      👁 Shown
+      🙈 Hidden
     </button>
   </div>
 
@@ -320,7 +320,8 @@
     <div class="comp-banner">
       <div>
         <div class="greeting">👋 Welcome, Larry</div>
-        <div class="plan"><strong>Base + Commission on GP</strong> &nbsp;·&nbsp; GP gate: ≥40% &nbsp;·&nbsp; <a style="color:var(--accent-light);cursor:pointer;text-decoration:none;">View Plan Details →</a></div>
+        <div class="plan pay-sensitive" style="display:none"><strong>Base + Commission on GP</strong> &nbsp;·&nbsp; GP gate: ≥40% &nbsp;·&nbsp; <a style="color:var(--accent-light);cursor:pointer;text-decoration:none;">View Plan Details →</a></div>
+        <div class="plan pay-hidden-placeholder" style="font-size:12px;color:rgba(255,255,255,0.3)">Pay details hidden · tap 👁 to show</div>
       </div>
       <div style="text-align:right">
         <div style="font-size:11px;color:var(--text-dim)">Today</div>
@@ -1023,18 +1024,22 @@
 </div>
 
 <script>
-let payVisible = true;
+let payVisible = false; // hidden by default on login
 
-function togglePayVisibility() {
-  payVisible = !payVisible;
+function applyPayVisibility() {
   const btn = document.getElementById('pay-toggle');
-  const hiddenMsg = document.getElementById('pay-hidden-msg');
+  // Sensitive elements (comp plan line, comm detail numbers)
+  document.querySelectorAll('.pay-sensitive').forEach(el => el.style.display = payVisible ? '' : 'none');
+  document.querySelectorAll('.pay-hidden-placeholder').forEach(el => el.style.display = payVisible ? 'none' : '');
+  // Commission card
   const commHidden = document.getElementById('comm-hidden');
   const commDetail = document.getElementById('comm-detail');
-
+  const hiddenMsg = document.getElementById('pay-hidden-msg');
   if (payVisible) {
     btn.innerHTML = '👁 Shown';
-    if (hiddenMsg) hiddenMsg.style.display = 'block';
+    if (hiddenMsg) hiddenMsg.style.display = 'none';
+    if (commHidden) commHidden.style.display = 'none';
+    if (commDetail) commDetail.style.display = '';
   } else {
     btn.innerHTML = '🙈 Hidden';
     if (hiddenMsg) hiddenMsg.style.display = 'block';
@@ -1042,6 +1047,14 @@ function togglePayVisibility() {
     if (commHidden) commHidden.style.display = 'block';
   }
 }
+
+function togglePayVisibility() {
+  payVisible = !payVisible;
+  applyPayVisibility();
+}
+
+// Apply on page load
+document.addEventListener('DOMContentLoaded', applyPayVisibility);
 
 function switchPayTab(tab, btn) {
   document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
