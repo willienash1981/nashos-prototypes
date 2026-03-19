@@ -324,8 +324,8 @@
 <script>
 // ─── DATA ───
 const microComponents = [
-  { id:1, name:'Brush/Roll First Coat — Wall', type:'LABOR', rate:'80', unit:'SF', costPerUnit:0.7250, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat @ $58/hr' },
-  { id:2, name:'Brush/Roll Second Coat — Wall', type:'LABOR', rate:'80', unit:'SF', costPerUnit:0.7250, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat @ $58/hr' },
+  { id:1, name:'Brush/Roll First Coat — Wall', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
+  { id:2, name:'Brush/Roll Second Coat — Wall', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
   { id:3, name:'Interior Wall Paint — Eggshell', type:'MATERIAL', rate:'0.00571 gal/SF', unit:'SF', costPerUnit:0.236, materialId:2 },
   { id:4, name:'Caulk — Interior Joints', type:'MATERIAL', rate:'0.001 tube/SF', unit:'SF', costPerUnit:0.005 },
   { id:5, name:'Primer — Stain Block', type:'MATERIAL', rate:'0.004 gal/SF', unit:'SF', costPerUnit:0.165, materialId:5 },
@@ -335,7 +335,7 @@ const microComponents = [
   { id:9, name:'Backroll — Siding', type:'LABOR', rate:'450 SF/hr', unit:'SF', costPerUnit:0.067, serviceType:'Exterior Painting', gpPct:50 },
   { id:10, name:'Exterior Acrylic Paint', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.263, materialId:1 },
   { id:11, name:'Ceiling Paint — Flat', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.208, materialId:2 },
-  { id:12, name:'Roll Ceiling — 1 Coat', type:'LABOR', rate:'80', unit:'SF', costPerUnit:0.7250, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat @ $58/hr' },
+  { id:12, name:'Roll Ceiling — 1 Coat', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
   { id:13, name:'Brush/Roll Trim — 1 Coat', type:'LABOR', rate:'46', unit:'LF', costPerUnit:1.2560, serviceType:'Interior Painting', gpPct:50, description:'ER: 1.3 min/LF → 46.15 LF/hr @ $58/hr' },
   { id:14, name:'Trim Enamel — Semi-Gloss', type:'MATERIAL', rate:'0.004 gal/LF', unit:'LF', costPerUnit:0.180 },
   { id:15, name:'Deck Stain — Semi-Trans', type:'MATERIAL', rate:'0.006 gal/SF', unit:'SF', costPerUnit:0.270, materialId:4 },
@@ -362,12 +362,12 @@ const microComponents = [
   { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
   { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceType:'Interior Painting', gpPct:50, description:'ER: ~6 min/EA → 10 EA/hr @ $58/hr (est.)' },
   // Tall/High wall + ceiling labor
-  { id:40, name:'Brush & Roll — 1st Coat, Tall Walls', type:'LABOR', rate:'64', unit:'SF', costPerUnit:0.9063, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
-  { id:41, name:'Brush & Roll — 2nd Coat, Tall Walls', type:'LABOR', rate:'64', unit:'SF', costPerUnit:0.9063, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
-  { id:42, name:'Brush & Roll — 1st Coat, High Walls', type:'LABOR', rate:'50', unit:'SF', costPerUnit:1.1600, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
-  { id:43, name:'Brush & Roll — 2nd Coat, High Walls', type:'LABOR', rate:'50', unit:'SF', costPerUnit:1.1600, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
-  { id:44, name:'Roll Ceiling — 1 Coat, Tall', type:'LABOR', rate:'64', unit:'SF', costPerUnit:0.9063, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
-  { id:45, name:'Roll Ceiling — 1 Coat, High', type:'LABOR', rate:'50', unit:'SF', costPerUnit:1.1600, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
+  { id:40, name:'Brush & Roll — 1st Coat, Tall Walls', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
+  { id:41, name:'Brush & Roll — 2nd Coat, Tall Walls', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
+  { id:42, name:'Brush & Roll — 1st Coat, High Walls', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
+  { id:43, name:'Brush & Roll — 2nd Coat, High Walls', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
+  { id:44, name:'Roll Ceiling — 1 Coat, Tall', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
+  { id:45, name:'Roll Ceiling — 1 Coat, High', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
   // Interior trim & fixture MCs from Estimate Rocket
   { id:50, name:'Paint Door Frame Only — 1 Coat', type:'LABOR', rate:'3.24', unit:'EA', costPerUnit:parseFloat((58/3.24).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 18.5 min/EA → 3.24 EA/hr @ $58/hr' },
   { id:51, name:'Paint Window & Frame — 1 Coat', type:'LABOR', rate:'1.13', unit:'EA', costPerUnit:parseFloat((58/1.13).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'NashOS grid pricing: $35 base + $1/grid (admin-configurable). NOT minutes-based. See §3.16 interior wizard grid model.' },
