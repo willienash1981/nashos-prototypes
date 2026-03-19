@@ -353,29 +353,29 @@ const microComponents = [
 ];
 
 const bundles = [
-  { id:1, name:'Paint Wall — 2 Coats, Standard Prep', customerName:'Interior Wall Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.41, sellPerUnit:0.82, gpPct:50, components:[1,2,3,4], estimates:47,
+  { id:1, name:'Paint Wall — 2 Coats, Standard Prep', customerName:'Interior Wall Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.41, sellPerUnit:0.82, gpPct:50, components:[1,2,3,4], estimates:47, surfaceType:'Walls', defaultSheen:'Satin',
     history:[{date:'Feb 15',text:'Material cost $0.228 → $0.241 (paint price increase) — Bill'},{date:'Jan 8',text:'Added caulk MC (was missing from recipe) — Bill'},{date:'Dec 12',text:'Labor rate $28/hr → $30/hr (annual adjustment) — Bill'}] },
-  { id:2, name:'Paint Wall — 2 Coats, Premium Prep', customerName:'Interior Wall Painting (Premium)', category:'Interior', workCategory:'Interior', package:'Premium+', unit:'SF', status:'Active', costPerUnit:0.86, sellPerUnit:1.72, gpPct:50, components:[1,2,3,4,5,6], estimates:23,
+  { id:2, name:'Paint Wall — 2 Coats, Premium Prep', customerName:'Interior Wall Painting (Premium)', category:'Interior', workCategory:'Interior', package:'Premium+', unit:'SF', status:'Active', costPerUnit:0.86, sellPerUnit:1.72, gpPct:50, components:[1,2,3,4,5,6], estimates:23, surfaceType:'Walls', defaultSheen:'Satin',
     history:[{date:'Jan 20',text:'Added primer + sand components — Bill'}] },
-  { id:3, name:'Paint Ceiling — 1 Coat', customerName:'Ceiling Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.29, sellPerUnit:0.58, gpPct:50, components:[12,11,4], estimates:31,
+  { id:3, name:'Paint Ceiling — 1 Coat', customerName:'Ceiling Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.29, sellPerUnit:0.58, gpPct:50, components:[12,11,4], estimates:31, surfaceType:'Ceiling', defaultSheen:'Flat',
     history:[{date:'Feb 1',text:'Created bundle — Bill'}] },
-  { id:4, name:'Paint Baseboard — 2 Coats', customerName:'Baseboard Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:0.68, sellPerUnit:1.36, gpPct:50, components:[13,13,14], estimates:18,
+  { id:4, name:'Paint Baseboard — 2 Coats', customerName:'Baseboard Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:0.68, sellPerUnit:1.36, gpPct:50, components:[13,13,14], estimates:18, surfaceType:'Trim', defaultSheen:'Semi-Gloss',
     history:[{date:'Jan 15',text:'Created bundle — Bill'}] },
-  { id:5, name:'Paint Door & Frame — 2 Coats', customerName:'Interior Door Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:32.50, sellPerUnit:65.00, gpPct:50, components:[23,24,7,4], estimates:12,
+  { id:5, name:'Paint Door & Frame — 2 Coats', customerName:'Interior Door Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:32.50, sellPerUnit:65.00, gpPct:50, components:[23,24,7,4], estimates:12, surfaceType:'Door', defaultSheen:'Semi-Gloss',
     history:[{date:'Dec 20',text:'Updated door labor rate — Bill'}] },
-  { id:6, name:'Exterior Siding — Spray + Backroll', customerName:'Exterior Siding Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.52, sellPerUnit:1.04, gpPct:50, components:[8,9,10,7,4], estimates:15,
+  { id:6, name:'Exterior Siding — Spray + Backroll', customerName:'Exterior Siding Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.52, sellPerUnit:1.04, gpPct:50, components:[8,9,10,7,4], estimates:15, surfaceType:'Ext. Siding', defaultSheen:'Satin',
     history:[{date:'Feb 10',text:'Adjusted spray rate — Bill'}] },
-  { id:7, name:'Exterior Trim — Brush & Roll', customerName:'Exterior Trim Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'LF', status:'Active', costPerUnit:1.12, sellPerUnit:2.24, gpPct:50, components:[13,13,14,5], estimates:9,
+  { id:7, name:'Exterior Trim — Brush & Roll', customerName:'Exterior Trim Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'LF', status:'Active', costPerUnit:1.12, sellPerUnit:2.24, gpPct:50, components:[13,13,14,5], estimates:9, surfaceType:'Ext. Trim', defaultSheen:'Semi-Gloss',
     history:[{date:'Jan 5',text:'Created bundle — Bill'}] },
-  { id:8, name:'Cabinet Body — Paint, Level 5', customerName:'Cabinet Body Painting', category:'Cabinets', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:18.40, sellPerUnit:36.80, gpPct:50, components:[6,20,21,22,5], estimates:7,
+  { id:8, name:'Cabinet Body — Paint, Level 5', customerName:'Cabinet Body Painting', category:'Cabinets', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:18.40, sellPerUnit:36.80, gpPct:50, components:[6,20,21,22,5], estimates:7, surfaceType:'Cabinets', defaultSheen:'Semi-Gloss',
     history:[{date:'Feb 8',text:'Updated cabinet enamel price — Bill'}] },
-  { id:9, name:'Deck Flooring — Semi-Transparent Stain', customerName:'Deck Floor Staining', category:'Deck', workCategory:'Exterior', package:'—', unit:'SF', status:'Active', costPerUnit:0.58, sellPerUnit:1.16, gpPct:50, components:[6,8,15,4], estimates:5,
+  { id:9, name:'Deck Flooring — Semi-Transparent Stain', customerName:'Deck Floor Staining', category:'Deck', workCategory:'Exterior', package:'—', unit:'SF', status:'Active', costPerUnit:0.58, sellPerUnit:1.16, gpPct:50, components:[6,8,15,4], estimates:5, surfaceType:'Deck', defaultSheen:'N/A',
     history:[{date:'Jan 28',text:'Created bundle — Bill'}] },
-  { id:10, name:"6' Privacy Fence — 1 Side", customerName:'Fence Stain (6ft, One Side)', category:'Fence', workCategory:'Exterior', package:'—', unit:'LF', status:'Active', costPerUnit:5.07, sellPerUnit:10.13, gpPct:50, components:[16,17,6,4], estimates:3,
+  { id:10, name:"6' Privacy Fence — 1 Side", customerName:'Fence Stain (6ft, One Side)', category:'Fence', workCategory:'Exterior', package:'—', unit:'LF', status:'Active', costPerUnit:5.07, sellPerUnit:10.13, gpPct:50, components:[16,17,6,4], estimates:3, surfaceType:'Fence', defaultSheen:'N/A',
     history:[{date:'Feb 5',text:'Created bundle — Bill'}] },
-  { id:11, name:'Drywall Patch Repair', customerName:'Drywall Patching', category:'Drywall', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:37.50, sellPerUnit:75.00, gpPct:50, components:[19,18,5], estimates:8,
+  { id:11, name:'Drywall Patch Repair', customerName:'Drywall Patching', category:'Drywall', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:37.50, sellPerUnit:75.00, gpPct:50, components:[19,18,5], estimates:8, surfaceType:'Drywall', defaultSheen:'Flat',
     history:[{date:'Jan 10',text:'Created bundle — Bill'}] },
-  { id:12, name:'Wallpaper Strip — Per SF', customerName:'Wallpaper Removal', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Inactive', costPerUnit:0.95, sellPerUnit:1.90, gpPct:50, components:[25,26], estimates:0,
+  { id:12, name:'Wallpaper Strip — Per SF', customerName:'Wallpaper Removal', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Inactive', costPerUnit:0.95, sellPerUnit:1.90, gpPct:50, components:[25,26], estimates:0, surfaceType:'Walls', defaultSheen:'Satin',
     history:[{date:'Feb 12',text:'Deactivated — Bill'}] },
 ];
 
@@ -744,7 +744,7 @@ function renderBundles(el) {
       ${pills.map(p=>`<div class="filter-pill ${p===activeFilter?'active':''}" onclick="activeFilter='${p}';renderMainContent()">${p}</div>`).join('')}
     </div>
     <div class="card"><table><thead><tr>
-      <th>Bundle Name</th><th>Customer Name</th><th>Service Type</th><th>Package</th><th>Unit</th><th>Components</th><th>Cost/Unit</th><th>Sell/Unit</th><th>Status</th>
+      <th>Bundle Name</th><th>Customer Name</th><th>Service Type</th><th>Surface</th><th>Package</th><th>Unit</th><th>Components</th><th>Cost/Unit</th><th>Sell/Unit</th><th>Status</th>
     </tr></thead><tbody>
       ${filtered.map(b => {
         const inactive = b.status==='Inactive';
@@ -752,6 +752,7 @@ function renderBundles(el) {
         return `<tr class="clickable" onclick="openBundle(${b.id})" ${editingBundle&&editingBundle.id===b.id?'style="background:rgba(59,130,246,0.05)"':''}>
           <td class="bright" ${st}>${b.name}</td><td class="dim" ${inactive?st:''}>${b.customerName}</td>
           <td><span class="badge ${badgeClass(b.category)}">${b.category}</span></td>
+          <td>${b.surfaceType||'—'}<br><span style="font-size:11px;color:var(--text-dim)">${b.defaultSheen||surfaceToSheen(b.surfaceType||'')}</span></td>
           <td>${b.package}</td><td class="mono">${b.unit}</td>
           <td><span class="link-count">${b.components.length} MCs</span></td>
           <td class="mono">$${b.costPerUnit.toFixed(2)}</td><td class="mono">$${b.sellPerUnit.toFixed(2)}</td>
@@ -772,7 +773,7 @@ function openBundle(id) {
 }
 
 function openNewBundle() {
-  editingBundle = { id:0, name:'', customerName:'', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0, sellPerUnit:0, gpPct:50, components:[], estimates:0, history:[] };
+  editingBundle = { id:0, name:'', customerName:'', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0, sellPerUnit:0, gpPct:50, components:[], estimates:0, history:[], surfaceType:'Walls', defaultSheen:'Satin' };
   editingComponents = [];
   activeDetailTab = 'definition';
   document.getElementById('detailTitle').textContent = 'New Service Bundle';
@@ -798,6 +799,16 @@ function renderDetail() {
   if (activeDetailTab === 'definition') renderDefinitionTab(body);
   else if (activeDetailTab === 'components') renderComponentsTab(body);
   else renderHistoryTab(body);
+}
+
+function surfaceToSheen(surface) {
+  const map = {
+    'Walls':'Satin','Ceiling':'Flat','Trim':'Semi-Gloss',
+    'Ext. Siding':'Satin','Ext. Trim':'Semi-Gloss',
+    'Deck':'N/A','Fence':'N/A','Cabinets':'Semi-Gloss',
+    'Door':'Semi-Gloss','Drywall':'Flat'
+  };
+  return map[surface] || 'Satin';
 }
 
 function categoryToWorkCat(cat) {
@@ -836,6 +847,10 @@ function renderDefinitionTab(el) {
     <div style="font-size:11px;color:var(--text-dim);margin-top:4px;line-height:1.4;padding:6px 8px;background:rgba(51,65,85,0.3);border-radius:6px;">
       <strong>Work Area</strong> = Interior or Exterior — determines which production rules apply (height tiers, weather scheduling, crew requirements).<br>
       Auto-set based on Service Type. Override only for Carpentry or Drywall jobs that happen to be exterior work.
+    </div>
+    <div class="form-row" style="margin-top:14px">
+      <div class="form-group"><label class="form-label">Surface Type</label><select class="form-select" onchange="editingBundle.surfaceType=this.value;editingBundle.defaultSheen=surfaceToSheen(this.value);renderDetail()">${['Walls','Ceiling','Trim','Ext. Siding','Ext. Trim','Deck','Fence','Cabinets','Door','Drywall'].map(s=>`<option ${s===(b.surfaceType||'')?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">Default Quote Sheen <span style="font-size:10px;color:var(--text-dim)">(auto-set from surface type)</span></label><div style="padding:8px 12px;background:var(--navy-mid);border-radius:6px;font-size:13px;color:var(--accent-light)">${b.defaultSheen||surfaceToSheen(b.surfaceType||'Walls')} — used for 1-gal quote cost basis</div></div>
     </div>
     <div class="form-row" style="margin-top:8px">
       <div class="form-toggle"><div class="toggle" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Value Package: Not Available</span></div>
