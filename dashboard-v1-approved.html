@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NashOS — Dashboard</title>
+<style>
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3D5F;
+  --gold: #C4A962;
+  --gold-light: #D4BE82;
+  --bg: #F5F3EF;
+  --white: #FFFFFF;
+  --border: #E2DFD8;
+  --text: #1B2A4A;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --yellow: #F59E0B;
+  --yellow-bg: #FFFBEB;
+  --blue: #2563EB;
+  --blue-bg: #EFF6FF;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(27,42,74,.08);
+  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+
+/* ─── TOPBAR ─── */
+.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
+.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-greeting{font-size:14px;opacity:.85}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-date{font-size:13px;opacity:.7}
+.notif-bell{position:relative;cursor:pointer;font-size:20px}
+.notif-badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ─── ROLE BAR ─── */
+.role-bar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:50px;z-index:99;flex-wrap:wrap}
+.role-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);white-space:nowrap}
+.role-toggle{display:flex;background:var(--bg);border-radius:var(--radius);padding:3px;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.role-btn{padding:7px 12px;border:none;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s;white-space:nowrap}
+.role-btn:hover{background:var(--white);color:var(--text)}
+.role-btn.active{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
+.perm-note{margin-left:auto;font-size:11px;color:var(--text-muted)}@media(max-width:480px){.perm-note{display:none}}
+
+/* ─── MAIN ─── */
+.main{max-width:1400px;margin:0 auto;padding:24px}
+@media(max-width:480px){.main{padding:12px}.topbar{padding:10px 12px}.role-bar{padding:8px 10px}.kpi{padding:14px}.card-h{padding:12px 14px}.card-b{padding:14px}.crew{padding:12px 14px}.lr{padding:8px 14px}.al{padding:8px 14px}.act{padding:6px 14px}.sch{padding:8px 14px}}
+
+/* ─── QUICK ACTIONS ─── */
+.qa-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.qa-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--white);font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;box-shadow:var(--shadow);transition:all .15s}
+.qa-btn:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+
+/* ─── KPI STRIP ─── */
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:22px}
+.kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi.hl{border-left:4px solid var(--gold)}
+.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:700;color:var(--navy);line-height:1.1}
+.kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
+.kpi-trend.up{background:var(--green-bg);color:var(--green)}
+.kpi-trend.down{background:var(--red-bg);color:var(--red)}
+.kpi-trend.flat{background:var(--bg);color:var(--text-sec)}
+.kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
+
+/* ─── CARD ─── */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:0}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
+.card-a:hover{text-decoration:underline}
+.card-b{padding:18px}
+
+/* ─── GRID ─── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
+.gf{margin-bottom:22px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}@media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr;gap:10px}.kpi-val{font-size:22px}.kpi-lbl{font-size:10px}.kpi-sub{font-size:11px}.qa-row{gap:6px}.qa-btn{padding:7px 10px;font-size:12px}}
+
+/* ─── PROGRESS ─── */
+.prog{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;border-radius:4px;transition:width .5s}
+.green-f{background:var(--green)}.gold-f{background:var(--gold)}.red-f{background:var(--red)}.blue-f{background:var(--blue)}.navy-f{background:var(--navy)}
+.prog-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text-sec)}
+
+/* ─── STAT ROW ─── */
+.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bg);font-size:13px}
+.sr:last-child{border-bottom:none}
+.sr-l{color:var(--text-sec)}.sr-v{font-weight:600}
+
+/* ─── LIST ROW ─── */
+.lr{display:flex;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bg);gap:10px;transition:background .1s}
+.lr:last-child{border-bottom:none}.lr:hover{background:#FAFAF8}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-g{background:var(--green)}.dot-y{background:var(--yellow)}.dot-r{background:var(--red)}.dot-b{background:var(--blue)}.dot-x{background:#D1D5DB}
+.lr-p{font-size:13px;font-weight:600;flex:1}
+.lr-s{font-size:12px;color:var(--text-sec)}
+.lr-m{font-size:11px;color:var(--text-muted);text-align:right}
+.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.b-g{background:var(--green-bg);color:var(--green)}.b-y{background:var(--yellow-bg);color:var(--yellow)}
+.b-r{background:var(--red-bg);color:var(--red)}.b-b{background:var(--blue-bg);color:var(--blue)}
+.b-x{background:var(--bg);color:var(--text-sec)}
+
+/* ─── CREW CARD ─── */
+.crew{padding:14px 18px;border-bottom:1px solid var(--bg)}
+.crew:last-child{border-bottom:none}
+.crew-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.crew-nm{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.crew-job{font-size:12px;color:var(--text-sec);margin-bottom:2px}
+.crew-addr{font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.crew-prog{display:flex;align-items:center;gap:10px}
+.crew-day{font-size:11px;font-weight:600;color:var(--text-sec);white-space:nowrap}
+.crew-meta{display:flex;gap:8px;margin-top:6px;font-size:11px;flex-wrap:wrap}
+
+/* ─── ALERT ─── */
+.al{display:flex;align-items:flex-start;gap:10px;padding:10px 18px;border-bottom:1px solid var(--bg)}
+.al:last-child{border-bottom:none}
+.al-i{font-size:16px;flex-shrink:0;margin-top:1px}
+.al-t{flex:1;font-size:12px;color:var(--text-sec)}.al-t strong{color:var(--text)}
+.al-tm{font-size:10px;color:var(--text-muted);white-space:nowrap}
+
+/* ─── ACTIVITY ─── */
+.act{display:flex;align-items:flex-start;gap:10px;padding:8px 18px;border-bottom:1px solid var(--bg);font-size:12px}
+.act:last-child{border-bottom:none}
+.act-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.act-t{flex:1;color:var(--text-sec)}.act-t strong{color:var(--text)}
+.act-tm{font-size:10px;color:var(--text-muted);white-space:nowrap}
+
+/* ─── COMMISSION ─── */
+.comm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.comm-item{text-align:center;padding:12px;background:var(--bg);border-radius:var(--radius-sm)}
+.comm-v{font-size:20px;font-weight:700;color:var(--navy);cursor:pointer}
+.comm-v.hidden-val{color:var(--text-muted);font-size:14px}
+.comm-l{font-size:11px;color:var(--text-sec);margin-top:2px}
+
+/* ─── SP CARD ─── */
+.sp{flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.sp-nm{font-size:14px;font-weight:700;margin-bottom:6px}
+
+/* ─── SCHEDULE ─── */
+.sch{display:flex;gap:14px;padding:10px 18px;border-bottom:1px solid var(--bg)}
+.sch:last-child{border-bottom:none}
+.sch-tm{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:65px}
+.sch-d{flex:1}.sch-c{font-size:13px;font-weight:600}
+.sch-adr{font-size:11px;color:var(--text-muted)}.sch-tp{font-size:11px;color:var(--text-sec);margin-top:1px}
+.sch-act{font-size:11px;color:var(--gold);font-weight:600;cursor:pointer;align-self:center}
+
+/* ─── CF CHART ─── */
+.cf{display:flex;align-items:flex-end;gap:6px;height:100px;margin:14px 0 6px}
+.cf-grp{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.cf-bar{width:100%;max-width:44px;border-radius:3px 3px 0 0}
+.cf-bar.inc{background:var(--green);opacity:.75}.cf-bar.out{background:var(--red);opacity:.45}
+.cf-lbl{font-size:10px;color:var(--text-muted)}.cf-val{font-size:9px;font-weight:600;color:var(--text-sec)}
+
+/* ─── OVERDUE ─── */
+.overdue{background:var(--red-bg);border:1px solid #FECACA;border-radius:var(--radius-sm);padding:10px 14px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;font-size:12px}
+.overdue strong{color:var(--red)}
+
+/* ─── BUDGET ─── */
+.bm{display:flex;align-items:center;gap:10px;padding:6px 0}
+.bm-l{font-size:12px;color:var(--text-sec);min-width:70px}
+.bm-bar{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.bm-fill{height:100%;border-radius:3px}
+.bm-a{font-size:12px;font-weight:600;white-space:nowrap}
+
+/* ─── SEC LABEL ─── */
+.sec-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px;padding-left:2px}
+
+/* ─── CREW GP ─── */
+.crew-gp{font-size:11px;font-weight:600;color:var(--green);margin-top:2px}
+
+/* ─── CALENDAR TABS ─── */
+.cal-tabs{display:flex;gap:4px;background:var(--bg);border-radius:8px;padding:3px}
+.cal-tab{padding:5px 12px;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
+.cal-tab.active{background:var(--navy);color:#fff}
+.office-tab{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
+.office-tab.active{background:var(--navy);color:#fff}
+.office-admin-only{}
+.field-tab{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
+.field-tab.active{background:var(--navy);color:#fff}
+.co-sel{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
+.cal-panel{}
+.sch-time{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:65px}
+.sch-body{flex:1}
+.sch-title{font-size:13px;font-weight:600}
+.sch-sub{font-size:11px;color:var(--text-muted)}
+
+/* ─── BADGES ─── */
+.b-r{background:#FEE2E2;color:#991B1B}
+.b-p{background:#F3E8FF;color:#6B21A8}
+.b-orange{background:#FEF3C7;color:#92400E}
+
+/* ─── MISC ─── */
+.hidden{display:none!important}@media(max-width:480px){.hide-mobile{display:none}}
+.stars{color:var(--gold);font-size:15px;letter-spacing:2px}
+.reveal-btn{font-size:11px;color:var(--gold);cursor:pointer;font-weight:600;border:none;background:none}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;background:var(--navy);color:#fff;margin-right:4px}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">Nash<span>OS</span></div>
+    <div class="topbar-greeting" id="greeting">👋 Welcome, Bill</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-date">Saturday, Feb 28, 2026</div>
+    <div class="notif-bell" id="bell">🔔<div class="notif-badge" id="ncount">5</div></div>
+  </div>
+</div>
+
+<!-- ═══ ROLE TOGGLE ═══ -->
+<div class="role-bar">
+  <span class="role-label">Demo — Permission Level:</span>
+  <div class="role-toggle">
+    <button class="role-btn active" data-role="admin">Admin</button>
+    <button class="role-btn" data-role="office">Office</button>
+    <button class="role-btn" data-role="field">Field Supervisor</button>
+  </div>
+  <div class="perm-note" id="perm-note">🔓 Full access — all data visible</div><div style="font-size:10px;color:var(--text-muted);margin-left:8px"><span class="hide-mobile">(In production, users only see their permission level)</span></div>
+</div>
+
+<div class="main">
+
+<!-- ═══ QUICK ACTIONS ═══ -->
+<div class="qa-row" id="qa"></div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- KPI STRIPS — one per role -->
+<!-- ════════════════════════════════════════════ -->
+
+<!-- ADMIN KPIs -->
+<div class="kpi-strip" data-r="admin">
+  <div class="kpi hl"><div class="kpi-icon">📈</div><div class="kpi-lbl">Weekly Production</div><div class="kpi-val">$22,400</div><div class="kpi-sub">of $25K target — 89.6%</div><div class="prog"><div class="prog-fill gold-f" style="width:89.6%"></div></div><div class="kpi-trend up">↑ 8% vs last week</div></div>
+  <div class="kpi"><div class="kpi-icon">📊</div><div class="kpi-lbl">Gross Profit %</div><div class="kpi-val">48.2%</div><div class="kpi-sub">Target: ≥45% · Gate: ≥40%</div><div class="kpi-trend up">↑ 1.2% vs Jan</div></div>
+  <div class="kpi"><div class="kpi-icon">🏗️</div><div class="kpi-lbl">Active Jobs</div><div class="kpi-val">7</div><div class="kpi-sub">5 crews out today</div><div class="kpi-trend flat">→ Same as last wk</div></div>
+  <div class="kpi"><div class="kpi-icon">💵</div><div class="kpi-lbl">Cash Expected (7d)</div><div class="kpi-val">$45,200</div><div class="kpi-sub">2 completing, 1 invoiced</div><div class="kpi-trend up">↑ Strong week</div></div>
+  <div class="kpi"><div class="kpi-icon">⭐</div><div class="kpi-lbl">NPS Score</div><div class="kpi-val">72</div><div class="kpi-sub">22 surveys this month</div><div class="kpi-trend up">↑ +4 vs trailing 30d</div></div>
+</div>
+
+<!-- February Revenue — full width row -->
+<div data-r="admin" style="display:block">
+  <div class="kpi hl" style="padding:16px 18px;margin-bottom:22px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--text)">💰 February Revenue</div>
+        <div style="font-size:11px;color:var(--text-sec);margin-top:2px">vs $100K target</div>
+      </div>
+      <div class="kpi-trend up">↑ 12% vs Jan · Forecast +34% above target</div>
+    </div>
+    <div class="prog" style="margin-bottom:4px"><div class="prog-fill green-f" style="width:89%"></div></div>
+    <div style="font-size:10px;color:var(--text-sec);margin-bottom:14px">89% of target</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div style="text-align:center;padding:10px 8px;background:var(--bg);border-radius:var(--radius-sm)">
+        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Invoiced</div>
+        <div class="kpi-val" style="font-size:18px;line-height:1.1">$89,200</div>
+        <div class="kpi-sub" style="font-size:10px">Billed to clients</div>
+      </div>
+      <div style="text-align:center;padding:10px 8px;background:var(--bg);border-radius:var(--radius-sm)">
+        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Assumed</div>
+        <div class="kpi-val" style="font-size:18px;line-height:1.1;color:var(--green)">$119,380</div>
+        <div class="kpi-sub" style="font-size:10px">+60% active jobs</div>
+      </div>
+      <div style="text-align:center;padding:10px 8px;background:var(--bg);border-radius:var(--radius-sm)">
+        <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Forecasted</div>
+        <div class="kpi-val" style="font-size:18px;line-height:1.1;color:var(--navy)">$134,500</div>
+        <div class="kpi-sub" style="font-size:10px">12 days left</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFICE KPIs -->
+<div class="kpi-strip" data-r="office">
+  <div class="kpi hl"><div class="kpi-icon">🏗️</div><div class="kpi-lbl">Active Jobs</div><div class="kpi-val">7</div><div class="kpi-sub">5 crews out today</div></div>
+  <div class="kpi hl"><div class="kpi-icon">📋</div><div class="kpi-lbl">Estimates Pending</div><div class="kpi-val">4</div><div class="kpi-sub">$26,430 total value</div></div>
+  <div class="kpi"><div class="kpi-icon">📦</div><div class="kpi-lbl">POs This Week</div><div class="kpi-val">6</div><div class="kpi-sub">$2,340 · 1 pending</div></div>
+  <div class="kpi"><div class="kpi-icon">📞</div><div class="kpi-lbl">Follow-Ups Due</div><div class="kpi-val">3</div><div class="kpi-sub">1 overdue (14 days)</div><div class="kpi-trend down">⚠️ 1 stale</div></div>
+  <div class="kpi"><div class="kpi-icon">📝</div><div class="kpi-lbl">Onboarding Incomplete</div><div class="kpi-val">3</div><div class="kpi-sub">Missing checklist, colors, or color verification</div></div>
+  <div class="kpi"><div class="kpi-icon">💳</div><div class="kpi-lbl">Invoices Outstanding</div><div class="kpi-val">$47,200</div><div class="kpi-sub">8 invoices · 1 overdue</div></div>
+</div>
+
+<!-- SALES KPIs -->
+<!-- FIELD KPIs -->
+<div class="kpi-strip" data-r="field">
+  <div class="kpi hl"><div class="kpi-icon">🏗️</div><div class="kpi-lbl">My Jobs Today</div><div class="kpi-val">5</div><div class="kpi-sub">5 crews active</div></div>
+  <div class="kpi hl"><div class="kpi-icon">✅</div><div class="kpi-lbl">On Schedule</div><div class="kpi-val">4 / 5</div><div class="kpi-sub">1 rain delay</div></div>
+  <div class="kpi"><div class="kpi-icon">📸</div><div class="kpi-lbl">Photos Today</div><div class="kpi-val">23</div><div class="kpi-sub">3 before · 14 during · 6 after</div></div>
+  <div class="kpi"><div class="kpi-icon">📦</div><div class="kpi-lbl">Perishable Budget</div><div class="kpi-val">$18 left</div><div class="kpi-sub">$25/wk · Resets Mon</div><div class="prog"><div class="prog-fill green-f" style="width:72%"></div></div></div>
+  <div class="kpi"><div class="kpi-icon">📍</div><div class="kpi-lbl">Snapshots Today</div><div class="kpi-val">3 / 5</div><div class="kpi-sub">2 remaining today</div><div class="kpi-trend flat">→ 79% this week</div></div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- ROW 2 — Role-specific main content -->
+<!-- ════════════════════════════════════════════ -->
+
+<!-- ─── ADMIN: Cash Flow + Sales Team ─── -->
+<div class="g2" data-r="admin">
+  <div class="card">
+    <div class="card-h"><div class="card-t">💵 Cash Flow — Next 7 Days</div><a class="card-a">Details →</a></div>
+    <div class="card-b">
+      <div class="cf">
+        <div class="cf-grp"><div class="cf-val">—</div><div class="cf-bar inc" style="height:3px"></div><div class="cf-lbl">Sat</div></div>
+        <div class="cf-grp"><div class="cf-val">$8K</div><div class="cf-bar inc" style="height:22px"></div><div class="cf-lbl">Mon</div></div>
+        <div class="cf-grp"><div class="cf-val">$2K</div><div class="cf-bar inc" style="height:8px"></div><div class="cf-lbl">Tue</div></div>
+        <div class="cf-grp"><div class="cf-val">$30K</div><div class="cf-bar inc" style="height:90px"></div><div class="cf-lbl">Wed</div></div>
+        <div class="cf-grp"><div class="cf-val">—</div><div class="cf-bar inc" style="height:3px"></div><div class="cf-lbl">Thu</div></div>
+        <div class="cf-grp"><div class="cf-val">$5.2K</div><div class="cf-bar inc" style="height:17px"></div><div class="cf-lbl">Fri</div></div>
+        <div class="cf-grp"><div class="cf-val">—</div><div class="cf-bar inc" style="height:3px"></div><div class="cf-lbl">Sat</div></div>
+      </div>
+      <div class="sr"><span class="sr-l">Total Expected</span><span class="sr-v" style="color:var(--green)">+$45,200</span></div>
+      <div class="sr"><span class="sr-l">Wed — Johnson Ext completes</span><span class="sr-v">$30,000</span></div>
+      <div class="sr"><span class="sr-l">Mon — Garcia final payment</span><span class="sr-v">$8,000</span></div>
+      <div class="overdue">⚠️ <strong>$4,800 overdue</strong> — Thompson (12d, late fees accruing)<a class="card-a" style="margin-left:auto">Send Reminder</a></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="card-t">👥 Sales Team — February</div><a class="card-a">Full Report →</a></div>
+    <div class="card-b">
+      <div class="sr" style="margin-bottom:10px"><span class="sr-l">Team Revenue MTD</span><span class="sr-v">$54,000 / $75,000 (72%)</span></div>
+      <div class="prog"><div class="prog-fill navy-f" style="width:72%"></div></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <div class="sp">
+          <div class="sp-nm">Larry</div>
+          <div class="sr"><span class="sr-l">Revenue</span><span class="sr-v">$54,000</span></div>
+          <div class="sr"><span class="sr-l">Close Rate</span><span class="sr-v">58%</span></div>
+          <div class="sr"><span class="sr-l">Avg GP%</span><span class="sr-v">47.3%</span></div>
+          <div class="sr"><span class="sr-l">Commission</span><span class="sr-v">$2,847</span></div>
+          <div class="sr"><span class="sr-l">Avg Deal</span><span class="sr-v">$8,200</span></div>
+          <div class="sr"><span class="sr-l">Days to Close</span><span class="sr-v">4.2</span></div>
+          <div style="margin-top:8px"><span class="badge b-g">ON TRACK ✅</span></div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:10px;text-align:center">Additional salespeople appear here as onboarded</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── OFFICE: Operations + POs ─── -->
+<div class="g2" data-r="office">
+  <div class="card">
+    <div class="card-h" style="padding-bottom:8px">
+      <div style="display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px">
+        <button class="office-tab active" onclick="switchOfficeTab('priority',this)">🏃 Priority Clients</button>
+        <button class="office-tab" onclick="switchOfficeTab('crews',this)">🔧 Active Crews</button>
+      </div>
+      <a class="card-a" id="office-link">View All →</a>
+    </div>
+    <!-- Priority Clients Tab -->
+    <div id="office-priority" style="padding:0">
+      <!-- URGENT -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🔴 Urgent — Ready to Schedule</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#EF4444;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Chen, David — Cabinets</div>
+          <div style="font-size:11px;color:var(--text-sec)">$12,400 · Accepted 5 days ago · No start date</div>
+        </div>
+        <button onclick="toast('Schedule logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Schedule</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#EF4444;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Martinez Family — Exterior</div>
+          <div style="font-size:11px;color:var(--text-sec)">$28,000 · Accepted 2 days ago · No start date</div>
+        </div>
+        <button onclick="toast('Schedule logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Schedule</button>
+      </div>
+      <!-- COMPLETING THIS WEEK -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟡 Completing This Week</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Williams — Cabinets</div>
+          <div style="font-size:11px;color:var(--text-sec)">Finishing TODAY · Invoice pending</div>
+        </div>
+        <button onclick="toast('Send Invoice logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Send Invoice</button>
+      </div>
+      <!-- NEEDS ATTENTION -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟠 Needs Attention</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F97316;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Chen, David — Onboarding</div>
+          <div style="font-size:11px;color:var(--text-sec)">No color selections (10 days stalled)</div>
+        </div>
+        <button onclick="toast('Follow Up logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Follow Up</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F97316;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Park — Pre-project Checklist</div>
+          <div style="font-size:11px;color:var(--text-sec)">Checklist incomplete</div>
+        </div>
+        <button onclick="toast('Follow Up logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Follow Up</button>
+      </div>
+      <!-- UNPAID 7+ DAYS -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🔵 Unpaid 7+ Days</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bg)">
+        <span style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0"></span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">Thompson</div>
+          <div style="font-size:11px;color:var(--text-sec)">$8,200 invoice · 12 days overdue</div>
+        </div>
+        <button onclick="toast('Call logged')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;white-space:nowrap">Call</button>
+      </div>
+
+    </div>
+    <!-- Active Crews Tab -->
+    <div id="office-crews" style="padding:0;display:none">
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5</div><div class="crew-addr">1234 Oak Rd, Nashville · Sup: Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Just Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3</div><div class="crew-addr">567 Maple Dr, Brentwood</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie — 2</div><span class="badge b-b">Finishing Today 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4</div><div class="crew-addr">321 Pine Ave, Nashville · Sup: Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain Delay ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2</div><div class="crew-addr">890 Cedar Ln, Spring Hill</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Park Interior — Day 2 of 3</div><div class="crew-addr">555 Maple Dr, Spring Hill</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="card-t">📦 PO Activity</div><a class="card-a">All POs →</a></div>
+    <div class="card-b" style="padding:0">
+      <div class="lr"><div class="dot dot-g"></div><div class="lr-p">PO-1047-01 — Johnson Ext<div class="lr-s">Hoover Cool Springs</div></div><div class="lr-m">$485<br><span class="badge b-g">Filled</span></div></div>
+      <div class="lr"><div class="dot dot-y"></div><div class="lr-p">PO-1049-01 — Smith Int<div class="lr-s">Hoover Green Hills</div></div><div class="lr-m">$628<br><span class="badge b-y">Pending</span></div></div>
+      <div class="lr"><div class="dot dot-g"></div><div class="lr-p">PO-1050-01 — Williams Cab<div class="lr-s">Hoover Murfreesboro</div></div><div class="lr-m">$415<br><span class="badge b-g">Picked Up</span></div></div>
+      <div class="lr"><div class="dot dot-r"></div><div class="lr-p">⚠️ Rogue PO — Carlos B<div class="lr-s">Hoover Mt. Juliet · No matching PO</div></div><div class="lr-m">$267<br><span class="badge b-r">Unmatched</span></div></div>
+      <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:12px;font-weight:600;display:flex;justify-content:space-between"><span>Week Total</span><span>$2,340 · 6 POs</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SALES: Commission + Goals ─── -->
+
+<!-- ─── FIELD: Active Jobs (detailed) ─── -->
+<div class="gf" data-r="field">
+  <div class="card">
+    <div class="card-h" style="padding-bottom:8px">
+      <div style="display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px">
+        <button class="field-tab active" onclick="switchFieldJobs('mine',this)">🔧 My Jobs</button>
+        <button class="field-tab" onclick="switchFieldJobs('all',this)">📋 All Jobs</button>
+      </div>
+      <span id="field-jobs-sub" style="font-size:12px;color:var(--text-sec)">5 crews · Anthony's jobs</span>
+    </div>
+    <!-- MY JOBS tab -->
+    <div id="field-my-jobs" class="card-b" style="padding:0">
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men <span class="tag">✋ CLAIMED</span></div><span class="badge b-g">On Schedule ✅</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5</div><div class="crew-addr">1234 Oak Rd, Nashville</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div><div class="crew-meta"><span class="badge b-g">📸 8 photos</span><span class="badge b-g">✅ Daily update</span><span>Coop: <strong>9.1</strong></span></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men <span class="tag">✋ CLAIMED</span></div><span class="badge b-g">Just Started 🟢</span></div><div class="crew-job">Smith Interior — Day 1 of 3</div><div class="crew-addr">567 Maple Dr, Brentwood</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div><div class="crew-meta"><span class="badge b-g">📸 4 before</span><span class="badge b-g">✅ Pre-existing docs</span><span>Coop: <strong>8.7</strong></span></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain Delay ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2 (+1d rain)</div><div class="crew-addr">890 Cedar Ln, Spring Hill</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div><div class="crew-meta"><span class="badge b-y">⏸ Standing down</span><span>Coop: <strong>7.5</strong></span></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men <span class="tag">✋ CLAIMED</span></div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Park Interior — Day 2 of 3</div><div class="crew-addr">555 Maple Dr, Spring Hill</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div><div class="crew-meta"><span class="badge b-g">📸 6 photos</span><span class="badge b-y">⏳ Update pending</span><span>Coop: <strong>8.2</strong></span></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie — 2 <span class="tag">✋ CLAIMED</span></div><span class="badge b-b">Finishing Today 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4</div><div class="crew-addr">321 Pine Ave, Nashville</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div><div class="crew-meta"><span class="badge b-g">📸 5 photos</span><span class="badge b-g">✅ After photos started</span><span>Coop: <strong>9.4</strong></span></div></div>
+    </div>
+    <!-- ALL JOBS tab -->
+    <div id="field-all-jobs" class="card-b" style="padding:0;display:none">
+      <!-- Anthony's jobs (same as My Jobs) -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">Anthony Lembo</div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule ✅</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5</div><div class="crew-addr">1234 Oak Rd, Nashville · <strong>Anthony</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Just Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3</div><div class="crew-addr">567 Maple Dr, Brentwood · <strong>Anthony</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain Delay ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2</div><div class="crew-addr">890 Cedar Ln, Spring Hill · <strong>Anthony</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div></div>
+      <!-- Matthew's jobs -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">Matthew Flores</div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Park Interior — Day 2 of 3</div><div class="crew-addr">555 Maple Dr, Spring Hill · <strong>Matthew</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie — 2</div><span class="badge b-b">Finishing Today 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4</div><div class="crew-addr">321 Pine Ave, Nashville · <strong>Matthew</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SCHEDULING QUEUE — Admin + Office only, standalone card -->
+<div class="card" data-r="admin,office" style="margin-bottom:22px">
+  <div class="card-h">
+    <div class="card-t">📋 Scheduling Queue</div>
+    <a onclick="toast('Opening full scheduling page…')" class="card-a">Full Scheduler →</a>
+  </div>
+  <div style="padding:0">
+    <!-- Critical -->
+    <div style="padding:3px 16px;background:#FEF2F2;font-size:10px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔴 Must Schedule Today — 1 day left</div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:#EF4444;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Martinez Family</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$28,000</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Exterior · Est. 6 days · Drop-dead: Mon 2/24</div>
+      </div>
+    </div>
+    <!-- Urgent -->
+    <div style="padding:3px 16px;background:#FFF7ED;font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">🟠 Schedule This Week</div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:#F97316;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Chen, David</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$12,400</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Cabinets · Est. 3 days · Drop-dead: Wed 2/26</div>
+      </div>
+    </div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:#F97316;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Thompson Residence</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$19,500</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Interior · Est. 4 days · Drop-dead: Thu 2/27</div>
+      </div>
+    </div>
+    <!-- On Track -->
+    <div style="padding:3px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟢 On Track — Next Up</div>
+    <div style="padding:10px 16px;display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:var(--green);flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Rivera, Carmen</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$9,800</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Interior · Est. 2 days · Drop-dead: Mar 3 · 8 days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 3 — Admin: Field + Pipeline / Office: Onboarding + Comms / Field: Budget + Scores -->
+<!-- ════════════════════════════════════════════ -->
+
+<!-- ADMIN: Crews + Pipeline -->
+<div class="g2" data-r="admin">
+  <div class="card">
+    <div class="card-h"><div class="card-t">🔧 Active Crews</div><a class="card-a">All Jobs →</a></div>
+    <div class="card-b" style="padding:0">
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5 · $30K</div><div class="crew-gp">Est. GP: $18,000 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">1234 Oak Rd, Nashville · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3 · $18K</div><div class="crew-gp">Est. GP: $10,800 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">567 Maple Dr, Brentwood · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie</div><span class="badge b-b">Finishing 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4 · $12.4K</div><div class="crew-gp">Est. GP: $7,440 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">321 Pine Ave · Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2 · $8K</div><div class="crew-gp">Est. GP: $4,800 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">890 Cedar Ln · Anthony</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men</div><span class="badge b-g">On Sched</span></div><div class="crew-job">Park Interior — Day 2 of 3 · $6.5K</div><div class="crew-gp">Est. GP: $3,900 <span style="color:var(--text-sec);font-size:10px">(60% · invoiced on completion)</span></div><div class="crew-addr">555 Maple Dr · Matthew</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div></div>
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid var(--red)">
+    <div class="card-h">
+      <div class="card-t">⚠️ Jobs Trending Over Budget</div>
+      <a class="card-a" style="color:var(--red)">Review All →</a>
+    </div>
+    <div class="card-b" style="padding:0">
+      <!-- Over-budget job 1 -->
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Johnson Exterior</div>
+            <div style="font-size:11px;color:var(--text-sec)">Carlos · $30K bid · Day 3 of 5</div>
+          </div>
+          <span class="badge b-r">+18% over</span>
+        </div>
+        <!-- What's over — specific flags -->
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FEF2F2;border-radius:6px;padding:5px 8px">
+            <span style="color:#7F1D1D">⏱ Days on site</span>
+            <span><strong style="color:var(--red)">3 of 5 used · pace = 6.5 days</strong> (bid: 5)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FEF2F2;border-radius:6px;padding:5px 8px">
+            <span style="color:#7F1D1D">💰 Labor cost</span>
+            <span><strong style="color:var(--red)">$21,200 paced</strong> vs $18,000 bid</span>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text-sec)">Extra prep on north-side rot discovered day 2.</div>
+          <button onclick="toast('Opening Johnson Exterior work order…')" style="font-size:11px;padding:5px 12px;border-radius:6px;border:none;background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap;margin-left:10px">Review Job →</button>
+        </div>
+      </div>
+      <!-- Over-budget job 2 -->
+      <div style="padding:12px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Garcia Deck</div>
+            <div style="font-size:11px;color:var(--text-sec)">Team B · $8K bid · Day 2 (rain delay)</div>
+          </div>
+          <span class="badge b-y">+8% risk</span>
+        </div>
+        <!-- What's at risk -->
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FFFBEB;border-radius:6px;padding:5px 8px">
+            <span style="color:#78350F">⏱ Days on site</span>
+            <span><strong style="color:#D97706">Rain delay +1d</strong> → 3 days total (bid: 2)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;background:#FFFBEB;border-radius:6px;padding:5px 8px">
+            <span style="color:#78350F">💰 Cost pace</span>
+            <span><strong style="color:#D97706">$8,640 projected</strong> vs $8,000 bid (+8%)</span>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text-sec)">Weather clears tomorrow — back on track if so.</div>
+          <button onclick="toast('Opening Garcia Deck work order…')" style="font-size:11px;padding:5px 12px;border-radius:6px;border:none;background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap;margin-left:10px">Review Job →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="card-t">📋 Pipeline</div><span style="font-size:12px;color:var(--text-sec)">4 active · $26,430</span></div>
+    <div class="card-b" style="padding:0">
+      <div class="lr"><div class="dot dot-g"></div><div style="flex:1"><div class="lr-p">Johnson Residence<div class="lr-s">Exterior · 5d · Larry · 47% GP</div></div></div><div class="lr-m">$10,330<br><span class="badge b-g">Follow-up sent</span></div></div>
+      <div class="lr"><div class="dot dot-g"></div><div style="flex:1"><div class="lr-p">Smith Kitchen<div class="lr-s">Cabinets · 3d · Larry · 52% GP</div></div></div><div class="lr-m">$5,200<br><span class="badge b-b">New</span></div></div>
+      <div class="lr"><div class="dot dot-y"></div><div style="flex:1"><div class="lr-p">Garcia Fence &amp; Deck<div class="lr-s">Deck+Fence · 7d · Larry · 44% GP</div></div></div><div class="lr-m">$3,800<br><span class="badge b-y">Call sched</span></div></div>
+      <div class="lr"><div class="dot dot-r"></div><div style="flex:1"><div class="lr-p">Williams Interior<div class="lr-s">Interior · 14d · Larry · 38% GP 🔴</div></div></div><div class="lr-m">$7,100<br><span class="badge b-r">Stale</span></div></div>
+      <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:11px;display:flex;gap:14px">
+        <span>🟢 Hot (0-6d): <b>2</b></span><span>🟡 Aging (7-14d): <b>1</b></span><span>🔴 Stale (15d+): <b>1</b></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFICE: Onboarding + Communications -->
+<div class="g2" data-r="office">
+  <div class="card">
+    <div class="card-h"><div class="card-t">📝 Onboarding Tracker</div><span style="font-size:12px;color:var(--text-sec)">3 incomplete</span></div>
+    <div class="card-b" style="padding:0">
+      <!-- Johnson: all complete -->
+      <div class="lr"><div style="flex:1"><div class="lr-p">Johnson Residence<div class="lr-s">Accepted Feb 14</div></div></div><div class="lr-m" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"><span class="badge b-g">✅ Checklist</span> <span class="badge b-g">✅ Colors</span> <span class="badge b-g">✅ Verified</span></div></div>
+      <!-- Chen: colors submitted but not verified yet (10 days) -->
+      <div class="lr" style="background:#FFFBEB"><div style="flex:1"><div class="lr-p">Chen Residence<div class="lr-s">Accepted Feb 18 · <strong style="color:var(--yellow)">10 days — colors not verified</strong></div></div></div><div class="lr-m" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"><span class="badge b-g">✅ Checklist</span> <span class="badge b-y">⏳ Colors</span> <span class="badge b-x" style="background:#F3F4F6;color:#374151">— Verify</span></div></div>
+      <!-- Park: checklist + colors both pending -->
+      <div class="lr"><div style="flex:1"><div class="lr-p">Park Kitchen<div class="lr-s">Accepted Feb 20</div></div></div><div class="lr-m" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"><span class="badge b-y">⏳ Checklist</span> <span class="badge b-y">⏳ Colors</span> <span class="badge b-x" style="background:#F3F4F6;color:#374151">— Verify</span></div></div>
+      <!-- Martinez: colors submitted, flag from system — needs staff review -->
+      <div class="lr" style="background:#FEF2F2"><div style="flex:1"><div class="lr-p">Martinez Interior<div class="lr-s">Accepted Feb 25 · <strong style="color:#DC2626">⚠️ Color flag — review needed</strong></div></div></div><div class="lr-m" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end"><span class="badge b-g">✅ Checklist</span> <span class="badge b-g">✅ Colors</span> <span class="badge b-r">⚠️ Verify</span></div></div>
+      <!-- Legend -->
+      <div style="padding:8px 16px;font-size:10px;color:var(--text-sec);border-top:1px solid var(--bg)">Verify = staff confirms color selections match scope · flags base/coat issues · approves or creates change order</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="card-t">📧 Communications</div><a class="card-a">View All →</a></div>
+    <div class="card-b" style="padding:0">
+      <div class="lr"><div class="dot dot-g"></div><div style="flex:1"><div class="lr-p">Color form received — Chen<div class="lr-s">BM White Dove + Simply White</div></div></div><div class="lr-m">2h ago</div></div>
+      <div class="lr"><div class="dot dot-y"></div><div style="flex:1"><div class="lr-p">Onboarding reminder — Chen<div class="lr-s">Pre-project checklist still pending</div></div></div><div class="lr-m">Yesterday</div></div>
+      <div class="lr"><div class="dot dot-g"></div><div style="flex:1"><div class="lr-p">Follow-up email — Johnson<div class="lr-s">DA: "Thank you for your time" auto-sent</div></div></div><div class="lr-m">Feb 24</div></div>
+      <div class="lr"><div class="dot dot-x"></div><div style="flex:1"><div class="lr-p">Survey sent — Park (completed)<div class="lr-s">Warranty registration pending survey</div></div></div><div class="lr-m">Feb 26</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SALES: Pipeline + KPIs -->
+
+<!-- FIELD: Site Check-Ins -->
+<div class="gf" data-r="field">
+  <div class="card">
+    <div class="card-h"><div class="card-t">📋 Daily Job Snapshots</div><span style="font-size:12px;color:var(--text-sec)">3 of 5 jobs logged</span></div>
+    <div class="card-b" style="padding:0">
+
+      <!-- Logged jobs — collapsed one-liners, tap to expand -->
+      <div class="snap-row" onclick="toggleSnap(this)" style="padding:10px 16px;border-bottom:1px solid var(--bg);cursor:pointer;background:#F0FDF4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="dot dot-g"></span>
+            <div>
+              <div style="font-size:13px;font-weight:600">Johnson Exterior — Carlos</div>
+              <div style="font-size:11px;color:var(--text-sec)">✅ 7:45 AM · 3 men · 📸 3 photos</div>
+            </div>
+          </div>
+          <span style="font-size:14px;color:var(--text-sec);transition:transform .2s" class="snap-chevron">›</span>
+        </div>
+        <div class="snap-detail" style="display:none;margin-top:10px;font-size:12px;color:var(--text-sec)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px"><div>Men: <strong>3 verified</strong></div><div>Arrived: <strong>7:30 AM</strong></div></div>
+          <div><strong style="color:var(--text)">Notes:</strong> Crew making good progress on west wall. Caulking looks solid. Remind Carlos to tape windows on north side — overspray risk.</div>
+        </div>
+      </div>
+
+      <div class="snap-row" onclick="toggleSnap(this)" style="padding:10px 16px;border-bottom:1px solid var(--bg);cursor:pointer;background:#F0FDF4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="dot dot-g"></span>
+            <div>
+              <div style="font-size:13px;font-weight:600">Smith Interior — Javier</div>
+              <div style="font-size:11px;color:var(--text-sec)">✅ 8:25 AM · 2 men · 📸 5 photos</div>
+            </div>
+          </div>
+          <span style="font-size:14px;color:var(--text-sec);transition:transform .2s" class="snap-chevron">›</span>
+        </div>
+        <div class="snap-detail" style="display:none;margin-top:10px;font-size:12px;color:var(--text-sec)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px"><div>Men: <strong>2 verified</strong></div><div>Arrived: <strong>8:00 AM</strong></div></div>
+          <div><strong style="color:var(--text)">Notes:</strong> Day 1 — pre-existing damage documented. Javier started prep in master bedroom. Homeowner note: keep garage door closed (dog).</div>
+        </div>
+      </div>
+
+      <div class="snap-row" onclick="toggleSnap(this)" style="padding:10px 16px;border-bottom:1px solid var(--bg);cursor:pointer;background:#F0FDF4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="dot dot-b"></span>
+            <div>
+              <div style="font-size:13px;font-weight:600">Williams Cabinets — Mike &amp; Julie</div>
+              <div style="font-size:11px;color:var(--text-sec)">✅ 9:10 AM · 2 men · 📸 4 photos · 🏁 Final walk pending</div>
+            </div>
+          </div>
+          <span style="font-size:14px;color:var(--text-sec);transition:transform .2s" class="snap-chevron">›</span>
+        </div>
+        <div class="snap-detail" style="display:none;margin-top:10px;font-size:12px;color:var(--text-sec)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px"><div>Men: <strong>2 verified</strong></div><div>Arrived: <strong>8:45 AM</strong></div></div>
+          <div><strong style="color:var(--text)">Notes:</strong> Finishing day — final coat on uppers great. Missed spot inside pantry door flagged for touch-up before photos.</div>
+        </div>
+      </div>
+
+      <div class="crew" style="background:var(--yellow-bg)">
+        <div class="crew-hd">
+          <div class="crew-nm"><span class="dot dot-y"></span> Garcia Deck — Team B</div>
+          <span class="badge b-y">☔ Rain — Standby</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-sec);margin-top:4px">Standing down due to rain. Rescheduled Mon 3/2.</div>
+      </div>
+
+      <div class="crew">
+        <div class="crew-hd">
+          <div class="crew-nm"><span class="dot dot-x"></span> Park Interior — Roberto</div>
+          <span class="badge b-y">⏳ Not Yet Logged</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-sec);margin-top:4px">PM snapshot pending · 555 Maple Dr, Spring Hill</div>
+        <div style="margin-top:8px"><button class="qa-btn" style="font-size:12px;padding:6px 12px">📋 Log Snapshot</button></div>
+      </div>
+
+    </div>
+
+    <!-- Weekly visit summary -->
+    <div style="padding:14px 18px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:8px">THIS WEEK — JOB SNAPSHOTS</div>
+      <div class="sr"><span class="sr-l">Monday</span><span class="sr-v">4 of 4 ✅</span></div>
+      <div class="sr"><span class="sr-l">Tuesday</span><span class="sr-v">3 of 5 (2 PM skipped)</span></div>
+      <div class="sr"><span class="sr-l">Wednesday</span><span class="sr-v">5 of 5 ✅</span></div>
+      <div class="sr"><span class="sr-l">Thursday</span><span class="sr-v">4 of 5 (1 rain)</span></div>
+      <div class="sr"><span class="sr-l">Today (Fri)</span><span class="sr-v">3 of 5 so far…</span></div>
+      <div style="margin-top:8px;font-size:12px;display:flex;justify-content:space-between">
+        <span style="color:var(--text-sec)">Week total: <strong style="color:var(--text)">19 of 24 snapshots (79%)</strong></span>
+        <span style="color:var(--text-sec)"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIELD: Job Closeout Reviews -->
+<div class="gf" data-r="field">
+  <div class="card">
+    <div class="card-h"><div class="card-t">🏁 Job Closeout Reviews</div><span style="font-size:12px;color:var(--text-sec)">1 pending · 2 completed</span></div>
+    <div class="card-b" style="padding:0">
+
+      <!-- Pending — compact tag row -->
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:700">Williams Cabinets — Mike &amp; Julie</div>
+          <div style="font-size:11px;color:var(--text-sec)">321 Pine Ave, Nashville · Finishing today</div>
+        </div>
+        <button onclick="openCloseout()" style="font-size:11px;font-weight:600;padding:6px 12px;border-radius:8px;background:#FEF9C3;border:1px solid #F59E0B;color:#92400E;cursor:pointer;white-space:nowrap">⏳ Do Closeout</button>
+      </div>
+
+      <!-- Completed — one-liners -->
+      <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:600">Garcia Exterior — Carlos</div>
+          <div style="font-size:11px;color:var(--text-sec)">Spot On · ★★★★☆ · 😃 · Review: Yes</div>
+        </div>
+        <button onclick="toast('Viewing Garcia closeout summary…')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">View →</button>
+      </div>
+
+      <div style="padding:10px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:600">Park Deck — Team B</div>
+          <div style="font-size:11px;color:var(--text-sec)">Minor Gaps · ★★★☆☆ · 🙂 · Review: No</div>
+        </div>
+        <button onclick="toast('Viewing Park closeout summary…')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">View →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CLOSEOUT BOTTOM SHEET -->
+<div id="closeout-sheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:flex-end">
+  <div style="background:#fff;width:100%;max-height:90vh;border-radius:20px 20px 0 0;overflow-y:auto">
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1">
+      <div>
+        <div style="font-size:14px;font-weight:700">🏁 Williams Cabinets Closeout</div>
+        <div style="font-size:11px;color:var(--text-sec)">Mike &amp; Julie · 321 Pine Ave</div>
+      </div>
+      <button onclick="closeCloseout()" style="border:none;background:none;font-size:20px;cursor:pointer;color:var(--text-sec)">✕</button>
+    </div>
+    <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+
+      <!-- Estimate Quality -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">📋 Estimate Quality</div>
+        <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">How well did the estimate match?</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn co-sel" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Spot On</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Minor Gaps</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Underestimated</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Overestimated</button>
+        </div>
+        <textarea placeholder="Optional: what was off?" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;min-height:36px;box-sizing:border-box"></textarea>
+      </div>
+
+      <!-- Crew Quality -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">⭐ Crew Quality <span style="font-size:10px;color:var(--text-muted);font-weight:400">Feeds internal score</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:12px;align-items:center">
+          <span>Prep thoroughness</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span></div>
+          <span>Application quality</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span></div>
+          <span>Cleanup</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span></div>
+          <span>Professionalism</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span></div>
+          <span>Material usage</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span></div>
+          <span>Schedule adherence</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span></div>
+        </div>
+        <textarea placeholder="Optional crew notes" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;min-height:36px;box-sizing:border-box"></textarea>
+      </div>
+
+      <!-- Customer Impression -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">😊 Customer Impression</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">😐 Neutral</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">🙂 Satisfied</button>
+          <button class="qa-btn co-sel" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">😃 Very Happy</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">🤩 Thrilled</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px;border-color:var(--red)">😟 Concerned</button>
+        </div>
+        <textarea placeholder="Optional customer comments" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;min-height:36px;box-sizing:border-box"></textarea>
+      </div>
+
+      <!-- Review request -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">⭐ Send Google Review Request?</div>
+        <div style="display:flex;gap:8px">
+          <button class="qa-btn co-sel" onclick="selectCloseout(this,'rv')" style="font-size:12px;padding:6px 16px">👍 Yes</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'rv')" style="font-size:12px;padding:6px 16px">👎 Not this one</button>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px">
+        <button onclick="submitCloseout()" style="flex:1;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">✅ Submit Closeout</button>
+        <a onclick="closeCloseout()" style="font-size:11px;color:var(--text-muted);cursor:pointer;margin-left:14px;white-space:nowrap">Skip</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FIELD: Budget + Cooperation -->
+<div class="g2" data-r="field">
+  <div class="card">
+    <div class="card-h"><div class="card-t">📦 Perishable Budget</div><a onclick="toast('Opening perishable budget details…')" class="card-a">Details →</a></div>
+    <div class="card-b">
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-sec)">This Week</span><span><strong style="color:var(--green)">$18</strong> of $25 left · Resets Mon</span></div>
+        <div class="prog"><div class="prog-fill green-f" style="width:72%"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-sec)">This Month</span><span><strong>$89</strong> of $200 used</span></div>
+        <div class="prog"><div class="prog-fill gold-f" style="width:44.5%"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="card-t">⭐ Crew Cooperation Scores</div><span style="font-size:11px;color:var(--text-muted)">3-input: updates · photos · finish</span></div>
+    <div class="card-b">
+      <div class="sr"><span class="sr-l">Mike &amp; Julie</span><span class="sr-v">9.4 / 10</span></div><div class="prog"><div class="prog-fill green-f" style="width:94%"></div></div>
+      <div class="sr"><span class="sr-l">Carlos</span><span class="sr-v">9.1 / 10</span></div><div class="prog"><div class="prog-fill green-f" style="width:91%"></div></div>
+      <div class="sr"><span class="sr-l">Javier</span><span class="sr-v">8.7 / 10</span></div><div class="prog"><div class="prog-fill green-f" style="width:87%"></div></div>
+      <div class="sr"><span class="sr-l">Roberto</span><span class="sr-v">8.2 / 10</span></div><div class="prog"><div class="prog-fill gold-f" style="width:82%"></div></div>
+      <div class="sr"><span class="sr-l">Team B</span><span class="sr-v">7.5 / 10</span></div><div class="prog"><div class="prog-fill gold-f" style="width:75%"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SALES: Follow-Ups & Customer Activity -->
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SCHEDULE + ALERTS (shared row, all roles) -->
+<!-- ════════════════════════════════════════════ -->
+<div class="g2" data-r="admin,office,field">
+  <!-- Schedule -->
+  <div class="card" data-r="admin,office">
+    <div class="card-h">
+      <div class="cal-tabs">
+        <button class="cal-tab active" onclick="switchCal('production',this)">🔧 Production</button>
+      </div>
+      <a class="card-a" id="cal-link">Production Schedule →</a>
+    </div>
+
+    <!-- Production Calendar -->
+    <div id="cal-production" class="cal-panel" style="padding:0">
+      <div class="sch">
+        <div class="sch-time">7:00 AM</div>
+        <div class="sch-body"><div class="sch-title">Carlos crew → Johnson Exterior</div><div class="sch-sub">Start day 3 · 1234 Oak Rd, Nashville</div></div>
+        <span class="badge b-g">Active</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">7:30 AM</div>
+        <div class="sch-body"><div class="sch-title">Javier crew → Smith Interior</div><div class="sch-sub">Start day 1 · 567 Maple Dr, Brentwood</div></div>
+        <span class="badge b-g">Active</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">4:00 PM</div>
+        <div class="sch-body"><div class="sch-title">Williams Cabinets — Final walkthrough</div><div class="sch-sub">Mike &amp; Julie finishing · 321 Pine Ave</div></div>
+        <span class="badge b-b">Completing 🏁</span>
+      </div>
+    </div>
+
+    <!-- (schedule queue moved to standalone card below) -->
+
+      <!-- CRITICAL: 1 day or less to schedule -->
+      <div style="padding:4px 16px;background:#FEF2F2;font-size:10px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔴 Must Schedule Today</div>
+
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:12px">
+        <div style="width:4px;align-self:stretch;border-radius:2px;background:#EF4444;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:13px;font-weight:700">Martinez Family</div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy)">$28,000</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-sec);margin-top:1px">Exterior · Est. 6 days · Accepted 2 days ago</div>
+          <div style="font-size:11px;font-weight:600;color:#DC2626;margin-top:4px">⚠️ 1 day left to schedule — drop-dead: Mon 2/24</div>
+        </div>
+        <button onclick="toast('Opening scheduler for Martinez…')" style="font-size:11px;padding:6px 12px;border-radius:8px;background:var(--navy);color:#fff;border:none;cursor:pointer;flex-shrink:0">Schedule</button>
+      </div>
+
+      <!-- URGENT: 2-3 days -->
+      <div style="padding:4px 16px;background:#FFF7ED;font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">🟠 Schedule This Week</div>
+
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:12px">
+        <div style="width:4px;align-self:stretch;border-radius:2px;background:#F97316;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:13px;font-weight:700">Chen, David</div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy)">$12,400</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-sec);margin-top:1px">Cabinets · Est. 3 days · Accepted 5 days ago</div>
+          <div style="font-size:11px;font-weight:600;color:#EA580C;margin-top:4px">3 days left to schedule — drop-dead: Wed 2/26</div>
+        </div>
+        <button onclick="toast('Opening scheduler for Chen…')" style="font-size:11px;padding:6px 12px;border-radius:8px;background:var(--navy);color:#fff;border:none;cursor:pointer;flex-shrink:0">Schedule</button>
+      </div>
+
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:12px">
+        <div style="width:4px;align-self:stretch;border-radius:2px;background:#F97316;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:13px;font-weight:700">Thompson Residence</div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy)">$19,500</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-sec);margin-top:1px">Interior · Est. 4 days · Accepted 1 day ago</div>
+          <div style="font-size:11px;font-weight:600;color:#EA580C;margin-top:4px">4 days left to schedule — drop-dead: Thu 2/27</div>
+        </div>
+        <button onclick="toast('Opening scheduler for Thompson…')" style="font-size:11px;padding:6px 12px;border-radius:8px;background:var(--navy);color:#fff;border:none;cursor:pointer;flex-shrink:0">Schedule</button>
+      </div>
+
+      <!-- ON TRACK: 5+ days -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟢 On Track</div>
+
+      <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:12px">
+        <div style="width:4px;align-self:stretch;border-radius:2px;background:var(--green);flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:13px;font-weight:700">Rivera, Carmen</div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy)">$9,800</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-sec);margin-top:1px">Interior · Est. 2 days · Accepted today</div>
+          <div style="font-size:11px;color:var(--green);font-weight:600;margin-top:4px">8 days to schedule — drop-dead: Mar 3</div>
+        </div>
+        <button onclick="toast('Opening scheduler for Rivera…')" style="font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;flex-shrink:0">Schedule</button>
+      </div>
+
+      <div style="padding:10px 16px;text-align:center">
+        <div class="sch-body"><div class="sch-title">Estimate — Martinez Exterior</div><div class="sch-sub">Larry Morrison · 892 Hillwood Dr, Nashville</div></div>
+        <span class="badge b-p">Estimate</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">11:00 AM</div>
+        <div class="sch-body"><div class="sch-title">Follow-up Call — Thompson</div><div class="sch-sub">Proposal sent 3 days ago · $28K interior</div></div>
+        <span class="badge b-y">Follow-up</span>
+      </div>
+      <div class="sch">
+        <div class="sch-time">2:00 PM</div>
+        <div class="sch-body"><div class="sch-title">Estimate — Kim Deck + Exterior</div><div class="sch-sub">Bill Nishanian · 445 Fieldstone Way, Franklin</div></div>
+        <span class="badge b-p">Estimate</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" data-r="field" style="display:none">
+    <div class="card-h"><div class="card-t">📅 Upcoming Jobs</div><span style="font-size:11px;color:var(--text-sec)">1 of 3 approved</span></div>
+    <div class="card-b" style="padding:0">
+
+      <!-- Job 1: Approved -->
+      <div style="padding:14px 18px;border-bottom:1px solid var(--bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Davis Exterior — Roberto (3 men)</div>
+            <div style="font-size:11px;color:var(--text-muted)">321 Pine Ave, Brentwood · Mon 3/2</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge b-g">✅ Approved</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec);margin-bottom:6px;flex-wrap:wrap">
+          <span>📋 Exterior paint — siding, trim, eaves, fascia</span>
+          <span>⏱ 4 day estimate</span>
+          <span>🎨 3 colors (SW Cityscape, Alabaster, Iron Ore)</span>
+        </div>
+        <div style="font-size:11px;color:var(--green);margin-bottom:8px">Reviewed work order Feb 26 — scope looks clear, standard exterior job</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" onclick="toast('Change Crew request sent to office for Davis Exterior')" style="font-size:11px;padding:5px 10px">🔄 Change Crew</button>
+        </div>
+      </div>
+
+      <!-- Job 2: Needs review -->
+      <div style="padding:14px 18px;border-bottom:1px solid var(--bg);background:var(--yellow-bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Thompson Interior — Javier (2 men)</div>
+            <div style="font-size:11px;color:var(--text-muted)">410 Birch Rd, Nashville · Tue 3/3</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge b-y">⏳ Needs Review</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec);margin-bottom:6px;flex-wrap:wrap">
+          <span>📋 Full interior — 6 rooms + hallway + 2 bathrooms</span>
+          <span>⏱ 2 day estimate</span>
+          <span>🎨 4 colors (multiple rooms)</span>
+        </div>
+        <div style="font-size:11px;color:var(--yellow);margin-bottom:8px">⚠️ 2 days seems tight for 6 rooms + 2 baths — review scope</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">✅ Approve</button>
+          <button class="qa-btn" onclick="toast('Change Crew request sent to office for Thompson Interior')" style="font-size:11px;padding:5px 10px">🔄 Change Crew</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📍 Schedule Site Visit</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">💬 Flag for Office</button>
+        </div>
+      </div>
+
+      <!-- Job 3: Needs review + site visit requested -->
+      <div style="padding:14px 18px;background:var(--blue-bg)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:700">Henderson Whole House — TBD crew</div>
+            <div style="font-size:11px;color:var(--text-muted)">220 Riverside Dr, Franklin · Wed 3/4</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge b-b">📍 Site Visit Wed</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec);margin-bottom:6px;flex-wrap:wrap">
+          <span>📋 Interior + exterior + deck stain + carpentry repairs</span>
+          <span>⏱ 8 day estimate</span>
+          <span>🎨 6 colors</span>
+          <span>🔧 Carpentry: rot repair + screen replacement</span>
+        </div>
+        <div style="font-size:11px;color:var(--blue);margin-bottom:8px">Pre-job walk-through scheduled Wed 9:00 AM — large scope, need to verify carpentry extent before crew assignment</div>
+        <!-- AI crew suggestion (future: auto-populated based on skill history) -->
+        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:11px">
+          <div style="font-weight:600;color:var(--blue);margin-bottom:3px">🤖 Suggested crew: Carlos (3 men)</div>
+          <div style="color:var(--text-sec)">Best carpentry + exterior match based on job history · Next free: Thu 3/5</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" onclick="toast('Carlos suggested for Henderson — sent to office for confirmation')" style="font-size:11px;padding:5px 10px">👍 Accept Suggestion</button>
+          <button class="qa-btn" onclick="toast('Requesting different crew for Henderson')" style="font-size:11px;padding:5px 10px">🔄 Suggest Different</button>
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📸 Take Before Photos</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="card">
+    <div class="card-h"><div class="card-t">⚡ Action Items</div><span class="notif-badge" style="position:static" id="acount">4</span></div>
+    <div class="card-b" style="padding:0">
+      <div class="al" data-r="admin"><div class="al-i">💸</div><div class="al-t"><strong>Thompson overdue</strong> — $4,800 · 12 days · late fees $24/wk</div><div class="al-tm">Feb 16</div></div>
+      <div class="al" data-r="admin"><div class="al-i">🔴</div><div class="al-t"><strong>Williams Interior 38% GP</strong> — below 40% gate · $0 commission</div><div class="al-tm">Feb 14</div></div>
+      <div class="al" data-r="admin"><div class="al-i">☔</div><div class="al-t"><strong>Garcia Deck rain delay</strong> — pushed +1d · Mon 3/2</div><div class="al-tm">Today</div></div>
+      <div class="al" data-r="admin"><div class="al-i">🏁</div><div class="al-t"><strong>Williams Cabinets finishing</strong> — invoice ready · $12,400</div><div class="al-tm">Today</div></div>
+      <div class="al" data-r="admin"><div class="al-i">⭐</div><div class="al-t"><strong>New review</strong> — Park ★★★★★ · "Anthony was amazing"</div><div class="al-tm">Yesterday</div></div>
+      <div class="al" data-r="admin"><div class="al-i">⚠️</div><div class="al-t"><strong>Brentwood reviews</strong> — 14 days since last · below target</div><div class="al-tm">Alert</div></div>
+
+      <div class="al" data-r="office"><div class="al-i">📦</div><div class="al-t"><strong>PO-1049-01 pending</strong> — Smith Int materials · Hoover Green Hills</div><div class="al-tm">Today</div></div>
+      <div class="al" data-r="office"><div class="al-i">🔴</div><div class="al-t"><strong>Rogue PO</strong> — Carlos B · Hoover Mt. Juliet · $267 unmatched</div><div class="al-tm">Feb 17</div></div>
+      <div class="al" data-r="office"><div class="al-i">📝</div><div class="al-t"><strong>Onboarding stalled</strong> — Chen: no color selections after 10 days</div><div class="al-tm">Feb 18</div></div>
+      <div class="al" data-r="office"><div class="al-i">📞</div><div class="al-t"><strong>Larry missed follow-up</strong> — Thompson Deck · 15 days</div><div class="al-tm">Feb 13</div></div>
+      <div class="al" data-r="office"><div class="al-i">🏁</div><div class="al-t"><strong>Invoice prep</strong> — Williams Cabinets finishing today</div><div class="al-tm">Today</div></div>
+
+
+      <div class="al" data-r="field"><div class="al-i">☔</div><div class="al-t"><strong>Garcia Deck</strong> — rain delay · Team B standing down</div><div class="al-tm">Today</div></div>
+      <div class="al" data-r="field"><div class="al-i">⏳</div><div class="al-t"><strong>Roberto update pending</strong> — Park Interior · Day 2</div><div class="al-tm">Today</div></div>
+      <div class="al" data-r="field"><div class="al-i">🏁</div><div class="al-t"><strong>Williams Cabinets</strong> — after photos before crew leaves!</div><div class="al-tm">Today</div></div>
+      <div class="al" data-r="field"><div class="al-i">📸</div><div class="al-t"><strong>Walk-through Wed</strong> — 220 Riverside · take before photos</div><div class="al-tm">Wed 3/4</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- ADMIN-ONLY: GP Pipeline + Revenue Recognition -->
+<!-- ════════════════════════════════════════════ -->
+<div class="g2" data-r="admin">
+  <div class="card">
+    <div class="card-h"><div class="card-t">📈 GP Pipeline — Active Production</div></div>
+    <div class="card-b">
+      <div style="display:flex;gap:12px;margin-bottom:14px">
+        <div style="flex:1;background:var(--green-bg);border-radius:var(--radius-sm);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green)">$185K</div><div style="font-size:10px;color:var(--text-sec)">Contract Value</div></div>
+        <div style="flex:1;background:var(--blue-bg);border-radius:var(--radius-sm);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--blue)">$98K</div><div style="font-size:10px;color:var(--text-sec)">Expected GP</div></div>
+        <div style="flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700">18d</div><div style="font-size:10px;color:var(--text-sec)">Production Left</div></div>
+      </div>
+      <div class="sr"><span class="sr-l">Johnson Ext (5d left)</span><span class="sr-v">$30K · 48% GP</span></div>
+      <div class="sr"><span class="sr-l">Smith Int (3d left)</span><span class="sr-v">$18K · 52% GP</span></div>
+      <div class="sr"><span class="sr-l">Williams Cab (today)</span><span class="sr-v">$12.4K · 55% GP</span></div>
+      <div class="sr"><span class="sr-l">Garcia Deck (+1d rain)</span><span class="sr-v">$8K · 44% GP</span></div>
+      <div class="sr"><span class="sr-l">Park Int (1d left)</span><span class="sr-v">$6.5K · 47% GP</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="card-t">📊 Revenue Recognition — Feb</div></div>
+    <div class="card-b">
+      <div class="sr"><span class="sr-l">Anticipated Revenue</span><span class="sr-v">$89,200</span></div>
+      <div class="sr"><span class="sr-l">Locked (completed)</span><span class="sr-v" style="color:var(--green)">$61,800</span></div>
+      <div class="sr"><span class="sr-l">In Progress</span><span class="sr-v" style="color:var(--blue)">$27,400</span></div>
+      <div class="prog" style="height:10px;margin:10px 0"><div style="display:flex;height:100%;border-radius:4px;overflow:hidden"><div style="width:69.3%;background:var(--green)"></div><div style="width:30.7%;background:var(--blue)"></div></div></div>
+      <div style="display:flex;gap:14px;font-size:11px;color:var(--text-sec)"><span>🟢 Locked 69%</span><span>🔵 In Progress 31%</span></div>
+      <div style="margin-top:14px">
+        <div class="sr"><span class="sr-l">QB Sync</span><span class="sr-v" style="color:var(--green)">✅ Synced Mon 2/24</span></div>
+        <div class="sr"><span class="sr-l">Next Batch</span><span class="sr-v">Mon 3/2</span></div>
+        <div class="sr"><span class="sr-l">Cross-Over Jobs</span><span class="sr-v">2 (Johnson, Park)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- ADMIN: Reviews + Marketing -->
+<!-- ════════════════════════════════════════════ -->
+<div class="g2" data-r="admin">
+  <div class="card">
+    <div class="card-h"><div class="card-t">⭐ Reviews &amp; Reputation</div><a class="card-a">GBP Dashboard →</a></div>
+    <div class="card-b">
+      <div style="display:flex;gap:20px;margin-bottom:14px">
+        <div><div style="font-size:26px;font-weight:700">4.9</div><div class="stars">★★★★★</div><div style="font-size:11px;color:var(--text-muted)">Google · 487 reviews</div></div>
+        <div style="flex:1"><div class="sr"><span class="sr-l">Feb reviews</span><span class="sr-v">6 new</span></div><div class="sr"><span class="sr-l">Request → Review</span><span class="sr-v">34%</span></div><div class="sr"><span class="sr-l">Avg days to review</span><span class="sr-v">3.1</span></div></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:4px">BY TERRITORY</div>
+      <div class="sr"><span class="sr-l">Nashville</span><span class="sr-v">3 reviews · 5d since last ✅</span></div>
+      <div class="sr"><span class="sr-l">Brentwood</span><span class="sr-v" style="color:var(--red)">1 review · 14d since last ⚠️</span></div>
+      <div class="sr"><span class="sr-l">Spring Hill</span><span class="sr-v">2 reviews · 3d since last ✅</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="card-t">📣 Marketing ROI — Feb</div></div>
+    <div class="card-b">
+      <div style="display:flex;gap:12px;margin-bottom:14px">
+        <div style="flex:1;background:var(--green-bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:16px;font-weight:700;color:var(--green)">19:1</div><div style="font-size:10px;color:var(--text-sec)">Google ROI</div></div>
+        <div style="flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:16px;font-weight:700">$2,500</div><div style="font-size:10px;color:var(--text-sec)">Ad Spend</div></div>
+        <div style="flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:16px;font-weight:700">$48K</div><div style="font-size:10px;color:var(--text-sec)">Revenue</div></div>
+      </div>
+      <div class="bm"><span class="bm-l">Referral</span><div class="bm-bar"><div class="bm-fill" style="width:45%;background:var(--green)"></div></div><span class="bm-a">$34K · 62%</span></div>
+      <div class="bm"><span class="bm-l">Google</span><div class="bm-bar"><div class="bm-fill" style="width:30%;background:var(--blue)"></div></div><span class="bm-a">$22K · 28%</span></div>
+      <div class="bm"><span class="bm-l">Angi</span><div class="bm-bar"><div class="bm-fill" style="width:10%;background:var(--yellow)"></div></div><span class="bm-a">$8K · 50%</span></div>
+      <div class="bm"><span class="bm-l">Direct</span><div class="bm-bar"><div class="bm-fill" style="width:8%;background:var(--text-muted)"></div></div><span class="bm-a">$6K · 40%</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- ADMIN: Crew Quality Grid -->
+<!-- ════════════════════════════════════════════ -->
+<div class="gf" data-r="admin">
+  <div class="card">
+    <div class="card-h"><div class="card-t">⭐ Crew Quality — Internal Rating</div><a class="card-a">Full Crew Report →</a></div>
+    <div class="card-b">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700">Carlos</div><div style="font-size:18px;font-weight:700;color:var(--green)">4.6</div></div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">COMBINED RATING (sup + customer avg)</div><div class="sr"><span class="sr-l">🔧 Supervisor Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.5</span></div><div class="sr"><span class="sr-l">😊 Customer Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.8</span></div><div style="height:1px;background:var(--border);margin:6px 0"></div><div class="sr"><span class="sr-l">Cooperation</span><span class="sr-v">9.1</span></div><div class="sr"><span class="sr-l">Completion Accuracy</span><span class="sr-v" style="color:var(--green)">+0.2d</span></div><div class="sr"><span class="sr-l">Rev/day</span><span class="sr-v">$1,920</span></div><div class="sr"><span class="sr-l">Rev/man-hr</span><span class="sr-v">$48</span></div></div>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700">Javier</div><div style="font-size:18px;font-weight:700;color:var(--gold)">4.3</div></div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">COMBINED RATING (sup + customer avg)</div><div class="sr"><span class="sr-l">🔧 Supervisor Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.2</span></div><div class="sr"><span class="sr-l">😊 Customer Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.6</span></div><div style="height:1px;background:var(--border);margin:6px 0"></div><div class="sr"><span class="sr-l">Cooperation</span><span class="sr-v">8.7</span></div><div class="sr"><span class="sr-l">Completion Accuracy</span><span class="sr-v" style="color:var(--green)">+0.5d</span></div><div class="sr"><span class="sr-l">Rev/day</span><span class="sr-v">$1,760</span></div><div class="sr"><span class="sr-l">Rev/man-hr</span><span class="sr-v">$44</span></div></div>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700">Mike &amp; Julie</div><div style="font-size:18px;font-weight:700;color:var(--green)">4.8</div></div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">COMBINED RATING (sup + customer avg)</div><div class="sr"><span class="sr-l">🔧 Supervisor Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.8</span></div><div class="sr"><span class="sr-l">😊 Customer Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.9</span></div><div style="height:1px;background:var(--border);margin:6px 0"></div><div class="sr"><span class="sr-l">Cooperation</span><span class="sr-v">9.4</span></div><div class="sr"><span class="sr-l">Completion Accuracy</span><span class="sr-v" style="color:var(--green)">-0.1d</span></div><div class="sr"><span class="sr-l">Rev/day</span><span class="sr-v">$2,080</span></div><div class="sr"><span class="sr-l">Rev/man-hr</span><span class="sr-v">$52</span></div></div>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700">Roberto</div><div style="font-size:18px;font-weight:700;color:var(--gold)">3.9</div></div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">COMBINED RATING (sup + customer avg)</div><div class="sr"><span class="sr-l">🔧 Supervisor Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★☆☆</span> 3.8</span></div><div class="sr"><span class="sr-l">😊 Customer Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★★☆</span> 4.2</span></div><div style="height:1px;background:var(--border);margin:6px 0"></div><div class="sr"><span class="sr-l">Cooperation</span><span class="sr-v">8.2</span></div><div class="sr"><span class="sr-l">Completion Accuracy</span><span class="sr-v" style="color:var(--yellow)">+1.1d</span></div><div class="sr"><span class="sr-l">Rev/day</span><span class="sr-v">$1,640</span></div><div class="sr"><span class="sr-l">Rev/man-hr</span><span class="sr-v">$41</span></div></div>
+        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-weight:700">Team B</div><div style="font-size:18px;font-weight:700;color:var(--red)">3.3</div></div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">COMBINED RATING (sup + customer avg)</div><div class="sr"><span class="sr-l">🔧 Supervisor Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★☆☆</span> 3.2</span></div><div class="sr"><span class="sr-l">😊 Customer Avg</span><span class="sr-v"><span style="color:var(--gold);letter-spacing:1px">★★★☆☆</span> 3.6</span></div><div style="height:1px;background:var(--border);margin:6px 0"></div><div class="sr"><span class="sr-l">Cooperation</span><span class="sr-v">7.5</span></div><div class="sr"><span class="sr-l">Completion Accuracy</span><span class="sr-v" style="color:var(--red)">+1.8d</span></div><div class="sr"><span class="sr-l">Rev/day</span><span class="sr-v">$1,520</span></div><div class="sr"><span class="sr-l">Rev/man-hr</span><span class="sr-v">$38</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- ACTIVITY FEED (all roles, filtered) -->
+<!-- ════════════════════════════════════════════ -->
+<div class="gf" data-r="admin,office,field">
+  <div class="card">
+    <div class="card-h"><div class="card-t">🕐 Recent Activity</div><a class="card-a">View All →</a></div>
+    <div class="card-b" style="padding:0">
+      <div class="act" data-r="admin,office,field"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Carlos</strong> uploaded 8 photos — Johnson Ext (during phase)</div><div class="act-tm">32m ago</div></div>
+      <div class="act" data-r="admin,office"><div class="act-dot" style="background:var(--blue)"></div><div class="act-t"><strong>Chen</strong> submitted color form — BM White Dove, Simply White, Hale Navy</div><div class="act-tm">2h ago</div></div>
+      <div class="act" data-r="admin,office"><div class="act-dot" style="background:var(--gold)"></div><div class="act-t"><strong>Larry</strong> sent proposal — Smith Kitchen · $5,200 · Premium+ cabinets</div><div class="act-tm">Yesterday</div></div>
+      <div class="act" data-r="admin"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Garcia</strong> — payment received · $8,000 · ACH · Job #1045</div><div class="act-tm">Yesterday</div></div>
+      <div class="act" data-r="admin,office,field"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Javier</strong> completed pre-existing damage docs — Smith Int (4 photos)</div><div class="act-tm">Yesterday</div></div>
+      <div class="act" data-r="admin"><div class="act-dot" style="background:var(--gold)"></div><div class="act-t"><strong>Google review</strong> — Park ★★★★★ · "Anthony was amazing"</div><div class="act-tm">Yesterday</div></div>
+      <div class="act" data-r="admin,office"><div class="act-dot" style="background:var(--red)"></div><div class="act-t"><strong>Thompson</strong> — late fee applied · $24/wk · 12 days overdue</div><div class="act-tm">2d ago</div></div>
+      <div class="act" data-r="field"><div class="act-dot" style="background:var(--yellow)"></div><div class="act-t"><strong>Team B</strong> — rain delay reported · Garcia Deck +1d</div><div class="act-tm">Today</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PERMISSION MATRIX (admin only) -->
+<!-- ════════════════════════════════════════════ -->
+<div class="gf" data-r="admin">
+  <div class="card" id="perm-card">
+    <div class="card-h"><div class="card-t">🔐 Permission Matrix — <span id="perm-role-name">Admin</span></div><a class="card-a" onclick="document.getElementById('perm-body').classList.toggle('hidden')">Show / Hide</a></div>
+    <div class="card-b hidden" id="perm-body">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const ROLES = {
+  admin: {
+    name: 'Bill',
+    title: 'Admin',
+    greeting: '👋 Welcome, Bill',
+    note: '🔓 Full access — all data visible',
+    notifs: 6,
+    actions: ['✏️ New Estimate','👤 New Customer','📋 Create Work Order','📊 Reports','⚙️ Admin Config','💳 Commission Payout','🔒 Lock Month'],
+    perms: {
+      '✅ All financial data (cash flow, GP, margins, P&L)': true,
+      '✅ All salespeople comparison + commissions': true,
+      '✅ Cost data (labor rates, material costs, sub rates)': true,
+      '✅ Margin architecture + pricing configuration': true,
+      '✅ Revenue recognition + QB sync': true,
+      '✅ Marketing ROI + lead source analytics': true,
+      '✅ Crew rating (supervisor + customer combined) + Completion Accuracy': true,
+      '✅ PO amounts + vendor management': true,
+      '✅ System configuration (all admin tabs)': true,
+      '✅ Reviews + GBP dashboard': true,
+    }
+  },
+  office: {
+    name: 'Linda',
+    title: 'Office',
+    greeting: '👋 Welcome, Linda',
+    note: '🔒 Operations access — no financials',
+    notifs: 5,
+    actions: ['📞 Create PO from Store Call','📋 View All Jobs','📨 Send Invoice','📅 Schedule Appt','👤 Customer Lookup','🔔 Resend Onboarding'],
+    perms: {
+      '✅ All estimates (pipeline, status, values)': true,
+      '✅ PO amounts + material ordering': true,
+      '✅ Crew status (who, where, day X of Y)': true,
+      '✅ Customer communications + onboarding': true,
+      '✅ Scheduling for all salespeople': true,
+      '✅ Invoice amounts + payment tracking': true,
+      '❌ Company P&L / financial reports': false,
+      '❌ Job profitability / GP% / margins': false,
+      '❌ Commission data (any salesperson)': false,
+      '❌ Margin architecture / base rates / cost data': false,
+      '❌ Marketing ROI / lead source analytics': false,
+      '❌ Revenue recognition / accrual data': false,
+      '❌ Cash flow projections': false,
+      '❌ Crew combined rating (supervisor + customer)': false,
+      '❌ System configuration': false,
+    }
+  },
+  field: {
+    name: 'Anthony',
+    title: 'Field Sup',
+    greeting: '👋 Welcome, Anthony',
+    note: '🔒 Field operations — no pricing, no financials',
+    notifs: 4,
+    actions: ['📋 Job Snapshot','📸 Upload Photos','📦 Request PO','✅ Mark Complete','📋 Punch List'],
+    perms: {
+      '✅ All crew status + job progress': true,
+      '✅ Crew cooperation scores (3-input)': true,
+      '✅ Photo uploads + categories': true,
+      '✅ Own perishable budget': true,
+      '✅ Job start checklists': true,
+      '✅ Upcoming job schedule': true,
+      '✅ Claim/unclaim jobs': true,
+      '❌ Job dollar values / estimate prices': false,
+      '❌ GP% / margins / cost data': false,
+      '❌ Commission / sales data': false,
+      '❌ Customer contact information': false,
+      '❌ PO dollar amounts (except own perishables)': false,
+      '❌ Financial reports of any kind': false,
+      '❌ Quality scores (8-input office version)': false,
+      '❌ Revenue/man-hour': false,
+      '❌ Admin settings': false,
+    }
+  }
+};
+
+let currentRole = 'admin';
+
+function switchRole(role) {
+  currentRole = role;
+  const r = ROLES[role];
+
+  // Toggle buttons
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+
+  // Greeting + note
+  document.getElementById('greeting').textContent = r.greeting;
+  document.getElementById('perm-note').textContent = r.note;
+  document.getElementById('ncount').textContent = r.notifs;
+
+  // Quick actions
+  const qa = document.getElementById('qa');
+  qa.innerHTML = r.actions.map(a => `<button class="qa-btn">${a}</button>`).join('');
+
+  // Show/hide elements
+  document.querySelectorAll('[data-r]').forEach(el => {
+    const roles = el.dataset.r.split(',');
+    if (roles.includes(role)) {
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+
+  // Permission matrix
+  document.getElementById('perm-role-name').textContent = r.title + ' (' + r.name + ')';
+  const pb = document.getElementById('perm-body');
+  pb.innerHTML = Object.entries(r.perms).map(([k, v]) =>
+    `<div class="sr"><span class="sr-l" style="color:${v ? 'var(--green)' : 'var(--red)'}">${k}</span></div>`
+  ).join('');
+
+  // Calendar tab visibility per role
+  const prodTab = document.querySelector('.cal-tab[onclick*="production"]');
+  const schedTab = document.querySelector('.cal-tab.office-admin-only');
+  if (prodTab) {
+    if (role === 'field') {
+      prodTab.style.display = '';
+      if (schedTab) schedTab.style.display = 'none';
+      prodTab.classList.add('active');
+      if (schedTab) schedTab.classList.remove('active');
+      const calProd = document.getElementById('cal-production');
+      const calSched = document.getElementById('cal-schedule');
+      if (calProd) calProd.style.display = '';
+      if (calSched) calSched.style.display = 'none';
+      const calLink = document.getElementById('cal-link');
+      if (calLink) calLink.textContent = 'Production Schedule →';
+    } else {
+      // admin or office — show all tabs
+      prodTab.style.display = '';
+      if (schedTab) schedTab.style.display = '';
+    }
+  }
+
+  // Action items count
+  const alerts = document.querySelectorAll(`.al[data-r*="${role}"]`);
+  const ac = document.getElementById('acount');
+  if (ac) ac.textContent = alerts.length;
+}
+
+// Init
+document.querySelectorAll('.role-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchRole(btn.dataset.role));
+});
+
+// Calendar tab switcher
+function toggleSnap(row) {
+  const detail = row.querySelector('.snap-detail');
+  const chevron = row.querySelector('.snap-chevron');
+  const open = detail.style.display !== 'none';
+  detail.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+function openCloseout() {
+  const s = document.getElementById('closeout-sheet');
+  s.style.display = 'flex';
+}
+function closeCloseout() {
+  document.getElementById('closeout-sheet').style.display = 'none';
+}
+function selectCloseout(btn, group) {
+  btn.closest('div').querySelectorAll('.qa-btn').forEach(b => b.classList.remove('co-sel'));
+  btn.classList.add('co-sel');
+}
+function submitCloseout() {
+  closeCloseout();
+  // Replace pending tag with submitted one-liner
+  const pending = document.querySelector('#closeout-sheet ~ .gf .card-b div:first-child, .gf[data-r="field"] .card-b div:first-child');
+  toast('✅ Williams Cabinets closeout submitted');
+  // Update the pending row to submitted state
+  const rows = document.querySelectorAll('[data-r="field"] .card-b > div');
+  if (rows[0]) {
+    rows[0].innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600">Williams Cabinets — Mike & Julie</div><div style="font-size:11px;color:var(--text-sec)">Spot On · ★★★★☆ · 😃 Very Happy · Review: Yes</div></div><button onclick="toast(\'Viewing Williams closeout…\')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">View →</button></div>';
+  }
+}
+
+function switchFieldJobs(tab, btn) {
+  document.querySelectorAll('.field-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('field-my-jobs').style.display = tab === 'mine' ? '' : 'none';
+  document.getElementById('field-all-jobs').style.display = tab === 'all' ? '' : 'none';
+  document.getElementById('field-jobs-sub').textContent = tab === 'mine' ? '5 crews · Anthony\'s jobs' : '5 crews across all supervisors';
+}
+
+function switchCal(type, btn) {
+  document.querySelectorAll('.cal-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.cal-tab').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('cal-' + type);
+  if (panel) panel.style.display = '';
+  btn.classList.add('active');
+  const links = {production:'Production Schedule →', sales:'Sales Calendar →', schedule:'Full Calendar →'};
+  const calLink = document.getElementById('cal-link');
+  if (calLink) calLink.textContent = links[type] || 'Full Schedule →';
+}
+
+// Office tab switcher
+function switchOfficeTab(tab, btn) {
+  document.querySelectorAll('.office-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('office-priority').style.display = tab === 'priority' ? '' : 'none';
+  document.getElementById('office-crews').style.display = tab === 'crews' ? '' : 'none';
+}
+
+// Over-budget reason logger
+function logReason(job, reason) {
+  const labels = {'bad-bid':'Bad Bid','missed-scope':'Missed Scope','client-changes':'Client Changes','material-cost':'Material Cost','weather':'Weather','other':'Other'};
+  toast('📝 ' + labels[reason] + ' logged for ' + job);
+}
+function toast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1B2B4B;color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;z-index:9999;white-space:nowrap;pointer-events:none';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// Commission tap-to-reveal
+document.getElementById('comm-kpi')?.addEventListener('click', function() {
+  if (this.textContent === '••••') {
+    this.textContent = '$2,847';
+    this.nextElementSibling.textContent = 'QTD: $8,412 · YTD: $11,259';
+  } else {
+    this.textContent = '••••';
+    this.nextElementSibling.textContent = 'Tap to show · QTD: ••••';
+  }
+});
+
+switchRole('admin');
+</script>
+</body>
+</html>
