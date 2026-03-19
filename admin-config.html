@@ -977,35 +977,78 @@ function renderMCDetail() {
         <option ${m.type==='MATERIAL'?'selected':''}>MATERIAL</option>
       </select></div>
     <div class="form-group"><label class="form-label">Unit</label>
-      <select class="form-select" onchange="editingMC.unit=this.value">
-        ${['SF','LF','EA','GAL','HR'].map(u=>`<option ${(m.unit===u||m.unit===u+'/coat')?'selected':''}>${u}</option>`).join('')}
+      <select class="form-select" onchange="editingMC.unit=this.value;renderMCDetail()">
+        ${['SF','LF','EA','GAL','HR'].map(u=>`<option ${m.unit===u?'selected':''}>${u}</option>`).join('')}
       </select></div>
-    <div class="form-group"><label class="form-label">Production Rate</label>
-      <input class="form-input" value="${m.rate}" onchange="editingMC.rate=this.value" placeholder="e.g. 350 SF/hr"/></div>
+
     ${m.type==='LABOR' ? `
-    <div class="form-group"><label class="form-label">Service Type <span style="font-size:10px;color:var(--text-dim)">(drives labor rate)</span></label>
+    <div class="form-group"><label class="form-label">Service Type <span style="font-size:10px;color:var(--text-dim)">(sets hourly rate)</span></label>
       <select class="form-select" onchange="editingMC.serviceType=this.value;renderMCDetail()">
         <option value="">— None —</option>
         ${laborServiceTypes.map(s=>`<option ${m.serviceType===s?'selected':''}>${s}</option>`).join('')}
       </select></div>
-    ${m.serviceType ? `<div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px;margin-bottom:12px">
-      ⚡ Pulling <strong>$${rate}/hr</strong> from Labor Rates → <strong>$${m.costPerUnit.toFixed(3)}/${m.unit.split('/')[0]||'unit'}</strong> effective cost</div>` : ''}
-    <div class="form-group"><label class="form-label">Cost Per Unit (override)</label>
-      <input class="form-input" type="number" step="0.001" value="${m.costPerUnit}" onchange="editingMC.costPerUnit=parseFloat(this.value)"/></div>
+
+    <div class="form-group">
+      <label class="form-label">Production Rate <span style="font-size:11px;color:var(--accent-light);font-weight:400">${m.unit}/hr</span></label>
+      <input class="form-input" type="number" step="1" min="0"
+        value="${parseFloat(m.rate)||''}"
+        placeholder="e.g. 350"
+        oninput="editingMC.rate=this.value;const lr=getLaborRate(editingMC.serviceType||'');const pr=parseFloat(this.value)||0;if(pr>0){editingMC.costPerUnit=parseFloat((lr/pr).toFixed(4));}renderMCDetail()"/>
+    </div>
+
+    ${m.serviceType && parseFloat(m.rate) > 0 ? (() => {
+      const pr = parseFloat(m.rate);
+      const lr = getLaborRate(m.serviceType);
+      const cost = lr / pr;
+      const gp = m.gpPct != null ? m.gpPct : 50;
+      const sell = cost / (1 - gp/100);
+      const margin = sell - cost;
+      return `<div style="background:var(--navy-mid);border-radius:8px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">Live Calculator</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">
+          <div style="color:var(--text-sec)">Hourly Rate</div><div><strong>$${lr.toFixed(2)}/hr</strong></div>
+          <div style="color:var(--text-sec)">Production Rate</div><div><strong>${pr} ${m.unit}/hr</strong></div>
+          <div style="color:var(--text-sec)">Labor Cost</div><div style="color:var(--yellow)"><strong>$${cost.toFixed(4)}/${m.unit}</strong></div>
+          <div style="color:var(--text-sec)">GP Target</div>
+          <div><select style="background:var(--navy);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:2px 6px;font-size:12px" onchange="editingMC.gpPct=parseInt(this.value);renderMCDetail()">
+            ${[30,35,40,45,50,55,60,65,70].map(g=>`<option value="${g}" ${(m.gpPct||50)===g?'selected':''}>${g}%</option>`).join('')}
+          </select></div>
+          <div style="color:var(--text-sec)">Sell Price</div><div style="color:var(--green)"><strong>$${sell.toFixed(4)}/${m.unit}</strong></div>
+          <div style="color:var(--text-sec)">Margin</div><div style="color:var(--green)"><strong>$${margin.toFixed(4)}/${m.unit}</strong></div>
+        </div>
+      </div>`;
+    })() : m.serviceType ? `<div style="padding:10px;background:var(--navy-mid);border-radius:6px;font-size:12px;color:var(--text-dim)">Enter production rate above to see calculator</div>` : ''}
+
     ` : `
-    <div class="form-group"><label class="form-label">Linked Product <span style="font-size:10px;color:var(--text-dim)">(optional — drives dynamic cost)</span></label>
+    <div class="form-group"><label class="form-label">Linked Product <span style="font-size:10px;color:var(--text-dim)">(drives dynamic cost)</span></label>
       <select class="form-select" onchange="editingMC.materialId=this.value?parseInt(this.value):null;renderMCDetail()">
         <option value="">— No link (use fixed cost) —</option>
         ${matOptions}
       </select></div>
-    ${m.materialId ? `<div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px;margin-bottom:12px">
-      ⚡ Dynamic cost: $${calcMaterialCost(m.materialId,'Satin','quote').toFixed(4)}/SF (1-gal Satin quote) | $${calcMaterialCost(m.materialId,'Satin','budget').toFixed(4)}/SF (5-gal budget)</div>` : ''}
-    <div class="form-group"><label class="form-label">Cost Per Unit (fallback if no link)</label>
+    ${m.materialId ? (() => {
+      const qc = calcMaterialCost(m.materialId,'Satin','quote');
+      const bc = calcMaterialCost(m.materialId,'Satin','budget');
+      const gp = m.gpPct || 50;
+      const sell = qc / (1 - gp/100);
+      return `<div style="background:var(--navy-mid);border-radius:8px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">Live Calculator</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">
+          <div style="color:var(--text-sec)">Quote Cost (1-gal Satin)</div><div style="color:var(--yellow)"><strong>$${qc.toFixed(4)}/${m.unit}</strong></div>
+          <div style="color:var(--text-sec)">Budget Cost (5-gal Satin)</div><div><strong>$${bc.toFixed(4)}/${m.unit}</strong></div>
+          <div style="color:var(--text-sec)">GP Target</div>
+          <div><select style="background:var(--navy);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:2px 6px;font-size:12px" onchange="editingMC.gpPct=parseInt(this.value);renderMCDetail()">
+            ${[30,35,40,45,50,55,60,65,70].map(g=>`<option value="${g}" ${(m.gpPct||50)===g?'selected':''}>${g}%</option>`).join('')}
+          </select></div>
+          <div style="color:var(--text-sec)">Sell Price</div><div style="color:var(--green)"><strong>$${sell.toFixed(4)}/${m.unit}</strong></div>
+        </div>
+      </div>`;
+    })() : ''}
+    <div class="form-group"><label class="form-label">Fixed Cost Per Unit <span style="font-size:10px;color:var(--text-dim)">(if no product link)</span></label>
       <input class="form-input" type="number" step="0.001" value="${m.costPerUnit}" onchange="editingMC.costPerUnit=parseFloat(this.value)"/></div>
     `}
     <div class="form-group"><label class="form-label">Notes</label>
       <input class="form-input" value="${m.description||''}" onchange="editingMC.description=this.value" placeholder="Optional notes"/></div>
-    <div style="margin-top:14px;padding:12px;background:var(--navy-mid);border-radius:6px;font-size:12px;color:var(--text-sec)">
+    <div style="margin-top:8px;padding:10px 12px;background:var(--navy-mid);border-radius:6px;font-size:12px;color:var(--text-sec)">
       Used in <strong>${bundles.filter(b=>b.components.includes(m.id)).length} bundles</strong>
     </div>`;
 }
