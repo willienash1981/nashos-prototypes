@@ -991,15 +991,16 @@ function renderMCDetail() {
     <div class="form-group">
       <label class="form-label">Production Rate <span style="font-size:11px;color:var(--accent-light);font-weight:400">${m.unit}/hr</span></label>
       <input class="form-input" type="number" step="1" min="0"
-        value="${parseFloat(m.rate)||''}"
+        value="${parseFloat(String(m.rate))||''}"
         placeholder="e.g. 350"
         oninput="editingMC.rate=this.value;const lr=getLaborRate(editingMC.serviceType||'');const pr=parseFloat(this.value)||0;if(pr>0){editingMC.costPerUnit=parseFloat((lr/pr).toFixed(4));}renderMCDetail()"/>
     </div>
 
     ${m.serviceType && parseFloat(m.rate) > 0 ? (() => {
-      const pr = parseFloat(m.rate);
+      const pr = parseFloat(String(m.rate));
       const lr = getLaborRate(m.serviceType);
       const cost = lr / pr;
+      if (editingMC) editingMC.costPerUnit = parseFloat(cost.toFixed(4));
       const gp = m.gpPct != null ? m.gpPct : 50;
       const sell = cost / (1 - gp/100);
       const margin = sell - cost;
