@@ -326,30 +326,62 @@
 const microComponents = [
   { id:1, name:'Brush/Roll First Coat — Wall', type:'LABOR', rate:'350 SF/hr', unit:'SF', costPerUnit:0.086 },
   { id:2, name:'Brush/Roll Second Coat — Wall', type:'LABOR', rate:'350 SF/hr', unit:'SF', costPerUnit:0.086 },
-  { id:3, name:'Interior Wall Paint — Eggshell', type:'MATERIAL', rate:'0.00571 gal/SF', unit:'SF', costPerUnit:0.236 },
+  { id:3, name:'Interior Wall Paint — Eggshell', type:'MATERIAL', rate:'0.00571 gal/SF', unit:'SF', costPerUnit:0.236, materialId:2 },
   { id:4, name:'Caulk — Interior Joints', type:'MATERIAL', rate:'0.001 tube/SF', unit:'SF', costPerUnit:0.005 },
-  { id:5, name:'Primer — Stain Block', type:'MATERIAL', rate:'0.004 gal/SF', unit:'SF', costPerUnit:0.165 },
+  { id:5, name:'Primer — Stain Block', type:'MATERIAL', rate:'0.004 gal/SF', unit:'SF', costPerUnit:0.165, materialId:5 },
   { id:6, name:'Sand/Degloss Surface', type:'LABOR', rate:'500 SF/hr', unit:'SF', costPerUnit:0.060 },
   { id:7, name:'Mask/Tape Edges', type:'LABOR', rate:'200 LF/hr', unit:'LF', costPerUnit:0.150 },
   { id:8, name:'Spray Apply — Siding', type:'LABOR', rate:'600 SF/hr', unit:'SF', costPerUnit:0.050 },
   { id:9, name:'Backroll — Siding', type:'LABOR', rate:'450 SF/hr', unit:'SF', costPerUnit:0.067 },
-  { id:10, name:'Exterior Acrylic Paint', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.263 },
-  { id:11, name:'Ceiling Paint — Flat', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.208 },
+  { id:10, name:'Exterior Acrylic Paint', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.263, materialId:1 },
+  { id:11, name:'Ceiling Paint — Flat', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.208, materialId:2 },
   { id:12, name:'Roll Ceiling — 1 Coat', type:'LABOR', rate:'400 SF/hr', unit:'SF', costPerUnit:0.075 },
   { id:13, name:'Brush/Roll Trim — 1 Coat', type:'LABOR', rate:'100 LF/hr', unit:'LF', costPerUnit:0.300 },
   { id:14, name:'Trim Enamel — Semi-Gloss', type:'MATERIAL', rate:'0.004 gal/LF', unit:'LF', costPerUnit:0.180 },
-  { id:15, name:'Deck Stain — Semi-Trans', type:'MATERIAL', rate:'0.006 gal/SF', unit:'SF', costPerUnit:0.270 },
+  { id:15, name:'Deck Stain — Semi-Trans', type:'MATERIAL', rate:'0.006 gal/SF', unit:'SF', costPerUnit:0.270, materialId:4 },
   { id:16, name:'Spray/Brush Fence', type:'LABOR', rate:'80 LF/hr', unit:'LF', costPerUnit:1.875 },
   { id:17, name:'Fence Stain', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.050 },
-  { id:18, name:'Drywall Compound', type:'MATERIAL', rate:'1 EA', unit:'EA', costPerUnit:12.00 },
+  { id:18, name:'Drywall Compound', type:'MATERIAL', rate:'1 EA', unit:'EA', costPerUnit:12.00, materialId:5 },
   { id:19, name:'Patch & Sand — Drywall', type:'LABOR', rate:'2 EA/hr', unit:'EA', costPerUnit:15.00 },
   { id:20, name:'Cabinet Spray — Per LF', type:'LABOR', rate:'8 LF/hr', unit:'LF', costPerUnit:3.750 },
-  { id:21, name:'Cabinet Primer', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.100 },
-  { id:22, name:'Cabinet Enamel', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.500 },
+  { id:21, name:'Cabinet Primer', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.100, materialId:5 },
+  { id:22, name:'Cabinet Enamel', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.500, materialId:3 },
   { id:23, name:'Door — Brush 2 Coats', type:'LABOR', rate:'3 EA/hr', unit:'EA', costPerUnit:10.00 },
   { id:24, name:'Door Enamel Paint', type:'MATERIAL', rate:'0.25 gal/EA', unit:'EA', costPerUnit:11.50 },
   { id:25, name:'Wallpaper Strip', type:'LABOR', rate:'40 SF/hr', unit:'SF', costPerUnit:0.750 },
   { id:26, name:'Wallpaper Adhesive Remover', type:'MATERIAL', rate:'0.002 gal/SF', unit:'SF', costPerUnit:0.200 },
+  // Interior ceiling obstacle components — per EA per coat
+  { id:30, name:'Cut Around Recessed Light — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA/coat', costPerUnit:0.58 },
+  { id:31, name:'Cut Around Recessed Light — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA/coat', costPerUnit:1.17 },
+  { id:32, name:'Cut Around Recessed Light — High', type:'LABOR', rate:'~3 min/EA', unit:'EA/coat', costPerUnit:1.75 },
+  { id:33, name:'Cut Around Ceiling Fan — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA/coat', costPerUnit:0.58 },
+  { id:34, name:'Cut Around Ceiling Fan — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA/coat', costPerUnit:1.17 },
+  { id:35, name:'Cut Around Ceiling Fan — High', type:'LABOR', rate:'~3 min/EA', unit:'EA/coat', costPerUnit:1.75 },
+  { id:36, name:'Cut Around Chandelier — High', type:'LABOR', rate:'~6 min/EA', unit:'EA/coat', costPerUnit:3.50 },
+  { id:37, name:'Cut Around Ceiling Beam — High', type:'LABOR', rate:'~3 min/LF', unit:'LF/coat', costPerUnit:0.58 },
+  { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:'~3 min/EA', unit:'EA/coat', costPerUnit:1.75 },
+  { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:'~6 min/EA', unit:'EA/coat', costPerUnit:3.50 },
+  // Interior Obstacle Components — per EA per coat
+  { id:30, name:'Cut Around Recessed Light — Standard', type:'LABOR', rate:0.58, unit:'EA/coat', costPerUnit:0.58, description:'8ft ladder cycle, ~1 min' },
+  { id:31, name:'Cut Around Recessed Light — Tall', type:'LABOR', rate:1.17, unit:'EA/coat', costPerUnit:1.17, description:'12ft ladder cycle, ~2 min' },
+  { id:32, name:'Cut Around Recessed Light — High', type:'LABOR', rate:1.75, unit:'EA/coat', costPerUnit:1.75, description:'18ft ladder cycle, ~3 min' },
+  { id:33, name:'Cut Around Ceiling Fan — Standard', type:'LABOR', rate:0.58, unit:'EA/coat', costPerUnit:0.58, description:'8ft ladder cycle, ~1 min' },
+  { id:34, name:'Cut Around Ceiling Fan — Tall', type:'LABOR', rate:1.17, unit:'EA/coat', costPerUnit:1.17, description:'12ft ladder cycle, ~2 min' },
+  { id:35, name:'Cut Around Ceiling Fan — High', type:'LABOR', rate:1.75, unit:'EA/coat', costPerUnit:1.75, description:'18ft ladder cycle, ~3 min' },
+  { id:36, name:'Cut Around Chandelier — High', type:'LABOR', rate:3.50, unit:'EA/coat', costPerUnit:3.50, description:'18ft ladder, wider/complex cut ~6 min' },
+  { id:37, name:'Cut Around Ceiling Beam — High', type:'LABOR', rate:0.58, unit:'LF/coat', costPerUnit:0.58, description:'Per linear foot, 18ft ladder' },
+  { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:1.75, unit:'EA/coat', costPerUnit:1.75, description:'18ft ladder cycle, ~3 min' },
+  { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:3.50, unit:'EA/coat', costPerUnit:3.50, description:'18ft ladder, decorative detail ~6 min' },
+  // Tall wall labor (12ft ladder, 1.25× slower = 80% production)
+  { id:40, name:'Brush & Roll — 1st Coat, Tall Walls', type:'LABOR', rate:35, unit:'SF', costPerUnit:0.125, description:'280 SF/hr effective (tall ceiling tier)' },
+  { id:41, name:'Brush & Roll — 2nd Coat, Tall Walls', type:'LABOR', rate:35, unit:'SF', costPerUnit:0.109, description:'320 SF/hr effective (tall ceiling tier)' },
+  // High wall labor (18ft ladder, 1.60× slower = 62.5% production)
+  { id:42, name:'Brush & Roll — 1st Coat, High Walls', type:'LABOR', rate:35, unit:'SF', costPerUnit:0.160, description:'219 SF/hr effective (high ceiling tier)' },
+  { id:43, name:'Brush & Roll — 2nd Coat, High Walls', type:'LABOR', rate:35, unit:'SF', costPerUnit:0.140, description:'250 SF/hr effective (high ceiling tier)' },
+  // Tall ceiling labor
+  { id:44, name:'Roll Ceiling — 1 Coat, Tall', type:'LABOR', rate:35, unit:'SF', costPerUnit:0.135, description:'260 SF/hr effective (tall tier)' },
+  // High ceiling labor
+  { id:45, name:'Roll Ceiling — 1 Coat, High', type:'LABOR', rate:35, unit:'SF', costPerUnit:0.175, description:'200 SF/hr effective (high tier)' },
 ];
 
 const bundles = [
@@ -377,6 +409,14 @@ const bundles = [
     history:[{date:'Jan 10',text:'Created bundle — Bill'}] },
   { id:12, name:'Wallpaper Strip — Per SF', customerName:'Wallpaper Removal', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Inactive', costPerUnit:0.95, sellPerUnit:1.90, gpPct:50, components:[25,26], estimates:0, surfaceType:'Walls', defaultSheen:'Satin',
     history:[{date:'Feb 12',text:'Deactivated — Bill'}] },
+  // Tall wall bundle — LABOR ONLY (upper section, material shared with standard wall bundle)
+  { id:25, name:'Paint Wall — Tall Upper Section, 2 Coats', customerName:'Wall Painting — Upper Section (Tall)', category:'Interior', workCategory:'Interior', surfaceType:'Walls', defaultSheen:'Satin', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.234, sellPerUnit:0.468, gpPct:50, components:[40,41], estimates:0, history:[] },
+  // High wall bundle — LABOR ONLY (upper section, material shared with standard wall bundle)
+  { id:26, name:'Paint Wall — High Upper Section, 2 Coats', customerName:'Wall Painting — Upper Section (High)', category:'Interior', workCategory:'Interior', surfaceType:'Walls', defaultSheen:'Satin', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.300, sellPerUnit:0.600, gpPct:50, components:[42,43], estimates:0, history:[] },
+  // Tall ceiling bundle
+  { id:27, name:'Paint Ceiling — 1 Coat, Tall', customerName:'Ceiling Painting (Tall)', category:'Interior', workCategory:'Interior', surfaceType:'Ceiling', defaultSheen:'Flat', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.135, sellPerUnit:0.270, gpPct:50, components:[44], estimates:0, history:[] },
+  // High ceiling bundle
+  { id:28, name:'Paint Ceiling — 1 Coat, High', customerName:'Ceiling Painting (High)', category:'Interior', workCategory:'Interior', surfaceType:'Ceiling', defaultSheen:'Flat', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.175, sellPerUnit:0.350, gpPct:50, components:[45], estimates:0, history:[] },
 ];
 
 const materialItems = [
@@ -391,6 +431,22 @@ let matEditingId = null;
 const sheenKeys = ['flat','satin','semiGloss','gloss'];
 const sheenLabels = {flat:'Flat',satin:'Satin',semiGloss:'Semi-Gloss',gloss:'Gloss'};
 const substrateOptions = ['Ext. Siding','Ext. Trim','Int. Walls','Int. Ceiling','Cabinets','Deck','Fence','Drywall','Primer'];
+
+function calcMaterialCost(materialId, sheen, useType) {
+  // useType: 'quote' (1-gal) or 'budget' (5-gal)
+  const mat = materialItems.find(m => m.id === materialId);
+  if (!mat) return 0;
+  const size = useType === 'budget' ? '5gal' : '1gal';
+  let price;
+  if (mat.hasSheen) {
+    const sheenKey = sheen === 'Semi-Gloss' ? 'semiGloss' : sheen.toLowerCase();
+    price = mat.prices[size][sheenKey] || mat.prices[size]['satin'] || mat.prices[size]['flat'] || 0;
+  } else {
+    price = mat.prices[size]['base'] || 0;
+  }
+  const afterTax = price * (1 + mat.taxRate / 100);
+  return afterTax / mat.coverage; // cost per SF
+}
 
 function matGetPrice(m, size, sheen) {
   const p = m.prices[size];
@@ -608,11 +664,18 @@ const laborRates = [
   { name:'Apprentice', rate:'$22.00', sfhr:'250 SF/hr (walls)', effective:'Jan 1, 2025' },
 ];
 
-const heightTiers = [
-  { name:'Premium', range:'0–9 ft', multiplier:'1.00x' },
-  { name:'Elevated', range:'10–15 ft', multiplier:'1.35x' },
-  { name:'High', range:'16+ ft', multiplier:'1.75x' },
+const heightTiersExterior = [
+  { name:'1-Story', range:'≤12 ft', multiplier:'1.00×', access:'Step ladder / ground' },
+  { name:'2-Story', range:'12–24 ft', multiplier:'1.54×', access:'Extension ladders' },
+  { name:'3-Story+', range:'24+ ft', multiplier:'2.00×', access:'Scaffolding / lifts' },
 ];
+const heightTiersInterior = [
+  { name:'Standard', range:'≤10 ft', multiplier:'1.00×', access:'8ft step ladder', obstacleRate:'$0.58/EA' },
+  { name:'Tall', range:'10–14 ft', multiplier:'1.25×', access:'12ft ladder', obstacleRate:'$1.17/EA' },
+  { name:'High', range:'14ft+', multiplier:'1.60×', access:'18ft ladder', obstacleRate:'$1.75/EA' },
+];
+// keep alias for legacy table renderer
+const heightTiers = heightTiersExterior;
 
 const pricingPackages = [
   { name:'Value', multiplier:'0.85x', desc:'Basic prep, builder-grade paint' },
@@ -717,17 +780,26 @@ function renderMainContent() {
   };
   if (specialRenderers[activeCategory]) { specialRenderers[activeCategory](el); return; }
   const tables = {
-    micro: { cols:['Name','Type','Rate','Unit','Cost/Unit','Used In'], rows: microComponents.map(m => {
+    micro: { cols:['Name','Type','Rate','Unit','Cost/Unit','Used In'], header:'⚡ Material costs are dynamic — linked to the Products & Materials catalog. Quote cost uses 1-gal pricing; budget cost uses 5-gal pricing.', rows: microComponents.map(m => {
       const usedIn = bundles.filter(b=>b.components.includes(m.id)).length;
-      return [m.name, `<span class="badge ${m.type==='LABOR'?'badge-interior':'badge-cabinets'}">${m.type}</span>`, m.rate, m.unit, `$${m.costPerUnit.toFixed(3)}`, `${usedIn} bundles`];
+      let costCell;
+      if (m.type === 'MATERIAL' && m.materialId) {
+        const mat = materialItems.find(x => x.id === m.materialId);
+        const dynCost = calcMaterialCost(m.materialId, 'Satin', 'quote');
+        costCell = mat ? `<span title="Dynamic: $${dynCost.toFixed(3)}/SF">Linked: <strong>${mat.name}</strong> <span class="badge badge-exterior" style="font-size:10px">catalog</span><br><small>~$${dynCost.toFixed(3)}/SF (1-gal satin)</small></span>` : `$${m.costPerUnit.toFixed(3)}`;
+      } else {
+        costCell = `$${m.costPerUnit.toFixed(3)}`;
+      }
+      return [m.name, `<span class="badge ${m.type==='LABOR'?'badge-interior':'badge-cabinets'}">${m.type}</span>`, m.rate, m.unit, costCell, `${usedIn} bundles`];
     })},
     materials: { cols:['Name','Supplier','Unit Size','Unit Cost','Last Updated'], rows: materialItems.map(m=>[m.name,m.supplier,m.unitSize,m.unitCost,m.updated]) },
     labor: { cols:['Name','Rate ($/hr)','SF/hr Equivalent','Effective Date'], rows: laborRates.map(l=>[l.name,l.rate,l.sfhr,l.effective]) },
-    height: { cols:['Tier Name','Height Range','Production Multiplier'], rows: heightTiers.map(h=>[h.name,h.range,h.multiplier]) },
+    height: { cols:['Tier Name','Height Range','Labor Multiplier','Access Method'], rows: heightTiersExterior.map(h=>[h.name,h.range,h.multiplier,h.access]) },
     packages: { cols:['Package Name','Multiplier','Description'], rows: pricingPackages.map(p=>[p.name,p.multiplier,p.desc]) },
   };
   const t = tables[activeCategory];
-  el.innerHTML = `<div class="card"><table><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  const headerNote = t.header ? `<div style="padding:10px 14px;background:#fffbea;border-left:4px solid #f59e0b;border-radius:6px;margin-bottom:12px;font-size:13px;color:#92400e;">${t.header}</div>` : '';
+  el.innerHTML = `${headerNote}<div class="card"><table><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 
 function renderBundles(el) {
