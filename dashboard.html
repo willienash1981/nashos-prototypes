@@ -224,7 +224,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="role-toggle">
     <button class="role-btn active" data-role="admin">Admin</button>
     <button class="role-btn" data-role="office">Office</button>
-    <button class="role-btn" data-role="sales">Sales</button>
     <button class="role-btn" data-role="field">Field Supervisor</button>
   </div>
   <div class="perm-note" id="perm-note">🔓 Full access — all data visible</div><div style="font-size:10px;color:var(--text-muted);margin-left:8px"><span class="hide-mobile">(In production, users only see their permission level)</span></div>
@@ -291,14 +290,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- SALES KPIs -->
-<div class="kpi-strip" data-r="sales">
-  <div class="kpi hl"><div class="kpi-icon">💰</div><div class="kpi-lbl">MTD Commission</div><div class="kpi-val" id="comm-kpi" style="cursor:pointer" title="Tap to reveal">••••</div><div class="kpi-sub">Tap to show · QTD: ••••</div><div class="kpi-trend up">↑ 14% vs Jan</div></div>
-  <div class="kpi hl"><div class="kpi-icon">🎯</div><div class="kpi-lbl">Monthly Goal</div><div class="kpi-val">72%</div><div class="kpi-sub">$54,000 / $75,000</div><div class="prog"><div class="prog-fill gold-f" style="width:72%"></div></div></div>
-  <div class="kpi"><div class="kpi-icon">📋</div><div class="kpi-lbl">Pipeline Value</div><div class="kpi-val">$26,430</div><div class="kpi-sub">4 active estimates</div></div>
-  <div class="kpi"><div class="kpi-icon">✅</div><div class="kpi-lbl">Close Rate</div><div class="kpi-val">58%</div><div class="kpi-sub">7 of 12 sent this month</div><div class="kpi-trend flat">→ Holding steady</div></div>
-  <div class="kpi"><div class="kpi-icon">📞</div><div class="kpi-lbl">Follow-Ups</div><div class="kpi-val">3 due</div><div class="kpi-sub">2 overdue · 1 today</div><div class="kpi-trend down">⚠️ 2 past due</div></div>
-</div>
-
 <!-- FIELD KPIs -->
 <div class="kpi-strip" data-r="field">
   <div class="kpi hl"><div class="kpi-icon">🏗️</div><div class="kpi-lbl">My Jobs Today</div><div class="kpi-val">5</div><div class="kpi-sub">5 crews active</div></div>
@@ -446,64 +437,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- ─── SALES: Commission + Goals ─── -->
-<div class="g2" data-r="sales">
-  <div class="card">
-    <div class="card-h"><div class="card-t">💰 Commission</div><a class="card-a">All Deals →</a></div>
-    <div class="card-b">
-      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--text-sec)">
-        <strong style="color:var(--navy)">YOUR PLAN:</strong> $50K base + 5% on GP · Gate: ≥40% GP
-      </div>
-      <div class="comm-grid">
-        <div class="comm-item"><div class="comm-v hidden-val" data-val="$2,847" onclick="this.textContent=this.dataset.val;this.classList.remove('hidden-val')">Tap to show</div><div class="comm-l">MTD Earned</div></div>
-        <div class="comm-item"><div class="comm-v hidden-val" data-val="$8,412" onclick="this.textContent=this.dataset.val;this.classList.remove('hidden-val')">Tap to show</div><div class="comm-l">QTD Earned</div></div>
-        <div class="comm-item"><div class="comm-v hidden-val" data-val="$11,259" onclick="this.textContent=this.dataset.val;this.classList.remove('hidden-val')">Tap to show</div><div class="comm-l">YTD Earned</div></div>
-      </div>
-      <div style="margin-top:14px">
-        <div class="sr"><span class="sr-l">Paid</span><span class="sr-v">$9,200</span></div>
-        <div class="sr"><span class="sr-l">Pending (awaiting payment)</span><span class="sr-v" style="color:var(--yellow)">$2,059</span></div>
-        <div class="sr"><span class="sr-l">Projected MTD (pipeline × close rate)</span><span class="sr-v" style="color:var(--text-muted)">$3,950</span></div>
-      </div>
-      <div style="margin-top:14px;font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:6px">RECENT DEALS</div>
-      <div class="lr" style="padding:6px 0"><span class="lr-p" style="font-size:12px">Johnson Residence</span><span class="lr-s">$10,330 · 47% GP</span><span class="badge b-g">$243 Earned</span></div>
-      <div class="lr" style="padding:6px 0"><span class="lr-p" style="font-size:12px">Smith Kitchen</span><span class="lr-s">$5,200 · 52% GP</span><span class="badge b-y">$135 Pending</span></div>
-      <div class="lr" style="padding:6px 0"><span class="lr-p" style="font-size:12px">Williams Interior</span><span class="lr-s">$7,100 · 38% GP</span><span class="badge b-r">$0 Below Gate</span></div>
-      <div class="lr" style="padding:6px 0"><span class="lr-p" style="font-size:12px">Chen Cabinets</span><span class="lr-s">$12,400 · 55% GP</span><span class="badge b-g">$352 Paid</span></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-h"><div class="card-t">🎯 Goal Tracking</div></div>
-    <div class="card-b">
-      <div style="margin-bottom:16px">
-        <div class="sr"><span class="sr-l">Monthly Goal</span><span class="sr-v">$54,000 / $75,000</span></div>
-        <div class="prog"><div class="prog-fill gold-f" style="width:72%"></div></div>
-        <div class="prog-lbl"><span>$21K remaining</span><span>72%</span></div>
-      </div>
-      <div style="margin-bottom:16px">
-        <div class="sr"><span class="sr-l">Weekly Target (recalculated)</span><span class="sr-v">$13,125 this week</span></div>
-      </div>
-      <div style="margin-bottom:16px">
-        <div class="sr"><span class="sr-l">QTD Revenue</span><span class="sr-v">$142,500 / $150,000</span></div>
-        <div class="prog"><div class="prog-fill navy-f" style="width:95%"></div></div>
-        <div class="prog-lbl"><span>$7,500 remaining</span><span style="color:var(--green)">ON TRACK ✅</span></div>
-      </div>
-      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;margin-top:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-size:12px;font-weight:700">🏆 Quarterly Bonus — Q1 2026</div>
-          <span class="badge b-y">⚠️ Behind Pace</span>
-        </div>
-        <div class="sr"><span class="sr-l">Q1 GP Target</span><span class="sr-v">$115,710</span></div>
-        <div class="sr"><span class="sr-l">Q1 GP Achieved</span><span class="sr-v">$47,250</span></div>
-        <div class="sr"><span class="sr-l">Where You Should Be (Day 59/90)</span><span class="sr-v" style="color:var(--yellow)">$75,906</span></div>
-        <div class="prog" style="position:relative"><div class="prog-fill blue-f" style="width:40.8%"></div><div style="position:absolute;left:65.6%;top:-2px;width:2px;height:12px;background:var(--navy);border-radius:1px" title="Pace marker — where you should be"></div></div>
-        <div class="prog-lbl"><span>40.8% achieved</span><span style="color:var(--yellow)">65.6% of quarter elapsed</span></div>
-        <div style="margin-top:8px;background:var(--yellow-bg);border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;color:var(--text)">
-          📊 <strong>$28,656 behind pace</strong> — need $2,208 GP/day for remaining 31 days to hit target (current avg: $801/day)
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Remaining: $68,460 GP to target · Projected at current rate: $72,081 (❌ misses by $43,629)</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ─── FIELD: Active Jobs (detailed) ─── -->
 <div class="gf" data-r="field">
@@ -693,36 +626,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- SALES: Pipeline + KPIs -->
-<div class="g2" data-r="sales">
-  <div class="card">
-    <div class="card-h"><div class="card-t">📋 My Pipeline</div><span style="font-size:12px;color:var(--text-sec)">4 active · $26,430</span></div>
-    <div class="card-b" style="padding:0">
-      <div class="lr"><div class="dot dot-g"></div><div style="flex:1"><div class="lr-p">Johnson Residence<div class="lr-s">Exterior · Sent 2/23 (5d)</div></div></div><div class="lr-m">$10,330<br><span class="badge b-g">Follow-up sent</span></div></div>
-      <div class="lr"><div class="dot dot-g"></div><div style="flex:1"><div class="lr-p">Smith Kitchen Remodel<div class="lr-s">Cabinets · Sent 2/25 (3d)</div></div></div><div class="lr-m">$5,200<br><span class="badge b-b">New</span></div></div>
-      <div class="lr"><div class="dot dot-y"></div><div style="flex:1"><div class="lr-p">Garcia Fence &amp; Deck<div class="lr-s">Deck+Fence · Sent 2/21 (7d)</div></div></div><div class="lr-m">$3,800<br><span class="badge b-y">Call sched</span></div></div>
-      <div class="lr"><div class="dot dot-r"></div><div style="flex:1"><div class="lr-p">Williams Full Interior<div class="lr-s">Interior · Sent 2/14 (14d)</div></div></div><div class="lr-m">$7,100<br><span class="badge b-r">Stale</span></div></div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-h"><div class="card-t">📊 Performance — February</div></div>
-    <div class="card-b">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:18px;font-weight:700">12</div><div style="font-size:10px;color:var(--text-sec)">Estimates Sent</div></div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:18px;font-weight:700">7</div><div style="font-size:10px;color:var(--text-sec)">Accepted</div></div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:18px;font-weight:700">58%</div><div style="font-size:10px;color:var(--text-sec)">Close Rate</div></div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center"><div style="font-size:18px;font-weight:700">$8,200</div><div style="font-size:10px;color:var(--text-sec)">Avg Deal Size</div></div>
-      </div>
-      <div class="sr"><span class="sr-l">Avg GP%</span><span class="sr-v">47.3%</span></div>
-      <div class="sr"><span class="sr-l">Avg Days to Close</span><span class="sr-v">4.2</span></div>
-      <div class="sr"><span class="sr-l">Repeat Customer %</span><span class="sr-v">18%</span></div>
-      <div style="margin-top:12px;font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:6px">LEAD SOURCE</div>
-      <div class="sr"><span class="sr-l">Google — 6 leads</span><span class="sr-v">67% · $7,200 avg</span></div>
-      <div class="sr"><span class="sr-l">Referral — 5 leads</span><span class="sr-v">60% · $11,400 avg</span></div>
-      <div class="sr"><span class="sr-l">Yard Sign — 2 leads</span><span class="sr-v">0% · —</span></div>
-      <div class="sr"><span class="sr-l">Angi — 2 leads</span><span class="sr-v">50% · $3,800 avg</span></div>
-    </div>
-  </div>
-</div>
 
 <!-- FIELD: Site Check-Ins -->
 <div class="gf" data-r="field">
@@ -982,131 +885,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 
 <!-- SALES: Follow-Ups & Customer Activity -->
-<div class="g2" data-r="sales">
-  <div class="card">
-    <div class="card-h">
-      <div class="card-t">📞 Follow-Ups & Tasks</div>
-      <span style="font-size:12px;color:var(--red);font-weight:600">2 overdue</span>
-    </div>
-    <div class="card-b" style="padding:0">
-
-      <div style="padding:10px 18px;background:var(--red-bg);font-size:11px;font-weight:600;color:var(--red);display:flex;align-items:center;gap:6px">🔴 OVERDUE</div>
-
-      <div class="lr">
-        <div class="dot dot-r"></div>
-        <div style="flex:1">
-          <div class="lr-p">Williams — Follow-up call<div class="lr-s">Was due Feb 24 · <strong style="color:var(--red)">4 days overdue</strong></div></div>
-        </div>
-        <div class="lr-m">$7,100<br><span class="badge b-r">14d stale</span></div>
-      </div>
-      <div class="lr">
-        <div class="dot dot-r"></div>
-        <div style="flex:1">
-          <div class="lr-p">Garcia — Check on proposal<div class="lr-s">Was due Feb 26 · <strong style="color:var(--red)">2 days overdue</strong></div></div>
-        </div>
-        <div class="lr-m">$3,800<br><span class="badge b-y">7d aging</span></div>
-      </div>
-
-      <div style="padding:10px 18px;background:var(--yellow-bg);font-size:11px;font-weight:600;color:var(--yellow);display:flex;align-items:center;gap:6px;border-top:1px solid var(--border)">📅 DUE TODAY</div>
-
-      <div class="lr">
-        <div class="dot dot-y"></div>
-        <div style="flex:1">
-          <div class="lr-p">Johnson — Day 5 check-in call<div class="lr-s">Auto-scheduled · Proposal sent 2/23</div></div>
-        </div>
-        <div class="lr-m">$10,330<br><span class="badge b-g">Active</span></div>
-      </div>
-
-      <div style="padding:10px 18px;font-size:11px;font-weight:600;color:var(--text-sec);display:flex;align-items:center;gap:6px;border-top:1px solid var(--border)">📆 UPCOMING</div>
-
-      <div class="lr">
-        <div class="dot dot-b"></div>
-        <div style="flex:1">
-          <div class="lr-p">Smith — First follow-up<div class="lr-s">Mon 3/2 · Proposal sent 2/25 (auto Day 5)</div></div>
-        </div>
-        <div class="lr-m">$5,200<br><span class="badge b-b">New</span></div>
-      </div>
-      <div class="lr">
-        <div class="dot dot-b"></div>
-        <div style="flex:1">
-          <div class="lr-p">Chen — Post-estimate follow-up<div class="lr-s">Mon 3/2 · After today's appointment</div></div>
-        </div>
-        <div class="lr-m">TBD<br><span class="badge b-x">Scheduled</span></div>
-      </div>
-      <div class="lr">
-        <div class="dot dot-b"></div>
-        <div style="flex:1">
-          <div class="lr-p">Davis — Re-measure follow-up<div class="lr-s">Tue 3/3 · After re-measure today</div></div>
-        </div>
-        <div class="lr-m">TBD<br><span class="badge b-x">Scheduled</span></div>
-      </div>
-
-      <div style="padding:10px 18px;border-top:1px solid var(--border);text-align:center">
-        <a class="card-a">View All Tasks (12) →</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-h">
-      <div class="card-t">💬 Customer Activity</div>
-      <span style="font-size:12px;color:var(--green);font-weight:600">3 new</span>
-    </div>
-    <div class="card-b" style="padding:0">
-
-      <div class="lr" style="background:var(--green-bg)">
-        <div class="dot dot-g"></div>
-        <div style="flex:1">
-          <div class="lr-p">Johnson opened proposal<div class="lr-s">Viewed 3 times today · spent 4 min on Premium+ page</div></div>
-        </div>
-        <div class="lr-m">1h ago<br><span class="badge b-g">🔥 Hot</span></div>
-      </div>
-      <div class="lr" style="background:var(--green-bg)">
-        <div class="dot dot-g"></div>
-        <div style="flex:1">
-          <div class="lr-p">Smith replied to follow-up email<div class="lr-s">"We're still deciding between the two color options..."</div></div>
-        </div>
-        <div class="lr-m">3h ago<br><span class="badge b-g">Reply</span></div>
-      </div>
-      <div class="lr" style="background:var(--green-bg)">
-        <div class="dot dot-g"></div>
-        <div style="flex:1">
-          <div class="lr-p">Garcia clicked proposal link<div class="lr-s">First view in 4 days · looked at financing options</div></div>
-        </div>
-        <div class="lr-m">Yesterday<br><span class="badge b-y">Re-engaged</span></div>
-      </div>
-
-      <div style="height:1px;background:var(--border)"></div>
-
-      <div class="lr">
-        <div class="dot dot-x"></div>
-        <div style="flex:1">
-          <div class="lr-p">Williams — no activity<div class="lr-s">Last opened proposal Feb 17 · 11 days silent</div></div>
-        </div>
-        <div class="lr-m"><span class="badge b-r">Cold</span></div>
-      </div>
-
-      <div style="padding:12px 18px;border-top:1px solid var(--border);background:var(--bg)">
-        <div style="font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:6px">PROPOSAL ENGAGEMENT SUMMARY</div>
-        <div class="sr"><span class="sr-l">Avg views per proposal</span><span class="sr-v">4.2</span></div>
-        <div class="sr"><span class="sr-l">Avg time on proposal</span><span class="sr-v">3.8 min</span></div>
-        <div class="sr"><span class="sr-l">Most viewed section</span><span class="sr-v">Package comparison</span></div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ════════════════════════════════════════════ -->
 <!-- SCHEDULE + ALERTS (shared row, all roles) -->
 <!-- ════════════════════════════════════════════ -->
-<div class="g2" data-r="admin,office,sales,field">
+<div class="g2" data-r="admin,office,field">
   <!-- Schedule -->
-  <div class="card" data-r="admin,office,sales">
+  <div class="card" data-r="admin,office">
     <div class="card-h">
       <div class="cal-tabs">
         <button class="cal-tab active" onclick="switchCal('production',this)">🔧 Production</button>
-        <button class="cal-tab" onclick="switchCal('sales',this)">📅 Sales</button>
-
       </div>
       <a class="card-a" id="cal-link">Production Schedule →</a>
     </div>
@@ -1194,10 +982,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
 
       <div style="padding:10px 16px;text-align:center">
-      <!-- Sales Calendar -->
-    <div id="cal-sales" class="cal-panel" style="display:none;padding:0">
-      <div class="sch">
-        <div class="sch-time">9:00 AM</div>
         <div class="sch-body"><div class="sch-title">Estimate — Martinez Exterior</div><div class="sch-sub">Larry Morrison · 892 Hillwood Dr, Nashville</div></div>
         <span class="badge b-p">Estimate</span>
       </div>
@@ -1305,10 +1089,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="al" data-r="office"><div class="al-i">📞</div><div class="al-t"><strong>Larry missed follow-up</strong> — Thompson Deck · 15 days</div><div class="al-tm">Feb 13</div></div>
       <div class="al" data-r="office"><div class="al-i">🏁</div><div class="al-t"><strong>Invoice prep</strong> — Williams Cabinets finishing today</div><div class="al-tm">Today</div></div>
 
-      <div class="al" data-r="sales"><div class="al-i">🔴</div><div class="al-t"><strong>Williams stale</strong> — 14d no response · deploy ghost rescue?</div><div class="al-tm">Feb 14</div></div>
-      <div class="al" data-r="sales"><div class="al-i">📞</div><div class="al-t"><strong>Garcia follow-up</strong> — call Mon · deck+fence $3,800</div><div class="al-tm">Mon 3/2</div></div>
-      <div class="al" data-r="sales"><div class="al-i">🎯</div><div class="al-t"><strong>Weekly target</strong> — need $13,125 to stay on pace</div><div class="al-tm">This week</div></div>
-      <div class="al" data-r="sales"><div class="al-i">🏆</div><div class="al-t"><strong>Bonus watch</strong> — $68,460 GP to Q1 target</div><div class="al-tm">Q1 2026</div></div>
 
       <div class="al" data-r="field"><div class="al-i">☔</div><div class="al-t"><strong>Garcia Deck</strong> — rain delay · Team B standing down</div><div class="al-tm">Today</div></div>
       <div class="al" data-r="field"><div class="al-i">⏳</div><div class="al-t"><strong>Roberto update pending</strong> — Park Interior · Day 2</div><div class="al-tm">Today</div></div>
@@ -1408,18 +1188,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ════════════════════════════════════════════ -->
 <!-- ACTIVITY FEED (all roles, filtered) -->
 <!-- ════════════════════════════════════════════ -->
-<div class="gf" data-r="admin,office,sales,field">
+<div class="gf" data-r="admin,office,field">
   <div class="card">
     <div class="card-h"><div class="card-t">🕐 Recent Activity</div><a class="card-a">View All →</a></div>
     <div class="card-b" style="padding:0">
       <div class="act" data-r="admin,office,field"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Carlos</strong> uploaded 8 photos — Johnson Ext (during phase)</div><div class="act-tm">32m ago</div></div>
       <div class="act" data-r="admin,office"><div class="act-dot" style="background:var(--blue)"></div><div class="act-t"><strong>Chen</strong> submitted color form — BM White Dove, Simply White, Hale Navy</div><div class="act-tm">2h ago</div></div>
-      <div class="act" data-r="admin,office,sales"><div class="act-dot" style="background:var(--gold)"></div><div class="act-t"><strong>Larry</strong> sent proposal — Smith Kitchen · $5,200 · Premium+ cabinets</div><div class="act-tm">Yesterday</div></div>
+      <div class="act" data-r="admin,office"><div class="act-dot" style="background:var(--gold)"></div><div class="act-t"><strong>Larry</strong> sent proposal — Smith Kitchen · $5,200 · Premium+ cabinets</div><div class="act-tm">Yesterday</div></div>
       <div class="act" data-r="admin"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Garcia</strong> — payment received · $8,000 · ACH · Job #1045</div><div class="act-tm">Yesterday</div></div>
       <div class="act" data-r="admin,office,field"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Javier</strong> completed pre-existing damage docs — Smith Int (4 photos)</div><div class="act-tm">Yesterday</div></div>
       <div class="act" data-r="admin"><div class="act-dot" style="background:var(--gold)"></div><div class="act-t"><strong>Google review</strong> — Park ★★★★★ · "Anthony was amazing"</div><div class="act-tm">Yesterday</div></div>
       <div class="act" data-r="admin,office"><div class="act-dot" style="background:var(--red)"></div><div class="act-t"><strong>Thompson</strong> — late fee applied · $24/wk · 12 days overdue</div><div class="act-tm">2d ago</div></div>
-      <div class="act" data-r="sales"><div class="act-dot" style="background:var(--green)"></div><div class="act-t"><strong>Johnson</strong> — follow-up email sent (DB template)</div><div class="act-tm">Yesterday</div></div>
       <div class="act" data-r="field"><div class="act-dot" style="background:var(--yellow)"></div><div class="act-t"><strong>Team B</strong> — rain delay reported · Garcia Deck +1d</div><div class="act-tm">Today</div></div>
     </div>
   </div>
@@ -1484,34 +1263,6 @@ const ROLES = {
       '❌ Cash flow projections': false,
       '❌ Crew combined rating (supervisor + customer)': false,
       '❌ System configuration': false,
-    }
-  },
-  sales: {
-    name: 'Larry',
-    title: 'Sales',
-    greeting: '👋 Welcome, Larry',
-    note: '🔒 Own data only — no other salespeople, no cost data',
-    notifs: 4,
-    actions: ['✏️ New Estimate','📝 Log Activity','📤 Send Proposal','📊 My Reports'],
-    perms: {
-      '✅ Own commission (MTD/QTD/YTD, hidden by default)': true,
-      '✅ Own pipeline + estimates': true,
-      '✅ Own KPIs (close rate, avg deal, GP%)': true,
-      '✅ Own lead source conversion': true,
-      '✅ Own schedule + appointments': true,
-      '✅ GP% number on estimates (single number)': true,
-      '✅ Quarterly bonus tracker': true,
-      '✅ Specials & promotions to deploy': true,
-      '❌ Other salespeople (any data)': false,
-      '❌ Cost data (labor rates, material costs, sub rates)': false,
-      '❌ How GP% is calculated (cost breakdown)': false,
-      '❌ Margin architecture / pricing derivation': false,
-      '❌ Company overhead dollar amount': false,
-      '❌ Company financials / P&L / reports': false,
-      '❌ Crew payments / PO amounts': false,
-      '❌ Marketing ROI': false,
-      '❌ Revenue recognition': false,
-      '❌ Admin settings / system config': false,
     }
   },
   field: {
@@ -1579,43 +1330,22 @@ function switchRole(role) {
 
   // Calendar tab visibility per role
   const prodTab = document.querySelector('.cal-tab[onclick*="production"]');
-  const salesTab = document.querySelector('.cal-tab[onclick*="sales"]');
   const schedTab = document.querySelector('.cal-tab.office-admin-only');
-  if (prodTab && salesTab) {
-    if (role === 'sales') {
-      prodTab.style.display = 'none';
-      salesTab.style.display = '';
-      if (schedTab) schedTab.style.display = 'none';
-      salesTab.classList.add('active');
-      prodTab.classList.remove('active');
-      if (schedTab) schedTab.classList.remove('active');
-      const calProd = document.getElementById('cal-production');
-      const calSales = document.getElementById('cal-sales');
-      const calSched = document.getElementById('cal-schedule');
-      if (calProd) calProd.style.display = 'none';
-      if (calSales) calSales.style.display = '';
-      if (calSched) calSched.style.display = 'none';
-      const calLink = document.getElementById('cal-link');
-      if (calLink) calLink.textContent = 'Sales Calendar →';
-    } else if (role === 'field') {
-      salesTab.style.display = 'none';
+  if (prodTab) {
+    if (role === 'field') {
       prodTab.style.display = '';
       if (schedTab) schedTab.style.display = 'none';
       prodTab.classList.add('active');
-      salesTab.classList.remove('active');
       if (schedTab) schedTab.classList.remove('active');
       const calProd = document.getElementById('cal-production');
-      const calSales = document.getElementById('cal-sales');
       const calSched = document.getElementById('cal-schedule');
       if (calProd) calProd.style.display = '';
-      if (calSales) calSales.style.display = 'none';
       if (calSched) calSched.style.display = 'none';
       const calLink = document.getElementById('cal-link');
       if (calLink) calLink.textContent = 'Production Schedule →';
     } else {
-      // admin or office — show all 3 tabs
+      // admin or office — show all tabs
       prodTab.style.display = '';
-      salesTab.style.display = '';
       if (schedTab) schedTab.style.display = '';
     }
   }
