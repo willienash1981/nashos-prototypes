@@ -316,7 +316,7 @@
     <button class="btn btn-danger" onclick="toggleBundleStatus()">Deactivate</button>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-outline" onclick="closeDetail()">Cancel</button>
-      <button class="btn btn-green" onclick="editingMC ? saveMC() : editingLaborRate ? saveLaborRate() : editingHeightTier ? saveHeightTier() : saveBundle()">💾 Save</button>
+      <button class="btn btn-green" onclick="editingMC ? saveMC() : editingLaborRate ? saveLaborRate() : editingHeightTier ? saveHeightTier() : editingServiceType ? saveServiceType() : saveBundle()">💾 Save</button>
     </div>
   </div>
 </div>
@@ -324,67 +324,67 @@
 <script>
 // ─── DATA ───
 const microComponents = [
-  { id:1, name:'Brush/Roll First Coat — Wall', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
-  { id:2, name:'Brush/Roll Second Coat — Wall', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
+  { id:1, name:'Brush/Roll First Coat — Wall', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
+  { id:2, name:'Brush/Roll Second Coat — Wall', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
   { id:3, name:'Interior Wall Paint — Eggshell', type:'MATERIAL', rate:'0.00571 gal/SF', unit:'SF', costPerUnit:0.236, materialId:2 },
   { id:4, name:'Caulk — Interior Joints', type:'MATERIAL', rate:'0.001 tube/SF', unit:'SF', costPerUnit:0.005 },
   { id:5, name:'Primer — Stain Block', type:'MATERIAL', rate:'0.004 gal/SF', unit:'SF', costPerUnit:0.165, materialId:5 },
-  { id:6, name:'Sand/Degloss Surface', type:'LABOR', rate:'500 SF/hr', unit:'SF', costPerUnit:0.060, serviceType:'Interior Painting', gpPct:50 },
-  { id:7, name:'Mask/Tape Edges', type:'LABOR', rate:'200 LF/hr', unit:'LF', costPerUnit:0.150, serviceType:'Interior Painting', gpPct:50 },
-  { id:8, name:'Spray Apply — Siding', type:'LABOR', rate:'600 SF/hr', unit:'SF', costPerUnit:0.050, serviceType:'Exterior Painting', gpPct:50 },
-  { id:9, name:'Backroll — Siding', type:'LABOR', rate:'450 SF/hr', unit:'SF', costPerUnit:0.067, serviceType:'Exterior Painting', gpPct:50 },
+  { id:6, name:'Sand/Degloss Surface', type:'LABOR', rate:'500 SF/hr', unit:'SF', costPerUnit:0.060, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50 },
+  { id:7, name:'Mask/Tape Edges', type:'LABOR', rate:'200 LF/hr', unit:'LF', costPerUnit:0.150, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50 },
+  { id:8, name:'Spray Apply — Siding', type:'LABOR', rate:'600 SF/hr', unit:'SF', costPerUnit:0.050, serviceTypeId:2, laborRateId:2, serviceType:'Exterior Painting', gpPct:50 },
+  { id:9, name:'Backroll — Siding', type:'LABOR', rate:'450 SF/hr', unit:'SF', costPerUnit:0.067, serviceTypeId:2, laborRateId:2, serviceType:'Exterior Painting', gpPct:50 },
   { id:10, name:'Exterior Acrylic Paint', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.263, materialId:1 },
   { id:11, name:'Ceiling Paint — Flat', type:'MATERIAL', rate:'0.005 gal/SF', unit:'SF', costPerUnit:0.208, materialId:2 },
-  { id:12, name:'Roll Ceiling — 1 Coat', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
-  { id:13, name:'Brush/Roll Trim — 1 Coat', type:'LABOR', rate:'46', unit:'LF', costPerUnit:1.2560, serviceType:'Interior Painting', gpPct:50, description:'ER: 1.3 min/LF → 46.15 LF/hr @ $58/hr' },
+  { id:12, name:'Roll Ceiling — 1 Coat', type:'LABOR', rate:'160', unit:'SF', costPerUnit:0.3625, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr for 2 coats = 160 SF/hr per coat @ $58/hr' },
+  { id:13, name:'Brush/Roll Trim — 1 Coat', type:'LABOR', rate:'46', unit:'LF', costPerUnit:1.2560, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 1.3 min/LF → 46.15 LF/hr @ $58/hr' },
   { id:14, name:'Trim Enamel — Semi-Gloss', type:'MATERIAL', rate:'0.004 gal/LF', unit:'LF', costPerUnit:0.180 },
   { id:15, name:'Deck Stain — Semi-Trans', type:'MATERIAL', rate:'0.006 gal/SF', unit:'SF', costPerUnit:0.270, materialId:4 },
-  { id:16, name:'Spray/Brush Fence', type:'LABOR', rate:'80 LF/hr', unit:'LF', costPerUnit:1.875, serviceType:'Deck / Fence', gpPct:50 },
+  { id:16, name:'Spray/Brush Fence', type:'LABOR', rate:'80 LF/hr', unit:'LF', costPerUnit:1.875, serviceTypeId:6, laborRateId:6, serviceType:'Deck / Fence', gpPct:50 },
   { id:17, name:'Fence Stain', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.050 },
   { id:18, name:'Drywall Compound', type:'MATERIAL', rate:'1 EA', unit:'EA', costPerUnit:12.00, materialId:5 },
-  { id:19, name:'Patch & Sand — Drywall', type:'LABOR', rate:'2 EA/hr', unit:'EA', costPerUnit:15.00, serviceType:'Drywall', gpPct:50 },
-  { id:20, name:'Cabinet Spray — Per LF', type:'LABOR', rate:'8 LF/hr', unit:'LF', costPerUnit:3.750, serviceType:'Cabinet Painting', gpPct:50 },
+  { id:19, name:'Patch & Sand — Drywall', type:'LABOR', rate:'2 EA/hr', unit:'EA', costPerUnit:15.00, serviceTypeId:5, laborRateId:5, serviceType:'Drywall', gpPct:50 },
+  { id:20, name:'Cabinet Spray — Per LF', type:'LABOR', rate:'8 LF/hr', unit:'LF', costPerUnit:3.750, serviceTypeId:3, laborRateId:3, serviceType:'Cabinet Painting', gpPct:50 },
   { id:21, name:'Cabinet Primer', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.100, materialId:5 },
   { id:22, name:'Cabinet Enamel', type:'MATERIAL', rate:'0.02 gal/LF', unit:'LF', costPerUnit:1.500, materialId:3 },
-  { id:23, name:'Door — Brush 2 Coats', type:'LABOR', rate:'1.22', unit:'EA', costPerUnit:47.3900, serviceType:'Interior Painting', gpPct:50, description:'ER: 49 min/EA → 1.22 EA/hr @ $58/hr' },
+  { id:23, name:'Door — Brush 2 Coats', type:'LABOR', rate:'1.22', unit:'EA', costPerUnit:47.3900, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 49 min/EA → 1.22 EA/hr @ $58/hr' },
   { id:24, name:'Door Enamel Paint', type:'MATERIAL', rate:'0.25 gal/EA', unit:'EA', costPerUnit:11.50 },
-  { id:25, name:'Wallpaper Strip', type:'LABOR', rate:'28.57', unit:'SF', costPerUnit:2.0300, serviceType:'Interior Painting', gpPct:50, description:'ER: 2.1 min/SF → 28.57 SF/hr @ $58/hr' },
+  { id:25, name:'Wallpaper Strip', type:'LABOR', rate:'28.57', unit:'SF', costPerUnit:2.0300, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 2.1 min/SF → 28.57 SF/hr @ $58/hr' },
   { id:26, name:'Wallpaper Adhesive Remover', type:'MATERIAL', rate:'0.002 gal/SF', unit:'SF', costPerUnit:0.200 },
   // Interior ceiling obstacle components — per EA per coat
-  { id:30, name:'Cut Around Recessed Light — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA', costPerUnit:0.58, serviceType:'Interior Painting', gpPct:50, description:'ER: ~1 min/EA → 60 EA/hr @ $58/hr (est.)' },
-  { id:31, name:'Cut Around Recessed Light — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA', costPerUnit:1.17, serviceType:'Interior Painting', gpPct:50, description:'ER: ~2 min/EA → 30 EA/hr @ $58/hr (est.)' },
-  { id:32, name:'Cut Around Recessed Light — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
-  { id:33, name:'Cut Around Ceiling Fan — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA', costPerUnit:0.58, serviceType:'Interior Painting', gpPct:50, description:'ER: ~1 min/EA → 60 EA/hr @ $58/hr (est.)' },
-  { id:34, name:'Cut Around Ceiling Fan — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA', costPerUnit:1.17, serviceType:'Interior Painting', gpPct:50, description:'ER: ~2 min/EA → 30 EA/hr @ $58/hr (est.)' },
-  { id:35, name:'Cut Around Ceiling Fan — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
-  { id:36, name:'Cut Around Chandelier — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceType:'Interior Painting', gpPct:50, description:'ER: ~6 min/EA → 10 EA/hr @ $58/hr (est.)' },
-  { id:37, name:'Cut Around Ceiling Beam — High', type:'LABOR', rate:'~3 min/LF', unit:'LF', costPerUnit:0.58, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/LF → 20 LF/hr @ $58/hr (est.)' },
-  { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
-  { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceType:'Interior Painting', gpPct:50, description:'ER: ~6 min/EA → 10 EA/hr @ $58/hr (est.)' },
+  { id:30, name:'Cut Around Recessed Light — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA', costPerUnit:0.58, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~1 min/EA → 60 EA/hr @ $58/hr (est.)' },
+  { id:31, name:'Cut Around Recessed Light — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA', costPerUnit:1.17, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~2 min/EA → 30 EA/hr @ $58/hr (est.)' },
+  { id:32, name:'Cut Around Recessed Light — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
+  { id:33, name:'Cut Around Ceiling Fan — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA', costPerUnit:0.58, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~1 min/EA → 60 EA/hr @ $58/hr (est.)' },
+  { id:34, name:'Cut Around Ceiling Fan — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA', costPerUnit:1.17, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~2 min/EA → 30 EA/hr @ $58/hr (est.)' },
+  { id:35, name:'Cut Around Ceiling Fan — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
+  { id:36, name:'Cut Around Chandelier — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~6 min/EA → 10 EA/hr @ $58/hr (est.)' },
+  { id:37, name:'Cut Around Ceiling Beam — High', type:'LABOR', rate:'~3 min/LF', unit:'LF', costPerUnit:0.58, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/LF → 20 LF/hr @ $58/hr (est.)' },
+  { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~3 min/EA → 20 EA/hr @ $58/hr (est.)' },
+  { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: ~6 min/EA → 10 EA/hr @ $58/hr (est.)' },
   // Tall/High wall + ceiling labor
-  { id:40, name:'Brush & Roll — 1st Coat, Tall Walls', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
-  { id:41, name:'Brush & Roll — 2nd Coat, Tall Walls', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
-  { id:42, name:'Brush & Roll — 1st Coat, High Walls', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
-  { id:43, name:'Brush & Roll — 2nd Coat, High Walls', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
-  { id:44, name:'Roll Ceiling — 1 Coat, Tall', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
-  { id:45, name:'Roll Ceiling — 1 Coat, High', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
+  { id:40, name:'Brush & Roll — 1st Coat, Tall Walls', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
+  { id:41, name:'Brush & Roll — 2nd Coat, Tall Walls', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
+  { id:42, name:'Brush & Roll — 1st Coat, High Walls', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
+  { id:43, name:'Brush & Roll — 2nd Coat, High Walls', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
+  { id:44, name:'Roll Ceiling — 1 Coat, Tall', type:'LABOR', rate:'128', unit:'SF', costPerUnit:0.4531, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.80 tall factor = 64 SF/hr @ $58/hr' },
+  { id:45, name:'Roll Ceiling — 1 Coat, High', type:'LABOR', rate:'100', unit:'SF', costPerUnit:0.5800, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 80 SF/hr/coat × 0.625 high factor = 50 SF/hr @ $58/hr' },
   // Interior trim & fixture MCs from Estimate Rocket
-  { id:50, name:'Paint Door Frame Only — 1 Coat', type:'LABOR', rate:'3.24', unit:'EA', costPerUnit:parseFloat((58/3.24).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 18.5 min/EA → 3.24 EA/hr @ $58/hr' },
-  { id:51, name:'Paint Window & Frame — 1 Coat', type:'LABOR', rate:'1.13', unit:'EA', costPerUnit:parseFloat((58/1.13).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'NashOS grid pricing: $35 base + $1/grid (admin-configurable). NOT minutes-based. See §3.16 interior wizard grid model.' },
-  { id:52, name:'Paint Window Frame Only — 1 Coat', type:'LABOR', rate:'4.00', unit:'EA', costPerUnit:parseFloat((58/4.00).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'NashOS grid pricing: $35 base + $1/grid (admin-configurable). NOT minutes-based. See §3.16 interior wizard grid model.' },
-  { id:53, name:'Paint Crown Moulding — 1 Coat', type:'LABOR', rate:'40', unit:'LF', costPerUnit:parseFloat((58/40).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 1.5 min/LF → 40 LF/hr @ $58/hr' },
-  { id:54, name:'Paint Rail Spindles — 1 Coat', type:'LABOR', rate:'8.57', unit:'EA', costPerUnit:parseFloat((58/8.57).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 7 min/EA → 8.57 EA/hr @ $58/hr' },
-  { id:55, name:'Paint Stair Kicks/Stringer — 1 Coat', type:'LABOR', rate:'1.62', unit:'EA', costPerUnit:parseFloat((58/1.62).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 37 min/EA → 1.62 EA/hr @ $58/hr' },
-  { id:56, name:'Paint Closet Door Back — 1 Coat', type:'LABOR', rate:'1.97', unit:'EA', costPerUnit:parseFloat((58/1.97).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 30.5 min/EA → 1.97 EA/hr @ $58/hr' },
-  { id:58, name:'Paint Fireplace Mantle — 1 Coat', type:'LABOR', rate:'1.00', unit:'EA', costPerUnit:parseFloat((58/1.00).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 60 min/EA → 1.00 EA/hr @ $58/hr' },
-  { id:59, name:'Paint Window Grille (8+ panes) — 1 Coat', type:'LABOR', rate:'60', unit:'EA', costPerUnit:parseFloat((58/60).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 1 min/EA → 60 EA/hr @ $58/hr' },
-  { id:60, name:'Masking — Per SF', type:'LABOR', rate:'86', unit:'SF', costPerUnit:parseFloat((58/86).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 0.697 min/SF → 86.08 SF/hr @ $58/hr' },
-  { id:61, name:'Tape Seam Replace — Per LF', type:'LABOR', rate:'2.00', unit:'LF', costPerUnit:parseFloat((58/2.00).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 30 min/LF → 2.00 LF/hr @ $58/hr' },
-  { id:62, name:'Tape Seam Patch — Per LF', type:'LABOR', rate:'6.00', unit:'LF', costPerUnit:parseFloat((58/6.00).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 10 min/LF → 6.00 LF/hr @ $58/hr' },
-  { id:63, name:'Paint Door Only — 1 Coat', type:'LABOR', rate:'1.97', unit:'EA', costPerUnit:parseFloat((58/1.97).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 30.5 min/EA → 1.97 EA/hr @ $58/hr' },
-  { id:64, name:'Paint Window Only — 1 Coat', type:'LABOR', rate:'1.58', unit:'EA', costPerUnit:parseFloat((58/1.58).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 38 min/EA → 1.58 EA/hr @ $58/hr' },
-  { id:65, name:'Closet Shelving Drywall Box', type:'LABOR', rate:'EA per wall back', unit:'EA', costPerUnit:5.80, serviceType:'Interior Painting', gpPct:50, description:'ER: painting back of built-in closet shelf box. $5.80/wall back. Entered as count of wall backs.' },
-  { id:66, name:'Accent Wall — 1 Coat (complex)', type:'LABOR', rate:'0.495', unit:'EA', costPerUnit:parseFloat((58/0.495).toFixed(4)), serviceType:'Interior Painting', gpPct:50, description:'ER: 121.33 min/EA → 0.495 EA/hr @ $58/hr' },
+  { id:50, name:'Paint Door Frame Only — 1 Coat', type:'LABOR', rate:'3.24', unit:'EA', costPerUnit:parseFloat((58/3.24).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 18.5 min/EA → 3.24 EA/hr @ $58/hr' },
+  { id:51, name:'Paint Window & Frame — 1 Coat', type:'LABOR', rate:'1.13', unit:'EA', costPerUnit:parseFloat((58/1.13).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'NashOS grid pricing: $35 base + $1/grid (admin-configurable). NOT minutes-based. See §3.16 interior wizard grid model.' },
+  { id:52, name:'Paint Window Frame Only — 1 Coat', type:'LABOR', rate:'4.00', unit:'EA', costPerUnit:parseFloat((58/4.00).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'NashOS grid pricing: $35 base + $1/grid (admin-configurable). NOT minutes-based. See §3.16 interior wizard grid model.' },
+  { id:53, name:'Paint Crown Moulding — 1 Coat', type:'LABOR', rate:'40', unit:'LF', costPerUnit:parseFloat((58/40).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 1.5 min/LF → 40 LF/hr @ $58/hr' },
+  { id:54, name:'Paint Rail Spindles — 1 Coat', type:'LABOR', rate:'8.57', unit:'EA', costPerUnit:parseFloat((58/8.57).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 7 min/EA → 8.57 EA/hr @ $58/hr' },
+  { id:55, name:'Paint Stair Kicks/Stringer — 1 Coat', type:'LABOR', rate:'1.62', unit:'EA', costPerUnit:parseFloat((58/1.62).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 37 min/EA → 1.62 EA/hr @ $58/hr' },
+  { id:56, name:'Paint Closet Door Back — 1 Coat', type:'LABOR', rate:'1.97', unit:'EA', costPerUnit:parseFloat((58/1.97).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 30.5 min/EA → 1.97 EA/hr @ $58/hr' },
+  { id:58, name:'Paint Fireplace Mantle — 1 Coat', type:'LABOR', rate:'1.00', unit:'EA', costPerUnit:parseFloat((58/1.00).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 60 min/EA → 1.00 EA/hr @ $58/hr' },
+  { id:59, name:'Paint Window Grille (8+ panes) — 1 Coat', type:'LABOR', rate:'60', unit:'EA', costPerUnit:parseFloat((58/60).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 1 min/EA → 60 EA/hr @ $58/hr' },
+  { id:60, name:'Masking — Per SF', type:'LABOR', rate:'86', unit:'SF', costPerUnit:parseFloat((58/86).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 0.697 min/SF → 86.08 SF/hr @ $58/hr' },
+  { id:61, name:'Tape Seam Replace — Per LF', type:'LABOR', rate:'2.00', unit:'LF', costPerUnit:parseFloat((58/2.00).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 30 min/LF → 2.00 LF/hr @ $58/hr' },
+  { id:62, name:'Tape Seam Patch — Per LF', type:'LABOR', rate:'6.00', unit:'LF', costPerUnit:parseFloat((58/6.00).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 10 min/LF → 6.00 LF/hr @ $58/hr' },
+  { id:63, name:'Paint Door Only — 1 Coat', type:'LABOR', rate:'1.97', unit:'EA', costPerUnit:parseFloat((58/1.97).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 30.5 min/EA → 1.97 EA/hr @ $58/hr' },
+  { id:64, name:'Paint Window Only — 1 Coat', type:'LABOR', rate:'1.58', unit:'EA', costPerUnit:parseFloat((58/1.58).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 38 min/EA → 1.58 EA/hr @ $58/hr' },
+  { id:65, name:'Closet Shelving Drywall Box', type:'LABOR', rate:'EA per wall back', unit:'EA', costPerUnit:5.80, serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: painting back of built-in closet shelf box. $5.80/wall back. Entered as count of wall backs.' },
+  { id:66, name:'Accent Wall — 1 Coat (complex)', type:'LABOR', rate:'0.495', unit:'EA', costPerUnit:parseFloat((58/0.495).toFixed(4)), serviceTypeId:1, laborRateId:1, serviceType:'Interior Painting', gpPct:50, description:'ER: 121.33 min/EA → 0.495 EA/hr @ $58/hr' },
 ];
 
 const bundles = [
@@ -678,19 +678,38 @@ window.matAddNew = function() {
   window.matEdit(newId);
 };
 
-const laborRates = [
-  { id:1, serviceType:'Interior Painting', ratePerHr:58.00, effectiveDate:'Jan 1, 2026' },
-  { id:2, serviceType:'Exterior Painting', ratePerHr:38.00, effectiveDate:'Jan 1, 2026' },
-  { id:3, serviceType:'Cabinet Painting', ratePerHr:45.00, effectiveDate:'Jan 1, 2026' },
-  { id:4, serviceType:'Carpentry', ratePerHr:52.00, effectiveDate:'Jan 1, 2026' },
-  { id:5, serviceType:'Drywall', ratePerHr:48.00, effectiveDate:'Jan 1, 2026' },
-  { id:6, serviceType:'Deck / Fence', ratePerHr:36.00, effectiveDate:'Jan 1, 2026' },
-  { id:7, serviceType:'Handyman', ratePerHr:42.00, effectiveDate:'Jan 1, 2026' },
+const serviceTypes = [
+  { id:1, name:'Interior Painting',  defaultLaborRateId:1, workArea:'Interior',  crewSkill:'Painting' },
+  { id:2, name:'Exterior Painting',  defaultLaborRateId:2, workArea:'Exterior',  crewSkill:'Painting' },
+  { id:3, name:'Cabinet Painting',   defaultLaborRateId:3, workArea:'Interior',  crewSkill:'Cabinet' },
+  { id:4, name:'Carpentry',          defaultLaborRateId:4, workArea:'Either',    crewSkill:'Carpentry' },
+  { id:5, name:'Drywall',            defaultLaborRateId:5, workArea:'Interior',  crewSkill:'Drywall' },
+  { id:6, name:'Deck / Fence',       defaultLaborRateId:6, workArea:'Exterior',  crewSkill:'Painting' },
+  { id:7, name:'Handyman',           defaultLaborRateId:7, workArea:'Either',    crewSkill:'General' },
 ];
 
-function getLaborRate(serviceType) {
-  const match = laborRates.find(r => r.serviceType === serviceType);
-  return match ? match.ratePerHr : 35.00; // default to interior rate
+const laborRates = [
+  { id:1, name:'Standard Interior',    ratePerHr:58.00, effectiveDate:'Jan 1, 2026' },
+  { id:2, name:'Standard Exterior',    ratePerHr:62.00, effectiveDate:'Jan 1, 2026' },
+  { id:3, name:'Standard Cabinet',     ratePerHr:45.00, effectiveDate:'Jan 1, 2026' },
+  { id:4, name:'Standard Carpentry',   ratePerHr:52.00, effectiveDate:'Jan 1, 2026' },
+  { id:5, name:'Standard Drywall',     ratePerHr:48.00, effectiveDate:'Jan 1, 2026' },
+  { id:6, name:'Standard Deck/Fence',  ratePerHr:36.00, effectiveDate:'Jan 1, 2026' },
+  { id:7, name:'Standard Handyman',    ratePerHr:42.00, effectiveDate:'Jan 1, 2026' },
+];
+
+function getLaborRate(laborRateId) {
+  const r = laborRates.find(l => l.id === laborRateId);
+  return r ? r.ratePerHr : 58.00;
+}
+
+function getServiceType(serviceTypeId) {
+  return serviceTypes.find(s => s.id === serviceTypeId);
+}
+
+function getDefaultLaborRateId(serviceTypeId) {
+  const st = serviceTypes.find(s => s.id === serviceTypeId);
+  return st ? st.defaultLaborRateId : 1;
 }
 
 const heightTiersExterior = [
@@ -724,6 +743,7 @@ const configCategories = [
   { key:'micro', icon:'⚛️', label:'Micro-Components', cnt:87 },
   { key:'materials', icon:'🪣', label:'Material Items', cnt:64 },
   { key:'labor', icon:'💰', label:'Labor Rates', cnt:7 },
+  { key:'servicetypes', icon:'🏷️', label:'Service Types', cnt:7 },
   { key:'height', icon:'📏', label:'Height Tier Pricing', cnt:3 },
   { key:'templates', icon:'📄', label:'Templates', cnt:8 },
   { key:'products', icon:'🪣', label:'Products & Materials', cnt:18 },
@@ -788,9 +808,9 @@ function switchCategory(key) {
 // ─── LABOR RATES ───
 function renderLaborRates(el) {
   const rows = laborRates.map(l => {
-    const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.serviceType === l.serviceType).length;
+    const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.laborRateId === l.id).length;
     return `<tr class="clickable" onclick="openLaborRate(${l.id})">
-      <td class="bright">${l.serviceType}</td>
+      <td class="bright">${l.name}</td>
       <td class="mono">$${l.ratePerHr.toFixed(2)}/hr</td>
       <td><span class="link-count">${linkedMCs}</span></td>
       <td class="dim">${l.effectiveDate}</td>
@@ -799,30 +819,30 @@ function renderLaborRates(el) {
   
   el.innerHTML = `
     <div style="background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--yellow);line-height:1.6;">
-      ⚡ Changing a rate here automatically updates all linked micro-component costs.
+      ⚡ Changing a rate here automatically updates all linked micro-component costs. Renaming a rate does not cascade — MCs reference by ID.
     </div>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary" onclick="openNewLaborRate()">+ New Service Type</button></div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary" onclick="openNewLaborRate()">+ New Labor Rate</button></div>
     <div class="card"><table>
-      <thead><tr><th>Service Type</th><th>Rate/hr</th><th>Linked MCs</th><th>Effective Date</th></tr></thead>
+      <thead><tr><th>Rate Name</th><th>Rate/hr</th><th>Used In (MCs)</th><th>Effective Date</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
 }
 
 function openNewLaborRate() {
   const newId = Math.max(...laborRates.map(l=>l.id)) + 1;
-  editingLaborRate = { id: newId, serviceType: '', ratePerHr: 0, effectiveDate: 'Jan 1, 2026' };
+  editingLaborRate = { id: newId, name: '', ratePerHr: 0, effectiveDate: 'Jan 1, 2026' };
   editingMC = null; editingHeightTier = null;
   document.getElementById('detailTabs').style.display = 'none';
-  document.getElementById('detailTitle').textContent = 'New Service Type';
+  document.getElementById('detailTitle').textContent = 'New Labor Rate';
   document.getElementById('detailBody').innerHTML = `
-    <div class="form-group"><label class="form-label">Service Type Name</label>
-      <input class="form-input" placeholder="e.g. Screen Repair" onchange="editingLaborRate.serviceType=this.value"/></div>
+    <div class="form-group"><label class="form-label">Rate Name</label>
+      <input class="form-input" placeholder="e.g. Standard Specialty" onchange="editingLaborRate.name=this.value"/></div>
     <div class="form-group"><label class="form-label">Rate per Hour ($)</label>
       <input class="form-input" type="number" step="0.50" value="0" onchange="editingLaborRate.ratePerHr=parseFloat(this.value)"/></div>
     <div class="form-group"><label class="form-label">Effective Date</label>
       <input class="form-input" value="Jan 1, 2026" onchange="editingLaborRate.effectiveDate=this.value"/></div>
     <div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px">
-      After saving, this service type will appear in the MC editor Service Type dropdown.</div>`;
+      After saving, this rate will appear in the MC editor Labor Rate dropdown.</div>`;
   document.getElementById('detailPanel').style.display = 'flex';
 }
 
@@ -831,32 +851,28 @@ function openLaborRate(id) {
   document.getElementById('detailTabs').style.display = 'none';
   document.getElementById('detailTitle').textContent = 'Edit Labor Rate';
   const l = editingLaborRate;
-  const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.serviceType === l.serviceType).length;
+  const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.laborRateId === l.id).length;
   document.getElementById('detailBody').innerHTML = `
-    <div class="form-group"><label class="form-label">Service Type Name <span style="font-size:10px;color:var(--text-dim)">(renaming updates all linked MCs)</span></label>
-      <input class="form-input" value="${l.serviceType}" onchange="editingLaborRate.serviceType=this.value"/></div>
+    <div class="form-group"><label class="form-label">Rate Name <span style="font-size:10px;color:var(--text-dim)">(rename freely — MCs reference by ID)</span></label>
+      <input class="form-input" value="${l.name}" onchange="editingLaborRate.name=this.value"/></div>
     <div class="form-group"><label class="form-label">Rate Per Hour ($)</label>
       <input class="form-input" type="number" step="0.01" min="0" value="${l.ratePerHr.toFixed(2)}" onchange="editingLaborRate.ratePerHr=parseFloat(this.value)"/></div>
     <div class="form-group"><label class="form-label">Effective Date</label>
       <input class="form-input" type="text" value="${l.effectiveDate}" onchange="editingLaborRate.effectiveDate=this.value"/></div>
-    <div class="form-group"><label class="form-label">Linked Micro-Components</label>
-      <div style="padding:9px 12px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text-bright);font-size:13px;">${linkedMCs} MCs use this service type</div></div>
+    <div class="form-group"><label class="form-label">Used In (Micro-Components)</label>
+      <div style="padding:9px 12px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text-bright);font-size:13px;">${linkedMCs} MCs reference this rate</div></div>
     <div style="background:var(--yellow-bg);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:10px 14px;margin-top:16px;display:flex;align-items:flex-start;gap:8px;">
       <span style="font-size:14px">⚡</span>
-      <span style="font-size:12px;color:var(--yellow);line-height:1.5;">Changing a rate here automatically updates all linked micro-component costs.</span>
+      <span style="font-size:12px;color:var(--yellow);line-height:1.5;">Changing rate/hr cascades automatically — getLaborRate() looks up live by ID.</span>
     </div>`;
   document.getElementById('detailPanel').style.display = 'flex';
 }
 
 function saveLaborRate() {
   const idx = laborRates.findIndex(l => l.id === editingLaborRate.id);
-  const oldName = idx >= 0 ? laborRates[idx].serviceType : null;
   if (idx >= 0) laborRates[idx] = { ...editingLaborRate };
   else laborRates.push({ ...editingLaborRate });
-  // propagate name change to linked MCs
-  if (oldName && oldName !== editingLaborRate.serviceType) {
-    microComponents.forEach(m => { if (m.serviceType === oldName) m.serviceType = editingLaborRate.serviceType; });
-  }
+  // No cascade needed — MCs reference laborRateId (int), not name string
   editingLaborRate = null;
   document.getElementById('detailPanel').style.display = 'none';
   document.getElementById('detailTabs').style.display = '';
@@ -951,6 +967,7 @@ function renderMainContent() {
     micro: renderMicroComponents,
     materials: renderMaterials,
     labor: renderLaborRates,
+    servicetypes: renderServiceTypes,
     height: renderHeight,
     templates: renderTemplates,
     products: renderProducts,
@@ -990,9 +1007,10 @@ function renderMicroComponents(el) {
       const mat = materialItems.find(x=>x.id===m.materialId);
       const dynCost = calcMaterialCost(m.materialId,'Satin','quote');
       costCell = mat ? `Linked: <strong>${mat.name}</strong> <span class="badge badge-exterior" style="font-size:10px">catalog</span><br><small>~$${dynCost.toFixed(3)}/SF</small>` : `$${m.costPerUnit.toFixed(3)}`;
-    } else if (m.type==='LABOR' && m.serviceType) {
-      const rate = getLaborRate(m.serviceType);
-      costCell = `via <strong>${m.serviceType}</strong> <span class="badge badge-interior" style="font-size:10px">⚡</span><br><small>$${rate}/hr</small>`;
+    } else if (m.type==='LABOR') {
+      const st = serviceTypes.find(s => s.id === m.serviceTypeId);
+      const lr = laborRates.find(l => l.id === m.laborRateId);
+      costCell = `<span>${st ? st.name : (m.serviceType || '—')} <span class="badge badge-interior" style="font-size:10px">⚡</span><br><small>${lr ? lr.name + ' @ $' + lr.ratePerHr + '/hr' : 'No rate'}</small></span>`;
     } else {
       costCell = `$${m.costPerUnit.toFixed(3)}`;
     }
@@ -1018,7 +1036,7 @@ function openMC(id) {
 function renderMCDetail() {
   const m = editingMC;
   if (!m) return;
-  const laborServiceTypes = laborRates.map(l => l.serviceType); // dynamic — pulls from Labor Rates table
+  // serviceTypes and laborRates arrays provide dropdown options
   const matOptions = materialItems.map(mat=>`<option value="${mat.id}" ${m.materialId===mat.id?'selected':''}>${mat.name} (${mat.brand})</option>`).join('');
   const rate = m.serviceType ? getLaborRate(m.serviceType) : 35;
   document.getElementById('detailBody').innerHTML = `
@@ -1035,10 +1053,15 @@ function renderMCDetail() {
       </select></div>
 
     ${m.type==='LABOR' ? `
-    <div class="form-group"><label class="form-label">Service Type <span style="font-size:10px;color:var(--text-dim)">(sets hourly rate)</span></label>
-      <select class="form-select" onchange="editingMC.serviceType=this.value;renderMCDetail()">
+    <div class="form-group"><label class="form-label">Service Type <span style="font-size:10px;color:var(--text-dim)">(routing / crew / work orders)</span></label>
+      <select class="form-select" onchange="editingMC.serviceTypeId=parseInt(this.value);editingMC.laborRateId=getDefaultLaborRateId(parseInt(this.value));const stObj=getServiceType(editingMC.serviceTypeId);editingMC.serviceType=stObj?stObj.name:editingMC.serviceType;renderMCDetail()">
         <option value="">— None —</option>
-        ${laborServiceTypes.map(s=>`<option ${m.serviceType===s?'selected':''}>${s}</option>`).join('')}
+        ${serviceTypes.map(s=>`<option value="${s.id}" ${m.serviceTypeId===s.id?'selected':''}>${s.name}</option>`).join('')}
+      </select></div>
+
+    <div class="form-group"><label class="form-label">Labor Rate <span style="font-size:10px;color:var(--text-dim)">(pricing — override default if needed)</span></label>
+      <select class="form-select" onchange="editingMC.laborRateId=parseInt(this.value);renderMCDetail()">
+        ${laborRates.map(l=>`<option value="${l.id}" ${m.laborRateId===l.id?'selected':''}>${l.name} — $${l.ratePerHr.toFixed(2)}/hr</option>`).join('')}
       </select></div>
 
     <div class="form-group">
@@ -1046,12 +1069,12 @@ function renderMCDetail() {
       <input class="form-input" type="number" step="1" min="0"
         value="${parseFloat(String(m.rate))||''}"
         placeholder="e.g. 350"
-        oninput="editingMC.rate=this.value;const lr=getLaborRate(editingMC.serviceType||'');const pr=parseFloat(this.value)||0;if(pr>0){editingMC.costPerUnit=parseFloat((lr/pr).toFixed(4));}renderMCDetail()"/>
+        oninput="editingMC.rate=this.value;const lr=getLaborRate(editingMC.laborRateId||1);const pr=parseFloat(this.value)||0;if(pr>0){editingMC.costPerUnit=parseFloat((lr/pr).toFixed(4));}renderMCDetail()"/>
     </div>
 
-    ${m.serviceType && parseFloat(m.rate) > 0 ? (() => {
+    ${m.laborRateId && parseFloat(m.rate) > 0 ? (() => {
       const pr = parseFloat(String(m.rate));
-      const lr = getLaborRate(m.serviceType);
+      const lr = getLaborRate(m.laborRateId);
       const cost = lr / pr;
       if (editingMC) editingMC.costPerUnit = parseFloat(cost.toFixed(4));
       const gp = m.gpPct != null ? m.gpPct : 50;
@@ -1071,7 +1094,7 @@ function renderMCDetail() {
           <div style="color:var(--text-sec)">Margin</div><div style="color:var(--green)"><strong>$${margin.toFixed(4)}/${m.unit}</strong></div>
         </div>
       </div>`;
-    })() : m.serviceType ? `<div style="padding:10px;background:var(--navy-mid);border-radius:6px;font-size:12px;color:var(--text-dim)">Enter production rate above to see calculator</div>` : ''}
+    })() : m.laborRateId ? `<div style="padding:10px;background:var(--navy-mid);border-radius:6px;font-size:12px;color:var(--text-dim)">Enter production rate above to see calculator</div>` : ''}
 
     ` : `
     <div class="form-group"><label class="form-label">Linked Product <span style="font-size:10px;color:var(--text-dim)">(drives dynamic cost)</span></label>
@@ -1176,6 +1199,7 @@ function closeDetail() {
   editingMC = null;
   editingLaborRate = null;
   editingHeightTier = null;
+  editingServiceType = null;
   renderMainContent();
 }
 
@@ -1744,6 +1768,84 @@ function renderIntegrations(el) {
           <button class="btn btn-outline btn-sm">Configure</button>
         </div>`).join('')}
     </div>`;
+}
+
+// ─── SERVICE TYPES ───
+function renderServiceTypes(el) {
+  const rows = serviceTypes.map(st => {
+    const defaultRate = laborRates.find(l => l.id === st.defaultLaborRateId);
+    const mcCount = microComponents.filter(m => m.type === 'LABOR' && m.serviceTypeId === st.id).length;
+    return `<tr class="clickable" onclick="openServiceType(${st.id})">
+      <td class="bright">${st.name}</td>
+      <td class="dim">${defaultRate ? defaultRate.name + ' — $' + defaultRate.ratePerHr.toFixed(2) + '/hr' : '—'}</td>
+      <td><span class="badge badge-${st.workArea==='Interior'?'interior':st.workArea==='Exterior'?'exterior':'drywall'}">${st.workArea}</span></td>
+      <td class="dim">${st.crewSkill}</td>
+      <td><span class="link-count">${mcCount}</span></td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--accent-light);line-height:1.6;">
+      🏷️ Service Types drive routing, crew assignment, and work order generation. Each has a default Labor Rate for pricing, which can be overridden per MC.
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary" onclick="openNewServiceType()">+ New Service Type</button></div>
+    <div class="card"><table>
+      <thead><tr><th>Service Type Name</th><th>Default Labor Rate</th><th>Work Area</th><th>Crew Skill</th><th>MCs</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+let editingServiceType = null;
+
+function openServiceType(id) {
+  editingServiceType = JSON.parse(JSON.stringify(serviceTypes.find(s => s.id === id)));
+  document.getElementById('detailTabs').style.display = 'none';
+  document.getElementById('detailTitle').textContent = 'Edit Service Type';
+  renderServiceTypeDetail();
+  document.getElementById('detailPanel').style.display = 'flex';
+}
+
+function openNewServiceType() {
+  const newId = Math.max(...serviceTypes.map(s=>s.id)) + 1;
+  editingServiceType = { id: newId, name: '', defaultLaborRateId: 1, workArea: 'Interior', crewSkill: '' };
+  document.getElementById('detailTabs').style.display = 'none';
+  document.getElementById('detailTitle').textContent = 'New Service Type';
+  renderServiceTypeDetail();
+  document.getElementById('detailPanel').style.display = 'flex';
+}
+
+function renderServiceTypeDetail() {
+  const st = editingServiceType;
+  const mcCount = serviceTypes.find(s=>s.id===st.id) ? microComponents.filter(m=>m.type==='LABOR'&&m.serviceTypeId===st.id).length : 0;
+  const rateOptions = laborRates.map(l => `<option value="${l.id}" ${st.defaultLaborRateId===l.id?'selected':''}>` + l.name + ' — $' + l.ratePerHr.toFixed(2) + '/hr</option>`).join('');
+  document.getElementById('detailBody').innerHTML = `
+    <div class="form-group"><label class="form-label">Service Type Name</label>
+      <input class="form-input" value="${st.name}" onchange="editingServiceType.name=this.value" placeholder="e.g. Screen Repair"/></div>
+    <div class="form-group"><label class="form-label">Default Labor Rate</label>
+      <select class="form-select" onchange="editingServiceType.defaultLaborRateId=parseInt(this.value)">
+        ${rateOptions}
+      </select></div>
+    <div class="form-group"><label class="form-label">Work Area</label>
+      <select class="form-select" onchange="editingServiceType.workArea=this.value">
+        <option ${st.workArea==='Interior'?'selected':''}>Interior</option>
+        <option ${st.workArea==='Exterior'?'selected':''}>Exterior</option>
+        <option ${st.workArea==='Either'?'selected':''}>Either</option>
+      </select></div>
+    <div class="form-group"><label class="form-label">Crew Skill</label>
+      <input class="form-input" value="${st.crewSkill}" onchange="editingServiceType.crewSkill=this.value" placeholder="e.g. Painting"/></div>
+    <div class="form-group"><label class="form-label">Linked Micro-Components</label>
+      <div style="padding:9px 12px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text-bright);font-size:13px;">${mcCount} MCs use this service type</div></div>`;
+}
+
+function saveServiceType() {
+  const idx = serviceTypes.findIndex(s => s.id === editingServiceType.id);
+  if (idx >= 0) serviceTypes[idx] = { ...editingServiceType };
+  else serviceTypes.push({ ...editingServiceType });
+  editingServiceType = null;
+  document.getElementById('detailPanel').style.display = 'none';
+  document.getElementById('detailTabs').style.display = '';
+  renderServiceTypes(document.getElementById('mainContent'));
+  toast('Service type saved');
 }
 
 // ─── UTILITIES ───
