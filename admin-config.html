@@ -500,68 +500,66 @@ function buildMatEditPanel(m) {
     `<label class="mat-sub-tag ${m.substrates.includes(s)?'active':''}"><input type="checkbox" ${m.substrates.includes(s)?'checked':''} value="${s}" onchange="matUpdateSubstrate(${m.id},this)"> ${s}</label>`
   ).join('');
 
-  let priceGrid = '';
-  if (m.hasSheen) {
-    const headerCols = sheenKeys.map(s=>`<th>${sheenLabels[s]}</th>`).join('');
-    const row1 = sheenKeys.map(s=>`<td><div class="mat-price-field"><span>$</span><input type="number" step="0.01" min="0" value="${(m.prices['1gal'][s]||0).toFixed(2)}" onchange="matPriceField(${m.id},'1gal','${s}',this.value)"></div></td>`).join('');
-    const row5 = sheenKeys.map(s=>`<td><div class="mat-price-field"><span>$</span><input type="number" step="0.01" min="0" value="${(m.prices['5gal'][s]||0).toFixed(2)}" onchange="matPriceField(${m.id},'5gal','${s}',this.value)"></div></td>`).join('');
-    priceGrid = `
-      <label class="mat-field-label">Price Grid (per SKU)</label>
-      <table class="mat-upcharge-table" style="margin-bottom:8px">
-        <thead><tr><th></th>${headerCols}</tr></thead>
-        <tbody>
-          <tr><td style="color:var(--text-dim);font-size:12px">1-gal</td>${row1}</tr>
-          <tr><td style="color:var(--text-dim);font-size:12px">5-gal</td>${row5}</tr>
-        </tbody>
-      </table>`;
-  } else {
-    priceGrid = `
-      <label class="mat-field-label">1-Gal Price ($)</label>
-      <div class="mat-price-field"><span>$</span><input type="number" step="0.01" min="0" value="${(m.prices['1gal'].base||0).toFixed(2)}" onchange="matPriceField(${m.id},'1gal','base',this.value)"></div>
-      <label class="mat-field-label">5-Gal Price ($)</label>
-      <div class="mat-price-field"><span>$</span><input type="number" step="0.01" min="0" value="${(m.prices['5gal'].base||0).toFixed(2)}" onchange="matPriceField(${m.id},'5gal','base',this.value)"></div>`;
-  }
+  // Per-sheen row toggles
+  const sheenRows = sheenKeys.map(key => {
+    const sh = (m.sheens && m.sheens[key]) || { enabled: false, price1gal: 0, price5gal: 0 };
+    const priceFields = sh.enabled
+      ? `<div class="mat-price-field"><span>$</span><input type="number" step="0.01" min="0" value="${sh.price1gal.toFixed(2)}" onchange="matSheenPrice(${m.id},'${key}','price1gal',this.value)" style="width:80px"></div>
+         <div class="mat-price-field"><span>$</span><input type="number" step="0.01" min="0" value="${sh.price5gal.toFixed(2)}" onchange="matSheenPrice(${m.id},'${key}','price5gal',this.value)" style="width:80px"></div>`
+      : `<span style="color:var(--text-dim);font-size:12px">— not available —</span>`;
+    return `<tr>
+      <td style="padding:6px 8px;white-space:nowrap">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" ${sh.enabled?'checked':''} onchange="matSheenToggle(${m.id},'${key}',this.checked)" style="accent-color:var(--accent)">
+          <span style="font-size:13px">${sheenLabels[key]}</span>
+        </label>
+      </td>
+      ${sh.enabled ? `<td style="padding:6px 4px">${priceFields.split('</div>')[0]}</div></td><td style="padding:6px 4px">${priceFields.split('</div>')[1].replace('<div','<div')}</div></td>` : `<td colspan="2" style="padding:6px 8px">${priceFields}</td>`}
+    </tr>`;
+  }).join('');
+
+  // Cost preview
+  const previewRows = sheenKeys.filter(k => m.sheens && m.sheens[k] && m.sheens[k].enabled && m.sheens[k].price1gal > 0).map(k => {
+    const sh = m.sheens[k];
+    const c1 = (sh.price1gal * (1 + m.taxRate/100) / m.coverage).toFixed(4);
+    const c5 = (sh.price5gal * (1 + m.taxRate/100) / m.coverage).toFixed(4);
+    return `<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--text-sec)">${sheenLabels[k]}</span>
+      <span>1-gal <strong style="color:var(--yellow)">$${c1}/SF</strong> &nbsp; 5-gal <strong style="color:var(--green)">$${c5}/SF</strong></span>
+    </div>`;
+  }).join('');
 
   return `
+    <div class="form-group"><label class="form-label">Material Name</label>
+      <input class="form-input" type="text" value="${m.name}" onchange="matField(${m.id},'name',this.value)"></div>
+    <div class="form-group"><label class="form-label">Brand</label>
+      <input class="form-input" type="text" value="${m.brand}" onchange="matField(${m.id},'brand',this.value)"></div>
+    <div class="form-group"><label class="form-label">Substrate Tags</label>
+      <div class="mat-sub-tags">${subChecks}</div></div>
+    <div class="form-group"><label class="form-label">Tax Rate (%)</label>
+      <input class="form-input" type="number" step="0.01" min="0" value="${m.taxRate.toFixed(2)}" onchange="matField(${m.id},'taxRate',parseFloat(this.value)||0)"></div>
+    <div class="form-group"><label class="form-label">Coverage (SF/gal)</label>
+      <input class="form-input" type="number" step="1" min="0" value="${m.coverage}" onchange="matField(${m.id},'coverage',parseInt(this.value)||0)"></div>
     <div class="form-group">
-      <label class="form-label">Material Name</label>
-      <input class="form-input" type="text" value="${m.name}" onchange="matField(${m.id},'name',this.value)">
+      <label class="form-label">Price Grid</label>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="text-align:left;font-size:11px;color:var(--text-dim);padding:4px 8px">Sheen</th>
+          <th style="text-align:left;font-size:11px;color:var(--text-dim);padding:4px 8px">1-gal</th>
+          <th style="text-align:left;font-size:11px;color:var(--text-dim);padding:4px 8px">5-gal</th>
+        </tr></thead>
+        <tbody>${sheenRows}</tbody>
+      </table>
     </div>
-    <div class="form-group">
-      <label class="form-label">Brand</label>
-      <input class="form-input" type="text" value="${m.brand}" onchange="matField(${m.id},'brand',this.value)">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Substrate Tags</label>
-      <div class="mat-sub-tags">${subChecks}</div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Tax Rate (%)</label>
-      <input class="form-input" type="number" step="0.01" min="0" value="${m.taxRate.toFixed(2)}" onchange="matField(${m.id},'taxRate',parseFloat(this.value)||0)">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Coverage Rate (SF/gal)</label>
-      <input class="form-input" type="number" step="1" min="0" value="${m.coverage}" onchange="matField(${m.id},'coverage',parseInt(this.value)||0)">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Has Sheen Variants</label>
-      <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer">
-        <input type="checkbox" ${m.hasSheen?'checked':''} onchange="matToggleSheen(${m.id},this.checked)" style="width:16px;height:16px;accent-color:var(--accent)">
-        <span style="font-size:13px;color:var(--text)">${m.hasSheen?'On — 8 price fields':'Off — 2 price fields'}</span>
-      </label>
-    </div>
-    <div class="form-group">${priceGrid}</div>
-    <div class="form-group">
-      <label class="form-label">Status</label>
+    <div class="form-group"><label class="form-label">Status</label>
       <select class="form-input" onchange="matField(${m.id},'status',this.value)">
         <option ${m.status==='Active'?'selected':''}>Active</option>
         <option ${m.status==='Inactive'?'selected':''}>Inactive</option>
-      </select>
-    </div>
-    <div class="mat-preview">
-      <div class="mat-preview-title">📊 Calculated Cost Preview (after tax)</div>
-      <div id="mat-preview-costs-${m.id}">${buildMatPreview(m)}</div>
-    </div>`;
+      </select></div>
+    ${previewRows ? `<div style="background:var(--navy-mid);border-radius:8px;padding:12px;margin-top:4px">
+      <div style="font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Cost Preview (after tax)</div>
+      ${previewRows}
+    </div>` : ''}`;
 }
 
 function renderMaterials(el) {
@@ -653,6 +651,20 @@ window.matToggleSheen = function(id, hasSheen) {
     m.prices = {'1gal':{base:b1},'5gal':{base:b5}};
   }
   renderMaterials(document.getElementById('mainContent'));
+};
+window.matSheenToggle = function(id, key, enabled) {
+  const m = materialItems.find(x=>x.id===id);
+  if (!m || !m.sheens) return;
+  m.sheens[key].enabled = enabled;
+  document.getElementById('detailBody').innerHTML = buildMatEditPanel(m);
+};
+window.matSheenPrice = function(id, key, field, val) {
+  const m = materialItems.find(x=>x.id===id);
+  if (!m || !m.sheens) return;
+  m.sheens[key][field] = parseFloat(val) || 0;
+  // update preview
+  const preview = document.querySelector('.mat-preview-costs');
+  if (preview) preview.innerHTML = buildMatPreview(m);
 };
 window.matUpdateSubstrate = function(id, checkbox) {
   const m = materialItems.find(x=>x.id===id);
