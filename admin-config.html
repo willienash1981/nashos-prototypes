@@ -567,7 +567,7 @@ function renderMaterials(el) {
         <td><span class="badge badge-${m.status.toLowerCase()}">${m.status}</span></td>
         <td><button class="btn btn-outline" style="padding:3px 10px;font-size:12px" onclick="matEdit(${m.id})">Edit</button></td>
       </tr>`;
-      const editRow = matEditingId === m.id ? buildEditPanel(m) : '';
+      const editRow = ''; // editing in right-side panel now
       return mainRow + editRow;
     }).join('');
   }
@@ -591,16 +591,25 @@ function renderMaterials(el) {
 }
 
 window.matEdit = function(id) {
-  matEditingId = matEditingId === id ? null : id;
-  renderMaterials(document.getElementById('mainContent'));
+  matEditingId = id;
+  const m = materialItems.find(x=>x.id===id);
+  if (!m) return;
+  document.getElementById('detailTitle').textContent = 'Edit Material';
+  document.getElementById('detailContent').innerHTML = buildEditPanel(m);
+  document.getElementById('detailPanel').style.display = 'flex';
+  // wire save button
+  document.querySelector('.btn-green').onclick = () => window.matSave(id);
 };
 window.matCancel = function() {
   matEditingId = null;
+  document.getElementById('detailPanel').style.display = 'none';
   renderMaterials(document.getElementById('mainContent'));
 };
 window.matSave = function(id) {
   matEditingId = null;
+  document.getElementById('detailPanel').style.display = 'none';
   renderMaterials(document.getElementById('mainContent'));
+  toast('Material saved');
 };
 window.matField = function(id, field, value) {
   const m = materialItems.find(x=>x.id===id);
@@ -640,8 +649,7 @@ window.matUpdateSubstrate = function(id, checkbox) {
 window.matAddNew = function() {
   const newId = Math.max(...materialItems.map(m=>m.id)) + 1;
   materialItems.push({ id:newId, name:'New Material', brand:'', substrates:[], hasSheen:true, prices:{'1gal':{flat:0,satin:0,semiGloss:0,gloss:0},'5gal':{flat:0,satin:0,semiGloss:0,gloss:0}}, taxRate:9.75, coverage:350, status:'Active' });
-  matEditingId = newId;
-  renderMaterials(document.getElementById('mainContent'));
+  window.matEdit(newId);
 };
 
 const laborRates = [
