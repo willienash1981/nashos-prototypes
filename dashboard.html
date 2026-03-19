@@ -186,6 +186,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .office-tab{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
 .office-tab.active{background:var(--navy);color:#fff}
 .office-admin-only{}
+.field-tab{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
+.field-tab.active{background:var(--navy);color:#fff}
 .cal-panel{}
 .sch-time{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:65px}
 .sch-body{flex:1}
@@ -441,13 +443,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- ─── FIELD: Active Jobs (detailed) ─── -->
 <div class="gf" data-r="field">
   <div class="card">
-    <div class="card-h"><div class="card-t">🔧 My Active Jobs — Today</div><span style="font-size:12px;color:var(--text-sec)">5 crews · Anthony's jobs</span></div>
-    <div class="card-b" style="padding:0">
+    <div class="card-h" style="padding-bottom:8px">
+      <div style="display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px">
+        <button class="field-tab active" onclick="switchFieldJobs('mine',this)">🔧 My Jobs</button>
+        <button class="field-tab" onclick="switchFieldJobs('all',this)">📋 All Jobs</button>
+      </div>
+      <span id="field-jobs-sub" style="font-size:12px;color:var(--text-sec)">5 crews · Anthony's jobs</span>
+    </div>
+    <!-- MY JOBS tab -->
+    <div id="field-my-jobs" class="card-b" style="padding:0">
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men <span class="tag">✋ CLAIMED</span></div><span class="badge b-g">On Schedule ✅</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5</div><div class="crew-addr">1234 Oak Rd, Nashville</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div><div class="crew-meta"><span class="badge b-g">📸 8 photos</span><span class="badge b-g">✅ Daily update</span><span>Coop: <strong>9.1</strong></span></div></div>
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men <span class="tag">✋ CLAIMED</span></div><span class="badge b-g">Just Started 🟢</span></div><div class="crew-job">Smith Interior — Day 1 of 3</div><div class="crew-addr">567 Maple Dr, Brentwood</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div><div class="crew-meta"><span class="badge b-g">📸 4 before</span><span class="badge b-g">✅ Pre-existing docs</span><span>Coop: <strong>8.7</strong></span></div></div>
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain Delay ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2 (+1d rain)</div><div class="crew-addr">890 Cedar Ln, Spring Hill</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div><div class="crew-meta"><span class="badge b-y">⏸ Standing down</span><span>Coop: <strong>7.5</strong></span></div></div>
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men <span class="tag">✋ CLAIMED</span></div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Park Interior — Day 2 of 3</div><div class="crew-addr">555 Maple Dr, Spring Hill</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div><div class="crew-meta"><span class="badge b-g">📸 6 photos</span><span class="badge b-y">⏳ Update pending</span><span>Coop: <strong>8.2</strong></span></div></div>
       <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie — 2 <span class="tag">✋ CLAIMED</span></div><span class="badge b-b">Finishing Today 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4</div><div class="crew-addr">321 Pine Ave, Nashville</div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div><div class="crew-meta"><span class="badge b-g">📸 5 photos</span><span class="badge b-g">✅ After photos started</span><span>Coop: <strong>9.4</strong></span></div></div>
+    </div>
+    <!-- ALL JOBS tab -->
+    <div id="field-all-jobs" class="card-b" style="padding:0;display:none">
+      <!-- Anthony's jobs (same as My Jobs) -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">Anthony Lembo</div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Carlos — 3 men</div><span class="badge b-g">On Schedule ✅</span></div><div class="crew-job">Johnson Exterior — Day 3 of 5</div><div class="crew-addr">1234 Oak Rd, Nashville · <strong>Anthony</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:60%"></div></div><div class="crew-day">60%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Javier — 2 men</div><span class="badge b-g">Just Started</span></div><div class="crew-job">Smith Interior — Day 1 of 3</div><div class="crew-addr">567 Maple Dr, Brentwood · <strong>Anthony</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:15%"></div></div><div class="crew-day">15%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-y"></span>Team B — 2 men</div><span class="badge b-y">Rain Delay ☔</span></div><div class="crew-job">Garcia Deck — Day 2 of 2</div><div class="crew-addr">890 Cedar Ln, Spring Hill · <strong>Anthony</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill gold-f" style="width:70%"></div></div><div class="crew-day">+1d</div></div></div>
+      <!-- Matthew's jobs -->
+      <div style="padding:4px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">Matthew Flores</div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-g"></span>Roberto — 2 men</div><span class="badge b-g">On Schedule</span></div><div class="crew-job">Park Interior — Day 2 of 3</div><div class="crew-addr">555 Maple Dr, Spring Hill · <strong>Matthew</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill green-f" style="width:55%"></div></div><div class="crew-day">55%</div></div></div>
+      <div class="crew"><div class="crew-hd"><div class="crew-nm"><span class="dot dot-b"></span>Mike &amp; Julie — 2</div><span class="badge b-b">Finishing Today 🏁</span></div><div class="crew-job">Williams Cabinets — Day 4 of 4</div><div class="crew-addr">321 Pine Ave, Nashville · <strong>Matthew</strong></div><div class="crew-prog"><div class="prog" style="flex:1"><div class="prog-fill blue-f" style="width:92%"></div></div><div class="crew-day">92%</div></div></div>
     </div>
   </div>
 </div>
@@ -1362,6 +1383,14 @@ document.querySelectorAll('.role-btn').forEach(btn => {
 });
 
 // Calendar tab switcher
+function switchFieldJobs(tab, btn) {
+  document.querySelectorAll('.field-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('field-my-jobs').style.display = tab === 'mine' ? '' : 'none';
+  document.getElementById('field-all-jobs').style.display = tab === 'all' ? '' : 'none';
+  document.getElementById('field-jobs-sub').textContent = tab === 'mine' ? '5 crews · Anthony\'s jobs' : '5 crews across all supervisors';
+}
+
 function switchCal(type, btn) {
   document.querySelectorAll('.cal-panel').forEach(p => p.style.display = 'none');
   document.querySelectorAll('.cal-tab').forEach(b => b.classList.remove('active'));
