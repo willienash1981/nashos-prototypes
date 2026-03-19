@@ -689,13 +689,13 @@ const serviceTypes = [
 ];
 
 const laborRates = [
-  { id:1, name:'Standard Interior',    ratePerHr:58.00, effectiveDate:'Jan 1, 2026' },
-  { id:2, name:'Standard Exterior',    ratePerHr:62.00, effectiveDate:'Jan 1, 2026' },
-  { id:3, name:'Standard Cabinet',     ratePerHr:45.00, effectiveDate:'Jan 1, 2026' },
-  { id:4, name:'Standard Carpentry',   ratePerHr:52.00, effectiveDate:'Jan 1, 2026' },
-  { id:5, name:'Standard Drywall',     ratePerHr:48.00, effectiveDate:'Jan 1, 2026' },
-  { id:6, name:'Standard Deck/Fence',  ratePerHr:36.00, effectiveDate:'Jan 1, 2026' },
-  { id:7, name:'Standard Handyman',    ratePerHr:42.00, effectiveDate:'Jan 1, 2026' },
+  { id:1, name:'Interior',    ratePerHr:58.00, defaultServiceTypeId:1, effectiveDate:'Jan 1, 2026' },
+  { id:2, name:'Exterior',    ratePerHr:62.00, defaultServiceTypeId:2, effectiveDate:'Jan 1, 2026' },
+  { id:3, name:'Cabinet',     ratePerHr:45.00, defaultServiceTypeId:3, effectiveDate:'Jan 1, 2026' },
+  { id:4, name:'Carpentry',   ratePerHr:52.00, defaultServiceTypeId:4, effectiveDate:'Jan 1, 2026' },
+  { id:5, name:'Drywall',     ratePerHr:48.00, defaultServiceTypeId:5, effectiveDate:'Jan 1, 2026' },
+  { id:6, name:'Deck/Fence',  ratePerHr:36.00, defaultServiceTypeId:6, effectiveDate:'Jan 1, 2026' },
+  { id:7, name:'Handyman',    ratePerHr:42.00, defaultServiceTypeId:7, effectiveDate:'Jan 1, 2026' },
 ];
 
 function getLaborRate(laborRateId) {
@@ -713,8 +713,9 @@ function getServiceType(serviceTypeId) {
 }
 
 function getDefaultLaborRateId(serviceTypeId) {
-  const st = serviceTypes.find(s => s.id === serviceTypeId);
-  return st ? st.defaultLaborRateId : 1;
+  // Find the labor rate whose defaultServiceTypeId matches this service type
+  const lr = laborRates.find(l => l.defaultServiceTypeId === serviceTypeId);
+  return lr ? lr.id : 1;
 }
 
 const heightTiersExterior = [
@@ -814,10 +815,12 @@ function switchCategory(key) {
 function renderLaborRates(el) {
   const rows = laborRates.map(l => {
     const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.laborRateId === l.id).length;
+    const defST = serviceTypes.find(s => s.id === l.defaultServiceTypeId);
     return `<tr class="clickable" onclick="openLaborRate(${l.id})">
       <td class="bright">${l.name}</td>
       <td class="mono">$${l.ratePerHr.toFixed(2)}/hr</td>
-      <td><span class="link-count">${linkedMCs}</span></td>
+      <td class="dim">${defST ? defST.name : '—'}</td>
+      <td><span class="link-count">${linkedMCs} MCs</span></td>
       <td class="dim">${l.effectiveDate}</td>
     </tr>`;
   }).join('');
@@ -828,7 +831,7 @@ function renderLaborRates(el) {
     </div>
     <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary" onclick="openNewLaborRate()">+ New Labor Rate</button></div>
     <div class="card"><table>
-      <thead><tr><th>Rate Name</th><th>Rate/hr</th><th>Used In (MCs)</th><th>Effective Date</th></tr></thead>
+      <thead><tr><th>Rate Name</th><th>Rate/hr</th><th>Default Service Type</th><th>Used In</th><th>Effective Date</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
 }
@@ -857,19 +860,21 @@ function openLaborRate(id) {
   document.getElementById('detailTitle').textContent = 'Edit Labor Rate';
   const l = editingLaborRate;
   const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.laborRateId === l.id).length;
+  const stOptions = serviceTypes.map(s => `<option value="${s.id}" ${(l.defaultServiceTypeId===s.id)?'selected':''}>${s.name}</option>`).join('');
   document.getElementById('detailBody').innerHTML = `
-    <div class="form-group"><label class="form-label">Rate Name <span style="font-size:10px;color:var(--text-dim)">(rename freely — MCs reference by ID)</span></label>
-      <input class="form-input" value="${l.name}" onchange="editingLaborRate.name=this.value"/></div>
-    <div class="form-group"><label class="form-label">Rate Per Hour ($)</label>
-      <input class="form-input" type="number" step="0.01" min="0" value="${l.ratePerHr.toFixed(2)}" onchange="editingLaborRate.ratePerHr=parseFloat(this.value)"/></div>
+    <div class="form-group"><label class="form-label">Rate Name</label>
+      <input class="form-input" value="${l.name}" onchange="editingLaborRate.name=this.value" placeholder="e.g. Interior"/></div>
+    <div class="form-group"><label class="form-label">Rate per Hour ($)</label>
+      <input class="form-input" type="number" step="0.50" min="0" value="${l.ratePerHr.toFixed(2)}" onchange="editingLaborRate.ratePerHr=parseFloat(this.value)"/></div>
+    <div class="form-group"><label class="form-label">Default Service Type <span style="font-size:10px;color:var(--text-dim)">(auto-fills when this service type is selected in MC editor)</span></label>
+      <select class="form-select" onchange="editingLaborRate.defaultServiceTypeId=parseInt(this.value)">
+        <option value="">— None —</option>
+        ${stOptions}
+      </select></div>
     <div class="form-group"><label class="form-label">Effective Date</label>
       <input class="form-input" type="text" value="${l.effectiveDate}" onchange="editingLaborRate.effectiveDate=this.value"/></div>
-    <div class="form-group"><label class="form-label">Used In (Micro-Components)</label>
-      <div style="padding:9px 12px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text-bright);font-size:13px;">${linkedMCs} MCs reference this rate</div></div>
-    <div style="background:var(--yellow-bg);border:1px solid rgba(234,179,8,0.3);border-radius:8px;padding:10px 14px;margin-top:16px;display:flex;align-items:flex-start;gap:8px;">
-      <span style="font-size:14px">⚡</span>
-      <span style="font-size:12px;color:var(--yellow);line-height:1.5;">Changing rate/hr cascades automatically — getLaborRate() looks up live by ID.</span>
-    </div>`;
+    <div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px;margin-top:4px">
+      ⚡ ${linkedMCs} MCs use this rate. Changing rate/hr updates all of them instantly.</div>`;
   document.getElementById('detailPanel').style.display = 'flex';
 }
 
