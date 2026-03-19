@@ -334,12 +334,35 @@ const pricingPackages = [
 ];
 
 const configCategories = [
+  { key:'_items', icon:'📦', label:'ITEMS', section:true },
   { key:'bundles', icon:'🧩', label:'Service Bundles', cnt:142 },
   { key:'micro', icon:'⚛️', label:'Micro-Components', cnt:87 },
   { key:'materials', icon:'🪣', label:'Material Items', cnt:64 },
   { key:'labor', icon:'💰', label:'Labor Rates', cnt:3 },
-  { key:'height', icon:'📏', label:'Height Tiers', cnt:3 },
-  { key:'packages', icon:'📦', label:'Pricing Packages', cnt:9 },
+  { key:'height', icon:'📏', label:'Height Tier Pricing', cnt:3 },
+  { key:'templates', icon:'📄', label:'Templates', cnt:8 },
+  { key:'_pricing', icon:'💰', label:'PRICING', section:true },
+  { key:'volume', icon:'📈', label:'Volume Pricing Engine', cnt:'' },
+  { key:'packages', icon:'🏷️', label:'Package Config', cnt:3 },
+  { key:'_promos', icon:'🎁', label:'PROMOTIONS', section:true },
+  { key:'specials', icon:'🎁', label:'Active Discounts', cnt:4 },
+  { key:'financing', icon:'💳', label:'Financing Offers', cnt:2 },
+  { key:'_color', icon:'🎨', label:'COLOR RULES', section:true },
+  { key:'color', icon:'🎨', label:'Color Surcharges', cnt:'' },
+  { key:'_warranty', icon:'🛡️', label:'WARRANTY', section:true },
+  { key:'warranty', icon:'🛡️', label:'Warranty Rules', cnt:'' },
+  { key:'_comp', icon:'💸', label:'COMPENSATION', section:true },
+  { key:'commission', icon:'💵', label:'Commission Plans', cnt:3 },
+  { key:'bonus', icon:'🏆', label:'Bonus Plans & Goals', cnt:2 },
+  { key:'budgets', icon:'📊', label:'Sales Budgets', cnt:'' },
+  { key:'crewdebt', icon:'🔁', label:'Crew Debt Repayment', cnt:'' },
+  { key:'_scheduling', icon:'📅', label:'SCHEDULING', section:true },
+  { key:'scheduling', icon:'📅', label:'Scheduling Rules', cnt:'' },
+  { key:'_users', icon:'👥', label:'USERS & PERMISSIONS', section:true },
+  { key:'roles', icon:'🎭', label:'Roles', cnt:5 },
+  { key:'users', icon:'👤', label:'Users', cnt:12 },
+  { key:'_integrations', icon:'🔌', label:'INTEGRATIONS', section:true },
+  { key:'integrations', icon:'🔌', label:'Connected Services', cnt:6 },
 ];
 
 let activeCategory = 'bundles';
@@ -353,13 +376,16 @@ let editingComponents = [];
 function renderConfigNav() {
   const nav = document.getElementById('configNav');
   nav.innerHTML = configCategories.map(c =>
-    `<div class="config-nav-item ${c.key===activeCategory?'active':''}" onclick="switchCategory('${c.key}')">
-      <span class="config-nav-icon">${c.icon}</span> ${c.label} <span class="cnt">${c.cnt}</span>
+    c.section
+      ? `<div class="nav-section" style="margin-top:10px">${c.label}</div>`
+      : `<div class="config-nav-item ${c.key===activeCategory?'active':''}" onclick="switchCategory('${c.key}')">
+      <span class="config-nav-icon">${c.icon}</span> ${c.label} ${c.cnt!==''?`<span class="cnt">${c.cnt}</span>`:''}
     </div>`
   ).join('');
 }
 
 function switchCategory(key) {
+  if (key.startsWith('_')) return;
   activeCategory = key;
   renderConfigNav();
   document.getElementById('topbarTitle').textContent = configCategories.find(c=>c.key===key).label;
