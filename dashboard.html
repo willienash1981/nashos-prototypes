@@ -655,58 +655,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="card-h"><div class="card-t">📋 Daily Job Snapshots</div><span style="font-size:12px;color:var(--text-sec)">3 of 5 jobs logged</span></div>
     <div class="card-b" style="padding:0">
 
-      <div class="crew" style="background:#F0FDF4">
-        <div class="crew-hd">
-          <div class="crew-nm"><span class="dot dot-g"></span> Johnson Exterior — Carlos</div>
-          <span class="badge b-g">✅ Logged 7:45 AM</span>
+      <!-- Logged jobs — collapsed one-liners, tap to expand -->
+      <div class="snap-row" onclick="toggleSnap(this)" style="padding:10px 16px;border-bottom:1px solid var(--bg);cursor:pointer;background:#F0FDF4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="dot dot-g"></span>
+            <div>
+              <div style="font-size:13px;font-weight:600">Johnson Exterior — Carlos</div>
+              <div style="font-size:11px;color:var(--text-sec)">✅ 7:45 AM · 3 men · 📸 3 photos</div>
+            </div>
+          </div>
+          <span style="font-size:14px;color:var(--text-sec);transition:transform .2s" class="snap-chevron">›</span>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:12px">
-          <div><span class="sr-l">Men on site:</span> <strong>3 verified</strong></div>
-          <div><span class="sr-l">Crew arrived:</span> <strong>7:30 AM</strong></div>
-        </div>
-        <div style="font-size:12px;color:var(--text-sec);margin-bottom:6px">
-          <strong style="color:var(--text)">Notes:</strong> Crew making good progress on west wall. Caulking looks solid. Need to remind Carlos to tape off windows better on north side — some overspray risk. Will check back PM.
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <span class="badge b-g">📸 3 site photos</span>
-          <span class="badge b-x">🕐 On site: 22 min</span>
-        </div>
-      </div>
-
-      <div class="crew" style="background:#F0FDF4">
-        <div class="crew-hd">
-          <div class="crew-nm"><span class="dot dot-g"></span> Smith Interior — Javier</div>
-          <span class="badge b-g">✅ Logged 8:25 AM</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:12px">
-          <div><span class="sr-l">Men on site:</span> <strong>2 verified</strong></div>
-          <div><span class="sr-l">Crew arrived:</span> <strong>8:00 AM</strong></div>
-        </div>
-        <div style="font-size:12px;color:var(--text-sec);margin-bottom:6px">
-          <strong style="color:var(--text)">Notes:</strong> Day 1 — pre-existing damage documented ✅. Javier already started prep in master bedroom. Floors covered. Homeowner left a note about keeping garage door closed (dog). Good start.
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <span class="badge b-g">📸 5 site photos</span>
-          <span class="badge b-x">🕐 On site: 18 min</span>
+        <div class="snap-detail" style="display:none;margin-top:10px;font-size:12px;color:var(--text-sec)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px"><div>Men: <strong>3 verified</strong></div><div>Arrived: <strong>7:30 AM</strong></div></div>
+          <div><strong style="color:var(--text)">Notes:</strong> Crew making good progress on west wall. Caulking looks solid. Remind Carlos to tape windows on north side — overspray risk.</div>
         </div>
       </div>
 
-      <div class="crew" style="background:#F0FDF4">
-        <div class="crew-hd">
-          <div class="crew-nm"><span class="dot dot-b"></span> Williams Cabinets — Mike &amp; Julie</div>
-          <span class="badge b-g">✅ Logged 9:10 AM</span>
+      <div class="snap-row" onclick="toggleSnap(this)" style="padding:10px 16px;border-bottom:1px solid var(--bg);cursor:pointer;background:#F0FDF4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="dot dot-g"></span>
+            <div>
+              <div style="font-size:13px;font-weight:600">Smith Interior — Javier</div>
+              <div style="font-size:11px;color:var(--text-sec)">✅ 8:25 AM · 2 men · 📸 5 photos</div>
+            </div>
+          </div>
+          <span style="font-size:14px;color:var(--text-sec);transition:transform .2s" class="snap-chevron">›</span>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:12px">
-          <div><span class="sr-l">Men on site:</span> <strong>2 verified</strong></div>
-          <div><span class="sr-l">Crew arrived:</span> <strong>8:45 AM</strong></div>
+        <div class="snap-detail" style="display:none;margin-top:10px;font-size:12px;color:var(--text-sec)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px"><div>Men: <strong>2 verified</strong></div><div>Arrived: <strong>8:00 AM</strong></div></div>
+          <div><strong style="color:var(--text)">Notes:</strong> Day 1 — pre-existing damage documented. Javier started prep in master bedroom. Homeowner note: keep garage door closed (dog).</div>
         </div>
-        <div style="font-size:12px;color:var(--text-sec);margin-bottom:6px">
-          <strong style="color:var(--text)">Notes:</strong> Finishing day — final coat on uppers looks great. Julie handling hardware reinstall. Should wrap by 2 PM. Crew missed a spot on the inside of the pantry door — flagged for touch-up before final photos.
+      </div>
+
+      <div class="snap-row" onclick="toggleSnap(this)" style="padding:10px 16px;border-bottom:1px solid var(--bg);cursor:pointer;background:#F0FDF4">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="dot dot-b"></span>
+            <div>
+              <div style="font-size:13px;font-weight:600">Williams Cabinets — Mike &amp; Julie</div>
+              <div style="font-size:11px;color:var(--text-sec)">✅ 9:10 AM · 2 men · 📸 4 photos · 🏁 Final walk pending</div>
+            </div>
+          </div>
+          <span style="font-size:14px;color:var(--text-sec);transition:transform .2s" class="snap-chevron">›</span>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <span class="badge b-g">📸 4 site photos</span>
-          <span class="badge b-b">🏁 Final walk pending</span>
-          <span class="badge b-x">🕐 On site: 25 min</span>
+        <div class="snap-detail" style="display:none;margin-top:10px;font-size:12px;color:var(--text-sec)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px"><div>Men: <strong>2 verified</strong></div><div>Arrived: <strong>8:45 AM</strong></div></div>
+          <div><strong style="color:var(--text)">Notes:</strong> Finishing day — final coat on uppers great. Missed spot inside pantry door flagged for touch-up before photos.</div>
         </div>
       </div>
 
@@ -855,20 +852,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- FIELD: Budget + Cooperation -->
 <div class="g2" data-r="field">
   <div class="card">
-    <div class="card-h"><div class="card-t">📦 Perishable Budget</div></div>
+    <div class="card-h"><div class="card-t">📦 Perishable Budget</div><a onclick="toast('Opening perishable budget details…')" class="card-a">Details →</a></div>
     <div class="card-b">
-      <div class="sr"><span class="sr-l">Weekly Budget</span><span class="sr-v">$25.00</span></div>
-      <div class="sr"><span class="sr-l">Spent This Week</span><span class="sr-v">$7.00</span></div>
-      <div class="sr"><span class="sr-l">Remaining</span><span class="sr-v" style="color:var(--green)">$18.00</span></div>
-      <div class="prog"><div class="prog-fill green-f" style="width:72%"></div></div>
-      <div class="prog-lbl"><span>72% left</span><span>Resets Mon</span></div>
-      <div style="margin-top:14px"><div class="sr"><span class="sr-l">Monthly Cap</span><span class="sr-v">$200.00</span></div>
-      <div class="sr"><span class="sr-l">Spent This Month</span><span class="sr-v">$89.00</span></div>
-      <div class="prog"><div class="prog-fill gold-f" style="width:44.5%"></div></div>
-      <div class="prog-lbl"><span>$111 remaining</span><span>44.5% used</span></div></div>
-      <div style="margin-top:12px;font-size:11px;font-weight:600;color:var(--text-sec)">RECENT</div>
-      <div class="sr"><span class="sr-l">Roller covers (3pk)</span><span class="sr-v">$4.50</span></div>
-      <div class="sr"><span class="sr-l">Rags</span><span class="sr-v">$2.50</span></div>
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-sec)">This Week</span><span><strong style="color:var(--green)">$18</strong> of $25 left · Resets Mon</span></div>
+        <div class="prog"><div class="prog-fill green-f" style="width:72%"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text-sec)">This Month</span><span><strong>$89</strong> of $200 used</span></div>
+        <div class="prog"><div class="prog-fill gold-f" style="width:44.5%"></div></div>
+      </div>
     </div>
   </div>
   <div class="card">
@@ -1374,6 +1367,14 @@ document.querySelectorAll('.role-btn').forEach(btn => {
 });
 
 // Calendar tab switcher
+function toggleSnap(row) {
+  const detail = row.querySelector('.snap-detail');
+  const chevron = row.querySelector('.snap-chevron');
+  const open = detail.style.display !== 'none';
+  detail.style.display = open ? 'none' : 'block';
+  chevron.style.transform = open ? '' : 'rotate(90deg)';
+}
+
 function openCloseout() {
   const s = document.getElementById('closeout-sheet');
   s.style.display = 'flex';
