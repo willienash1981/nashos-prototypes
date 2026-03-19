@@ -423,38 +423,45 @@ const bundles = [
 ];
 
 const materialItems = [
-  { id:1, name:'SuperPaint Exterior', brand:'Sherwin-Williams', substrates:['Ext. Siding','Ext. Trim'], hasSheen:true, prices:{'1gal':{flat:38.00,satin:39.00,semiGloss:40.00,gloss:41.00},'5gal':{flat:33.00,satin:34.00,semiGloss:35.00,gloss:36.00}}, taxRate:9.75, coverage:350, status:'Active' },
-  { id:2, name:'ProMar 200 Interior', brand:'Sherwin-Williams', substrates:['Int. Walls'], hasSheen:true, prices:{'1gal':{flat:28.00,satin:29.00,semiGloss:30.00,gloss:31.00},'5gal':{flat:24.00,satin:25.00,semiGloss:26.00,gloss:27.00}}, taxRate:9.75, coverage:400, status:'Active' },
-  { id:3, name:'Emerald Urethane', brand:'Sherwin-Williams', substrates:['Cabinets','Trim'], hasSheen:true, prices:{'1gal':{flat:72.00,satin:74.00,semiGloss:76.00,gloss:78.00},'5gal':{flat:62.00,satin:64.00,semiGloss:66.00,gloss:68.00}}, taxRate:9.75, coverage:300, status:'Active' },
-  { id:4, name:'Cabot Australian Timber Oil', brand:'Cabot', substrates:['Deck'], hasSheen:false, prices:{'1gal':{base:44.00},'5gal':{base:38.00}}, taxRate:9.75, coverage:200, status:'Active' },
-  { id:5, name:'ProMar 200 PVA Primer', brand:'Sherwin-Williams', substrates:['Drywall','Primer'], hasSheen:false, prices:{'1gal':{base:22.00},'5gal':{base:19.00}}, taxRate:9.75, coverage:450, status:'Active' },
-  { id:6, name:'Loxon Exterior Primer', brand:'Sherwin-Williams', substrates:['Ext. Siding','Primer'], hasSheen:false, prices:{'1gal':{base:34.00},'5gal':{base:29.00}}, taxRate:9.75, coverage:400, status:'Active' },
+  { id:1, name:'SuperPaint Exterior', brand:'Sherwin-Williams', substrates:['Ext. Siding','Ext. Trim'],
+    sheens:{ flat:{enabled:true,price1gal:38.00,price5gal:33.00}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:true,price1gal:39.00,price5gal:34.00}, semiGloss:{enabled:true,price1gal:40.00,price5gal:35.00}, gloss:{enabled:true,price1gal:41.00,price5gal:36.00} },
+    taxRate:9.75, coverage:350, status:'Active' },
+  { id:2, name:'ProMar 200 Interior', brand:'Sherwin-Williams', substrates:['Int. Walls'],
+    sheens:{ flat:{enabled:true,price1gal:28.00,price5gal:24.00}, eggshell:{enabled:true,price1gal:28.50,price5gal:24.50}, satin:{enabled:true,price1gal:29.00,price5gal:25.00}, semiGloss:{enabled:true,price1gal:30.00,price5gal:26.00}, gloss:{enabled:false,price1gal:0,price5gal:0} },
+    taxRate:9.75, coverage:400, status:'Active' },
+  { id:3, name:'Emerald Urethane', brand:'Sherwin-Williams', substrates:['Cabinets','Trim'],
+    sheens:{ flat:{enabled:false,price1gal:0,price5gal:0}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:true,price1gal:74.00,price5gal:64.00}, semiGloss:{enabled:true,price1gal:76.00,price5gal:66.00}, gloss:{enabled:true,price1gal:78.00,price5gal:68.00} },
+    taxRate:9.75, coverage:300, status:'Active' },
+  { id:4, name:'Cabot Australian Timber Oil', brand:'Cabot', substrates:['Deck'],
+    sheens:{ flat:{enabled:true,price1gal:44.00,price5gal:38.00}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:false,price1gal:0,price5gal:0}, semiGloss:{enabled:false,price1gal:0,price5gal:0}, gloss:{enabled:false,price1gal:0,price5gal:0} },
+    taxRate:9.75, coverage:200, status:'Active' },
+  { id:5, name:'ProMar 200 PVA Primer', brand:'Sherwin-Williams', substrates:['Drywall','Primer'],
+    sheens:{ flat:{enabled:true,price1gal:22.00,price5gal:19.00}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:false,price1gal:0,price5gal:0}, semiGloss:{enabled:false,price1gal:0,price5gal:0}, gloss:{enabled:false,price1gal:0,price5gal:0} },
+    taxRate:9.75, coverage:450, status:'Active' },
+  { id:6, name:'Loxon Exterior Primer', brand:'Sherwin-Williams', substrates:['Ext. Siding','Primer'],
+    sheens:{ flat:{enabled:true,price1gal:34.00,price5gal:29.00}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:false,price1gal:0,price5gal:0}, semiGloss:{enabled:false,price1gal:0,price5gal:0}, gloss:{enabled:false,price1gal:0,price5gal:0} },
+    taxRate:9.75, coverage:400, status:'Active' },
 ];
 let matEditingId = null;
-const sheenKeys = ['flat','satin','semiGloss','gloss'];
-const sheenLabels = {flat:'Flat',satin:'Satin',semiGloss:'Semi-Gloss',gloss:'Gloss'};
+const sheenKeys = ['flat','eggshell','satin','semiGloss','gloss'];
+const sheenLabels = {flat:'Flat',eggshell:'Eggshell',satin:'Satin',semiGloss:'Semi-Gloss',gloss:'Gloss'};
 const substrateOptions = ['Ext. Siding','Ext. Trim','Int. Walls','Int. Ceiling','Cabinets','Deck','Fence','Drywall','Primer'];
 
 function calcMaterialCost(materialId, sheen, useType) {
   // useType: 'quote' (1-gal) or 'budget' (5-gal)
   const mat = materialItems.find(m => m.id === materialId);
   if (!mat) return 0;
-  const size = useType === 'budget' ? '5gal' : '1gal';
-  let price;
-  if (mat.hasSheen) {
-    const sheenKey = sheen === 'Semi-Gloss' ? 'semiGloss' : sheen.toLowerCase();
-    price = mat.prices[size][sheenKey] || mat.prices[size]['satin'] || mat.prices[size]['flat'] || 0;
-  } else {
-    price = mat.prices[size]['base'] || 0;
+  const sheenKeyMap = { 'Flat':'flat', 'Eggshell':'eggshell', 'Satin':'satin', 'Semi-Gloss':'semiGloss', 'Gloss':'gloss' };
+  const key = sheenKeyMap[sheen] || 'flat';
+  const sheenData = mat.sheens[key];
+  if (!sheenData || !sheenData.enabled) {
+    const firstEnabled = Object.values(mat.sheens).find(s => s.enabled);
+    if (!firstEnabled) return 0;
+    const price = useType === 'budget' ? firstEnabled.price5gal : firstEnabled.price1gal;
+    return (price * (1 + mat.taxRate / 100)) / mat.coverage;
   }
-  const afterTax = price * (1 + mat.taxRate / 100);
-  return afterTax / mat.coverage; // cost per SF
-}
-
-function matGetPrice(m, size, sheen) {
-  const p = m.prices[size];
-  if (!p) return 0;
-  return m.hasSheen ? (p[sheen] || 0) : (p.base || 0);
+  const price = useType === 'budget' ? sheenData.price5gal : sheenData.price1gal;
+  return (price * (1 + mat.taxRate / 100)) / mat.coverage;
 }
 
 function calcMatCost(price, taxRate) {
@@ -462,38 +469,30 @@ function calcMatCost(price, taxRate) {
 }
 
 function matPriceRange(m) {
+  const enabledSheens = Object.entries(m.sheens).filter(([k,v]) => v.enabled);
+  const prices1 = enabledSheens.map(([k,v]) => v.price1gal).filter(p => p > 0);
+  const prices5 = enabledSheens.map(([k,v]) => v.price5gal).filter(p => p > 0);
+  const gal1Range = prices1.length === 0 ? '—' : prices1.length === 1 ? `$${prices1[0].toFixed(2)}` : `$${Math.min(...prices1).toFixed(2)}–$${Math.max(...prices1).toFixed(2)}`;
+  const gal5Range = prices5.length === 0 ? '—' : prices5.length === 1 ? `$${prices5[0].toFixed(2)}` : `$${Math.min(...prices5).toFixed(2)}–$${Math.max(...prices5).toFixed(2)}`;
   const tax = 1 + m.taxRate / 100;
-  if (m.hasSheen) {
-    const p1 = m.prices['1gal'];
-    const p5 = m.prices['5gal'];
-    const vals1 = sheenKeys.map(s => p1[s] || 0);
-    const vals5 = sheenKeys.map(s => p5[s] || 0);
-    const min1 = Math.min(...vals1), max1 = Math.max(...vals1);
-    const min5 = Math.min(...vals5), max5 = Math.max(...vals5);
-    return { gal1: `$${min1.toFixed(0)}–$${max1.toFixed(0)}`, gal5: `$${min5.toFixed(0)}–$${max5.toFixed(0)}`,
-             qCost: `$${(min1*tax).toFixed(2)}–$${(max1*tax).toFixed(2)}`,
-             bCost: `$${(min5*tax).toFixed(2)}–$${(max5*tax).toFixed(2)}` };
-  } else {
-    const b1 = m.prices['1gal'].base || 0;
-    const b5 = m.prices['5gal'].base || 0;
-    return { gal1: `$${b1.toFixed(2)}`, gal5: `$${b5.toFixed(2)}`,
-             qCost: `$${(b1*tax).toFixed(2)}`, bCost: `$${(b5*tax).toFixed(2)}` };
-  }
+  const qCosts = prices1.map(p => p * tax);
+  const bCosts = prices5.map(p => p * tax);
+  const qCost = qCosts.length === 0 ? '—' : qCosts.length === 1 ? `$${qCosts[0].toFixed(2)}` : `$${Math.min(...qCosts).toFixed(2)}–$${Math.max(...qCosts).toFixed(2)}`;
+  const bCost = bCosts.length === 0 ? '—' : bCosts.length === 1 ? `$${bCosts[0].toFixed(2)}` : `$${Math.min(...bCosts).toFixed(2)}–$${Math.max(...bCosts).toFixed(2)}`;
+  return { gal1: gal1Range, gal5: gal5Range, qCost, bCost };
 }
 
 function buildMatPreview(m) {
-  const tax = 1 + m.taxRate / 100;
-  if (m.hasSheen) {
-    const headerRow = `<tr><th></th>${sheenKeys.map(s=>`<th>${sheenLabels[s]}</th>`).join('')}</tr>`;
-    const quoteRow = `<tr><td class="mat-preview-sheen">Quote (1-gal)</td>${sheenKeys.map(s=>`<td class="mono green">$${calcMatCost(m.prices['1gal'][s]||0,m.taxRate)}</td>`).join('')}</tr>`;
-    const budgetRow = `<tr><td class="mat-preview-sheen">Budget (5-gal)</td>${sheenKeys.map(s=>`<td class="mono" style="color:var(--yellow)">$${calcMatCost(m.prices['5gal'][s]||0,m.taxRate)}</td>`).join('')}</tr>`;
-    return `<table class="mat-upcharge-table"><thead>${headerRow}</thead><tbody>${quoteRow}${budgetRow}</tbody></table>`;
-  } else {
-    const b1 = m.prices['1gal'].base || 0;
-    const b5 = m.prices['5gal'].base || 0;
-    return `<div class="mat-preview-row"><span class="mat-preview-sheen">Quote (1-gal)</span><span class="mono green">$${calcMatCost(b1,m.taxRate)}</span></div>
-            <div class="mat-preview-row"><span class="mat-preview-sheen">Budget (5-gal)</span><span class="mono" style="color:var(--yellow)">$${calcMatCost(b5,m.taxRate)}</span></div>`;
+  const enabledSheens = Object.entries(m.sheens).filter(([k,v]) => v.enabled);
+  if (enabledSheens.length === 0) {
+    return `<div style="color:var(--text-dim);font-size:12px">No sheens enabled</div>`;
   }
+  const rows = enabledSheens.map(([k,v]) => {
+    const qCost = ((v.price1gal) * (1 + m.taxRate / 100) / m.coverage).toFixed(4);
+    const bCost = ((v.price5gal) * (1 + m.taxRate / 100) / m.coverage).toFixed(4);
+    return `<div class="mat-preview-row"><span class="mat-preview-sheen">${sheenLabels[k]}:</span><span class="mono green">1-gal $${qCost}/SF</span><span style="color:var(--text-dim);margin:0 6px">|</span><span class="mono" style="color:var(--yellow)">5-gal $${bCost}/SF</span></div>`;
+  }).join('');
+  return rows;
 }
 
 function buildMatEditPanel(m) {
