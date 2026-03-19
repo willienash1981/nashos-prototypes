@@ -520,6 +520,62 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- ════════════════════════════════════════════ -->
+<!-- SCHEDULING QUEUE — Admin + Office only, standalone card -->
+<div class="card" data-r="admin,office" style="margin-bottom:22px">
+  <div class="card-h">
+    <div class="card-t">📋 Scheduling Queue</div>
+    <a onclick="toast('Opening full scheduling page…')" class="card-a">Full Scheduler →</a>
+  </div>
+  <div style="padding:0">
+    <!-- Critical -->
+    <div style="padding:3px 16px;background:#FEF2F2;font-size:10px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔴 Must Schedule Today — 1 day left</div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:#EF4444;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Martinez Family</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$28,000</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Exterior · Est. 6 days · Drop-dead: Mon 2/24</div>
+      </div>
+    </div>
+    <!-- Urgent -->
+    <div style="padding:3px 16px;background:#FFF7ED;font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.5px">🟠 Schedule This Week</div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:#F97316;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Chen, David</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$12,400</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Cabinets · Est. 3 days · Drop-dead: Wed 2/26</div>
+      </div>
+    </div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:#F97316;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Thompson Residence</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$19,500</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Interior · Est. 4 days · Drop-dead: Thu 2/27</div>
+      </div>
+    </div>
+    <!-- On Track -->
+    <div style="padding:3px 16px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.5px">🟢 On Track — Next Up</div>
+    <div style="padding:10px 16px;display:flex;align-items:center;gap:10px">
+      <div style="width:4px;align-self:stretch;border-radius:2px;background:var(--green);flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:13px;font-weight:700">Rivera, Carmen</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">$9,800</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-sec)">Interior · Est. 2 days · Drop-dead: Mar 3 · 8 days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ROW 3 — Admin: Field + Pipeline / Office: Onboarding + Comms / Field: Budget + Scores -->
 <!-- ════════════════════════════════════════════ -->
 
@@ -1050,7 +1106,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="cal-tabs">
         <button class="cal-tab active" onclick="switchCal('production',this)">🔧 Production</button>
         <button class="cal-tab" onclick="switchCal('sales',this)">📅 Sales</button>
-        <button class="cal-tab office-admin-only" onclick="switchCal('schedule',this)">📋 Schedule</button>
+
       </div>
       <a class="card-a" id="cal-link">Production Schedule →</a>
     </div>
@@ -1074,13 +1130,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
     </div>
 
-    <!-- Schedule Crew Tab -->
-    <div id="cal-schedule" class="cal-panel" style="display:none">
-      <!-- Header: urgency queue explanation + link to full scheduling page -->
-      <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:11px;color:var(--text-sec)">Jobs needing scheduling — sorted by deadline urgency</div>
-        <a onclick="toast('Opening full scheduling page…')" style="font-size:11px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap">Full Scheduler →</a>
-      </div>
+    <!-- (schedule queue moved to standalone card below) -->
 
       <!-- CRITICAL: 1 day or less to schedule -->
       <div style="padding:4px 16px;background:#FEF2F2;font-size:10px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.5px">🔴 Must Schedule Today</div>
@@ -1144,11 +1194,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
 
       <div style="padding:10px 16px;text-align:center">
-        <a onclick="toast('Opening full scheduling page…')" style="font-size:12px;font-weight:600;color:var(--navy);cursor:pointer">View all unscheduled jobs on Scheduling Page →</a>
-      </div>
-    </div>
-
-    <!-- Sales Calendar -->
+      <!-- Sales Calendar -->
     <div id="cal-sales" class="cal-panel" style="display:none;padding:0">
       <div class="sch">
         <div class="sch-time">9:00 AM</div>
