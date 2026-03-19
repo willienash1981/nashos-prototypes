@@ -674,7 +674,7 @@ window.matUpdateSubstrate = function(id, checkbox) {
 };
 window.matAddNew = function() {
   const newId = Math.max(...materialItems.map(m=>m.id)) + 1;
-  materialItems.push({ id:newId, name:'New Material', brand:'', substrates:[], hasSheen:true, prices:{'1gal':{flat:0,satin:0,semiGloss:0,gloss:0},'5gal':{flat:0,satin:0,semiGloss:0,gloss:0}}, taxRate:9.75, coverage:350, status:'Active' });
+  materialItems.push({ id:newId, name:'New Material', brand:'', substrates:[], sheens:{flat:{enabled:true,price1gal:0,price5gal:0},eggshell:{enabled:false,price1gal:0,price5gal:0},satin:{enabled:false,price1gal:0,price5gal:0},semiGloss:{enabled:false,price1gal:0,price5gal:0},gloss:{enabled:false,price1gal:0,price5gal:0}}, taxRate:9.75, coverage:350, status:'Active' });
   window.matEdit(newId);
 };
 
@@ -699,6 +699,11 @@ const laborRates = [
 ];
 
 function getLaborRate(laborRateId) {
+  // Accept ID (int) or legacy service type name (string)
+  if (typeof laborRateId === 'string') {
+    const byName = laborRates.find(l => l.serviceType === laborRateId || l.name === laborRateId);
+    return byName ? byName.ratePerHr : 58.00;
+  }
   const r = laborRates.find(l => l.id === laborRateId);
   return r ? r.ratePerHr : 58.00;
 }
@@ -1038,7 +1043,7 @@ function renderMCDetail() {
   if (!m) return;
   // serviceTypes and laborRates arrays provide dropdown options
   const matOptions = materialItems.map(mat=>`<option value="${mat.id}" ${m.materialId===mat.id?'selected':''}>${mat.name} (${mat.brand})</option>`).join('');
-  const rate = m.serviceType ? getLaborRate(m.serviceType) : 35;
+  const rate = m.laborRateId ? getLaborRate(m.laborRateId) : (m.serviceType ? getLaborRate(m.serviceType) : 35);
   document.getElementById('detailBody').innerHTML = `
     <div class="form-group"><label class="form-label">Internal Name</label>
       <input class="form-input" value="${m.name}" onchange="editingMC.name=this.value"/></div>
@@ -1817,7 +1822,7 @@ function openNewServiceType() {
 function renderServiceTypeDetail() {
   const st = editingServiceType;
   const mcCount = serviceTypes.find(s=>s.id===st.id) ? microComponents.filter(m=>m.type==='LABOR'&&m.serviceTypeId===st.id).length : 0;
-  const rateOptions = laborRates.map(l => `<option value="${l.id}" ${st.defaultLaborRateId===l.id?'selected':''}>` + l.name + ' — $' + l.ratePerHr.toFixed(2) + '/hr</option>`).join('');
+  const rateOptions = laborRates.map(l => `<option value="${l.id}" ${st.defaultLaborRateId===l.id?'selected':''}>${l.name} — $${l.ratePerHr.toFixed(2)}/hr</option>`).join('');
   document.getElementById('detailBody').innerHTML = `
     <div class="form-group"><label class="form-label">Service Type Name</label>
       <input class="form-input" value="${st.name}" onchange="editingServiceType.name=this.value" placeholder="e.g. Screen Repair"/></div>
