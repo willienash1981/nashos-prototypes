@@ -316,7 +316,7 @@
     <button class="btn btn-danger" onclick="toggleBundleStatus()">Deactivate</button>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-outline" onclick="closeDetail()">Cancel</button>
-      <button class="btn btn-green" onclick="editingMC ? saveMC() : editingLaborRate ? saveLaborRate() : editingHeightTier ? saveHeightTier() : editingServiceType ? saveServiceType() : saveBundle()">💾 Save</button>
+      <button class="btn btn-green" onclick="editingTag ? saveTag() : editingMC ? saveMC() : editingLaborRate ? saveLaborRate() : editingHeightTier ? saveHeightTier() : editingServiceType ? saveServiceType() : saveBundle()">💾 Save</button>
     </div>
   </div>
 </div>
@@ -388,38 +388,38 @@ const microComponents = [
 ];
 
 const bundles = [
-  { id:1, name:'Paint Wall — 2 Coats, Standard Prep', customerName:'Interior Wall Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.41, sellPerUnit:0.82, gpPct:50, components:[1,2,3,4], estimates:47, surfaceType:'Walls', defaultSheen:'Satin',
+  { id:1, name:'Paint Wall — 2 Coats, Standard Prep', customerName:'Interior Wall Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.41, sellPerUnit:0.82, gpPct:50, components:[1,2,3,4], estimates:47, surfaceType:'Walls', defaultSheen:'Satin', requiredTags:[],
     history:[{date:'Feb 15',text:'Material cost $0.228 → $0.241 (paint price increase) — Bill'},{date:'Jan 8',text:'Added caulk MC (was missing from recipe) — Bill'},{date:'Dec 12',text:'Labor rate $28/hr → $30/hr (annual adjustment) — Bill'}] },
-  { id:2, name:'Paint Wall — 2 Coats, Premium Prep', customerName:'Interior Wall Painting (Premium)', category:'Interior', workCategory:'Interior', package:'Premium+', unit:'SF', status:'Active', costPerUnit:0.86, sellPerUnit:1.72, gpPct:50, components:[1,2,3,4,5,6], estimates:23, surfaceType:'Walls', defaultSheen:'Satin',
+  { id:2, name:'Paint Wall — 2 Coats, Premium Prep', customerName:'Interior Wall Painting (Premium)', category:'Interior', workCategory:'Interior', package:'Premium+', unit:'SF', status:'Active', costPerUnit:0.86, sellPerUnit:1.72, gpPct:50, components:[1,2,3,4,5,6], estimates:23, surfaceType:'Walls', defaultSheen:'Satin', requiredTags:[6],
     history:[{date:'Jan 20',text:'Added primer + sand components — Bill'}] },
-  { id:3, name:'Paint Ceiling — 1 Coat', customerName:'Ceiling Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.29, sellPerUnit:0.58, gpPct:50, components:[12,11,4], estimates:31, surfaceType:'Ceiling', defaultSheen:'Flat',
+  { id:3, name:'Paint Ceiling — 1 Coat', customerName:'Ceiling Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.29, sellPerUnit:0.58, gpPct:50, components:[12,11,4], estimates:31, surfaceType:'Ceiling', defaultSheen:'Flat', requiredTags:[],
     history:[{date:'Feb 1',text:'Created bundle — Bill'}] },
-  { id:4, name:'Paint Baseboard — 2 Coats', customerName:'Baseboard Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:0.68, sellPerUnit:1.36, gpPct:50, components:[13,13,14], estimates:18, surfaceType:'Trim', defaultSheen:'Semi-Gloss',
+  { id:4, name:'Paint Baseboard — 2 Coats', customerName:'Baseboard Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:0.68, sellPerUnit:1.36, gpPct:50, components:[13,13,14], estimates:18, surfaceType:'Trim', defaultSheen:'Semi-Gloss', requiredTags:[],
     history:[{date:'Jan 15',text:'Created bundle — Bill'}] },
-  { id:5, name:'Paint Door & Frame — 2 Coats', customerName:'Interior Door Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:32.50, sellPerUnit:65.00, gpPct:50, components:[23,24,7,4], estimates:12, surfaceType:'Door', defaultSheen:'Semi-Gloss',
+  { id:5, name:'Paint Door & Frame — 2 Coats', customerName:'Interior Door Painting', category:'Interior', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:32.50, sellPerUnit:65.00, gpPct:50, components:[23,24,7,4], estimates:12, surfaceType:'Door', defaultSheen:'Semi-Gloss', requiredTags:[],
     history:[{date:'Dec 20',text:'Updated door labor rate — Bill'}] },
-  { id:6, name:'Exterior Siding — Spray + Backroll', customerName:'Exterior Siding Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.52, sellPerUnit:1.04, gpPct:50, components:[8,9,10,7,4], estimates:15, surfaceType:'Ext. Siding', defaultSheen:'Satin',
+  { id:6, name:'Exterior Siding — Spray + Backroll', customerName:'Exterior Siding Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.52, sellPerUnit:1.04, gpPct:50, components:[8,9,10,7,4], estimates:15, surfaceType:'Ext. Siding', defaultSheen:'Satin', requiredTags:[],
     history:[{date:'Feb 10',text:'Adjusted spray rate — Bill'}] },
-  { id:7, name:'Exterior Trim — Brush & Roll', customerName:'Exterior Trim Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'LF', status:'Active', costPerUnit:1.12, sellPerUnit:2.24, gpPct:50, components:[13,13,14,5], estimates:9, surfaceType:'Ext. Trim', defaultSheen:'Semi-Gloss',
+  { id:7, name:'Exterior Trim — Brush & Roll', customerName:'Exterior Trim Painting', category:'Exterior', workCategory:'Exterior', package:'Premium', unit:'LF', status:'Active', costPerUnit:1.12, sellPerUnit:2.24, gpPct:50, components:[13,13,14,5], estimates:9, surfaceType:'Ext. Trim', defaultSheen:'Semi-Gloss', requiredTags:[2],
     history:[{date:'Jan 5',text:'Created bundle — Bill'}] },
-  { id:8, name:'Cabinet Body — Paint, Level 5', customerName:'Cabinet Body Painting', category:'Cabinets', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:18.40, sellPerUnit:36.80, gpPct:50, components:[6,20,21,22,5], estimates:7, surfaceType:'Cabinets', defaultSheen:'Semi-Gloss',
+  { id:8, name:'Cabinet Body — Paint, Level 5', customerName:'Cabinet Body Painting', category:'Cabinets', workCategory:'Interior', package:'Premium', unit:'LF', status:'Active', costPerUnit:18.40, sellPerUnit:36.80, gpPct:50, components:[6,20,21,22,5], estimates:7, surfaceType:'Cabinets', defaultSheen:'Semi-Gloss', requiredTags:[6],
     history:[{date:'Feb 8',text:'Updated cabinet enamel price — Bill'}] },
-  { id:9, name:'Deck Flooring — Semi-Transparent Stain', customerName:'Deck Floor Staining', category:'Deck', workCategory:'Exterior', package:'—', unit:'SF', status:'Active', costPerUnit:0.58, sellPerUnit:1.16, gpPct:50, components:[6,8,15,4], estimates:5, surfaceType:'Deck', defaultSheen:'N/A',
+  { id:9, name:'Deck Flooring — Semi-Transparent Stain', customerName:'Deck Floor Staining', category:'Deck', workCategory:'Exterior', package:'—', unit:'SF', status:'Active', costPerUnit:0.58, sellPerUnit:1.16, gpPct:50, components:[6,8,15,4], estimates:5, surfaceType:'Deck', defaultSheen:'N/A', requiredTags:[],
     history:[{date:'Jan 28',text:'Created bundle — Bill'}] },
-  { id:10, name:"6' Privacy Fence — 1 Side", customerName:'Fence Stain (6ft, One Side)', category:'Fence', workCategory:'Exterior', package:'—', unit:'LF', status:'Active', costPerUnit:5.07, sellPerUnit:10.13, gpPct:50, components:[16,17,6,4], estimates:3, surfaceType:'Fence', defaultSheen:'N/A',
+  { id:10, name:"6' Privacy Fence — 1 Side", customerName:'Fence Stain (6ft, One Side)', category:'Fence', workCategory:'Exterior', package:'—', unit:'LF', status:'Active', costPerUnit:5.07, sellPerUnit:10.13, gpPct:50, components:[16,17,6,4], estimates:3, surfaceType:'Fence', defaultSheen:'N/A', requiredTags:[],
     history:[{date:'Feb 5',text:'Created bundle — Bill'}] },
-  { id:11, name:'Drywall Patch Repair', customerName:'Drywall Patching', category:'Drywall', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:37.50, sellPerUnit:75.00, gpPct:50, components:[19,18,5], estimates:8, surfaceType:'Drywall', defaultSheen:'Flat',
+  { id:11, name:'Drywall Patch Repair', customerName:'Drywall Patching', category:'Drywall', workCategory:'Interior', package:'Premium', unit:'EA', status:'Active', costPerUnit:37.50, sellPerUnit:75.00, gpPct:50, components:[19,18,5], estimates:8, surfaceType:'Drywall', defaultSheen:'Flat', requiredTags:[],
     history:[{date:'Jan 10',text:'Created bundle — Bill'}] },
-  { id:12, name:'Wallpaper Strip — Per SF', customerName:'Wallpaper Removal', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Inactive', costPerUnit:0.95, sellPerUnit:1.90, gpPct:50, components:[25,26], estimates:0, surfaceType:'Walls', defaultSheen:'Satin',
+  { id:12, name:'Wallpaper Strip — Per SF', customerName:'Wallpaper Removal', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Inactive', costPerUnit:0.95, sellPerUnit:1.90, gpPct:50, components:[25,26], estimates:0, surfaceType:'Walls', defaultSheen:'Satin', requiredTags:[],
     history:[{date:'Feb 12',text:'Deactivated — Bill'}] },
   // Tall wall bundle — LABOR ONLY (upper section, material shared with standard wall bundle)
-  { id:25, name:'Paint Wall — Tall Upper Section, 2 Coats', customerName:'Wall Painting — Upper Section (Tall)', category:'Interior', workCategory:'Interior', surfaceType:'Walls', defaultSheen:'Satin', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.234, sellPerUnit:0.468, gpPct:50, components:[40,41], estimates:0, history:[] },
+  { id:25, name:'Paint Wall — Tall Upper Section, 2 Coats', customerName:'Wall Painting — Upper Section (Tall)', category:'Interior', workCategory:'Interior', surfaceType:'Walls', defaultSheen:'Satin', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.234, sellPerUnit:0.468, gpPct:50, components:[40,41], estimates:0, history:[], requiredTags:[] },
   // High wall bundle — LABOR ONLY (upper section, material shared with standard wall bundle)
-  { id:26, name:'Paint Wall — High Upper Section, 2 Coats', customerName:'Wall Painting — Upper Section (High)', category:'Interior', workCategory:'Interior', surfaceType:'Walls', defaultSheen:'Satin', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.300, sellPerUnit:0.600, gpPct:50, components:[42,43], estimates:0, history:[] },
+  { id:26, name:'Paint Wall — High Upper Section, 2 Coats', customerName:'Wall Painting — Upper Section (High)', category:'Interior', workCategory:'Interior', surfaceType:'Walls', defaultSheen:'Satin', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.300, sellPerUnit:0.600, gpPct:50, components:[42,43], estimates:0, history:[], requiredTags:[] },
   // Tall ceiling bundle
-  { id:27, name:'Paint Ceiling — 1 Coat, Tall', customerName:'Ceiling Painting (Tall)', category:'Interior', workCategory:'Interior', surfaceType:'Ceiling', defaultSheen:'Flat', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.135, sellPerUnit:0.270, gpPct:50, components:[44], estimates:0, history:[] },
+  { id:27, name:'Paint Ceiling — 1 Coat, Tall', customerName:'Ceiling Painting (Tall)', category:'Interior', workCategory:'Interior', surfaceType:'Ceiling', defaultSheen:'Flat', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.135, sellPerUnit:0.270, gpPct:50, components:[44], estimates:0, history:[], requiredTags:[] },
   // High ceiling bundle
-  { id:28, name:'Paint Ceiling — 1 Coat, High', customerName:'Ceiling Painting (High)', category:'Interior', workCategory:'Interior', surfaceType:'Ceiling', defaultSheen:'Flat', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.175, sellPerUnit:0.350, gpPct:50, components:[45], estimates:0, history:[] },
+  { id:28, name:'Paint Ceiling — 1 Coat, High', customerName:'Ceiling Painting (High)', category:'Interior', workCategory:'Interior', surfaceType:'Ceiling', defaultSheen:'Flat', package:'Premium', unit:'SF', status:'Active', costPerUnit:0.175, sellPerUnit:0.350, gpPct:50, components:[45], estimates:0, history:[], requiredTags:[3,4] },
 ];
 
 const materialItems = [
@@ -678,6 +678,17 @@ window.matAddNew = function() {
   window.matEdit(newId);
 };
 
+const crewTags = [
+  { id:1, name:'romabio', label:'Romabio / Brick Coating', description:'Certified to apply Romabio masonry coatings' },
+  { id:2, name:'30ft-ladder', label:'30ft Ladder', description:'Can safely work from 30ft extension ladder' },
+  { id:3, name:'equipment-operator', label:'Equipment Operator', description:'Licensed to operate boom lift or scissor lift' },
+  { id:4, name:'boom-lift', label:'Boom Lift', description:'Certified boom lift operator' },
+  { id:5, name:'scissor-lift', label:'Scissor Lift', description:'Certified scissor lift operator' },
+  { id:6, name:'fine-finish', label:'Fine Finish', description:'Premium Plus quality — skim coat, spray, level 5 prep' },
+  { id:7, name:'night-work', label:'Night Work', description:'Available for after-hours or night shift jobs' },
+  { id:8, name:'2nd-story-carpentry', label:'2nd Story Carpentry', description:'Comfortable with exterior carpentry at height (fascia, soffits, etc.)' },
+];
+
 const serviceTypes = [
   { id:1, name:'Interior Painting',  defaultLaborRateId:1, workArea:'Interior',  crewSkill:'Painting' },
   { id:2, name:'Exterior Painting',  defaultLaborRateId:2, workArea:'Exterior',  crewSkill:'Painting' },
@@ -686,6 +697,8 @@ const serviceTypes = [
   { id:5, name:'Drywall',            defaultLaborRateId:5, workArea:'Interior',  crewSkill:'Drywall' },
   { id:6, name:'Deck / Fence',       defaultLaborRateId:6, workArea:'Exterior',  crewSkill:'Painting' },
   { id:7, name:'Handyman',           defaultLaborRateId:7, workArea:'Either',    crewSkill:'General' },
+  { id:8, name:'Screen Replacement', defaultLaborRateId:7, workArea:'Exterior',  crewSkill:'General' },
+  { id:9, name:'Wood Door Refinishing', defaultLaborRateId:1, workArea:'Interior', crewSkill:'Fine Finish' },
 ];
 
 const laborRates = [
@@ -749,7 +762,8 @@ const configCategories = [
   { key:'micro', icon:'⚛️', label:'Micro-Components', cnt:87 },
   { key:'materials', icon:'🪣', label:'Material Items', cnt:64 },
   { key:'labor', icon:'💰', label:'Labor Rates', cnt:7 },
-  { key:'servicetypes', icon:'🏷️', label:'Service Types', cnt:7 },
+  { key:'servicetypes', icon:'🏷️', label:'Service Types', cnt:9 },
+  { key:'tags', icon:'🏷️', label:'Crew Capability Tags', cnt:8 },
   { key:'height', icon:'📏', label:'Height Tier Pricing', cnt:3 },
   { key:'templates', icon:'📄', label:'Templates', cnt:8 },
   { key:'products', icon:'🪣', label:'Products & Materials', cnt:18 },
@@ -972,6 +986,7 @@ function renderMainContent() {
     materials: renderMaterials,
     labor: renderLaborRates,
     servicetypes: renderServiceTypes,
+    tags: renderTags,
     height: renderHeight,
     templates: renderTemplates,
     products: renderProducts,
@@ -1158,7 +1173,7 @@ function renderBundles(el) {
       ${pills.map(p=>`<div class="filter-pill ${p===activeFilter?'active':''}" onclick="activeFilter='${p}';renderMainContent()">${p}</div>`).join('')}
     </div>
     <div class="card"><table><thead><tr>
-      <th>Bundle Name</th><th>Customer Name</th><th>Service Type</th><th>Surface</th><th>Package</th><th>Unit</th><th>Components</th><th>Cost/Unit</th><th>Sell/Unit</th><th>Status</th>
+      <th>Bundle Name</th><th>Customer Name</th><th>Service Type</th><th>Surface</th><th>Package</th><th>Unit</th><th>Components</th><th>Tags</th><th>Cost/Unit</th><th>Sell/Unit</th><th>Status</th>
     </tr></thead><tbody>
       ${filtered.map(b => {
         const inactive = b.status==='Inactive';
@@ -1169,6 +1184,7 @@ function renderBundles(el) {
           <td>${b.surfaceType||'—'}<br><span style="font-size:11px;color:var(--text-dim)">${b.defaultSheen||surfaceToSheen(b.surfaceType||'')}</span></td>
           <td>${b.package}</td><td class="mono">${b.unit}</td>
           <td><span class="link-count">${b.components.length} MCs</span></td>
+          <td>${b.requiredTags && b.requiredTags.length > 0 ? b.requiredTags.map(tid => { const t = crewTags.find(x=>x.id===tid); return t ? `<span class="badge badge-exterior" style="font-size:10px;margin:1px">${t.label}</span>` : ''; }).join('') : '<span style="color:var(--text-dim)">—</span>'}</td>
           <td class="mono">$${b.costPerUnit.toFixed(2)}</td><td class="mono">$${b.sellPerUnit.toFixed(2)}</td>
           <td><span class="badge badge-${b.status.toLowerCase()}">${b.status}</span></td>
         </tr>`;
@@ -1187,7 +1203,7 @@ function openBundle(id) {
 }
 
 function openNewBundle() {
-  editingBundle = { id:0, name:'', customerName:'', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0, sellPerUnit:0, gpPct:50, components:[], estimates:0, history:[], surfaceType:'Walls', defaultSheen:'Satin' };
+  editingBundle = { id:0, name:'', customerName:'', category:'Interior', workCategory:'Interior', package:'Premium', unit:'SF', status:'Active', costPerUnit:0, sellPerUnit:0, gpPct:50, components:[], estimates:0, history:[], surfaceType:'Walls', defaultSheen:'Satin', requiredTags:[] };
   editingComponents = [];
   activeDetailTab = 'definition';
   document.getElementById('detailTitle').textContent = 'New Service Bundle';
@@ -1204,6 +1220,7 @@ function closeDetail() {
   editingLaborRate = null;
   editingHeightTier = null;
   editingServiceType = null;
+  editingTag = null;
   renderMainContent();
 }
 
@@ -1274,6 +1291,18 @@ function renderDefinitionTab(el) {
     </div>
     <div class="form-row" style="margin-top:8px">
       <div class="form-toggle"><div class="toggle" onclick="this.classList.toggle('on')"></div><span class="toggle-label">Value Package: Not Available</span></div>
+    </div>
+    <div class="form-group" style="margin-top:14px">
+      <label class="form-label">Required Crew Tags <span style="font-size:10px;color:var(--text-dim)">(auto-applied — crew must have these to be assigned)</span></label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+        ${crewTags.map(t => {
+          const checked = editingBundle.requiredTags && editingBundle.requiredTags.includes(t.id);
+          return `<label style="display:flex;align-items:center;gap:5px;padding:5px 10px;background:${checked?'rgba(59,130,246,0.15)':'var(--navy-mid)'};border:1px solid ${checked?'var(--accent)':'var(--border)'};border-radius:20px;cursor:pointer;font-size:12px">
+            <input type="checkbox" ${checked?'checked':''} onchange="toggleBundleTag(${t.id},this.checked)" style="accent-color:var(--accent)">
+            ${t.label}
+          </label>`;
+        }).join('')}
+      </div>
     </div>`;
 }
 
@@ -1772,6 +1801,87 @@ function renderIntegrations(el) {
           <button class="btn btn-outline btn-sm">Configure</button>
         </div>`).join('')}
     </div>`;
+}
+
+// ─── CREW CAPABILITY TAGS ───
+function renderTags(el) {
+  const rows = crewTags.map(t => {
+    const usedIn = bundles.filter(b => b.requiredTags && b.requiredTags.includes(t.id)).length;
+    return `<tr class="clickable" onclick="openTag(${t.id})">
+      <td><span class="badge badge-exterior" style="font-size:12px">${t.label}</span></td>
+      <td class="dim">${t.name}</td>
+      <td class="dim">${t.description}</td>
+      <td>${usedIn > 0 ? `<span class="link-count">${usedIn} bundles</span>` : '<span style="color:var(--text-dim)">—</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-left:4px solid var(--accent);border-radius:6px;margin-bottom:12px;font-size:13px;">
+      Tags are assigned to Service Bundles to indicate special crew requirements. Crews are matched to jobs based on which tags they have.
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button class="btn btn-primary" onclick="openNewTag()">+ New Tag</button>
+    </div>
+    <div class="card"><table>
+      <thead><tr><th>Tag Label</th><th>Key</th><th>Description</th><th>Used In</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+}
+
+let editingTag = null;
+
+function openTag(id) {
+  editingTag = JSON.parse(JSON.stringify(crewTags.find(t => t.id === id)));
+  document.getElementById('detailTabs').style.display = 'none';
+  document.getElementById('detailTitle').textContent = 'Edit Tag';
+  const t = editingTag;
+  const usedIn = bundles.filter(b => b.requiredTags && b.requiredTags.includes(t.id));
+  document.getElementById('detailBody').innerHTML = `
+    <div class="form-group"><label class="form-label">Tag Label <span style="font-size:10px;color:var(--text-dim)">(shown to office/admin)</span></label>
+      <input class="form-input" value="${t.label}" onchange="editingTag.label=this.value"/></div>
+    <div class="form-group"><label class="form-label">Tag Key <span style="font-size:10px;color:var(--text-dim)">(system identifier — lowercase, no spaces)</span></label>
+      <input class="form-input" value="${t.name}" onchange="editingTag.name=this.value" placeholder="e.g. romabio"/></div>
+    <div class="form-group"><label class="form-label">Description</label>
+      <input class="form-input" value="${t.description}" onchange="editingTag.description=this.value"/></div>
+    ${usedIn.length > 0 ? `<div style="padding:10px 14px;background:var(--navy-mid);border-radius:6px;font-size:12px;margin-top:4px">
+      Used in: ${usedIn.map(b=>`<strong>${b.name}</strong>`).join(', ')}
+    </div>` : ''}`;
+  document.getElementById('detailPanel').style.display = 'flex';
+}
+
+function openNewTag() {
+  const newId = Math.max(...crewTags.map(t=>t.id)) + 1;
+  editingTag = { id:newId, name:'', label:'', description:'' };
+  document.getElementById('detailTabs').style.display = 'none';
+  document.getElementById('detailTitle').textContent = 'New Tag';
+  document.getElementById('detailBody').innerHTML = `
+    <div class="form-group"><label class="form-label">Tag Label</label>
+      <input class="form-input" placeholder="e.g. Boom Lift" onchange="editingTag.label=this.value"/></div>
+    <div class="form-group"><label class="form-label">Tag Key <span style="font-size:10px;color:var(--text-dim)">(lowercase, no spaces)</span></label>
+      <input class="form-input" placeholder="e.g. boom-lift" onchange="editingTag.name=this.value"/></div>
+    <div class="form-group"><label class="form-label">Description</label>
+      <input class="form-input" placeholder="What capability does this tag represent?" onchange="editingTag.description=this.value"/></div>`;
+  document.getElementById('detailPanel').style.display = 'flex';
+}
+
+function saveTag() {
+  const idx = crewTags.findIndex(t => t.id === editingTag.id);
+  if (idx >= 0) crewTags[idx] = {...editingTag};
+  else crewTags.push({...editingTag});
+  editingTag = null;
+  document.getElementById('detailPanel').style.display = 'none';
+  document.getElementById('detailTabs').style.display = '';
+  renderTags(document.getElementById('mainContent'));
+  toast('Tag saved');
+}
+
+function toggleBundleTag(tagId, checked) {
+  if (!editingBundle.requiredTags) editingBundle.requiredTags = [];
+  if (checked) {
+    if (!editingBundle.requiredTags.includes(tagId)) editingBundle.requiredTags.push(tagId);
+  } else {
+    editingBundle.requiredTags = editingBundle.requiredTags.filter(id => id !== tagId);
+  }
 }
 
 // ─── SERVICE TYPES ───
