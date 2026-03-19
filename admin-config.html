@@ -316,7 +316,7 @@
     <button class="btn btn-danger" onclick="toggleBundleStatus()">Deactivate</button>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-outline" onclick="closeDetail()">Cancel</button>
-      <button class="btn btn-green" onclick="saveBundle()">💾 Save Bundle</button>
+      <button class="btn btn-green" onclick="editingMC ? saveMC() : saveBundle()">💾 Save</button>
     </div>
   </div>
 </div>
@@ -795,9 +795,102 @@ function renderMainContent() {
     height: { cols:['Tier Name','Height Range','Labor Multiplier','Access Method'], rows: heightTiersExterior.map(h=>[h.name,h.range,h.multiplier,h.access]) },
     packages: { cols:['Package Name','Multiplier','Description'], rows: pricingPackages.map(p=>[p.name,p.multiplier,p.desc]) },
   };
+  if (activeCategory === 'micro') { renderMicroComponents(el); return; }
   const t = tables[activeCategory];
   const headerNote = t.header ? `<div style="padding:10px 14px;background:#fffbea;border-left:4px solid #f59e0b;border-radius:6px;margin-bottom:12px;font-size:13px;color:#92400e;">${t.header}</div>` : '';
   el.innerHTML = `${headerNote}<div class="card"><table><thead><tr>${t.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+let editingMC = null;
+
+function renderMicroComponents(el) {
+  const header = `<div style="padding:10px 14px;background:#fffbea;border-left:4px solid #f59e0b;border-radius:6px;margin-bottom:12px;font-size:13px;color:#92400e;">⚡ All costs are dynamic — LABOR pulls from Labor Rates by Service Type; MATERIAL pulls from Products catalog. Update in one place, reprices everywhere.</div>`;
+  const rows = microComponents.map(m => {
+    const usedIn = bundles.filter(b=>b.components.includes(m.id)).length;
+    let costCell;
+    if (m.type === 'MATERIAL' && m.materialId) {
+      const mat = materialItems.find(x=>x.id===m.materialId);
+      const dynCost = calcMaterialCost(m.materialId,'Satin','quote');
+      costCell = mat ? `Linked: <strong>${mat.name}</strong> <span class="badge badge-exterior" style="font-size:10px">catalog</span><br><small>~$${dynCost.toFixed(3)}/SF</small>` : `$${m.costPerUnit.toFixed(3)}`;
+    } else if (m.type==='LABOR' && m.serviceType) {
+      const rate = getLaborRate(m.serviceType);
+      costCell = `via <strong>${m.serviceType}</strong> <span class="badge badge-interior" style="font-size:10px">⚡</span><br><small>$${rate}/hr</small>`;
+    } else {
+      costCell = `$${m.costPerUnit.toFixed(3)}`;
+    }
+    const isEditing = editingMC && editingMC.id === m.id;
+    return `<tr class="clickable ${isEditing?'':''}">
+      <td class="bright" onclick="openMC(${m.id})" style="cursor:pointer">${m.name}</td>
+      <td><span class="badge ${m.type==='LABOR'?'badge-interior':'badge-cabinets'}">${m.type}</span></td>
+      <td>${m.rate}</td><td>${m.unit}</td>
+      <td>${costCell}</td>
+      <td>${usedIn} bundles</td>
+      <td><button class="qa-btn" onclick="openMC(${m.id})" style="font-size:11px;padding:4px 10px">Edit</button></td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `${header}<div class="card"><table><thead><tr><th>Name</th><th>Type</th><th>Rate</th><th>Unit</th><th>Cost/Unit</th><th>Used In</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function openMC(id) {
+  editingMC = JSON.parse(JSON.stringify(microComponents.find(m=>m.id===id)));
+  renderMCDetail();
+  document.getElementById('detailPanel').style.display='flex';
+  document.getElementById('detailTitle').textContent = 'Edit Micro-Component';
+}
+
+function renderMCDetail() {
+  const m = editingMC;
+  if (!m) return;
+  const laborServiceTypes = ['Interior Painting','Exterior Painting','Cabinet Painting','Carpentry','Drywall','Deck / Fence','Handyman'];
+  const matOptions = materialItems.map(mat=>`<option value="${mat.id}" ${m.materialId===mat.id?'selected':''}>${mat.name} (${mat.brand})</option>`).join('');
+  const rate = m.serviceType ? getLaborRate(m.serviceType) : 35;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="form-group"><label class="form-label">Internal Name</label>
+      <input class="form-input" value="${m.name}" onchange="editingMC.name=this.value"/></div>
+    <div class="form-group"><label class="form-label">Type</label>
+      <select class="form-select" onchange="editingMC.type=this.value;renderMCDetail()">
+        <option ${m.type==='LABOR'?'selected':''}>LABOR</option>
+        <option ${m.type==='MATERIAL'?'selected':''}>MATERIAL</option>
+      </select></div>
+    <div class="form-group"><label class="form-label">Unit</label>
+      <input class="form-input" value="${m.unit}" onchange="editingMC.unit=this.value"/></div>
+    <div class="form-group"><label class="form-label">Production Rate</label>
+      <input class="form-input" value="${m.rate}" onchange="editingMC.rate=this.value" placeholder="e.g. 350 SF/hr"/></div>
+    ${m.type==='LABOR' ? `
+    <div class="form-group"><label class="form-label">Service Type <span style="font-size:10px;color:var(--text-dim)">(drives labor rate)</span></label>
+      <select class="form-select" onchange="editingMC.serviceType=this.value;renderMCDetail()">
+        <option value="">— None —</option>
+        ${laborServiceTypes.map(s=>`<option ${m.serviceType===s?'selected':''}>${s}</option>`).join('')}
+      </select></div>
+    ${m.serviceType ? `<div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px;margin-bottom:12px">
+      ⚡ Pulling <strong>$${rate}/hr</strong> from Labor Rates → <strong>$${m.costPerUnit.toFixed(3)}/${m.unit.split('/')[0]||'unit'}</strong> effective cost</div>` : ''}
+    <div class="form-group"><label class="form-label">Cost Per Unit (override)</label>
+      <input class="form-input" type="number" step="0.001" value="${m.costPerUnit}" onchange="editingMC.costPerUnit=parseFloat(this.value)"/></div>
+    ` : `
+    <div class="form-group"><label class="form-label">Linked Product <span style="font-size:10px;color:var(--text-dim)">(optional — drives dynamic cost)</span></label>
+      <select class="form-select" onchange="editingMC.materialId=this.value?parseInt(this.value):null;renderMCDetail()">
+        <option value="">— No link (use fixed cost) —</option>
+        ${matOptions}
+      </select></div>
+    ${m.materialId ? `<div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px;margin-bottom:12px">
+      ⚡ Dynamic cost: $${calcMaterialCost(m.materialId,'Satin','quote').toFixed(4)}/SF (1-gal Satin quote) | $${calcMaterialCost(m.materialId,'Satin','budget').toFixed(4)}/SF (5-gal budget)</div>` : ''}
+    <div class="form-group"><label class="form-label">Cost Per Unit (fallback if no link)</label>
+      <input class="form-input" type="number" step="0.001" value="${m.costPerUnit}" onchange="editingMC.costPerUnit=parseFloat(this.value)"/></div>
+    `}
+    <div class="form-group"><label class="form-label">Notes</label>
+      <input class="form-input" value="${m.description||''}" onchange="editingMC.description=this.value" placeholder="Optional notes"/></div>
+    <div style="margin-top:14px;padding:12px;background:var(--navy-mid);border-radius:6px;font-size:12px;color:var(--text-sec)">
+      Used in <strong>${bundles.filter(b=>b.components.includes(m.id)).length} bundles</strong>
+    </div>`;
+}
+
+function saveMC() {
+  const idx = microComponents.findIndex(m=>m.id===editingMC.id);
+  if (idx>=0) microComponents[idx] = {...editingMC};
+  editingMC = null;
+  document.getElementById('detailPanel').style.display='none';
+  renderMicroComponents(document.getElementById('mainContent'));
+  toast('Micro-component saved');
 }
 
 function renderBundles(el) {
