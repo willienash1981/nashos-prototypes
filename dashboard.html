@@ -1038,7 +1038,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <span>⏱ 4 day estimate</span>
           <span>🎨 3 colors (SW Cityscape, Alabaster, Iron Ore)</span>
         </div>
-        <div style="font-size:11px;color:var(--green)">Reviewed work order Feb 26 — scope looks clear, standard exterior job</div>
+        <div style="font-size:11px;color:var(--green);margin-bottom:8px">Reviewed work order Feb 26 — scope looks clear, standard exterior job</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" onclick="toast('Change Crew request sent to office for Davis Exterior')" style="font-size:11px;padding:5px 10px">🔄 Change Crew</button>
+        </div>
       </div>
 
       <!-- Job 2: Needs review -->
@@ -1061,6 +1065,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
           <button class="qa-btn" style="font-size:11px;padding:5px 10px">✅ Approve</button>
+          <button class="qa-btn" onclick="toast('Change Crew request sent to office for Thompson Interior')" style="font-size:11px;padding:5px 10px">🔄 Change Crew</button>
           <button class="qa-btn" style="font-size:11px;padding:5px 10px">📍 Schedule Site Visit</button>
           <button class="qa-btn" style="font-size:11px;padding:5px 10px">💬 Flag for Office</button>
         </div>
@@ -1084,8 +1089,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <span>🔧 Carpentry: rot repair + screen replacement</span>
         </div>
         <div style="font-size:11px;color:var(--blue);margin-bottom:8px">Pre-job walk-through scheduled Wed 9:00 AM — large scope, need to verify carpentry extent before crew assignment</div>
+        <!-- AI crew suggestion (future: auto-populated based on skill history) -->
+        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:11px">
+          <div style="font-weight:600;color:var(--blue);margin-bottom:3px">🤖 Suggested crew: Carlos (3 men)</div>
+          <div style="color:var(--text-sec)">Best carpentry + exterior match based on job history · Next free: Thu 3/5</div>
+        </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="qa-btn" style="font-size:11px;padding:5px 10px">📄 View Work Order</button>
+          <button class="qa-btn" onclick="toast('Carlos suggested for Henderson — sent to office for confirmation')" style="font-size:11px;padding:5px 10px">👍 Accept Suggestion</button>
+          <button class="qa-btn" onclick="toast('Requesting different crew for Henderson')" style="font-size:11px;padding:5px 10px">🔄 Suggest Different</button>
           <button class="qa-btn" style="font-size:11px;padding:5px 10px">📸 Take Before Photos</button>
         </div>
       </div>
