@@ -819,7 +819,6 @@ function renderLaborRates(el) {
     return `<tr class="clickable" onclick="openLaborRate(${l.id})">
       <td class="bright">${l.name}</td>
       <td class="mono">$${l.ratePerHr.toFixed(2)}/hr</td>
-      <td class="dim">${defST ? defST.name : '—'}</td>
       <td><span class="link-count">${linkedMCs} MCs</span></td>
       <td class="dim">${l.effectiveDate}</td>
     </tr>`;
@@ -831,7 +830,7 @@ function renderLaborRates(el) {
     </div>
     <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary" onclick="openNewLaborRate()">+ New Labor Rate</button></div>
     <div class="card"><table>
-      <thead><tr><th>Rate Name</th><th>Rate/hr</th><th>Default Service Type</th><th>Used In</th><th>Effective Date</th></tr></thead>
+      <thead><tr><th>Rate Name</th><th>Rate/hr</th><th>Used In</th><th>Effective Date</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
 }
@@ -860,21 +859,16 @@ function openLaborRate(id) {
   document.getElementById('detailTitle').textContent = 'Edit Labor Rate';
   const l = editingLaborRate;
   const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.laborRateId === l.id).length;
-  const stOptions = serviceTypes.map(s => `<option value="${s.id}" ${(l.defaultServiceTypeId===s.id)?'selected':''}>${s.name}</option>`).join('');
   document.getElementById('detailBody').innerHTML = `
     <div class="form-group"><label class="form-label">Rate Name</label>
       <input class="form-input" value="${l.name}" onchange="editingLaborRate.name=this.value" placeholder="e.g. Interior"/></div>
     <div class="form-group"><label class="form-label">Rate per Hour ($)</label>
       <input class="form-input" type="number" step="0.50" min="0" value="${l.ratePerHr.toFixed(2)}" onchange="editingLaborRate.ratePerHr=parseFloat(this.value)"/></div>
-    <div class="form-group"><label class="form-label">Default Service Type <span style="font-size:10px;color:var(--text-dim)">(auto-fills when this service type is selected in MC editor)</span></label>
-      <select class="form-select" onchange="editingLaborRate.defaultServiceTypeId=parseInt(this.value)">
-        <option value="">— None —</option>
-        ${stOptions}
-      </select></div>
     <div class="form-group"><label class="form-label">Effective Date</label>
       <input class="form-input" type="text" value="${l.effectiveDate}" onchange="editingLaborRate.effectiveDate=this.value"/></div>
     <div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-radius:6px;font-size:13px;margin-top:4px">
-      ⚡ ${linkedMCs} MCs use this rate. Changing rate/hr updates all of them instantly.</div>`;
+      ⚡ ${linkedMCs} MCs use this rate. Changing rate/hr updates all of them instantly.<br>
+      <span style="color:var(--text-dim);font-size:11px">Default service type association is set in the Service Types editor.</span></div>`;
   document.getElementById('detailPanel').style.display = 'flex';
 }
 
