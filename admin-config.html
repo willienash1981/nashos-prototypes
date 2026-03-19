@@ -705,7 +705,7 @@ const crewTags = [
   { id:4, name:'boom-lift', label:'Boom Lift', description:'Certified boom lift operator' },
   { id:5, name:'scissor-lift', label:'Scissor Lift', description:'Certified scissor lift operator' },
   { id:6, name:'fine-finish', label:'Fine Finish', description:'Premium Plus quality — skim coat, spray, level 5 prep' },
-  { id:7, name:'night-work', label:'Night Work', description:'Available for after-hours or night shift jobs' },
+  { id:7, name:'night-work', label:'Night Work', description:'Auto-applied when estimate has nights/weekends toggle enabled — not manually assigned', autoApply: true },
   { id:8, name:'2nd-story-carpentry', label:'2nd Story Carpentry', description:'Comfortable with exterior carpentry at height (fascia, soffits, etc.)' },
   { id:9, name:'cabinets-body', label:'Cabinets — Body', description:'Cabinet box painting — brush/roll application, tight spaces' },
   { id:10, name:'cabinets-doors', label:'Cabinets — Doors', description:'Cabinet door/drawer painting — spray booth required, fine finish' },
@@ -788,7 +788,7 @@ const configCategories = [
   { key:'materials', icon:'🪣', label:'Material Items', cnt:64 },
   { key:'labor', icon:'💰', label:'Labor Rates', cnt:7 },
   { key:'servicetypes', icon:'🏷️', label:'Service Types', cnt:10 },
-  { key:'tags', icon:'🏷️', label:'Crew Capability Tags', cnt:12 },
+  { key:'tags', icon:'🏷️', label:'Crew Capability Tags', cnt:11 },
   { key:'height', icon:'📏', label:'Height Tier Pricing', cnt:3 },
   { key:'templates', icon:'📄', label:'Templates', cnt:8 },
   { key:'products', icon:'🪣', label:'Products & Materials', cnt:18 },
@@ -1509,6 +1509,57 @@ function renderVolume(el) {
       <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
         <button class="btn btn-primary btn-sm">💾 Save Multipliers</button>
       </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-h"><div class="card-t">⚡ Job Condition Modifiers</div></div>
+      <div class="card-b">
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px">
+          These multipliers apply when special job conditions are toggled on the estimate (global or per service type).
+          Toggling a condition also auto-applies the corresponding crew requirement tag.
+        </div>
+        <!-- Nights/Weekends row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:13px;font-weight:600">Nights / Weekends</div>
+            <div style="font-size:11px;color:var(--text-sec)">Applied when estimate is toggled to night/weekend schedule → auto-applies <strong>night-work</strong> crew tag</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" step="0.05" min="1" max="3" value="1.5"
+              style="width:70px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"
+              onchange="toast('Night/weekend rate updated to '+this.value+'×')">
+            <span style="font-size:13px;color:var(--text-sec)">×</span>
+          </div>
+        </div>
+        <!-- Rush Job row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:13px;font-weight:600">Rush Job</div>
+            <div style="font-size:11px;color:var(--text-sec)">Applied when start date is within 48hrs of estimate acceptance</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" step="0.05" min="1" max="3" value="1.25"
+              style="width:70px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"
+              onchange="toast('Rush rate updated to '+this.value+'×')">
+            <span style="font-size:13px;color:var(--text-sec)">×</span>
+          </div>
+        </div>
+        <!-- Holiday row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+          <div>
+            <div style="font-size:13px;font-weight:600">Holiday</div>
+            <div style="font-size:11px;color:var(--text-sec)">Applied on designated holidays (configured in Scheduling → Blackout Dates)</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" step="0.05" min="1" max="3" value="2.0"
+              style="width:70px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"
+              onchange="toast('Holiday rate updated to '+this.value+'×')">
+            <span style="font-size:13px;color:var(--text-sec)">×</span>
+          </div>
+        </div>
+        <div style="margin-top:12px;text-align:right">
+          <button class="btn btn-primary" onclick="toast('Job condition rates saved')">💾 Save Rates</button>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -1835,8 +1886,9 @@ function renderIntegrations(el) {
 function renderTags(el) {
   const rows = crewTags.map(t => {
     const usedIn = bundles.filter(b => b.requiredTags && b.requiredTags.includes(t.id)).length;
+    const autoBadge = t.autoApply ? `<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:700;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);border-radius:4px;padding:1px 5px">⚡ AUTO</span>` : '';
     return `<tr class="clickable" onclick="openTag(${t.id})">
-      <td><span class="badge badge-exterior" style="font-size:12px">${t.label}</span></td>
+      <td><span class="badge badge-exterior" style="font-size:12px">${t.label}</span>${autoBadge}</td>
       <td class="dim">${t.name}</td>
       <td class="dim">${t.description}</td>
       <td>${usedIn > 0 ? `<span class="link-count">${usedIn} bundles</span>` : '<span style="color:var(--text-dim)">—</span>'}</td>
@@ -1846,6 +1898,7 @@ function renderTags(el) {
   el.innerHTML = `
     <div style="padding:10px 14px;background:rgba(59,130,246,0.08);border-left:4px solid var(--accent);border-radius:6px;margin-bottom:12px;font-size:13px;">
       Tags are assigned to Service Bundles to indicate special crew requirements. Crews are matched to jobs based on which tags they have.
+      <strong style="color:#fbbf24">⚡ AUTO</strong> tags are system-triggered and cannot be manually assigned.
     </div>
     <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
       <button class="btn btn-primary" onclick="openNewTag()">+ New Tag</button>
