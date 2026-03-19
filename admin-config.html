@@ -833,8 +833,8 @@ function openLaborRate(id) {
   const l = editingLaborRate;
   const linkedMCs = microComponents.filter(m => m.type === 'LABOR' && m.serviceType === l.serviceType).length;
   document.getElementById('detailBody').innerHTML = `
-    <div class="form-group"><label class="form-label">Service Type</label>
-      <div style="padding:9px 12px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text-bright);font-size:13px;">${l.serviceType}</div></div>
+    <div class="form-group"><label class="form-label">Service Type Name <span style="font-size:10px;color:var(--text-dim)">(renaming updates all linked MCs)</span></label>
+      <input class="form-input" value="${l.serviceType}" onchange="editingLaborRate.serviceType=this.value"/></div>
     <div class="form-group"><label class="form-label">Rate Per Hour ($)</label>
       <input class="form-input" type="number" step="0.01" min="0" value="${l.ratePerHr.toFixed(2)}" onchange="editingLaborRate.ratePerHr=parseFloat(this.value)"/></div>
     <div class="form-group"><label class="form-label">Effective Date</label>
@@ -850,8 +850,13 @@ function openLaborRate(id) {
 
 function saveLaborRate() {
   const idx = laborRates.findIndex(l => l.id === editingLaborRate.id);
+  const oldName = idx >= 0 ? laborRates[idx].serviceType : null;
   if (idx >= 0) laborRates[idx] = { ...editingLaborRate };
-  else laborRates.push({ ...editingLaborRate }); // new entry
+  else laborRates.push({ ...editingLaborRate });
+  // propagate name change to linked MCs
+  if (oldName && oldName !== editingLaborRate.serviceType) {
+    microComponents.forEach(m => { if (m.serviceType === oldName) m.serviceType = editingLaborRate.serviceType; });
+  }
   editingLaborRate = null;
   document.getElementById('detailPanel').style.display = 'none';
   document.getElementById('detailTabs').style.display = '';
