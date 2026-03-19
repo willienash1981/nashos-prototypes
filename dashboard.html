@@ -188,6 +188,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .office-admin-only{}
 .field-tab{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s}
 .field-tab.active{background:var(--navy);color:#fff}
+.co-sel{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)!important}
 .cal-panel{}
 .sch-time{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:65px}
 .sch-body{flex:1}
@@ -747,126 +748,104 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- FIELD: Job Closeout Reviews -->
 <div class="gf" data-r="field">
   <div class="card">
-    <div class="card-h"><div class="card-t">🏁 Job Closeout Reviews</div><span style="font-size:12px;color:var(--text-sec)">1 pending · 2 completed this week</span></div>
+    <div class="card-h"><div class="card-t">🏁 Job Closeout Reviews</div><span style="font-size:12px;color:var(--text-sec)">1 pending · 2 completed</span></div>
     <div class="card-b" style="padding:0">
 
-      <!-- Pending closeout -->
-      <div style="padding:18px;border-bottom:1px solid var(--border)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div>
-            <div style="font-size:14px;font-weight:700">Williams Cabinets — Mike &amp; Julie</div>
-            <div style="font-size:12px;color:var(--text-sec)">321 Pine Ave, Nashville · Finishing today</div>
-          </div>
-          <span class="badge b-y">⏳ Closeout Pending</span>
+      <!-- Pending — compact tag row -->
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bg);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:700">Williams Cabinets — Mike &amp; Julie</div>
+          <div style="font-size:11px;color:var(--text-sec)">321 Pine Ave, Nashville · Finishing today</div>
         </div>
+        <button onclick="openCloseout()" style="font-size:11px;font-weight:600;padding:6px 12px;border-radius:8px;background:#FEF9C3;border:1px solid #F59E0B;color:#92400E;cursor:pointer;white-space:nowrap">⏳ Do Closeout</button>
+      </div>
 
-        <!-- Estimate Quality -->
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">
-          <div style="font-size:12px;font-weight:700;margin-bottom:8px">📋 Estimate Quality</div>
-          <div style="font-size:12px;color:var(--text-sec);margin-bottom:6px">How well did the estimate match the actual job?</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px">Spot On</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px">Minor Gaps</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px;border-color:var(--yellow)">Underestimated</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px">Overestimated</button>
-          </div>
-          <textarea placeholder="Optional: What was missed or off? (e.g., &#34;Trim was more damaged than noted, added 3 hrs prep&#34;)" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:inherit;resize:vertical;min-height:40px"></textarea>
+      <!-- Completed — one-liners -->
+      <div style="padding:10px 16px;border-bottom:1px solid var(--bg);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:600">Garcia Exterior — Carlos</div>
+          <div style="font-size:11px;color:var(--text-sec)">Spot On · ★★★★☆ · 😃 · Review: Yes</div>
         </div>
+        <button onclick="toast('Viewing Garcia closeout summary…')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">View →</button>
+      </div>
 
-        <!-- Crew Quality Rating -->
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:12px;font-weight:700">⭐ Crew Quality</div><div style="font-size:10px;color:var(--text-muted)">Feeds crew's internal star rating</div></div>
-          <div style="display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:12px;align-items:center">
-            <span>Prep work thoroughness</span>
-            <div style="display:flex;gap:4px" class="star-row">
-              <span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--border)">★</span>
-            </div>
-            <span>Application quality / finish</span>
-            <div style="display:flex;gap:4px">
-              <span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span>
-            </div>
-            <span>Cleanup &amp; site condition</span>
-            <div style="display:flex;gap:4px">
-              <span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--border)">★</span>
-            </div>
-            <span>Professionalism / communication</span>
-            <div style="display:flex;gap:4px">
-              <span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span>
-            </div>
-            <span>Material usage / waste</span>
-            <div style="display:flex;gap:4px">
-              <span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--border)">★</span><span style="cursor:pointer;font-size:16px;color:var(--border)">★</span>
-            </div>
-            <span>Schedule adherence</span>
-            <div style="display:flex;gap:4px">
-              <span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span><span style="cursor:pointer;font-size:16px;color:var(--gold)">★</span>
-            </div>
-          </div>
-          <textarea placeholder="Optional crew notes (e.g., &#34;Julie's detail work on the pantry doors was exceptional&#34;)" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:inherit;resize:vertical;min-height:40px"></textarea>
+      <div style="padding:10px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;font-weight:600">Park Deck — Team B</div>
+          <div style="font-size:11px;color:var(--text-sec)">Minor Gaps · ★★★☆☆ · 🙂 · Review: No</div>
         </div>
+        <button onclick="toast('Viewing Park closeout summary…')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">View →</button>
+      </div>
 
-        <!-- Customer Impression -->
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">
-          <div style="font-size:12px;font-weight:700;margin-bottom:8px">😊 Customer Impression</div>
-          <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px">Based on your interactions, how happy is the customer?</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px">😐 Neutral</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px">🙂 Satisfied</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px;border-color:var(--green);background:var(--green-bg)">😃 Very Happy</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px">🤩 Thrilled</button>
-            <button class="qa-btn" style="font-size:11px;padding:5px 12px;border-color:var(--red)">😟 Concerned</button>
-          </div>
-          <textarea placeholder="Optional: Any customer comments or concerns? (e.g., &#34;Mrs. Williams said she loves the color, asked about exterior quote&#34;)" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:inherit;resize:vertical;min-height:40px"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- CLOSEOUT BOTTOM SHEET -->
+<div id="closeout-sheet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:flex-end">
+  <div style="background:#fff;width:100%;max-height:90vh;border-radius:20px 20px 0 0;overflow-y:auto">
+    <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1">
+      <div>
+        <div style="font-size:14px;font-weight:700">🏁 Williams Cabinets Closeout</div>
+        <div style="font-size:11px;color:var(--text-sec)">Mike &amp; Julie · 321 Pine Ave</div>
+      </div>
+      <button onclick="closeCloseout()" style="border:none;background:none;font-size:20px;cursor:pointer;color:var(--text-sec)">✕</button>
+    </div>
+    <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+
+      <!-- Estimate Quality -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">📋 Estimate Quality</div>
+        <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px">How well did the estimate match?</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn co-sel" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Spot On</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Minor Gaps</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Underestimated</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'eq')" style="font-size:11px;padding:5px 12px">Overestimated</button>
         </div>
+        <textarea placeholder="Optional: what was off?" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;min-height:36px;box-sizing:border-box"></textarea>
+      </div>
 
-        <!-- Review Request -->
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px">
-          <div style="font-size:12px;font-weight:700;margin-bottom:6px">⭐ Send Review Request?</div>
-          <div style="font-size:12px;color:var(--text-sec);margin-bottom:8px">Should we ask this customer for a Google review?</div>
-          <div style="display:flex;gap:8px">
-            <button class="qa-btn" style="font-size:12px;padding:6px 16px;border-color:var(--green);background:var(--green-bg);color:var(--green)">👍 Yes — send it</button>
-            <button class="qa-btn" style="font-size:12px;padding:6px 16px">👎 Not this one</button>
-          </div>
+      <!-- Crew Quality -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">⭐ Crew Quality <span style="font-size:10px;color:var(--text-muted);font-weight:400">Feeds internal score</span></div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:12px;align-items:center">
+          <span>Prep thoroughness</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span></div>
+          <span>Application quality</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span></div>
+          <span>Cleanup</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span></div>
+          <span>Professionalism</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span></div>
+          <span>Material usage</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span><span style="color:var(--border);font-size:18px">★</span></div>
+          <span>Schedule adherence</span><div style="display:flex;gap:3px"><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span><span style="color:var(--gold);font-size:18px">★</span></div>
         </div>
+        <textarea placeholder="Optional crew notes" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;min-height:36px;box-sizing:border-box"></textarea>
+      </div>
 
-        <!-- Skip option -->
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <button class="qa-btn" style="background:var(--navy);color:#fff;border-color:var(--navy)">✅ Submit Closeout Review</button>
-          <a style="font-size:12px;color:var(--text-muted);cursor:pointer">Skip — not enough info to review</a>
+      <!-- Customer Impression -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">😊 Customer Impression</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">😐 Neutral</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">🙂 Satisfied</button>
+          <button class="qa-btn co-sel" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">😃 Very Happy</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px">🤩 Thrilled</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'ci')" style="font-size:11px;padding:5px 10px;border-color:var(--red)">😟 Concerned</button>
+        </div>
+        <textarea placeholder="Optional customer comments" style="width:100%;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;min-height:36px;box-sizing:border-box"></textarea>
+      </div>
+
+      <!-- Review request -->
+      <div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">⭐ Send Google Review Request?</div>
+        <div style="display:flex;gap:8px">
+          <button class="qa-btn co-sel" onclick="selectCloseout(this,'rv')" style="font-size:12px;padding:6px 16px">👍 Yes</button>
+          <button class="qa-btn" onclick="selectCloseout(this,'rv')" style="font-size:12px;padding:6px 16px">👎 Not this one</button>
         </div>
       </div>
 
-      <!-- Completed closeout (collapsed summary) -->
-      <div style="padding:14px 18px;border-bottom:1px solid var(--bg)">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-size:13px;font-weight:600">Garcia Exterior — Carlos</div>
-            <div style="font-size:11px;color:var(--text-sec)">Completed Wed · Closeout submitted Thu</div>
-          </div>
-          <span class="badge b-g">✅ Submitted</span>
-        </div>
-        <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--text-sec)">
-          <span>Estimate: Spot On</span>
-          <span>Crew: ★★★★☆ (4.2 avg)</span>
-          <span>Customer: 😃 Very Happy</span>
-          <span>Review: 👍 Yes</span>
-        </div>
-      </div>
-
-      <div style="padding:14px 18px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-size:13px;font-weight:600">Park Deck Stain — Team B</div>
-            <div style="font-size:11px;color:var(--text-sec)">Completed Mon · Closeout submitted Mon</div>
-          </div>
-          <span class="badge b-g">✅ Submitted</span>
-        </div>
-        <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--text-sec)">
-          <span>Estimate: Minor Gaps</span>
-          <span>Crew: ★★★☆☆ (3.4 avg)</span>
-          <span>Customer: 🙂 Satisfied</span>
-          <span>Review: 👎 No</span>
-        </div>
+      <!-- Submit -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px">
+        <button onclick="submitCloseout()" style="flex:1;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">✅ Submit Closeout</button>
+        <a onclick="closeCloseout()" style="font-size:11px;color:var(--text-muted);cursor:pointer;margin-left:14px;white-space:nowrap">Skip</a>
       </div>
 
     </div>
@@ -1395,6 +1374,29 @@ document.querySelectorAll('.role-btn').forEach(btn => {
 });
 
 // Calendar tab switcher
+function openCloseout() {
+  const s = document.getElementById('closeout-sheet');
+  s.style.display = 'flex';
+}
+function closeCloseout() {
+  document.getElementById('closeout-sheet').style.display = 'none';
+}
+function selectCloseout(btn, group) {
+  btn.closest('div').querySelectorAll('.qa-btn').forEach(b => b.classList.remove('co-sel'));
+  btn.classList.add('co-sel');
+}
+function submitCloseout() {
+  closeCloseout();
+  // Replace pending tag with submitted one-liner
+  const pending = document.querySelector('#closeout-sheet ~ .gf .card-b div:first-child, .gf[data-r="field"] .card-b div:first-child');
+  toast('✅ Williams Cabinets closeout submitted');
+  // Update the pending row to submitted state
+  const rows = document.querySelectorAll('[data-r="field"] .card-b > div');
+  if (rows[0]) {
+    rows[0].innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600">Williams Cabinets — Mike & Julie</div><div style="font-size:11px;color:var(--text-sec)">Spot On · ★★★★☆ · 😃 Very Happy · Review: Yes</div></div><button onclick="toast(\'Viewing Williams closeout…\')" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer">View →</button></div>';
+  }
+}
+
 function switchFieldJobs(tab, btn) {
   document.querySelectorAll('.field-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
