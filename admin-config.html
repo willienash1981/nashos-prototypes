@@ -687,6 +687,10 @@ const crewTags = [
   { id:6, name:'fine-finish', label:'Fine Finish', description:'Premium Plus quality — skim coat, spray, level 5 prep' },
   { id:7, name:'night-work', label:'Night Work', description:'Available for after-hours or night shift jobs' },
   { id:8, name:'2nd-story-carpentry', label:'2nd Story Carpentry', description:'Comfortable with exterior carpentry at height (fascia, soffits, etc.)' },
+  { id:9, name:'cabinets-body', label:'Cabinets — Body', description:'Cabinet box painting — brush/roll application, tight spaces' },
+  { id:10, name:'cabinets-doors', label:'Cabinets — Doors', description:'Cabinet door/drawer painting — spray booth required, fine finish' },
+  { id:11, name:'semi-transparent-stain', label:'Semi-Transparent Stain', description:'Brush/roll technique only, no lap marks — not all deck crews qualify' },
+  { id:12, name:'popcorn-removal', label:'Popcorn Removal', description:'Acoustic ceiling texture removal — wet scrape method, containment required' },
 ];
 
 const serviceTypes = [
@@ -699,6 +703,7 @@ const serviceTypes = [
   { id:7, name:'Handyman',           defaultLaborRateId:7, workArea:'Either',    crewSkill:'General' },
   { id:8, name:'Screen Replacement', defaultLaborRateId:7, workArea:'Exterior',  crewSkill:'General' },
   { id:9, name:'Wood Door Refinishing', defaultLaborRateId:1, workArea:'Interior', crewSkill:'Fine Finish' },
+  { id:10, name:'Epoxy Floors', defaultLaborRateId:7, workArea:'Interior', crewSkill:'General' },
 ];
 
 const laborRates = [
@@ -762,8 +767,8 @@ const configCategories = [
   { key:'micro', icon:'⚛️', label:'Micro-Components', cnt:87 },
   { key:'materials', icon:'🪣', label:'Material Items', cnt:64 },
   { key:'labor', icon:'💰', label:'Labor Rates', cnt:7 },
-  { key:'servicetypes', icon:'🏷️', label:'Service Types', cnt:9 },
-  { key:'tags', icon:'🏷️', label:'Crew Capability Tags', cnt:8 },
+  { key:'servicetypes', icon:'🏷️', label:'Service Types', cnt:10 },
+  { key:'tags', icon:'🏷️', label:'Crew Capability Tags', cnt:12 },
   { key:'height', icon:'📏', label:'Height Tier Pricing', cnt:3 },
   { key:'templates', icon:'📄', label:'Templates', cnt:8 },
   { key:'products', icon:'🪣', label:'Products & Materials', cnt:18 },
