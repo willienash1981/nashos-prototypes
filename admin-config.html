@@ -351,16 +351,16 @@ const microComponents = [
   { id:25, name:'Wallpaper Strip', type:'LABOR', rate:'40 SF/hr', unit:'SF', costPerUnit:0.750, serviceType:'Interior Painting' },
   { id:26, name:'Wallpaper Adhesive Remover', type:'MATERIAL', rate:'0.002 gal/SF', unit:'SF', costPerUnit:0.200 },
   // Interior ceiling obstacle components — per EA per coat
-  { id:30, name:'Cut Around Recessed Light — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA/coat', costPerUnit:0.58, serviceType:'Interior Painting' },
-  { id:31, name:'Cut Around Recessed Light — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA/coat', costPerUnit:1.17, serviceType:'Interior Painting' },
-  { id:32, name:'Cut Around Recessed Light — High', type:'LABOR', rate:'~3 min/EA', unit:'EA/coat', costPerUnit:1.75, serviceType:'Interior Painting' },
-  { id:33, name:'Cut Around Ceiling Fan — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA/coat', costPerUnit:0.58, serviceType:'Interior Painting' },
-  { id:34, name:'Cut Around Ceiling Fan — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA/coat', costPerUnit:1.17, serviceType:'Interior Painting' },
-  { id:35, name:'Cut Around Ceiling Fan — High', type:'LABOR', rate:'~3 min/EA', unit:'EA/coat', costPerUnit:1.75, serviceType:'Interior Painting' },
-  { id:36, name:'Cut Around Chandelier — High', type:'LABOR', rate:'~6 min/EA', unit:'EA/coat', costPerUnit:3.50, serviceType:'Interior Painting' },
-  { id:37, name:'Cut Around Ceiling Beam — High', type:'LABOR', rate:'~3 min/LF', unit:'LF/coat', costPerUnit:0.58, serviceType:'Interior Painting' },
-  { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:'~3 min/EA', unit:'EA/coat', costPerUnit:1.75, serviceType:'Interior Painting' },
-  { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:'~6 min/EA', unit:'EA/coat', costPerUnit:3.50, serviceType:'Interior Painting' },
+  { id:30, name:'Cut Around Recessed Light — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA', costPerUnit:0.58, serviceType:'Interior Painting' },
+  { id:31, name:'Cut Around Recessed Light — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA', costPerUnit:1.17, serviceType:'Interior Painting' },
+  { id:32, name:'Cut Around Recessed Light — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting' },
+  { id:33, name:'Cut Around Ceiling Fan — Standard', type:'LABOR', rate:'~1 min/EA', unit:'EA', costPerUnit:0.58, serviceType:'Interior Painting' },
+  { id:34, name:'Cut Around Ceiling Fan — Tall', type:'LABOR', rate:'~2 min/EA', unit:'EA', costPerUnit:1.17, serviceType:'Interior Painting' },
+  { id:35, name:'Cut Around Ceiling Fan — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting' },
+  { id:36, name:'Cut Around Chandelier — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceType:'Interior Painting' },
+  { id:37, name:'Cut Around Ceiling Beam — High', type:'LABOR', rate:'~3 min/LF', unit:'LF', costPerUnit:0.58, serviceType:'Interior Painting' },
+  { id:38, name:'Cut Around Smoke Detector — High', type:'LABOR', rate:'~3 min/EA', unit:'EA', costPerUnit:1.75, serviceType:'Interior Painting' },
+  { id:39, name:'Cut Around Ceiling Medallion — High', type:'LABOR', rate:'~6 min/EA', unit:'EA', costPerUnit:3.50, serviceType:'Interior Painting' },
   // Tall/High wall + ceiling labor
   { id:40, name:'Brush & Roll — 1st Coat, Tall Walls', type:'LABOR', rate:'280 SF/hr', unit:'SF', costPerUnit:0.125, serviceType:'Interior Painting' },
   { id:41, name:'Brush & Roll — 2nd Coat, Tall Walls', type:'LABOR', rate:'320 SF/hr', unit:'SF', costPerUnit:0.109, serviceType:'Interior Painting' },
@@ -978,7 +978,7 @@ function renderMCDetail() {
       </select></div>
     <div class="form-group"><label class="form-label">Unit</label>
       <select class="form-select" onchange="editingMC.unit=this.value">
-        ${['SF','LF','EA','GAL','HR','EA/coat','LF/coat'].map(u=>`<option ${m.unit===u?'selected':''}>${u}</option>`).join('')}
+        ${['SF','LF','EA','GAL','HR'].map(u=>`<option ${(m.unit===u||m.unit===u+'/coat')?'selected':''}>${u}</option>`).join('')}
       </select></div>
     <div class="form-group"><label class="form-label">Production Rate</label>
       <input class="form-input" value="${m.rate}" onchange="editingMC.rate=this.value" placeholder="e.g. 350 SF/hr"/></div>
