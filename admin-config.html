@@ -977,7 +977,9 @@ function renderMCDetail() {
         <option ${m.type==='MATERIAL'?'selected':''}>MATERIAL</option>
       </select></div>
     <div class="form-group"><label class="form-label">Unit</label>
-      <input class="form-input" value="${m.unit}" onchange="editingMC.unit=this.value"/></div>
+      <select class="form-select" onchange="editingMC.unit=this.value">
+        ${['SF','LF','EA','GAL','HR','EA/coat','LF/coat'].map(u=>`<option ${m.unit===u?'selected':''}>${u}</option>`).join('')}
+      </select></div>
     <div class="form-group"><label class="form-label">Production Rate</label>
       <input class="form-input" value="${m.rate}" onchange="editingMC.rate=this.value" placeholder="e.g. 350 SF/hr"/></div>
     ${m.type==='LABOR' ? `
