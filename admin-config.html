@@ -434,7 +434,7 @@ const materialItems = [
     taxRate:9.75, coverage:300, status:'Active' },
   { id:4, name:'Cabot Australian Timber Oil', brand:'Cabot', substrates:['Deck'],
     sheens:{ flat:{enabled:true,price1gal:44.00,price5gal:38.00}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:false,price1gal:0,price5gal:0}, semiGloss:{enabled:false,price1gal:0,price5gal:0}, gloss:{enabled:false,price1gal:0,price5gal:0} },
-    taxRate:9.75, coverage:200, status:'Active' },
+    taxRate:9.75, coverage:200, status:'Active', requiredTags:[11] },
   { id:5, name:'ProMar 200 PVA Primer', brand:'Sherwin-Williams', substrates:['Drywall','Primer'],
     sheens:{ flat:{enabled:true,price1gal:22.00,price5gal:19.00}, eggshell:{enabled:false,price1gal:0,price5gal:0}, satin:{enabled:false,price1gal:0,price5gal:0}, semiGloss:{enabled:false,price1gal:0,price5gal:0}, gloss:{enabled:false,price1gal:0,price5gal:0} },
     taxRate:9.75, coverage:450, status:'Active' },
@@ -556,6 +556,18 @@ function buildMatEditPanel(m) {
         <option ${m.status==='Active'?'selected':''}>Active</option>
         <option ${m.status==='Inactive'?'selected':''}>Inactive</option>
       </select></div>
+    <div class="form-group" style="margin-top:10px">
+      <label class="form-label">Required Crew Tags <span style="font-size:10px;color:var(--text-dim)">(if this material is used, crew must have these tags)</span></label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+        ${crewTags.map(t => {
+          const checked = m.requiredTags && m.requiredTags.includes(t.id);
+          return `<label style="display:flex;align-items:center;gap:5px;padding:4px 10px;background:${checked?'rgba(59,130,246,0.15)':'var(--navy-mid)'};border:1px solid ${checked?'var(--accent)':'var(--border)'};border-radius:20px;cursor:pointer;font-size:11px">
+            <input type="checkbox" ${checked?'checked':''} onchange="matTagToggle(${m.id},${t.id},this.checked)" style="accent-color:var(--accent)">
+            ${t.label}
+          </label>`;
+        }).join('')}
+      </div>
+    </div>
     ${previewRows ? `<div style="background:var(--navy-mid);border-radius:8px;padding:12px;margin-top:4px">
       <div style="font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Cost Preview (after tax)</div>
       ${previewRows}
@@ -651,6 +663,14 @@ window.matToggleSheen = function(id, hasSheen) {
     m.prices = {'1gal':{base:b1},'5gal':{base:b5}};
   }
   renderMaterials(document.getElementById('mainContent'));
+};
+window.matTagToggle = function(id, tagId, checked) {
+  const m = materialItems.find(x=>x.id===id);
+  if (!m) return;
+  if (!m.requiredTags) m.requiredTags = [];
+  if (checked) { if (!m.requiredTags.includes(tagId)) m.requiredTags.push(tagId); }
+  else { m.requiredTags = m.requiredTags.filter(t=>t!==tagId); }
+  document.getElementById('detailBody').innerHTML = buildMatEditPanel(m);
 };
 window.matSheenToggle = function(id, key, enabled) {
   const m = materialItems.find(x=>x.id===id);
@@ -1203,7 +1223,9 @@ function openBundle(id) {
   editingComponents = [...editingBundle.components];
   activeDetailTab = 'definition';
   renderDetail();
-  document.getElementById('detailPanel').classList.add('open');
+  const dp = document.getElementById('detailPanel');
+  dp.classList.add('open');
+  dp.style.display = 'flex';
   renderMainContent();
 }
 
@@ -1212,8 +1234,9 @@ function openNewBundle() {
   editingComponents = [];
   activeDetailTab = 'definition';
   document.getElementById('detailTitle').textContent = 'New Service Bundle';
-  renderDetail();
-  document.getElementById('detailPanel').classList.add('open');
+  const dp2 = document.getElementById('detailPanel');
+  dp2.classList.add('open');
+  dp2.style.display = 'flex';
 }
 
 function closeDetail() {
