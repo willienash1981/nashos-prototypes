@@ -341,6 +341,7 @@ const configCategories = [
   { key:'labor', icon:'💰', label:'Labor Rates', cnt:3 },
   { key:'height', icon:'📏', label:'Height Tier Pricing', cnt:3 },
   { key:'templates', icon:'📄', label:'Templates', cnt:8 },
+  { key:'products', icon:'🪣', label:'Products & Materials', cnt:18 },
   { key:'_pricing', icon:'💰', label:'PRICING', section:true },
   { key:'volume', icon:'📈', label:'Volume Pricing Engine', cnt:'' },
   { key:'packages', icon:'🏷️', label:'Package Config', cnt:3 },
@@ -401,6 +402,24 @@ function switchCategory(key) {
 function renderMainContent() {
   const el = document.getElementById('mainContent');
   if (activeCategory === 'bundles') { renderBundles(el); return; }
+  const specialRenderers = {
+    templates: renderTemplates,
+    products: renderProducts,
+    volume: renderVolume,
+    specials: renderDiscounts,
+    financing: renderFinancing,
+    color: renderColor,
+    warranty: renderWarranty,
+    commission: renderCommission,
+    bonus: renderBonus,
+    budgets: renderBudgets,
+    crewdebt: renderCrewDebt,
+    scheduling: renderScheduling,
+    roles: renderRoles,
+    users: renderUsers,
+    integrations: renderIntegrations,
+  };
+  if (specialRenderers[activeCategory]) { specialRenderers[activeCategory](el); return; }
   const tables = {
     micro: { cols:['Name','Type','Rate','Unit','Cost/Unit','Used In'], rows: microComponents.map(m => {
       const usedIn = bundles.filter(b=>b.components.includes(m.id)).length;
@@ -618,6 +637,410 @@ function toggleBundleStatus() {
 function exportJSON() {
   const blob = new Blob([JSON.stringify(bundles, null, 2)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'service-bundles.json'; a.click();
+}
+
+// ─── SECTION RENDERERS ───
+
+function renderTemplates(el) {
+  el.innerHTML = `
+    <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--text-dim);">
+      📋 Templates are managed by your NashOS admin. Contact support to add or modify templates.
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+      ${[
+        {name:'Exterior Full Package',sub:'Siding + Trim + Doors',cnt:12,color:'var(--green)'},
+        {name:'Interior Room Package',sub:'Walls + Ceiling + Trim',cnt:8,color:'var(--accent-light)'},
+        {name:'Cabinet Refresh',sub:'Body + Doors + Drawers',cnt:6,color:'var(--purple)'},
+        {name:'Deck Full Treatment',sub:'Floor + Rails + Steps',cnt:4,color:'var(--yellow)'},
+      ].map(t=>`
+        <div class="card" style="padding:20px;">
+          <div style="font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">${t.name}</div>
+          <div style="font-size:13px;color:var(--text-dim);margin-bottom:14px;">${t.sub}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:12px;color:${t.color};">${t.cnt} bundles</span>
+            <button class="btn btn-outline btn-sm" onclick="alert('Templates are read-only. Contact support to modify.')">View Bundles</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderProducts(el) {
+  const rows = [
+    {substrate:'Exterior Siding Paint', def:'SW SuperPaint Ext.', b1:'SW Emerald Ext.', b2:'BM Regal Select'},
+    {substrate:'Interior Wall Paint', def:'SW ProMar 200', b1:'SW Emerald Int.', b2:'BM Aura'},
+    {substrate:'Interior Ceiling Paint', def:'SW ProMar 400 Ceiling', b1:'SW Emerald Ceiling', b2:'—'},
+    {substrate:'Cabinet Paint', def:'SW Emerald Urethane', b1:'BM Advance', b2:'—'},
+    {substrate:'Deck Stain', def:'Cabot Australian Timber Oil', b1:'TWP 100 Series', b2:'—'},
+    {substrate:'Fence Stain', def:'TWP 100 Series', b1:'Cabot Semi-Solid', b2:'—'},
+    {substrate:'Exterior Trim Paint', def:'SW Emerald Ext.', b1:'SW Duration Ext.', b2:'—'},
+    {substrate:'Interior Trim/Door Paint', def:'SW ProClassic', b1:'SW Emerald Urethane', b2:'—'},
+    {substrate:'Drywall Primer', def:'SW ProMar 200 PVA', b1:'Zinsser Bulls Eye 1-2-3', b2:'—'},
+    {substrate:'Exterior Primer', def:'SW Loxon Primer', b1:'Zinsser 123', b2:'—'},
+  ];
+  el.innerHTML = `
+    <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:var(--accent-light);">
+      🔄 Changing a default product updates all linked bundles + pricing automatically.
+    </div>
+    <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--text-dim);line-height:1.6;">
+      🔒 <strong>Lock/Unlock Pattern:</strong> When an estimator manually selects a product on a specific line item, that item is auto-locked (🔒) and will not be overridden by global product changes. The estimator can choose <em>"Override all"</em> to revert to global defaults.
+    </div>
+    <div class="card"><table><thead><tr>
+      <th>Substrate</th><th>Default Product</th><th>Backup 1</th><th>Backup 2</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td class="bright">${r.substrate}</td>
+        <td><span style="color:var(--green)">${r.def}</span></td>
+        <td class="dim">${r.b1}</td>
+        <td class="dim">${r.b2}</td>
+        <td><button class="btn btn-outline btn-sm">Edit</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderVolume(el) {
+  const tiers = [
+    {range:'< $1,000', mult:'1.15'},
+    {range:'$1,000 – $2,499', mult:'1.10'},
+    {range:'$2,500 – $4,999', mult:'1.05'},
+    {range:'$5,000 – $9,999', mult:'1.00', base:true},
+    {range:'$10,000 – $19,999', mult:'0.97'},
+    {range:'$20,000+', mult:'0.94'},
+  ];
+  el.innerHTML = `
+    <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--text-dim);">
+      ℹ️ Multipliers apply to total estimated job value before financing/promotions.
+    </div>
+    <div class="card" style="max-width:520px;">
+      <table><thead><tr><th>Job Size</th><th>Multiplier</th><th></th></tr></thead><tbody>
+        ${tiers.map(t=>`<tr>
+          <td class="${t.base?'bright':'dim'}">${t.range}${t.base?' <span style="font-size:10px;color:var(--text-dim)">(base)</span>':''}</td>
+          <td><input style="width:80px;padding:5px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--accent-light);font-size:13px;font-family:monospace;text-align:center;" value="${t.mult}x" /></td>
+          <td class="dim" style="font-size:11px;">${t.base?'📍 base rate':''}</td>
+        </tr>`).join('')}
+      </tbody></table>
+      <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary btn-sm">💾 Save Multipliers</button>
+      </div>
+    </div>`;
+}
+
+function renderDiscounts(el) {
+  const rows = [
+    {name:'Spring Exterior Special', type:'% off', val:'10%', scope:'Exterior bundles', status:'Active', exp:'Apr 30'},
+    {name:'Referral Credit', type:'$ off', val:'$200', scope:'Any job', status:'Active', exp:'No expiry'},
+    {name:'Repeat Customer', type:'% off', val:'5%', scope:'All bundles', status:'Active', exp:'No expiry'},
+    {name:'Winter Interior', type:'% off', val:'8%', scope:'Interior bundles', status:'Paused', exp:'Feb 28'},
+  ];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button class="btn btn-primary btn-sm">+ New Discount</button>
+    </div>
+    <div class="card"><table><thead><tr>
+      <th>Name</th><th>Type</th><th>Value</th><th>Applies To</th><th>Status</th><th>Expires</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td class="bright">${r.name}</td>
+        <td class="dim">${r.type}</td>
+        <td class="mono">${r.val}</td>
+        <td class="dim">${r.scope}</td>
+        <td><span class="badge ${r.status==='Active'?'badge-active':'badge-inactive'}">${r.status}</span></td>
+        <td class="dim">${r.exp}</td>
+        <td><button class="btn btn-outline btn-sm">Edit</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderFinancing(el) {
+  el.innerHTML = `
+    <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--red);">
+      ⚠️ Promo financing (EnerBank) blocks discount selection on proposals.
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+      <div class="card" style="padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:17px;font-weight:700;color:var(--text-bright);">Acorn Finance</div>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-dim);line-height:2;">
+          <div>Terms: <span style="color:var(--text)">12 / 18 / 24 months</span></div>
+          <div>Promo rate: <span style="color:var(--green)">0% promotional</span></div>
+          <div>Allows discounts: <span style="color:var(--green)">✅ Yes</span></div>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top:14px;">Configure</button>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:17px;font-weight:700;color:var(--text-bright);">EnerBank <span style="font-size:12px;color:var(--yellow);font-weight:400;">(Promo)</span></div>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div style="font-size:13px;color:var(--text-dim);line-height:2;">
+          <div>Terms: <span style="color:var(--text)">12 month same-as-cash</span></div>
+          <div>Allows discounts: <span style="color:var(--red)">❌ No (excludes discounts)</span></div>
+          <div>Note: <span style="color:var(--yellow)">Blocks discount field on proposals</span></div>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top:14px;">Configure</button>
+      </div>
+    </div>`;
+}
+
+function renderColor(el) {
+  const rows = [
+    {rule:'Deep Base surcharge', trigger:'LRV < 20', surcharge:'+$0.08/SF', status:'Active'},
+    {rule:'Custom color match', trigger:'Non-stock color', surcharge:'+$45 flat', status:'Active'},
+    {rule:'Multiple accent colors', trigger:'> 2 accent colors', surcharge:'+$0.05/SF each', status:'Active'},
+  ];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button class="btn btn-primary btn-sm">+ Add Rule</button>
+    </div>
+    <div class="card"><table><thead><tr>
+      <th>Rule</th><th>Trigger</th><th>Surcharge</th><th>Status</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td class="bright">${r.rule}</td>
+        <td class="dim">${r.trigger}</td>
+        <td class="mono" style="color:var(--yellow)">${r.surcharge}</td>
+        <td><span class="badge badge-active">${r.status}</span></td>
+        <td><button class="btn btn-outline btn-sm">Edit</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderWarranty(el) {
+  const rows = [
+    {svc:'Exterior', pkg:'Premium', labor:'5 years', paint:'10 years'},
+    {svc:'Exterior', pkg:'Value', labor:'2 years', paint:'10 years'},
+    {svc:'Interior', pkg:'Premium', labor:'2 years', paint:'2 years'},
+    {svc:'Interior', pkg:'Value', labor:'1 year', paint:'1 year'},
+    {svc:'Deck Stain', pkg:'Any', labor:'1 year', paint:'1 year'},
+    {svc:'Carpentry', pkg:'Any', labor:'10 years', paint:'10 years'},
+  ];
+  el.innerHTML = `
+    <div class="card"><table><thead><tr>
+      <th>Service Type</th><th>Package</th><th>Labor Warranty</th><th>Paint Warranty</th><th></th>
+    </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td class="bright">${r.svc}</td>
+        <td class="dim">${r.pkg}</td>
+        <td><input style="width:90px;padding:4px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;" value="${r.labor}" /></td>
+        <td><input style="width:90px;padding:4px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:12px;" value="${r.paint}" /></td>
+        <td><button class="btn btn-outline btn-sm">Save</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderCommission(el) {
+  const plans = [
+    {name:'Standard Sales', rate:'8% of job value', extra:'', status:'Active', users:4, uLabel:'salespeople'},
+    {name:'Senior Sales', rate:'10% of job value', extra:'+ $500 monthly base', status:'Active', users:1, uLabel:'salesperson'},
+    {name:'Manager Override', rate:'2% on team deals', extra:'', status:'Active', users:1, uLabel:'manager'},
+  ];
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+      ${plans.map(p=>`
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="font-size:16px;font-weight:700;color:var(--text-bright);">${p.name}</div>
+            <span class="badge badge-active">${p.status}</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-dim);line-height:2;">
+            <div>Rate: <span style="color:var(--green);font-weight:600;">${p.rate}</span></div>
+            ${p.extra?`<div>Base: <span style="color:var(--text)">${p.extra}</span></div>`:''}
+            <div>Users: <span style="color:var(--accent-light)">${p.users} ${p.uLabel}</span></div>
+          </div>
+          <button class="btn btn-outline btn-sm" style="margin-top:14px;">Edit Plan</button>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderBonus(el) {
+  const plans = [
+    {name:'Monthly Volume Bonus', tiers:[{at:'$30k/mo',bonus:'$500'},{at:'$50k/mo',bonus:'$1,000'},{at:'$75k/mo',bonus:'$2,000'}], status:'Active'},
+    {name:'Close Rate Bonus', tiers:[{at:'40% close rate',bonus:'$250'},{at:'50%+',bonus:'$500'}], status:'Active'},
+  ];
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+      ${plans.map(p=>`
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:16px;font-weight:700;color:var(--text-bright);">${p.name}</div>
+            <span class="badge badge-active">${p.status}</span>
+          </div>
+          <table style="width:100%;font-size:13px;">
+            <thead><tr><th style="text-align:left;padding:4px 0;color:var(--text-dim);font-size:11px;text-transform:uppercase;">Threshold</th><th style="text-align:right;padding:4px 0;color:var(--text-dim);font-size:11px;text-transform:uppercase;">Bonus</th></tr></thead>
+            <tbody>${p.tiers.map(t=>`<tr><td style="padding:5px 0;color:var(--text);">${t.at}</td><td style="text-align:right;color:var(--green);font-weight:600;">${t.bonus}</td></tr>`).join('')}</tbody>
+          </table>
+          <button class="btn btn-outline btn-sm" style="margin-top:14px;">Edit Plan</button>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderBudgets(el) {
+  const rows = [
+    {period:'March 2026', target:'$180,000', current:'$127,400', pct:71},
+    {period:'Q1 2026', target:'$520,000', current:'$398,200', pct:77},
+    {period:'Annual 2026', target:'$2,100,000', current:'$398,200', pct:19},
+  ];
+  el.innerHTML = `
+    <div class="card" style="max-width:680px;">
+      <table><thead><tr><th>Period</th><th>Target</th><th>Current</th><th>Progress</th><th></th></tr></thead><tbody>
+        ${rows.map(r=>`<tr>
+          <td class="bright">${r.period}</td>
+          <td><input style="width:120px;padding:5px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;" value="${r.target}" /></td>
+          <td class="mono" style="color:var(--green)">${r.current}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:100px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;"><div style="width:${r.pct}%;height:100%;background:${r.pct>=75?'var(--green)':r.pct>=50?'var(--yellow)':'var(--red)'}"></div></div>
+              <span style="font-size:12px;color:var(--text-dim);">${r.pct}%</span>
+            </div>
+          </td>
+          <td><button class="btn btn-outline btn-sm">Save</button></td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>`;
+}
+
+function renderCrewDebt(el) {
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px;">
+      <div class="card" style="padding:20px;">
+        <div style="font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">Recoupment Mode</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Choose how deductions appear to crew members.</div>
+        <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;">
+          <div style="flex:1;padding:8px 12px;background:var(--accent);color:white;font-size:13px;text-align:center;cursor:pointer;">Transparent</div>
+          <div style="flex:1;padding:8px 12px;background:transparent;color:var(--text-dim);font-size:13px;text-align:center;cursor:pointer;">Silent</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:8px;">Transparent = crew sees deduction on pay stub. Silent = admin-only visibility.</div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">Default Repayment Rate</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Percentage of weekly pay withheld until debt is cleared.</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input style="width:80px;padding:8px 12px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:16px;text-align:center;" value="15%" />
+          <span style="font-size:13px;color:var(--text-dim);">of weekly pay</span>
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:14px;">Save Rate</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;color:var(--text-bright);">Active Debts</div>
+      <table><thead><tr><th>Crew Member</th><th>Amount Owed</th><th>Weekly Deduction</th><th>Est. Payoff</th><th></th></tr></thead><tbody>
+        <tr>
+          <td class="bright">Carlos Rodriguez</td>
+          <td class="mono" style="color:var(--red)">$420</td>
+          <td class="mono">$63/wk</td>
+          <td class="dim">~7 weeks</td>
+          <td><button class="btn btn-outline btn-sm">Edit</button></td>
+        </tr>
+      </tbody></table>
+    </div>`;
+}
+
+function renderScheduling(el) {
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">Min Days: Estimate → Start</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Minimum days required between estimate approval and job start date.</div>
+        <div style="display:flex;align-items:center;gap:10px;"><input style="width:70px;padding:7px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:16px;text-align:center;" value="3" /><span class="dim">days</span></div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">Max Advance Booking</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Maximum days ahead a job can be scheduled.</div>
+        <div style="display:flex;align-items:center;gap:10px;"><input style="width:70px;padding:7px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:16px;text-align:center;" value="90" /><span class="dim">days</span></div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:12px;">Blackout Dates</div>
+        ${['Nov 26–27 (Thanksgiving)','Dec 24–25 (Christmas)','Jan 1 (New Year\'s)'].map(d=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(51,65,85,0.4);">
+            <span style="font-size:13px;color:var(--text)">${d}</span>
+            <button class="btn btn-danger btn-sm">✕</button>
+          </div>`).join('')}
+        <button class="btn btn-outline btn-sm" style="margin-top:12px;">+ Add Date</button>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">Weather Standby Rule</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Jobs flagged as weather-standby after 2 consecutive rain forecast days.</div>
+        <div class="form-toggle">
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <span class="toggle-label">Enabled</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderRoles(el) {
+  const roles = [
+    {role:'Super Admin', perms:'All access', users:1},
+    {role:'Admin', perms:'All except user deletion', users:2},
+    {role:'Office', perms:'Jobs, invoices, scheduling, reports', users:3},
+    {role:'Sales', perms:'Estimates, proposals, customers, own dashboard', users:4},
+    {role:'Field Supervisor', perms:'Jobs, work orders, crew, closeouts', users:3},
+    {role:'Field Crew', perms:'Work orders (assigned only), photos', users:8},
+  ];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button class="btn btn-primary btn-sm">+ New Role</button>
+    </div>
+    <div class="card"><table><thead><tr>
+      <th>Role</th><th>Default Permissions</th><th>Users</th><th></th>
+    </tr></thead><tbody>
+      ${roles.map(r=>`<tr>
+        <td class="bright">${r.role}</td>
+        <td class="dim">${r.perms}</td>
+        <td><span class="link-count">${r.users}</span></td>
+        <td><button class="btn btn-outline btn-sm">Edit Permissions</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderUsers(el) {
+  const users = [
+    {name:'Bill Nash', role:'Super Admin', status:'Active', last:'Today'},
+    {name:'Sarah M.', role:'Admin', status:'Active', last:'Yesterday'},
+    {name:'Jeff Milam', role:'Field Supervisor', status:'Active', last:'2h ago'},
+    {name:'Anthony L.', role:'Field Supervisor', status:'Active', last:'1d ago'},
+    {name:'Carlos R.', role:'Field Crew', status:'Active', last:'Today'},
+  ];
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button class="btn btn-primary btn-sm">+ Invite User</button>
+    </div>
+    <div class="card"><table><thead><tr>
+      <th>Name</th><th>Role</th><th>Status</th><th>Last Login</th><th></th>
+    </tr></thead><tbody>
+      ${users.map(u=>`<tr>
+        <td class="bright">${u.name}</td>
+        <td class="dim">${u.role}</td>
+        <td><span class="badge badge-active">${u.status}</span></td>
+        <td class="dim">${u.last}</td>
+        <td><button class="btn btn-outline btn-sm">Edit</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+function renderIntegrations(el) {
+  const services = [
+    {name:'Twilio', cat:'SMS/Calls', status:'Connected', detail:'All 9 tracking numbers active'},
+    {name:'Lob', cat:'Direct Mail', status:'Connected', detail:'Postcard printing active'},
+    {name:'Acorn Finance', cat:'Financing', status:'Connected', detail:'Live'},
+    {name:'EnerBank', cat:'Financing', status:'Connected', detail:'Live'},
+    {name:'Stripe', cat:'Payments', status:'Connected', detail:'Live'},
+    {name:'Google Calendar', cat:'Scheduling sync', status:'Connected', detail:'Sync active'},
+  ];
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
+      ${services.map(s=>`
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="font-size:16px;font-weight:700;color:var(--text-bright);">${s.name}</div>
+            <span style="font-size:12px;color:var(--green);">✅ ${s.status}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">${s.cat}</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">${s.detail}</div>
+          <button class="btn btn-outline btn-sm">Configure</button>
+        </div>`).join('')}
+    </div>`;
 }
 
 // ─── INIT ───
