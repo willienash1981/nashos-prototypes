@@ -120,19 +120,21 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   </div>
 
   <!-- DECK NAME -->
-  <div style="padding:10px 12px 4px">
-    <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Deck Name</div>
-    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px" id="deckNameChips">
-      <div class="cq-chip sel" data-dn="Back Deck" onclick="setDeckName(this)">Back Deck</div>
-      <div class="cq-chip" data-dn="Front Deck" onclick="setDeckName(this)">Front Deck</div>
-      <div class="cq-chip" data-dn="Left Side" onclick="setDeckName(this)">Left Side</div>
-      <div class="cq-chip" data-dn="Right Side" onclick="setDeckName(this)">Right Side</div>
-      <div class="cq-chip" data-dn="Pool Deck" onclick="setDeckName(this)">Pool Deck</div>
-      <div class="cq-chip" data-dn="Wrap-Around" onclick="setDeckName(this)">Wrap-Around</div>
-      <div class="cq-chip" data-dn="custom" onclick="setDeckName(this)">Custom…</div>
+  <div class="card" style="margin:8px 12px">
+    <div style="padding:10px 12px 4px">
+      <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Deck Name</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px" id="deckNameChips">
+        <div class="cq-chip sel" data-dn="Back Deck" onclick="setDeckName(this)">Back Deck</div>
+        <div class="cq-chip" data-dn="Front Deck" onclick="setDeckName(this)">Front Deck</div>
+        <div class="cq-chip" data-dn="Left Side" onclick="setDeckName(this)">Left Side</div>
+        <div class="cq-chip" data-dn="Right Side" onclick="setDeckName(this)">Right Side</div>
+        <div class="cq-chip" data-dn="Pool Deck" onclick="setDeckName(this)">Pool Deck</div>
+        <div class="cq-chip" data-dn="Wrap-Around" onclick="setDeckName(this)">Wrap-Around</div>
+        <div class="cq-chip" data-dn="custom" onclick="setDeckName(this)">Custom…</div>
+      </div>
+      <input type="text" id="deckNameCustom" placeholder="Enter deck name" style="display:none;width:100%;padding:7px 10px;border:1.5px solid #d1d5db;border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box" oninput="updateDeckNameFromCustom(this.value)">
+      <div style="font-size:10px;color:#9ca3af;margin-top:6px">Name shows on estimate. Sections below are for work order detail only.</div>
     </div>
-    <input type="text" id="deckNameCustom" placeholder="Deck name" style="display:none;width:100%;padding:7px 10px;border:1.5px solid #d1d5db;border-radius:8px;font-size:13px;font-family:inherit" oninput="updateDeckNameFromCustom(this.value)">
-    <div style="font-size:10px;color:#9ca3af;margin-top:4px">Appears on estimate as a single line. Sections are for work order detail only.</div>
   </div>
 
   <!-- STEP 1: CONDITION ASSESSMENT -->
