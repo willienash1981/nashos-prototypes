@@ -112,40 +112,41 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
   <div class="section-title">🔍 Fence Condition</div>
   <div class="global-card" id="conditionCard">
 
-    <div class="cq-label">Active water beading?</div>
+    <div class="cq-label">Previous coating transparency?</div>
     <div class="cq-chips" data-q="q1">
-      <div class="cq-chip" data-v="yes" onclick="pick(this)">Yes</div>
-      <div class="cq-chip sel" data-v="no" onclick="pick(this)">No</div>
+      <div class="cq-chip sel" data-v="bare" onclick="pick(this)">None (bare/new wood)</div>
+      <div class="cq-chip" data-v="semi" onclick="pick(this)">Semi-transparent</div>
+      <div class="cq-chip" data-v="solid" onclick="pick(this)">Solid</div>
+      <div class="cq-chip" data-v="paint" onclick="pick(this)">Paint</div>
     </div>
 
-    <div class="cq-label">Previous coating type?</div>
-    <div class="cq-chips" data-q="q2">
-      <div class="cq-chip sel" data-v="bare" onclick="pick(this)">None (bare/new)</div>
-      <div class="cq-chip" data-v="stained-good" onclick="pick(this)">Stained (good)</div>
-      <div class="cq-chip" data-v="stained-weathered" onclick="pick(this)">Stained (weathered)</div>
-      <div class="cq-chip" data-v="painted" onclick="pick(this)">Painted</div>
-      <div class="cq-chip" data-v="oil-wax" onclick="pick(this)">Oil/wax</div>
-      <div class="cq-chip" data-v="unknown" onclick="pick(this)">Unknown</div>
+    <div id="q2-section" style="display:none">
+      <div class="cq-label">Previous material type?</div>
+      <div class="cq-chips" data-q="q2">
+        <div class="cq-chip sel" data-v="semi-stain" onclick="pick(this)">Semi-transparent stain</div>
+        <div class="cq-chip" data-v="solid-stain" onclick="pick(this)">Solid stain</div>
+        <div class="cq-chip" data-v="thin-paint" onclick="pick(this)">Thin paint</div>
+        <div class="cq-chip" data-v="thick-paint" onclick="pick(this)">Thick paint (DeckOver / Restore)</div>
+      </div>
     </div>
 
-    <div class="cq-label">Wood type?</div>
+    <div class="cq-label">Active water beading on surface?</div>
     <div class="cq-chips" data-q="q3">
-      <div class="cq-chip sel" data-v="standard" onclick="pick(this)">Standard (cedar/pine/PT)</div>
-      <div class="cq-chip" data-v="redwood" onclick="pick(this)">Redwood</div>
-      <div class="cq-chip" data-v="ipe" onclick="pick(this)">IPE ⚠️</div>
+      <div class="cq-chip sel" data-v="no" onclick="pick(this)">No</div>
+      <div class="cq-chip" data-v="yes" onclick="pick(this)">Yes ⚠️</div>
     </div>
 
     <div class="cq-label">Overall condition?</div>
     <div class="cq-chips" data-q="q4">
-      <div class="cq-chip sel" data-v="minimal" onclick="pick(this)">Minimal</div>
-      <div class="cq-chip" data-v="moderate" onclick="pick(this)">Moderate</div>
-      <div class="cq-chip" data-v="severe" onclick="pick(this)">Severe</div>
+      <div class="cq-chip sel" data-v="good" onclick="pick(this)">Good (well-maintained)</div>
+      <div class="cq-chip" data-v="weathered" onclick="pick(this)">Weathered</div>
+      <div class="cq-chip" data-v="severe" onclick="pick(this)">Severely worn / failing</div>
     </div>
 
-    <div id="condResult" style="margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12px;display:none">
-      <div style="font-weight:700;color:#166534" id="condResultTitle"></div>
-      <div style="color:#15803d;margin-top:2px" id="condResultReason"></div>
-      <div id="condDisclaimer" style="margin-top:4px;font-size:11px;color:#92400e"></div>
+    <div id="condResult" style="margin:8px 12px 4px;padding:12px 14px;border-radius:10px;border:1px solid #86efac;background:#f0fdf4;display:none">
+      <div style="font-weight:700;font-size:13px" id="condResultTitle"></div>
+      <div style="font-size:12px;margin-top:3px" id="condResultReason"></div>
+      <div id="condDisclaimer" style="font-size:11px;margin-top:6px;line-height:1.4;display:none"></div>
     </div>
   </div>
 
@@ -251,98 +252,124 @@ function pickStainOpt(el){
   recalc();
 }
 function updateCondResult() {
-  const beading = getQ('q1');
-  const prev = getQ('q2');
-  const wood = getQ('q3');
+  const prev = getQ('q1');
+  const material = getQ('q2');
+  const beading = getQ('q3');
   const cond = getQ('q4');
 
   let rec = 'semi-trans';
+  let title = '';
   let reason = '';
   let disclaimer = '';
-  let blocked = false;
+  let isPaintJob = false;
+  let cardColor = 'green'; // green = good, yellow = caution, red = warning
 
-  if (prev === 'painted') {
-    rec = 'paint';
-    reason = 'Previously painted surface — must use paint. Stain will not adhere over paint.';
-    blocked = true;
-  } else if (prev === 'oil-wax') {
-    rec = 'solid';
-    reason = 'Oil or wax-based coating detected. Solid stain after thorough prep and testing. Semi-transparent will not adhere reliably.';
-    disclaimer = '⚠️ Test adhesion before full application. May require stripper.';
-  } else if (cond === 'severe') {
+  // SELF-PRIMING SOLID triggers (highest priority)
+  if (beading === 'yes') {
     rec = 'self-prime-solid';
-    reason = 'Severely weathered — self-priming solid stain recommended for maximum coverage and adhesion.';
-  } else if (beading === 'yes') {
+    title = '✅ SW SuperDeck Self-Priming Solid';
+    reason = 'Active water beading — existing coating is still active. Self-priming solid is the only product that can adhere reliably over active repellency.';
+    cardColor = 'yellow';
+  }
+  else if (cond === 'severe') {
+    rec = 'self-prime-solid';
+    title = '✅ SW SuperDeck Self-Priming Solid';
+    reason = 'Severely worn surface — self-priming solid provides maximum coverage and adhesion over failing or heavily weathered wood.';
+    cardColor = 'yellow';
+  }
+  else if (prev === 'paint' || material === 'thick-paint' || material === 'thin-paint') {
+    rec = 'self-prime-solid';
+    isPaintJob = true;
+    title = '✅ SW SuperDeck Self-Priming Solid — Only Option';
+    reason = 'Previously painted surface. Self-priming solid is the only viable product. Standard stain will not adhere.';
+    disclaimer = '⚠️ PAINTED DECK/FENCE DISCLAIMER: We do not restore decks or fences. We will pressure wash and scrape any loose or failing material, but the thick peeling chips and layers underneath could fail. Wood surfaces are not designed to be painted — they expand and contract and develop natural cracks that fill with water. The layer underneath our coating could and most likely will eventually let go or fail, which we cannot prevent. This work is NOT covered under warranty.';
+    cardColor = 'red';
+  }
+  // SOLID triggers
+  else if (prev === 'solid' || material === 'solid-stain') {
     rec = 'solid';
-    reason = 'Active water beading indicates previous coating is still repelling. Solid stain for best adhesion over existing coating.';
-    disclaimer = '⚠️ Surface may need light prep/sanding before application.';
-  } else if (prev === 'bare') {
-    if (cond === 'minimal' || cond === 'moderate') {
-      rec = 'semi-trans';
-      reason = 'Bare/new wood in ' + (cond === 'minimal' ? 'good' : 'moderate') + ' condition — semi-transparent preserves natural grain.';
-    } else {
-      rec = 'solid';
-      reason = 'Bare wood with heavy weathering — solid stain recommended for full coverage.';
-    }
-  } else if (prev === 'stained-good') {
+    title = '✅ SW SuperDeck Solid Stain';
+    reason = 'Previously coated with solid stain — cannot revert to semi-transparent. Solid stain maintains coverage and adhesion.';
+    cardColor = 'green';
+  }
+  else if (cond === 'weathered') {
+    rec = 'solid';
+    title = '✅ SW SuperDeck Solid Stain';
+    reason = 'Weathered surface — solid stain recommended for full, even coverage over greying or damaged wood.';
+    cardColor = 'green';
+  }
+  // SEMI-TRANSPARENT (default for good/new/bare)
+  else {
     rec = 'semi-trans';
-    reason = 'Previously stained in good condition — semi-transparent maintains the look.';
-  } else if (prev === 'stained-weathered') {
-    rec = 'solid';
-    reason = 'Weathered/patchy previous stain — solid recommended for full, even coverage.';
-    disclaimer = cond === 'minimal' ? '⚠️ Semi-transparent possible with extra prep, but solid is strongly recommended.' : '';
+    title = '✅ SW SuperDeck Semi-Transparent';
+    reason = prev === 'bare'
+      ? 'Bare or new wood in good condition — semi-transparent preserves the natural grain and color.'
+      : 'Previously semi-transparent stain in good condition — maintain with semi-transparent.';
+    cardColor = 'green';
   }
 
-  if (wood === 'ipe') {
-    disclaimer += (disclaimer ? ' ' : '') + '⚠️ IPE requires specific oil-based product and longer dry times. Confirm product compatibility.';
-  }
-
-  if (rec === 'paint') {
-    product = 'Paint';
-    document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Paint'));
-    document.getElementById('stainOpts').style.display = 'none';
-    document.getElementById('paintWarn').style.display = '';
-    const coat2cb = document.getElementById('coat2');
-    if (coat2cb) { coat2cb.checked = true; coat2cb.disabled = true; }
+  // Auto-switch product selection in the Product section
+  if (isPaintJob) {
+    const paintBtn = document.querySelector('[data-prod="Paint"]');
+    if (paintBtn) {
+      product = 'Paint';
+      document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Paint'));
+      const stainOpts = document.getElementById('stainOpts');
+      if (stainOpts) stainOpts.style.display = 'none';
+      const paintWarn = document.getElementById('paintWarn');
+      if (paintWarn) paintWarn.style.display = '';
+      const coat2cb = document.getElementById('coat2');
+      if (coat2cb) { coat2cb.checked = true; coat2cb.disabled = true; }
+    }
   } else {
-    product = 'Stain';
-    document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Stain'));
-    document.getElementById('stainOpts').style.display = '';
-    document.getElementById('paintWarn').style.display = 'none';
-    const coat2cb = document.getElementById('coat2');
-    if (coat2cb) coat2cb.disabled = false;
+    const stainBtn = document.querySelector('[data-prod="Stain"]');
+    if (stainBtn) {
+      product = 'Stain';
+      document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Stain'));
+      const stainOpts = document.getElementById('stainOpts');
+      if (stainOpts) stainOpts.style.display = '';
+      const paintWarn = document.getElementById('paintWarn');
+      if (paintWarn) paintWarn.style.display = 'none';
+      const coat2cb = document.getElementById('coat2');
+      if (coat2cb) coat2cb.disabled = false;
+    }
+    // auto-select stain opacity
     stainOpt = rec;
     document.querySelectorAll('[data-so]').forEach(b => b.classList.toggle('active', b.dataset.so === rec));
   }
 
+  // Show/hide Q2 based on Q1
+  const q2section = document.getElementById('q2-section');
+  if (q2section) q2section.style.display = (prev === 'bare') ? 'none' : '';
+
+  // Update result card
   const resultCard = document.getElementById('condResult');
-  const title = document.getElementById('condResultTitle');
+  if (!resultCard) return;
+  const titleEl = document.getElementById('condResultTitle');
   const reasonEl = document.getElementById('condResultReason');
   const discEl = document.getElementById('condDisclaimer');
-  const labels = {'semi-trans':'Semi-Transparent Stain','solid':'Solid Stain','self-prime-solid':'Self-Priming Solid Stain','paint':'Paint (see Product section)'};
-  title.textContent = (blocked ? '🎨' : '✅') + ' Recommended: ' + (labels[rec] || rec);
-  reasonEl.textContent = reason;
-  if (discEl) discEl.textContent = disclaimer;
-  resultCard.style.display = '';
-  resultCard.style.background = blocked ? '#fef2f2' : '#f0fdf4';
-  resultCard.style.borderColor = blocked ? '#fca5a5' : '#86efac';
-  title.style.color = blocked ? '#991b1b' : '#166534';
-  reasonEl.style.color = blocked ? '#b91c1c' : '#15803d';
 
-  const alert = document.getElementById('productAlert');
-  if (alert) {
-    if (blocked) {
-      alert.style.display = '';
-      alert.style.background = '#fef2f2';
-      alert.style.border = '1px solid #fca5a5';
-      alert.style.color = '#991b1b';
-      alert.textContent = '❌ Cannot apply stain over painted surface. Switch to Paint above.';
-    } else {
-      alert.style.display = 'none';
-    }
+  if (titleEl) titleEl.textContent = title;
+  if (reasonEl) reasonEl.textContent = reason;
+  if (discEl) {
+    discEl.textContent = disclaimer;
+    discEl.style.display = disclaimer ? '' : 'none';
   }
 
-  recalc();
+  resultCard.style.display = '';
+  const colors = {
+    green: {bg:'#f0fdf4', border:'#86efac', title:'#166534', reason:'#15803d'},
+    yellow: {bg:'#fffbeb', border:'#fde047', title:'#854d0e', reason:'#92400e'},
+    red: {bg:'#fef2f2', border:'#fca5a5', title:'#991b1b', reason:'#b91c1c'},
+  };
+  const c = colors[cardColor];
+  resultCard.style.background = c.bg;
+  resultCard.style.borderColor = c.border;
+  if (titleEl) titleEl.style.color = c.title;
+  if (reasonEl) reasonEl.style.color = c.reason;
+
+  if (typeof recalc === 'function') recalc();
+  if (typeof calc === 'function') calc();
 }
 
 function uid(){return '_'+Math.random().toString(36).slice(2,9)}
