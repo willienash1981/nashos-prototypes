@@ -383,8 +383,8 @@ function render() {
   h+=`<div class="card">
     <div class="card-title">① Location Name</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
-      ${LOC_PRESETS.map(p=>`<span class="chip${loc0.name===p?' active':''}" onclick="state.locations[0].name='${p.replace(/'/g,"\\'")}';render()">${p}</span>`).join('')}
-      <span class="chip${!LOC_PRESETS.includes(loc0.name)&&loc0.name?' active':''}" onclick="document.getElementById('locCustomToggle').style.display='';document.getElementById('locCustomInput').focus()">✏️ Custom</span>
+      ${LOC_PRESETS.map(p=>`<div class="pill${loc0.name===p?' active':''}" onclick="state.locations[0].name='${p.replace(/'/g,"\\'")}';render()">${p}</div>`).join('')}
+      <div class="pill${!LOC_PRESETS.includes(loc0.name)&&loc0.name?' active':''}" onclick="document.getElementById('locCustomToggle').style.display='';document.getElementById('locCustomInput').focus()">✏️ Custom</div>
     </div>
     <div id="locCustomToggle" style="${!LOC_PRESETS.includes(loc0.name)&&loc0.name?'':'display:none'}">
       <input type="text" value="${loc0.name&&!LOC_PRESETS.includes(loc0.name)?loc0.name:''}" placeholder="e.g. Master Bath, Island, Laundry…" id="locCustomInput"
