@@ -339,6 +339,15 @@ function setProduct(p,el){
   document.querySelectorAll('[data-prod]').forEach(b=>b.classList.toggle('active',b.dataset.prod===p));
   document.getElementById('stainOpts').style.display=p==='Stain'?'':'none';
   document.getElementById('paintWarn').style.display=p==='Paint'?'':'none';
+  // Paint locks 2nd coat on
+  const coat2cb=document.getElementById('coat2');
+  if(p==='Paint'){
+    coat2cb.checked=true;
+    coat2cb.disabled=true;
+    coat2cb.parentElement.title='Paint requires 3 coats — cannot disable';
+  } else {
+    coat2cb.disabled=false;
+  }
   recalc();
 }
 function recalc(){
@@ -355,20 +364,35 @@ function recalc(){
     lines.push({label:s.label||'Segment',type:s.type,sides:s.sides,lf:s.lf,price});
   });
 
-  const paintMult=product==='Paint'?1.4:1.0;
-  subtotal=subtotal*paintMult;
-  const coat2Cost=coat2On?subtotal*0.85:0;
+  // Paint = primer coat (base rate) + coat 1 (base rate) + coat 2 (0.85x) + coat 3 (0.85x)
+  // Stain = base rate + optional coat 2 (0.85x)
+  const isPaint = product==='Paint';
+  const coat2Cost = (isPaint||coat2On) ? subtotal*0.85 : 0;
+  const coat3Cost = isPaint ? subtotal*0.85 : 0; // 3rd coat for paint only
   const maskCost=maskOn?totalLF*2.00:0;
-  const total=subtotal+coat2Cost+maskCost;
+  const total=subtotal+coat2Cost+coat3Cost+maskCost;
   const gallons=totalSF/100;
 
-  document.getElementById('coat2price').textContent=coat2On?'$'+coat2Cost.toFixed(2):'$0';
+  document.getElementById('coat2price').textContent=(isPaint||coat2On)?'$'+coat2Cost.toFixed(2):'$0';
   document.getElementById('maskPrice').textContent=maskOn?'$'+maskCost.toFixed(2):'$0';
 
+  // Product label in summary
+  const prodLabel = isPaint
+    ? 'SW SuperPaint Ext. / BM Regal Select (primer + 2 finish coats)'
+    : stainOpt==='semi-trans' ? 'SW SuperDeck Semi-Transparent / BM Arborcoat Semi-Trans'
+    : stainOpt==='self-prime-solid' ? 'SW SuperDeck Self-Priming Solid'
+    : 'SW SuperDeck Solid / BM Arborcoat Solid';
+
   // Summary
-  let html=lines.map(l=>`<div class="sum-line seg-line"><span>${l.label} — ${l.type}, ${l.sides}s, ${l.lf} LF</span><span class="sum-val">$${l.price.toFixed(2)}</span></div>`).join('');
-  html+=`<div class="sum-line"><span>Subtotal</span><span class="sum-val">$${subtotal.toFixed(2)}</span></div>`;
-  if(coat2On)html+=`<div class="sum-line addon"><span>2nd Coat (0.85×)</span><span class="sum-val">+$${coat2Cost.toFixed(2)}</span></div>`;
+  let html=`<div class="sum-line" style="font-size:11px;color:#6b7280"><span>Product: ${prodLabel}</span></div>`;
+  html+=lines.map(l=>`<div class="sum-line seg-line"><span>${l.label} — ${l.type}, ${l.sides}s, ${l.lf} LF</span><span class="sum-val">$${l.price.toFixed(2)}</span></div>`).join('');
+  html+=`<div class="sum-line"><span>${isPaint?'Primer coat (1st)':'Base coat'}</span><span class="sum-val">$${subtotal.toFixed(2)}</span></div>`;
+  if(isPaint){
+    html+=`<div class="sum-line addon"><span>2nd Coat / Coat 1 Finish (0.85×) 🔒</span><span class="sum-val">+$${coat2Cost.toFixed(2)}</span></div>`;
+    html+=`<div class="sum-line addon"><span>3rd Coat / Coat 2 Finish (0.85×) 🔒</span><span class="sum-val">+$${coat3Cost.toFixed(2)}</span></div>`;
+  } else if(coat2On){
+    html+=`<div class="sum-line addon"><span>2nd Coat (0.85×)</span><span class="sum-val">+$${coat2Cost.toFixed(2)}</span></div>`;
+  }
   if(maskOn)html+=`<div class="sum-line addon"><span>Heavy Masking (${totalLF} LF × $2.00)</span><span class="sum-val">+$${maskCost.toFixed(2)}</span></div>`;
   html+=`<div class="sum-line total"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
   html+=`<div class="sum-meta"><div>Total SF: <span>${totalSF.toLocaleString()}</span></div><div>Est. Gallons: <span>${gallons.toFixed(1)}</span></div></div>`;
