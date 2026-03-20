@@ -43,13 +43,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .notif-badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 
 /* ─── ROLE BAR ─── */
-.role-bar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:50px;z-index:99;flex-wrap:wrap}
+.role-bar{background:var(--white);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:88px;z-index:99;flex-wrap:wrap}
 .role-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);white-space:nowrap}
 .role-toggle{display:flex;background:var(--bg);border-radius:var(--radius);padding:3px;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .role-btn{padding:7px 12px;border:none;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s;white-space:nowrap}
 .role-btn:hover{background:var(--white);color:var(--text)}
 .role-btn.active{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
 .perm-note{margin-left:auto;font-size:11px;color:var(--text-muted)}@media(max-width:480px){.perm-note{display:none}}
+
+/* ─── VIEW SWITCHER ─── */
+.view-bar{background:var(--navy-light);padding:6px 12px;display:flex;align-items:center;gap:8px;position:sticky;top:98px;z-index:98;flex-wrap:wrap}
+.view-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.5);white-space:nowrap}
+.view-toggle{display:flex;background:rgba(255,255,255,.08);border-radius:var(--radius);padding:3px;gap:2px}
+.view-btn{padding:5px 14px;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;background:transparent;color:rgba(255,255,255,.65);transition:all .2s;white-space:nowrap}
+.view-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.view-btn.active{background:var(--gold);color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.exec-frame{width:100%;border:none;min-height:85vh;display:block}
 
 /* ─── MAIN ─── */
 .main{max-width:1400px;margin:0 auto;padding:24px}
@@ -221,8 +230,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 
+<!-- ═══ VIEW SWITCHER ═══ -->
+<div class="view-bar">
+  <span class="view-label">View:</span>
+  <div class="view-toggle">
+    <button class="view-btn active" data-view="operations">⚙️ Operations</button>
+    <button class="view-btn" data-view="ceo">👔 CEO</button>
+    <button class="view-btn" data-view="cmo">📣 CMO</button>
+    <button class="view-btn" data-view="cfo">💰 CFO</button>
+  </div>
+</div>
+
 <!-- ═══ ROLE TOGGLE ═══ -->
-<div class="role-bar">
+<div class="role-bar" id="role-bar">
   <span class="role-label">Demo — Permission Level:</span>
   <div class="role-toggle">
     <button class="role-btn active" data-role="admin">Admin</button>
@@ -232,7 +252,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="perm-note" id="perm-note">🔓 Full access — all data visible</div><div style="font-size:10px;color:var(--text-muted);margin-left:8px"><span class="hide-mobile">(In production, users only see their permission level)</span></div>
 </div>
 
-<div class="main">
+<!-- ═══ EXEC IFRAMES ═══ -->
+<div id="view-ceo" style="display:none"><iframe class="exec-frame" src="executive-dashboard.html" title="CEO Dashboard"></iframe></div>
+<div id="view-cmo" style="display:none"><iframe class="exec-frame" src="cmo-dashboard.html" title="CMO Dashboard"></iframe></div>
+<div id="view-cfo" style="display:none"><iframe class="exec-frame" src="cfr-dashboard.html" title="CFO Dashboard"></iframe></div>
+
+<div class="main" id="ops-main">
 
 <!-- ═══ QUICK ACTIONS ═══ -->
 <div class="qa-row" id="qa"></div>
@@ -1450,6 +1475,29 @@ document.getElementById('comm-kpi')?.addEventListener('click', function() {
 });
 
 switchRole('admin');
+
+// ─── VIEW SWITCHER ───
+function switchView(view) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  const opsMain = document.getElementById('ops-main');
+  const roleBar = document.getElementById('role-bar');
+  const execViews = ['ceo','cmo','cfo'];
+  if (view === 'operations') {
+    opsMain.style.display = '';
+    roleBar.style.display = '';
+    execViews.forEach(v => document.getElementById('view-' + v).style.display = 'none');
+  } else {
+    opsMain.style.display = 'none';
+    roleBar.style.display = 'none';
+    execViews.forEach(v => {
+      document.getElementById('view-' + v).style.display = v === view ? '' : 'none';
+    });
+  }
+}
+
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchView(btn.dataset.view));
+});
 </script>
 </body>
 </html>
