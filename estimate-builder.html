@@ -339,7 +339,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
     <div class="group-header-right">
       <span class="group-subtotal" id="grpMainTotal">$16,294</span>
-      <span class="group-menu" onclick="event.stopPropagation();openSheet('groupMenuSheet')">⋯</span>
+      <span class="group-menu" onclick="event.stopPropagation();openGroupMenu(this)">⋯</span>
       <span class="group-arrow" id="grpArrow-main">▶</span>
     </div>
   </div>
@@ -691,7 +691,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     </div>
     <div class="group-header-right">
       <span class="group-subtotal" id="grpGarageTotal">$2,880</span>
-      <span class="group-menu" onclick="event.stopPropagation();openSheet('groupMenuSheet')">⋯</span>
+      <span class="group-menu" onclick="event.stopPropagation();openGroupMenu(this)">⋯</span>
       <span class="group-arrow" id="grpArrow-garage">▶</span>
     </div>
   </div>
@@ -793,9 +793,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 </div>
 
 <!-- ═══════════ OPTIONAL ADD-ONS ═══════════ -->
-<div class="optional-section">
+<div class="optional-section" id="optionalSection">
   <div class="optional-divider">Optional Add-Ons</div>
-  <div class="optional-card">
+  <div id="optionalGroupsContainer"></div>
+  <div class="optional-card" id="staticCabCard">
     <div class="optional-header">
       <div class="optional-left">
         <span class="optional-icon">🗄️</span>
@@ -952,10 +953,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <!-- SHEET: Group Menu -->
 <div class="bottom-sheet" id="groupMenuSheet">
   <div class="sheet-handle"></div>
-  <div class="sheet-title">Group Actions</div>
+  <div class="sheet-title" id="groupMenuTitle">Group Actions</div>
+  <div class="sheet-item" id="groupMenuOptionalBtn" onclick="toggleGroupOptional();closeAllSheets()"><span class="sheet-icon">🔘</span><span class="sheet-label" id="groupMenuOptionalLabel">Mark as Optional Add-On</span></div>
   <div class="sheet-item" onclick="toast('Rename group');closeAllSheets()"><span class="sheet-icon">✏️</span><span class="sheet-label">Rename Group</span></div>
-  <div class="sheet-item" onclick="toast('Delete group');closeAllSheets()"><span class="sheet-icon">🗑️</span><span class="sheet-label">Delete Group</span></div>
   <div class="sheet-item" onclick="toast('Add service to group');closeAllSheets()"><span class="sheet-icon">➕</span><span class="sheet-label">Add Service to Group</span></div>
+  <div class="sheet-item" onclick="toast('Delete group');closeAllSheets()" style="color:var(--red)"><span class="sheet-icon">🗑️</span><span class="sheet-label" style="color:var(--red)">Delete Group</span></div>
   <div class="sheet-safe"></div>
 </div>
 
@@ -1558,6 +1560,79 @@ function toggleNights() {
   if (typeof recalcTotal === 'function') recalcTotal();
 }
 
+
+// ── Group Optional Toggle ──
+let activeGroupId = null;
+const optionalGroups = {}; // groupId → { name, subtotal, icon }
+
+function openGroupMenu(el) {
+  // Find the group-container ancestor
+  const grp = el.closest('.group-container');
+  activeGroupId = grp ? grp.id : null;
+  if (activeGroupId) {
+    const isOpt = !!optionalGroups[activeGroupId];
+    const grpName = grp.querySelector('.name') ? grp.querySelector('.name').textContent : 'Group';
+    document.getElementById('groupMenuTitle').textContent = grpName;
+    document.getElementById('groupMenuOptionalLabel').textContent = isOpt ? '✅ Move to Included' : 'Mark as Optional Add-On';
+  }
+  openSheet('groupMenuSheet');
+}
+
+function toggleGroupOptional() {
+  if (!activeGroupId) return;
+  const grp = document.getElementById(activeGroupId);
+  if (!grp) return;
+
+  if (optionalGroups[activeGroupId]) {
+    // Move back to included — show the group, remove from optional
+    grp.style.display = '';
+    delete optionalGroups[activeGroupId];
+    toast('Moved back to included');
+  } else {
+    // Mark as optional — hide the group card, add to optional section
+    const name = grp.querySelector('.name') ? grp.querySelector('.name').textContent : 'Group';
+    const subtotal = grp.querySelector('.group-subtotal') ? grp.querySelector('.group-subtotal').textContent : '$0';
+    const icon = grp.querySelector('.icon') ? grp.querySelector('.icon').textContent : '📂';
+    optionalGroups[activeGroupId] = { name, subtotal, icon, id: activeGroupId };
+    grp.style.display = 'none';
+    toast(name + ' marked as optional add-on');
+  }
+  renderOptionalGroups();
+}
+
+function renderOptionalGroups() {
+  const container = document.getElementById('optionalGroupsContainer');
+  const section = document.getElementById('optionalSection');
+  const keys = Object.keys(optionalGroups);
+
+  // Show/hide the static cabinet demo card when there are dynamic ones
+  const staticCard = document.getElementById('staticCabCard');
+
+  container.innerHTML = keys.map(id => {
+    const g = optionalGroups[id];
+    return `<div class="optional-card" style="margin-bottom:10px">
+      <div class="optional-header">
+        <div class="optional-left">
+          <span class="optional-icon">${g.icon}</span>
+          <div class="optional-info">
+            <div class="opt-title">${g.name} <span class="opt-badge">OPTIONAL</span></div>
+            <div class="opt-sub">Customer can add to proposal</div>
+          </div>
+        </div>
+        <span class="opt-price">${g.subtotal}</span>
+        <button onclick="moveBackToIncluded('${id}')" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-light);font-family:inherit">Include</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function moveBackToIncluded(id) {
+  const grp = document.getElementById(id);
+  if (grp) grp.style.display = '';
+  delete optionalGroups[id];
+  renderOptionalGroups();
+  toast('Moved back to included');
+}
 </script>
 </body>
 </html>
