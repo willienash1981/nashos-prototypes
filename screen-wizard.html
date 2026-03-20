@@ -605,7 +605,7 @@ function calc() {
   document.getElementById('cost-total').textContent = '$'+total;
   document.getElementById('difficult-price').textContent = state.difficultCount ? '$'+(state.difficultCount*RATES.difficult) : '$0';
 
-  const displayTotal = nightsOn ? Math.round(total * 1.5) : total;
+  const displayTotal = effectiveNights() ? Math.round(total * 1.5) : total;
   document.getElementById('rtTotal').textContent = '$'+displayTotal.toLocaleString();
   document.getElementById('rtDetail').textContent = `Screen: ${totalSF} SF · Replace: ${replaceLF} LF · Reuse: ${reuseLF} LF`;
   document.getElementById('bottomTotal').textContent = '$'+displayTotal.toLocaleString();
@@ -662,7 +662,7 @@ function switchNoteTab(btn, tab) {
   });
 }
 
-let nightsOn = false;
+
 
 
 // Nights/Weekends — template-level (wizard) toggle
@@ -677,6 +677,7 @@ function effectiveNights() {
 function toggleNights() {
   nightsWeekends = !nightsWeekends;
   updateNightsUI();
+  if (typeof calc === 'function') calc();
   if (typeof updateTotal === 'function') updateTotal();
   if (typeof updateTotals === 'function') updateTotals();
   if (typeof recalcTotal === 'function') recalcTotal();
