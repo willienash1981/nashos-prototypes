@@ -323,30 +323,30 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   </div>
 
 
-</div>
 
-<!-- STEP 4: PHOTOS -->
-<div class="step-header"><h2><span class="num">4</span> Photos</h2></div>
-<div class="card">
-  <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px">📷 Job Photos</div>
-  <div id="deckMainPhotoRow" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"></div>
-  <div style="display:flex;gap:8px">
-    <button onclick="deckMainCapturePhoto()" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">📷 Take Photo</button>
-    <button onclick="deckMainPickPhoto()" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🖼️ From Library</button>
+  <!-- STEP 4: PHOTOS -->
+  <div class="step-header"><h2><span class="num">4</span> Photos</h2></div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px">📷 Job Photos</div>
+    <div id="deckMainPhotoRow" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="deckMainCapturePhoto()" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">📷 Take Photo</button>
+      <button onclick="deckMainPickPhoto()" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🖼️ From Library</button>
+    </div>
   </div>
-</div>
 
-<!-- STEP 5: NOTES -->
-<div class="step-header"><h2><span class="num">5</span> Notes</h2></div>
-<div class="card" style="margin-bottom:80px">
-  <div style="display:flex;gap:4px;margin-bottom:8px" id="noteTabs">
-    <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
+  <!-- STEP 5: NOTES -->
+  <div class="step-header"><h2><span class="num">5</span> Notes</h2></div>
+  <div class="card" style="margin-bottom:80px">
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="noteTabs">
+      <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
+      <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
+      <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
+    </div>
+    <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
+    <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
+    <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
   </div>
-  <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
-  <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
-  <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
 </div>
 
 <!-- Bottom Bar -->
