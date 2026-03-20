@@ -411,12 +411,9 @@ function render() {
   h+=`<div class="color-note">1 color included · +$300 per additional color</div>`;
   h+=`</div></div>`;
 
-  // Step 2: Locations
-  h+=`<div class="card"><div class="card-title">② Locations</div>`;
-  state.locations.forEach((loc,i)=>{
-    h+=renderLocation(loc,i);
-  });
-  h+=`<button class="btn-add" onclick="addLocation()">+ Add Location</button>`;
+  // Step 2: Cabinet Details (single location — one wizard per cabinet job)
+  h+=`<div class="card"><div class="card-title">② Cabinet Details</div>`;
+  h+=renderLocationBody(state.locations[0], 0);
   h+=`</div>`;
 
   // Warnings
@@ -438,26 +435,9 @@ function render() {
   updateTotal();
 }
 
-function renderLocation(loc, idx) {
-  const isFirst = idx===0;
-  const coll = loc.collapsed;
-  let h=`<div style="border-top:${idx?'2px solid #eee':'none'};padding-top:${idx?'12px':'0'};margin-top:${idx?'12px':'0'}">`;
-  h+=`<div class="loc-header" onclick="toggleLoc(${idx})">`;
-  h+=`<span class="arrow${coll?'':' open'}">▼</span>`;
-  h+=`<h3>${esc(loc.name)||'Location '+(idx+1)}</h3>`;
-  h+=`<span class="loc-total" id="locTotal${idx}"></span>`;
-  if(!isFirst) h+=`<button class="del-btn" onclick="event.stopPropagation();delLoc(${idx})">🗑</button>`;
-  h+=`</div>`;
-  h+=`<div class="loc-body${coll?'':' open'}" id="locBody${idx}">`;
+function renderLocationBody(loc, idx) {
+  let h=``;
 
-  // Name
-  h+=`<div class="field" style="margin-top:8px"><label>Location Name</label>`;
-  h+=`<div class="loc-name-wrap"><input type="text" value="${esc(loc.name)}" placeholder="Kitchen, Vanity..." class="${loc.name?'has-val':''}" onfocus="showLocDD(${idx})" oninput="setLocName(${idx},this.value)" id="locName${idx}">`;
-  h+=`<div class="loc-name-dd" id="locDD${idx}">`;
-  LOC_PRESETS.forEach(p=>{
-    h+=`<div onclick="pickLocName(${idx},'${esc(p)}')">${p}</div>`;
-  });
-  h+=`</div></div></div>`;
 
   // Bodies
   h+=`<div class="sgrp-title">Bodies (Linear Feet)</div>`;
@@ -534,7 +514,6 @@ function renderLocation(loc, idx) {
     h+=srowCount('Drawer inside count',`$${(RATES.drawer_inside*getCoatMult()).toFixed(0)}/ea`,`loc_di_${idx}`,loc.drawerInside,idx,'drawerInside');
   }
 
-  h+=`</div></div>`;
   return h;
 }
 
