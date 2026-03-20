@@ -130,6 +130,7 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
     </div>
   </div>
 
+
   <div class="section-title">🎨 Product</div>
   <div class="global-card">
     <div class="global-row">
@@ -147,6 +148,7 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
         <div class="toggle-btn" data-so="self-prime-solid" onclick="pickStainOpt(this)">Self-Priming Solid</div>
       </div>
     </div>
+    <div id="productAlert" style="display:none;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px"></div>
     <div id="paintWarn" style="display:none;padding:8px 12px;background:#fef9c3;border:1px solid #fde047;border-radius:8px;font-size:11px;color:#854d0e;margin-top:4px">
       ⚠️ Paint on fence is rare. Requires full primer coat + 2 finish coats. Labor multiplier: 1.4×. Warranty may not apply.
     </div>
@@ -158,6 +160,16 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
 
   <div class="section-title">➕ Add-Ons</div>
   <div class="global-card">
+    <div class="global-row" id="primerRow" style="display:none">
+      <div>
+        <div class="gr-label">Primer Coat</div>
+        <div class="gr-sub" id="primerNote">Required for new/stained surface</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="gr-val" id="primerPrice">$0</span>
+        <label class="switch"><input type="checkbox" id="primerCoat" onchange="recalc()" checked><span class="slider"></span></label>
+      </div>
+    </div>
     <div class="global-row">
       <div><div class="gr-label">2nd Coat</div><div class="gr-sub">0.85× labor on full price</div></div>
       <div style="display:flex;align-items:center;gap:10px">
@@ -211,6 +223,24 @@ function pickCond(q,el){
   el.classList.add('active');
   if(q==='prev') condPrev=el.dataset.v;
   else condCond=el.dataset.v;
+  // If paint is selected, re-evaluate primer state
+  if(product==='Paint'){
+    const primerCoat=document.getElementById('primerCoat');
+    const primerNote=document.getElementById('primerNote');
+    if(condPrev==='painted'&&condCond==='good'){
+      primerCoat.checked=false;
+      primerCoat.disabled=true;
+      primerNote.textContent='Not required — existing paint in good condition';
+    } else if(condPrev==='painted'&&condCond!=='good'){
+      primerCoat.checked=true;
+      primerCoat.disabled=false;
+      primerNote.textContent='Recommended — existing paint worn/damaged';
+    } else {
+      primerCoat.checked=true;
+      primerCoat.disabled=true;
+      primerNote.textContent='Required for bare/stained/unknown surface';
+    }
+  }
   updateCondResult();
   recalc();
 }
@@ -218,22 +248,55 @@ function pickStainOpt(el){
   document.querySelectorAll('[data-so]').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   stainOpt=el.dataset.so;
+  updateCondResult();
   recalc();
 }
 function updateCondResult(){
   const res=document.getElementById('condResult');
   const title=document.getElementById('condResultTitle');
   const reason=document.getElementById('condResultReason');
+  const alert=document.getElementById('productAlert');
+  const stainOptsEl=document.getElementById('stainOpts');
+
+  // Clear alert
+  alert.style.display='none';
+  alert.textContent='';
+
+  // Re-enable stain opacity buttons
+  document.querySelectorAll('[data-so]').forEach(b=>{b.style.pointerEvents='';b.style.opacity='';});
+
+  if(product==='Stain'){
+    if(condPrev==='painted'){
+      // BLOCK
+      alert.style.cssText='display:block;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px;background:#fef2f2;border:1px solid #fca5a5;color:#991b1b';
+      alert.textContent='❌ Cannot stain over paint. Surface must be stripped or repainted.';
+      document.querySelectorAll('[data-so]').forEach(b=>{b.style.pointerEvents='none';b.style.opacity='0.4';});
+    } else if(condPrev==='stained-weathered'&&stainOpt==='semi-trans'){
+      // WARN
+      alert.style.cssText='display:block;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px;background:#fefce8;border:1px solid #fde047;color:#854d0e';
+      alert.textContent='⚠️ Semi-transparent over weathered/patchy stain may not cover evenly. Solid recommended.';
+    }
+  } else {
+    // Paint — primer logic handled in recalc/setProduct, no block
+  }
+
+  // Condition recommendation (green box)
   let rec='solid', msg='';
+  if(product==='Paint'){
+    res.style.display='none';
+    return;
+  }
   if(condPrev==='bare'&&condCond==='good'){ rec='semi-trans'; msg='Bare/new wood in good condition — semi-transparent preserves grain.'; }
   else if(condPrev==='bare'&&condCond!=='good'){ rec='solid'; msg='Bare but weathered — solid stain gives better coverage and protection.'; }
   else if(condPrev==='stained-good'){ rec='semi-trans'; msg='Good existing stain — semi-transparent maintains the look.'; }
   else if(condPrev==='stained-weathered'){ rec='solid'; msg='Weathered/patchy stain — solid recommended for full coverage.'; }
   else if(condPrev==='painted'){ rec='solid'; msg='Previously painted — must use solid or paint to maintain opacity.'; }
   else { rec='solid'; msg='Unknown history — default to solid stain for best results.'; }
-  // auto-select stain opt
-  stainOpt=rec;
-  document.querySelectorAll('[data-so]').forEach(b=>b.classList.toggle('active',b.dataset.so===rec));
+  // auto-select stain opt only if not blocked
+  if(condPrev!=='painted'){
+    stainOpt=rec;
+    document.querySelectorAll('[data-so]').forEach(b=>b.classList.toggle('active',b.dataset.so===rec));
+  }
   title.textContent='✅ Recommended: '+(rec==='semi-trans'?'Semi-Transparent Stain':'Solid Stain');
   reason.textContent=msg;
   res.style.display='';
@@ -339,20 +402,50 @@ function setProduct(p,el){
   document.querySelectorAll('[data-prod]').forEach(b=>b.classList.toggle('active',b.dataset.prod===p));
   document.getElementById('stainOpts').style.display=p==='Stain'?'':'none';
   document.getElementById('paintWarn').style.display=p==='Paint'?'':'none';
-  // Paint locks 2nd coat on
+  // Paint locks 2nd coat on (always 2 finish coats)
   const coat2cb=document.getElementById('coat2');
   if(p==='Paint'){
     coat2cb.checked=true;
     coat2cb.disabled=true;
-    coat2cb.parentElement.title='Paint requires 3 coats — cannot disable';
+    coat2cb.parentElement.title='Paint always has 2 finish coats';
   } else {
     coat2cb.disabled=false;
   }
+  // Show/hide primer row
+  const primerRow=document.getElementById('primerRow');
+  primerRow.style.display=p==='Paint'?'':'none';
+  // Set primer state based on condition
+  if(p==='Paint'){
+    const primerCoat=document.getElementById('primerCoat');
+    const primerNote=document.getElementById('primerNote');
+    if(condPrev==='painted'&&condCond==='good'){
+      // No primer needed
+      primerCoat.checked=false;
+      primerCoat.disabled=true;
+      primerNote.textContent='Not required — existing paint in good condition';
+    } else if(condPrev==='painted'&&condCond!=='good'){
+      // Recommended but optional
+      primerCoat.checked=true;
+      primerCoat.disabled=false;
+      primerNote.textContent='Recommended — existing paint worn/damaged';
+    } else {
+      // Required (bare, stained, unknown)
+      primerCoat.checked=true;
+      primerCoat.disabled=true;
+      primerNote.textContent='Required for bare/stained/unknown surface';
+    }
+  }
+  // Hide condResult green box when Paint
+  if(p==='Paint') document.getElementById('condResult').style.display='none';
+  else updateCondResult();
   recalc();
 }
 function recalc(){
   const coat2On=document.getElementById('coat2').checked;
   const maskOn=document.getElementById('masking').checked;
+  const isPaint=product==='Paint';
+  const primerOn=isPaint&&(document.getElementById('primerCoat')?.checked??false);
+
   let subtotal=0,totalLF=0,totalSF=0;
   const lines=[];
   segments.forEach(s=>{
@@ -364,34 +457,68 @@ function recalc(){
     lines.push({label:s.label||'Segment',type:s.type,sides:s.sides,lf:s.lf,price});
   });
 
-  // Paint = primer coat (base rate) + coat 1 (base rate) + coat 2 (0.85x) + coat 3 (0.85x)
-  // Stain = base rate + optional coat 2 (0.85x)
-  const isPaint = product==='Paint';
-  const coat2Cost = (isPaint||coat2On) ? subtotal*0.85 : 0;
-  const coat3Cost = isPaint ? subtotal*0.85 : 0; // 3rd coat for paint only
+  // Coat math:
+  // Stain: subtotal (base/1st coat) + optional coat2 at 0.85×
+  // Paint no primer: subtotal (1st finish) + 0.85× (2nd finish)
+  // Paint with primer: subtotal (primer) + subtotal (1st finish) + 0.85× (2nd finish)
+  let primerCost=0, finish1Cost=0, finish2Cost=0, stainBase=0, stain2Cost=0;
+  if(isPaint){
+    if(primerOn){
+      primerCost=subtotal;
+      finish1Cost=subtotal;
+      finish2Cost=subtotal*0.85;
+    } else {
+      finish1Cost=subtotal;
+      finish2Cost=subtotal*0.85;
+    }
+  } else {
+    stainBase=subtotal;
+    stain2Cost=coat2On?subtotal*0.85:0;
+  }
   const maskCost=maskOn?totalLF*2.00:0;
-  const total=subtotal+coat2Cost+coat3Cost+maskCost;
+  const total=isPaint
+    ?(primerCost+finish1Cost+finish2Cost+maskCost)
+    :(stainBase+stain2Cost+maskCost);
   const gallons=totalSF/100;
 
-  document.getElementById('coat2price').textContent=(isPaint||coat2On)?'$'+coat2Cost.toFixed(2):'$0';
+  // Update add-on price displays
+  if(isPaint){
+    document.getElementById('coat2price').textContent='$'+finish2Cost.toFixed(2);
+    document.getElementById('primerPrice').textContent=primerOn?'$'+primerCost.toFixed(2):'$0';
+  } else {
+    document.getElementById('coat2price').textContent=coat2On?'$'+stain2Cost.toFixed(2):'$0';
+  }
   document.getElementById('maskPrice').textContent=maskOn?'$'+maskCost.toFixed(2):'$0';
 
-  // Product label in summary
-  const prodLabel = isPaint
-    ? 'SW SuperPaint Ext. / BM Regal Select (primer + 2 finish coats)'
-    : stainOpt==='semi-trans' ? 'SW SuperDeck Semi-Transparent / BM Arborcoat Semi-Trans'
-    : stainOpt==='self-prime-solid' ? 'SW SuperDeck Self-Priming Solid'
-    : 'SW SuperDeck Solid / BM Arborcoat Solid';
+  // Product label
+  let prodLabel;
+  if(isPaint){
+    prodLabel=primerOn
+      ?'SW Loxon Primer + SW SuperPaint Exterior (3 coats)'
+      :'SW SuperPaint Exterior (2 coats)';
+  } else {
+    prodLabel=stainOpt==='semi-trans'?'SW SuperDeck Semi-Transparent Stain'
+      :stainOpt==='self-prime-solid'?'SW SuperDeck Self-Priming Solid Stain'
+      :'SW SuperDeck Solid Stain';
+  }
 
-  // Summary
+  // Summary HTML
   let html=`<div class="sum-line" style="font-size:11px;color:#6b7280"><span>Product: ${prodLabel}</span></div>`;
   html+=lines.map(l=>`<div class="sum-line seg-line"><span>${l.label} — ${l.type}, ${l.sides}s, ${l.lf} LF</span><span class="sum-val">$${l.price.toFixed(2)}</span></div>`).join('');
-  html+=`<div class="sum-line"><span>${isPaint?'Primer coat (1st)':'Base coat'}</span><span class="sum-val">$${subtotal.toFixed(2)}</span></div>`;
   if(isPaint){
-    html+=`<div class="sum-line addon"><span>2nd Coat / Coat 1 Finish (0.85×) 🔒</span><span class="sum-val">+$${coat2Cost.toFixed(2)}</span></div>`;
-    html+=`<div class="sum-line addon"><span>3rd Coat / Coat 2 Finish (0.85×) 🔒</span><span class="sum-val">+$${coat3Cost.toFixed(2)}</span></div>`;
-  } else if(coat2On){
-    html+=`<div class="sum-line addon"><span>2nd Coat (0.85×)</span><span class="sum-val">+$${coat2Cost.toFixed(2)}</span></div>`;
+    if(primerOn){
+      html+=`<div class="sum-line"><span>Primer Coat</span><span class="sum-val">$${primerCost.toFixed(2)}</span></div>`;
+      html+=`<div class="sum-line addon"><span>1st Finish Coat</span><span class="sum-val">+$${finish1Cost.toFixed(2)}</span></div>`;
+      html+=`<div class="sum-line addon"><span>2nd Finish Coat (0.85×) 🔒</span><span class="sum-val">+$${finish2Cost.toFixed(2)}</span></div>`;
+    } else {
+      html+=`<div class="sum-line"><span>1st Finish Coat</span><span class="sum-val">$${finish1Cost.toFixed(2)}</span></div>`;
+      html+=`<div class="sum-line addon"><span>2nd Finish Coat (0.85×) 🔒</span><span class="sum-val">+$${finish2Cost.toFixed(2)}</span></div>`;
+    }
+  } else {
+    html+=`<div class="sum-line"><span>Base coat</span><span class="sum-val">$${stainBase.toFixed(2)}</span></div>`;
+    if(coat2On){
+      html+=`<div class="sum-line addon"><span>2nd Coat (0.85×)</span><span class="sum-val">+$${stain2Cost.toFixed(2)}</span></div>`;
+    }
   }
   if(maskOn)html+=`<div class="sum-line addon"><span>Heavy Masking (${totalLF} LF × $2.00)</span><span class="sum-val">+$${maskCost.toFixed(2)}</span></div>`;
   html+=`<div class="sum-line total"><span>Total</span><span>$${total.toFixed(2)}</span></div>`;
