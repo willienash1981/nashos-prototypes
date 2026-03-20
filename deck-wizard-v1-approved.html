@@ -242,16 +242,16 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
       </div>
       <div class="input-row">
         <label>OR dims</label>
-        <input type="number" id="skirting-l" placeholder="L" style="max-width:55px" oninput="calcSkirtingDims()">
+        <input type="number" id="skirting-l" placeholder="L" style="width:70px;min-width:70px" oninput="calcSkirtingDims()">
         <span style="font-size:12px">×</span>
-        <input type="number" id="skirting-h" placeholder="H" style="max-width:55px" oninput="calcSkirtingDims()">
+        <input type="number" id="skirting-h" placeholder="H" style="width:70px;min-width:70px" oninput="calcSkirtingDims()">
         <div class="unit">ft → SF</div>
       </div>
       <div class="input-row" style="margin-top:4px">
         <label>Posts</label>
-        <input type="number" id="post-h" placeholder="H (ft)" style="max-width:55px" oninput="calcPosts()">
+        <input type="number" id="post-h" placeholder="H (ft)" style="width:70px;min-width:70px" oninput="calcPosts()">
         <span style="font-size:12px">× qty</span>
-        <input type="number" id="post-count" placeholder="Qty" style="max-width:55px" oninput="calcPosts()">
+        <input type="number" id="post-count" placeholder="Qty" style="width:70px;min-width:70px" oninput="calcPosts()">
       </div>
       <div class="calc-note" id="posts-note">Post: 0.5' wide × H × 4 sides × count → adds to SF</div>
       <div class="calc-note">Rate: $1.39/SF</div>
@@ -563,12 +563,13 @@ function renderSections() {
             ${removable?`<button class="remove-btn" onclick="removeSect(${s.id})">✕</button>`:''}
           </div>
         </div>
+        ${buildPhotos(s)}
 
         <div class="q-label" style="font-size:12px">Dimensions</div>
         <div class="input-row">
-          <label>L</label><input type="number" data-sid="${s.id}" data-field="l" value="${l||''}" placeholder="L" oninput="sectInput(${s.id},'l',this.value)" style="max-width:65px">
+          <label>L</label><input type="number" data-sid="${s.id}" data-field="l" value="${l||''}" placeholder="L" oninput="sectInput(${s.id},'l',this.value)" style="width:70px;min-width:70px">
           <span style="font-size:12px">×</span>
-          <label>W</label><input type="number" data-sid="${s.id}" data-field="w" value="${w||''}" placeholder="W" oninput="sectInput(${s.id},'w',this.value)" style="max-width:65px">
+          <label>W</label><input type="number" data-sid="${s.id}" data-field="w" value="${w||''}" placeholder="W" oninput="sectInput(${s.id},'w',this.value)" style="width:70px;min-width:70px">
           <div class="unit">ft → ${sf} SF</div>
         </div>
         <div class="coat-toggle" style="margin:4px 0 10px">
@@ -602,13 +603,14 @@ function renderSections() {
             <button class="remove-btn" onclick="removeSect(${s.id})">✕</button>
           </div>
         </div>
+        ${buildPhotos(s)}
         <div class="input-row">
           <label style="min-width:55px">Steps</label>
-          <input type="number" data-sid="${s.id}" data-field="steps" value="${s.steps||''}" oninput="sectInput(${s.id},'steps',this.value)" style="max-width:65px">
+          <input type="number" data-sid="${s.id}" data-field="steps" value="${s.steps||''}" oninput="sectInput(${s.id},'steps',this.value)" style="width:70px;min-width:70px">
         </div>
         <div class="input-row">
           <label style="min-width:55px">Width</label>
-          <input type="number" data-sid="${s.id}" data-field="widthIn" value="${s.widthIn||36}" oninput="sectInput(${s.id},'widthIn',this.value);sectInput(${s.id},'openingFt',Math.round(this.value/12*10)/10)" style="max-width:65px">
+          <input type="number" data-sid="${s.id}" data-field="widthIn" value="${s.widthIn||36}" oninput="sectInput(${s.id},'widthIn',this.value);sectInput(${s.id},'openingFt',Math.round(this.value/12*10)/10)" style="width:70px;min-width:70px">
           <div class="unit">in → ${((s.widthIn||36)/12).toFixed(1)}' opening</div>
         </div>
         <div class="calc-note">Surface: ${stairSF} SF @ $${RATES.stair}/SF = $${Math.round(stairSF*RATES.stair)}</div>
@@ -619,7 +621,7 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label style="min-width:55px">Rail len</label>
-          <input type="number" data-sid="${s.id}" data-field="railLen" value="${s.railLen||''}" oninput="sectInput(${s.id},'railLen',this.value)" style="max-width:65px">
+          <input type="number" data-sid="${s.id}" data-field="railLen" value="${s.railLen||''}" oninput="sectInput(${s.id},'railLen',this.value)" style="width:70px;min-width:70px">
           <div class="unit">ft/side <span style="font-size:10px;color:var(--text-light)">(≈ # steps)</span></div>
         </div>
       </div>`;
@@ -638,11 +640,12 @@ function renderSections() {
             <button class="remove-btn" onclick="removeSect(${s.id})">✕</button>
           </div>
         </div>
+        ${buildPhotos(s)}
         <div class="input-row">
           <label>Size</label>
-          <input type="number" data-sid="${s.id}" data-field="l" value="${s.l||4}" oninput="sectInput(${s.id},'l',this.value)" style="max-width:50px">
+          <input type="number" data-sid="${s.id}" data-field="l" value="${s.l||4}" oninput="sectInput(${s.id},'l',this.value)" style="width:70px;min-width:70px">
           <span style="font-size:12px">×</span>
-          <input type="number" data-sid="${s.id}" data-field="w" value="${s.w||4}" oninput="sectInput(${s.id},'w',this.value)" style="max-width:50px">
+          <input type="number" data-sid="${s.id}" data-field="w" value="${s.w||4}" oninput="sectInput(${s.id},'w',this.value)" style="width:70px;min-width:70px">
           <div class="unit">ft → ${sf} SF</div>
         </div>
         <div class="coat-toggle" style="margin:4px 0 8px">
@@ -651,7 +654,7 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label>Rail sides</label>
-          <input type="number" data-sid="${s.id}" data-field="sides" value="${s.sides!==undefined?s.sides:2}" min="0" max="4" oninput="sectInput(${s.id},'sides',this.value)" style="max-width:50px">
+          <input type="number" data-sid="${s.id}" data-field="sides" value="${s.sides!==undefined?s.sides:2}" min="0" max="4" oninput="sectInput(${s.id},'sides',this.value)" style="width:70px;min-width:70px">
           <div class="unit">of 4 → ${railLf} LF</div>
         </div>
       </div>`;
@@ -666,6 +669,7 @@ function renderSections() {
             <button class="remove-btn" onclick="removeSect(${s.id})">✕</button>
           </div>
         </div>
+        ${buildPhotos(s)}
         <div class="input-row">
           <label>Linear ft</label>
           <input type="number" data-sid="${s.id}" data-field="lf" value="${s.lf||''}" oninput="sectInput(${s.id},'lf',this.value)">
@@ -862,6 +866,70 @@ function calc() {
   document.getElementById('bottomTotal').textContent = '$'+totalRound.toLocaleString();
   document.getElementById('rtProduct').textContent = state.productName || 'Semi-Transparent Stain';
   document.getElementById('rtDetail').textContent = `Floor: ${Math.round(sumFloorSF)} SF · Stairs: ${Math.round(sumStairSF)} SF · Rail: ${Math.round(sumRailLF)} LF`;
+}
+
+function buildPhotos(s) {
+  if(!s.photos) s.photos=[];
+  let ph = `<div style="background:white;border-radius:10px;margin:0 0 8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px">📷 Section Photos</div>
+    <div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px" id="photos-${s.id}">`;
+  s.photos.forEach((p,i) => {
+    ph += `<div style="position:relative">
+      <img src="${p.src}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer" onclick="deckShowPhoto('${p.src.replace(/'/g,"\\'")}')">
+      <button onclick="deckRemovePhoto(${s.id},${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#ef4444;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">✕</button>
+    </div>`;
+  });
+  ph += `</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="deckCapturePhoto(${s.id})" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid #d1d5db;background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">📷 Take Photo</button>
+      <button onclick="deckPickPhoto(${s.id})" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid #d1d5db;background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🖼️ From Library</button>
+    </div>
+  </div>`;
+  return ph;
+}
+
+function deckCapturePhoto(sid) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*'; inp.capture = 'environment';
+  inp.onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      const s = state.sections.find(x=>x.id===sid);
+      if(!s.photos) s.photos=[];
+      s.photos.push({src:ev.target.result});
+      renderSections();
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+function deckPickPhoto(sid) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      const s = state.sections.find(x=>x.id===sid);
+      if(!s.photos) s.photos=[];
+      s.photos.push({src:ev.target.result});
+      renderSections();
+    };
+    r.readAsDataURL(f);
+  };
+  inp.click();
+}
+function deckRemovePhoto(sid, idx) {
+  const s = state.sections.find(x=>x.id===sid);
+  if(s&&s.photos) { s.photos.splice(idx,1); renderSections(); }
+}
+function deckShowPhoto(src) {
+  const ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;display:flex;align-items:center;justify-content:center';
+  ov.onclick=()=>ov.remove();
+  ov.innerHTML=`<img src="${src}" style="max-width:95vw;max-height:90vh;border-radius:8px">`;
+  document.body.appendChild(ov);
 }
 
 // Init
