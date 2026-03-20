@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Interior Painting Wizard — NashOS</title>
+<style>
+:root {
+  --navy:#1B2A4A; --navy-light:#2A3F6A; --navy-mid:#233457;
+  --bg:#F5F3EF; --card:#FFFFFF; --text:#2C2C2C; --text-sec:#6B7280;
+  --green:#10B981; --green-bg:#ECFDF5;
+  --red:#EF4444; --red-bg:#FEF2F2;
+  --yellow:#F59E0B; --yellow-bg:#FFFBEB;
+  --accent:#3B82F6;
+  --border:#E5E7EB; --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);max-width:900px;margin:0 auto;min-height:100vh;padding-bottom:120px}
+
+/* ── Header ── */
+.topbar{position:sticky;top:0;z-index:100;background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.topbar .back{color:#C4A962;text-decoration:none;font-size:15px;white-space:nowrap}
+.topbar .title-wrap{flex:1;min-width:0}
+.topbar .title{font-size:13px;font-weight:700;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar .subtitle{font-size:11px;opacity:.6;margin-top:1px}
+.topbar .nights-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar .nights-lbl{font-size:12px;opacity:.85;white-space:nowrap}
+
+.total-bar{position:sticky;top:53px;z-index:99;background:var(--navy-light);color:#fff;padding:9px 16px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.total-bar .price{color:#C4A962;font-size:20px;font-weight:700}
+.total-bar .meta{font-size:12px;opacity:.75}
+.total-bar .nights-badge{background:rgba(245,158,11,.2);color:#F59E0B;border:1px solid rgba(245,158,11,.4);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700;display:none}
+.total-bar .nights-badge.show{display:inline}
+
+/* ── Layout ── */
+.layout{display:flex;gap:0;align-items:flex-start}
+.rooms-col{flex:1;min-width:0}
+.summary-col{width:320px;flex-shrink:0;position:sticky;top:90px;max-height:calc(100vh - 100px);overflow-y:auto;padding:12px 12px 12px 0}
+@media(max-width:720px){.layout{flex-direction:column}.summary-col{width:100%;position:static;max-height:none;padding:0 12px 12px}}
+
+/* ── Cards ── */
+.card{background:var(--card);border-radius:var(--radius);margin:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* ── Room cards ── */
+.room-card{background:var(--card);border-radius:var(--radius);margin:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden;border:1.5px solid var(--border)}
+.room-header{background:var(--navy);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.room-header input.room-name-input{flex:1;background:transparent;border:none;color:#fff;font-size:15px;font-weight:700;outline:none;min-width:0}
+.room-header input.room-name-input::placeholder{color:rgba(255,255,255,.5)}
+.room-menu-btn{background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:4px 6px;line-height:1;letter-spacing:2px}
+.room-menu-btn:active{color:#fff}
+.room-body{padding:14px}
+
+/* Room type pills */
+.type-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.type-pill{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;transition:.15s}
+.type-pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* Dimensions */
+.dim-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px}
+.dim-field{flex:1}
+.dim-field label{font-size:11px;font-weight:700;color:var(--text-sec);display:block;margin-bottom:3px}
+.dim-field input{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 10px;font-size:15px;font-family:inherit;background:#fff;color:var(--text);text-align:center}
+.dim-field input:focus{border-color:var(--navy);outline:none}
+
+/* Height tier badge */
+.height-tier{margin-bottom:12px;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;display:none}
+.ht-standard{background:var(--green-bg);color:#065F46}
+.ht-tall{background:var(--yellow-bg);color:#92400E}
+.ht-high{background:var(--red-bg);color:#991B1B}
+
+/* Surface toggles 2×2 grid */
+.surface-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.surface-toggle-card{border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s;background:#fff}
+.surface-toggle-card.on{border-color:var(--navy);background:rgba(27,42,74,.05)}
+.surface-toggle-card .surf-header{display:flex;align-items:center;justify-content:space-between}
+.surface-toggle-card .surf-name{font-size:13px;font-weight:700}
+.surface-toggle-card .surf-check{font-size:16px}
+.surface-toggle-card .surf-rate{font-size:10px;color:var(--text-sec);margin-top:2px}
+.surface-toggle-card .surf-details{margin-top:8px;display:none}
+.surface-toggle-card.on .surf-details{display:block}
+
+/* Coat stepper */
+.coat-row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.coat-lbl{font-size:11px;color:var(--text-sec);flex:1}
+.coat-btn{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text)}
+.coat-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* Obstacle section */
+.obstacle-section{background:var(--red-bg);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px;margin-bottom:12px;display:none}
+.obstacle-section.show{display:block}
+.obstacle-title{font-size:12px;font-weight:700;color:#991B1B;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.obs-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.obs-row{display:flex;align-items:center;gap:6px}
+.obs-lbl{font-size:11px;font-weight:600;flex:1;color:var(--text)}
+.obs-input{width:54px;border:1px solid var(--border);border-radius:6px;padding:5px 6px;font-size:13px;text-align:center;background:#fff}
+.obs-subtotal{font-size:11px;color:#991B1B;margin-top:6px;font-weight:600}
+
+/* Windows section */
+.wins-section{margin-top:8px}
+.wins-header{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px}
+.win-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.win-select{border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:12px;background:#fff;font-family:inherit;color:var(--text);flex:1;min-width:100px}
+.win-qty-input{width:54px;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:13px;text-align:center;background:#fff}
+.win-price-lbl{font-size:11px;color:var(--text-sec);white-space:nowrap;min-width:60px;text-align:right}
+.win-remove{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:2px 5px;line-height:1}
+.btn-add-win{background:none;border:1px dashed var(--accent);color:var(--accent);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:4px}
+.win-note{font-size:10px;color:var(--text-sec);margin-top:4px;font-style:italic}
+
+/* Closet section */
+.closet-section{background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:10px;border:1px solid var(--border)}
+.closet-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:7px}
+.closet-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.closet-lbl{font-size:12px;flex:1;color:var(--text)}
+.closet-input{width:60px;border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;text-align:center;background:#fff}
+.closet-note{font-size:10px;color:var(--text-sec);margin-top:3px;font-style:italic}
+
+/* Doors inline field */
+.doors-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.doors-lbl{font-size:12px;font-weight:600;flex:1}
+.doors-input{width:60px;border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:13px;text-align:center;background:#fff}
+
+/* Room mini-summary strip */
+.room-mini-sum{background:var(--navy);color:#fff;padding:8px 14px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.room-mini-sum .rs-label{opacity:.8}
+.room-mini-sum .rs-price{font-weight:700;color:#C4A962}
+
+/* Dropdown menu */
+.menu-overlay{position:fixed;inset:0;z-index:200;display:none}
+.menu-overlay.open{display:block}
+.dropdown-menu{position:absolute;right:8px;top:44px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:201;min-width:140px;overflow:hidden}
+.dropdown-item{padding:12px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.dropdown-item:last-child{border-bottom:none}
+.dropdown-item:hover{background:var(--bg)}
+.dropdown-item.danger{color:var(--red)}
+
+/* Summary panel */
+.sum-panel{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 4px rgba(0,0,0,.08);padding:14px;border:1.5px solid var(--border)}
+.sum-panel-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.sum-room{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sum-room:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.sum-room-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.sum-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;padding:2px 0}
+.sum-line .sl-label{color:var(--text-sec);flex:1}
+.sum-line .sl-price{font-weight:600;color:var(--text);white-space:nowrap}
+.sum-room-total{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)}
+.sum-grand{display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--navy);padding-top:12px;border-top:2px solid var(--navy);margin-top:8px}
+.sum-grand .gp{color:#C4A962}
+
+/* Add room button */
+.add-room-wrap{padding:0 12px 12px}
+.btn-add-room{background:var(--navy);color:#fff;border:none;border-radius:var(--radius);padding:13px 20px;font-size:14px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-add-room:active{background:var(--navy-light)}
+
+/* Switch */
+.switch{position:relative;width:42px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch .slider{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:.2s}
+.switch .slider::before{content:'';position:absolute;width:20px;height:20px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:var(--yellow)}
+.switch input:checked+.slider::before{transform:translateX(18px)}
+
+/* Misc */
+.hidden{display:none!important}
+.fade-in{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.section-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);padding:10px 14px 4px}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="topbar">
+  <div class="title-wrap">
+    <div class="title" id="jobTitle">Interior Painting Wizard</div>
+    <div class="subtitle">NashOS Estimator</div>
+  </div>
+  <div class="nights-wrap">
+    <span class="nights-lbl">🌙 Nights</span>
+    <label class="switch">
+      <input type="checkbox" id="nightsToggle" onchange="onNightsChange()">
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+<div class="total-bar">
+  <span class="price" id="grandTotal">$0.00</span>
+  <span class="meta" id="totalMeta">0 rooms</span>
+  <span class="nights-badge" id="nightsBadge">🌙 ×1.5 surcharge</span>
+</div>
+
+<div class="layout">
+  <!-- Rooms column -->
+  <div class="rooms-col">
+    <div id="roomsList"></div>
+    <div class="add-room-wrap">
+      <button class="btn-add-room" onclick="addRoom()">+ Add Room</button>
+    </div>
+  </div>
+
+  <!-- Summary column -->
+  <div class="summary-col">
+    <div class="sum-panel" id="summaryPanel">
+      <div class="sum-panel-title">📋 Live Estimate</div>
+      <div id="summaryBody"><p style="font-size:12px;color:var(--text-sec)">Add a room to see the breakdown.</p></div>
+      <div class="sum-grand hidden" id="grandRow">
+        <span>Grand Total</span>
+        <span class="gp" id="grandTotalSum">$0.00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dropdown overlay -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const ROOM_TYPES = ['Bedroom','Living Room','Kitchen','Bathroom','Hallway','Dining Room','Office','Other'];
+const GRID_OPTIONS = [
+  {label:'No Grids',grids:0},
+  {label:'4 Grids',grids:4},
+  {label:'8 Grids',grids:8},
+  {label:'12 Grids',grids:12},
+  {label:'16 Grids',grids:16},
+  {label:'Custom',grids:-1}
+];
+
+const RATES = {
+  wallLabor: 0.3625,       // per SF per coat
+  ceilLabor: 0.3625,       // per SF per coat
+  tallUpperLabor: 0.4531,  // per SF per coat
+  highUpperLabor: 0.5800,  // per SF per coat
+  trim: 1.256,             // per LF per coat
+  door: 47.39,             // per EA per coat
+  winBase: 35.00,          // per window
+  winGrid: 1.00,           // per grid
+  recessedLight: 3.50,     // per EA per coat (obstacle)
+  ceilFan: 3.50,
+  chandelier: 7.00,
+  closetShelfBack: 5.80,   // flat
+  material: 0.082          // per SF (paint only)
+};
+
+// Closet standard dims
+const CLOSET_SINGLE_L = 5, CLOSET_SINGLE_W = 3;
+const CLOSET_DOUBLE_L = 10, CLOSET_DOUBLE_W = 3;
+
+let rooms = [];
+let nightsOn = false;
+let openMenuId = null;
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+window.onload = () => {
+  // Pre-populate sample room
+  const sample = newRoom('Master Bedroom');
+  sample.L = 14; sample.W = 12; sample.H = 9;
+  sample.walls = true; sample.ceiling = true; sample.trim = true; sample.doorsWindows = true;
+  sample.wallCoats = 2; sample.ceilCoats = 1; sample.trimCoats = 2;
+  sample.doors = 1;
+  sample.windows = [{grids: 0, qty: 2}];
+  sample.reachInClosets = 1;
+  rooms.push(sample);
+  renderAll();
+};
+
+// ─── DATA MODEL ──────────────────────────────────────────────────────────────
+function newRoom(name='') {
+  return {
+    id: Date.now() + Math.random(),
+    name: name || 'New Room',
+    type: '',
+    L: '', W: '', H: '',
+    walls: true, ceiling: false, trim: false, doorsWindows: false,
+    wallCoats: 2, ceilCoats: 1, trimCoats: 2,
+    doors: 0,
+    windows: [],
+    obstacles: {recessedLights:0, ceilFans:0, chandeliers:0, beamsLF:0, smokeDetectors:0},
+    reachInClosets: 0, doubleReachIn: 0, shelfBacks: 0
+  };
+}
+
+// ─── RENDERING ───────────────────────────────────────────────────────────────
+function renderAll() {
+  renderRooms();
+  renderSummary();
+}
+
+function renderRooms() {
+  const container = document.getElementById('roomsList');
+  container.innerHTML = '';
+  rooms.forEach(r => container.appendChild(buildRoomCard(r)));
+}
+
+function buildRoomCard(r) {
+  const div = document.createElement('div');
+  div.className = 'room-card fade-in';
+  div.id = `room-${r.id}`;
+
+  // Compute height tier
+  const H = parseFloat(r.H) || 0;
+  const tierInfo = getHeightTier(H);
+
+  // Compute room price for mini-summary
+  const calc = calcRoom(r);
+  const price = nightsOn ? calc.total * 1.5 : calc.total;
+
+  div.innerHTML = `
+    <!-- Room header -->
+    <div class="room-header" style="position:relative">
+      <input class="room-name-input" type="text" value="${esc(r.name)}" placeholder="Room Name"
+        onchange="setRoomProp('${r.id}','name',this.value)">
+      <button class="room-menu-btn" onclick="toggleMenu(event,'${r.id}')">⋯</button>
+      <div class="dropdown-menu hidden" id="menu-${r.id}">
+        <div class="dropdown-item danger" onclick="deleteRoom('${r.id}')">🗑 Delete Room</div>
+      </div>
+    </div>
+
+    <!-- Type pills -->
+    <div class="room-body">
+      <div class="type-pills">
+        ${ROOM_TYPES.map(t => `
+          <div class="type-pill ${r.type===t?'active':''}" onclick="setRoomProp('${r.id}','type','${t}');this.parentElement.querySelectorAll('.type-pill').forEach(p=>p.classList.remove('active'));this.classList.add('active')">${t}</div>
+        `).join('')}
+      </div>
+
+      <!-- Dimensions -->
+      <div class="dim-row">
+        <div class="dim-field"><label>L (ft)</label><input type="number" min="0" step="0.5" value="${r.L}" placeholder="0" oninput="setRoomProp('${r.id}','L',this.value)"></div>
+        <div class="dim-field"><label>W (ft)</label><input type="number" min="0" step="0.5" value="${r.W}" placeholder="0" oninput="setRoomProp('${r.id}','W',this.value)"></div>
+        <div class="dim-field"><label>H (ft)</label><input type="number" min="0" step="0.5" value="${r.H}" placeholder="0" oninput="setRoomProp('${r.id}','H',this.value)"></div>
+      </div>
+
+      <!-- Height tier indicator -->
+      <div class="height-tier ${tierInfo.cls}" style="${H > 0 ? 'display:block' : 'display:none'}">
+        ${tierInfo.label}
+        ${tierInfo.splitNote && calc.wallsSF > 0 ? `<div style="margin-top:4px;font-size:11px;font-weight:400">${calc.wallSplitNote}</div>` : ''}
+      </div>
+
+      <!-- Surface toggles 2×2 -->
+      <div class="surface-grid">
+        ${surfaceCard(r, 'walls', '🧱 Walls', `$${RATES.wallLabor.toFixed(4)}/SF/coat`)}
+        ${surfaceCard(r, 'ceiling', '⬜ Ceiling', `$${RATES.ceilLabor.toFixed(4)}/SF/coat`)}
+        ${surfaceCard(r, 'trim', '📏 Trim/Baseboards', `$${RATES.trim.toFixed(3)}/LF/coat`)}
+        ${surfaceCard(r, 'doorsWindows', '🚪 Doors & Windows', `$${RATES.door.toFixed(2)}/door + windows`)}
+      </div>
+
+      <!-- Walls coats (shown if walls on) -->
+      ${r.walls ? coatRow(r.id, 'wallCoats', r.wallCoats, 'Wall coats') : ''}
+
+      <!-- Ceiling coats + obstacles (shown if ceiling on) -->
+      ${r.ceiling ? coatRow(r.id, 'ceilCoats', r.ceilCoats, 'Ceiling coats') : ''}
+
+      <!-- Ceiling obstacles for tall/high -->
+      ${(r.ceiling && H > 12) ? obstacleSection(r, tierInfo) : ''}
+
+      <!-- Trim coats -->
+      ${r.trim ? coatRow(r.id, 'trimCoats', r.trimCoats, 'Trim coats') : ''}
+
+      <!-- Doors & Windows detail -->
+      ${r.doorsWindows ? doorsWindowsSection(r) : ''}
+
+      <!-- Closets -->
+      ${closetSection(r)}
+    </div>
+
+    <!-- Mini price bar -->
+    <div class="room-mini-sum">
+      <span class="rs-label">${r.name}</span>
+      <span class="rs-price">${fmtPrice(price)}</span>
+    </div>
+  `;
+  return div;
+}
+
+function surfaceCard(r, key, label, rateLabel) {
+  const on = r[key];
+  return `
+    <div class="surface-toggle-card ${on?'on':''}" onclick="toggleSurface('${r.id}','${key}')">
+      <div class="surf-header">
+        <span class="surf-name">${label}</span>
+        <span class="surf-check">${on ? '✅' : '⬜'}</span>
+      </div>
+      <div class="surf-rate">${rateLabel}</div>
+    </div>
+  `;
+}
+
+function coatRow(rid, prop, val, lbl) {
+  return `
+    <div class="coat-row" style="margin-bottom:6px">
+      <span class="coat-lbl">${lbl}:</span>
+      <button class="coat-btn ${val===1?'active':''}" onclick="setRoomProp('${rid}','${prop}',1)">1 coat</button>
+      <button class="coat-btn ${val===2?'active':''}" onclick="setRoomProp('${rid}','${prop}',2)">2 coats</button>
+    </div>
+  `;
+}
+
+function obstacleSection(r, tierInfo) {
+  const obs = r.obstacles;
+  const totalObs = calcObstacles(r, tierInfo);
+  return `
+    <div class="obstacle-section show">
+      <div class="obstacle-title">➕ Ceiling obstacles <span style="font-weight:400;font-size:10px">(each requires ladder repositioning)</span></div>
+      ${tierInfo.tier === 'high' ? `<div style="font-size:11px;color:#991B1B;margin-bottom:7px">🔴 High ceiling — 18ft ladder cycle pricing applied</div>` : ''}
+      <div class="obs-grid">
+        <div class="obs-row"><span class="obs-lbl">Recessed Lights</span><input class="obs-input" type="number" min="0" value="${obs.recessedLights||0}" oninput="setObstacle('${r.id}','recessedLights',this.value)"></div>
+        <div class="obs-row"><span class="obs-lbl">Ceiling Fans</span><input class="obs-input" type="number" min="0" value="${obs.ceilFans||0}" oninput="setObstacle('${r.id}','ceilFans',this.value)"></div>
+        <div class="obs-row"><span class="obs-lbl">Chandelier</span><input class="obs-input" type="number" min="0" value="${obs.chandeliers||0}" oninput="setObstacle('${r.id}','chandeliers',this.value)"></div>
+        <div class="obs-row"><span class="obs-lbl">Beams (LF)</span><input class="obs-input" type="number" min="0" value="${obs.beamsLF||0}" oninput="setObstacle('${r.id}','beamsLF',this.value)"></div>
+        <div class="obs-row"><span class="obs-lbl">Smoke Detectors</span><input class="obs-input" type="number" min="0" value="${obs.smokeDetectors||0}" oninput="setObstacle('${r.id}','smokeDetectors',this.value)"></div>
+      </div>
+      ${totalObs > 0 ? `<div class="obs-subtotal">${obsSubtotalText(r, totalObs)}</div>` : ''}
+    </div>
+  `;
+}
+
+function obsSubtotalText(r, total) {
+  const obs = r.obstacles;
+  const parts = [];
+  if (obs.recessedLights > 0) parts.push(`${obs.recessedLights} recessed × $${RATES.recessedLight.toFixed(2)}`);
+  if (obs.ceilFans > 0) parts.push(`${obs.ceilFans} fans × $${RATES.ceilFan.toFixed(2)}`);
+  if (obs.chandeliers > 0) parts.push(`${obs.chandeliers} chandeliers × $${RATES.chandelier.toFixed(2)}`);
+  if (obs.smokeDetectors > 0) parts.push(`${obs.smokeDetectors} smoke det. × $${RATES.recessedLight.toFixed(2)}`);
+  return parts.join(' | ') + ` = ${fmtPrice(total)}`;
+}
+
+function doorsWindowsSection(r) {
+  const windowRows = (r.windows || []).map((w, i) => {
+    const priceEa = winPrice(w.grids);
+    const isCustom = w.grids === -1;
+    return `
+      <div class="win-row">
+        <select class="win-select" onchange="setWindowGrids('${r.id}',${i},this.value)">
+          ${GRID_OPTIONS.map(o => `<option value="${o.grids}" ${w.grids===o.grids?'selected':''}>${o.label} ${o.grids>=0?'($'+(35+o.grids)+')':''}</option>`).join('')}
+        </select>
+        ${isCustom ? `<input type="number" min="0" placeholder="grids" style="width:60px;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:12px;text-align:center" value="${w.customGrids||''}" oninput="setWindowCustomGrids('${r.id}',${i},this.value)">` : ''}
+        <input class="win-qty-input" type="number" min="0" value="${w.qty||1}" oninput="setWindowQty('${r.id}',${i},this.value)">
+        <span class="win-price-lbl">${fmtPrice(priceEa)} ea</span>
+        <button class="win-remove" onclick="removeWindow('${r.id}',${i})">×</button>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="wins-section">
+      <div class="doors-row">
+        <span class="doors-lbl">🚪 Doors (qty)</span>
+        <input class="doors-input" type="number" min="0" value="${r.doors||0}" oninput="setRoomProp('${r.id}','doors',this.value)">
+        <span style="font-size:11px;color:var(--text-sec)">$${RATES.door.toFixed(2)}/coat</span>
+      </div>
+      <div class="wins-header">🪟 Windows</div>
+      ${windowRows}
+      <button class="btn-add-win" onclick="addWindow('${r.id}')">+ Add window type</button>
+      <div class="win-note">⚠️ Internal / between-glass grids are NEVER counted.</div>
+    </div>
+  `;
+}
+
+function closetSection(r) {
+  return `
+    <div class="closet-section">
+      <div class="closet-title">🚪 Closets</div>
+      <div class="closet-row">
+        <span class="closet-lbl">Reach-in closets (single, 5×3)</span>
+        <input class="closet-input" type="number" min="0" value="${r.reachInClosets||0}" oninput="setRoomProp('${r.id}','reachInClosets',this.value)">
+      </div>
+      <div class="closet-row">
+        <span class="closet-lbl">Reach-in closets (double, 10×3)</span>
+        <input class="closet-input" type="number" min="0" value="${r.doubleReachIn||0}" oninput="setRoomProp('${r.id}','doubleReachIn',this.value)">
+      </div>
+      <div class="closet-row">
+        <span class="closet-lbl">Shelf backs to paint</span>
+        <input class="closet-input" type="number" min="0" value="${r.shelfBacks||0}" oninput="setRoomProp('${r.id}','shelfBacks',this.value)">
+        <span style="font-size:11px;color:var(--text-sec)">× $${RATES.closetShelfBack.toFixed(2)}</span>
+      </div>
+      <div class="closet-note">Walk-in closets → add as separate rooms. Reach-in SF rolls into wall/ceiling/baseboard totals.</div>
+    </div>
+  `;
+}
+
+// ─── CALCULATIONS ─────────────────────────────────────────────────────────────
+function getHeightTier(H) {
+  if (H <= 0) return {tier:'none', cls:'', label:'', splitNote:false};
+  if (H <= 12) return {tier:'standard', cls:'height-tier ht-standard', label:'✅ Standard ceiling — no split', splitNote:false};
+  if (H <= 14) return {tier:'tall', cls:'height-tier ht-tall', label:'⚠️ Tall ceiling (12ft ladder)', splitNote:true};
+  return {tier:'high', cls:'height-tier ht-high', label:'🔴 High ceiling (18ft ladder)', splitNote:true};
+}
+
+function winPrice(grids, customGrids) {
+  if (grids === -1) return RATES.winBase + (parseFloat(customGrids) || 0) * RATES.winGrid;
+  return RATES.winBase + grids * RATES.winGrid;
+}
+
+function calcObstacles(r, tierInfo) {
+  if (!tierInfo || tierInfo.tier === 'standard' || tierInfo.tier === 'none') return 0;
+  const obs = r.obstacles;
+  const coats = r.ceilCoats || 1;
+  let total = 0;
+  total += (obs.recessedLights || 0) * RATES.recessedLight * coats;
+  total += (obs.ceilFans || 0) * RATES.ceilFan * coats;
+  total += (obs.chandeliers || 0) * RATES.chandelier * coats;
+  total += (obs.smokeDetectors || 0) * RATES.recessedLight * coats;
+  // beams - priced like trim @ $1.256/LF
+  total += (obs.beamsLF || 0) * RATES.trim * coats;
+  return total;
+}
+
+function calcRoom(r) {
+  const L = parseFloat(r.L) || 0;
+  const W = parseFloat(r.W) || 0;
+  const H = parseFloat(r.H) || 0;
+  const tierInfo = getHeightTier(H);
+
+  // Closet SF additions
+  const closetSingleSF_wall = (r.reachInClosets || 0) * 2 * (CLOSET_SINGLE_L + CLOSET_SINGLE_W) * H;
+  const closetDoubleSF_wall = (r.doubleReachIn || 0) * 2 * (CLOSET_DOUBLE_L + CLOSET_DOUBLE_W) * H;
+  const closetSingleSF_ceil = (r.reachInClosets || 0) * CLOSET_SINGLE_L * CLOSET_SINGLE_W;
+  const closetDoubleSF_ceil = (r.doubleReachIn || 0) * CLOSET_DOUBLE_L * CLOSET_DOUBLE_W;
+
+  const perimeter = 2 * (L + W);
+  const closetPerim = (r.reachInClosets || 0) * 2 * (CLOSET_SINGLE_L + CLOSET_SINGLE_W)
+                    + (r.doubleReachIn || 0) * 2 * (CLOSET_DOUBLE_L + CLOSET_DOUBLE_W);
+  const totalPerim = perimeter + closetPerim;
+
+  // Wall SF
+  let wallsSF_standard = 0, wallsSF_upper = 0, wallSplitNote = '';
+  if (r.walls && L > 0 && W > 0 && H > 0) {
+    const totalWallSF = totalPerim * H;
+    if (tierInfo.tier === 'standard' || tierInfo.tier === 'none') {
+      wallsSF_standard = totalWallSF;
+    } else {
+      wallsSF_standard = totalPerim * 12;
+      wallsSF_upper = totalPerim * (H - 12);
+      wallSplitNote = `Walls: ${Math.round(wallsSF_standard)} SF standard + ${Math.round(wallsSF_upper)} SF upper (${tierInfo.tier} rate)`;
+    }
+  }
+
+  // Ceiling SF
+  const ceilSF = r.ceiling ? (L * W) + closetSingleSF_ceil + closetDoubleSF_ceil : 0;
+
+  // Trim LF (perimeter)
+  const trimLF = r.trim ? totalPerim : 0;
+
+  // Windows
+  let winTotal = 0;
+  (r.windows || []).forEach(w => {
+    const qty = parseFloat(w.qty) || 0;
+    winTotal += qty * winPrice(w.grids, w.customGrids);
+  });
+
+  // Doors
+  const doorTotal = r.doorsWindows ? (parseFloat(r.doors) || 0) * RATES.door * (r.wallCoats || 2) : 0;
+
+  // Shelf backs
+  const shelfTotal = (parseFloat(r.shelfBacks) || 0) * RATES.closetShelfBack;
+
+  // Obstacles
+  const obsTotal = calcObstacles(r, tierInfo);
+
+  // Labor
+  const wallCoats = r.wallCoats || 2;
+  const ceilCoats = r.ceilCoats || 1;
+  const trimCoats = r.trimCoats || 2;
+
+  const wallLaborStd = wallsSF_standard * RATES.wallLabor * wallCoats;
+  let wallLaborUpper = 0;
+  if (tierInfo.tier === 'tall') wallLaborUpper = wallsSF_upper * RATES.tallUpperLabor * wallCoats;
+  if (tierInfo.tier === 'high') wallLaborUpper = wallsSF_upper * RATES.highUpperLabor * wallCoats;
+
+  const ceilLabor = ceilSF * RATES.ceilLabor * ceilCoats;
+  const trimLabor = trimLF * RATES.trim * trimCoats;
+
+  // Material (wall paint only, total SF regardless of height split)
+  const totalWallSFForMaterial = wallsSF_standard + wallsSF_upper;
+  const matCost = totalWallSFForMaterial * RATES.material;
+
+  const total = wallLaborStd + wallLaborUpper + ceilLabor + trimLabor + doorTotal + winTotal + obsTotal + shelfTotal + matCost;
+
+  return {
+    total, wallsSF_standard, wallsSF_upper, wallSplitNote, wallSplitNote,
+    ceilSF, trimLF, doorTotal, winTotal, obsTotal, shelfTotal,
+    wallLaborStd, wallLaborUpper, ceilLabor, trimLabor, matCost,
+    tierInfo, wallCoats, ceilCoats, trimCoats,
+    r
+  };
+}
+
+function calcGrandTotal() {
+  const mult = nightsOn ? 1.5 : 1;
+  return rooms.reduce((sum, r) => sum + calcRoom(r).total * mult, 0);
+}
+
+// ─── SUMMARY ─────────────────────────────────────────────────────────────────
+function renderSummary() {
+  const body = document.getElementById('summaryBody');
+  const grandRow = document.getElementById('grandRow');
+  const mult = nightsOn ? 1.5 : 1;
+
+  if (rooms.length === 0) {
+    body.innerHTML = '<p style="font-size:12px;color:var(--text-sec)">Add a room to see the breakdown.</p>';
+    grandRow.classList.add('hidden');
+    updateTotalBar();
+    return;
+  }
+
+  let html = '';
+  rooms.forEach(r => {
+    const c = calcRoom(r);
+    const roomTotal = c.total * mult;
+    html += `<div class="sum-room">`;
+    html += `<div class="sum-room-name">${esc(r.name)}</div>`;
+
+    if (r.walls && c.wallsSF_standard > 0) {
+      html += sumLine(`Walls (std) ${Math.round(c.wallsSF_standard)} SF × ${c.wallCoats}ct`, c.wallLaborStd * mult);
+      if (c.wallsSF_upper > 0) {
+        html += sumLine(`Walls (upper) ${Math.round(c.wallsSF_upper)} SF × ${c.wallCoats}ct`, c.wallLaborUpper * mult);
+      }
+    }
+    if (r.ceiling && c.ceilSF > 0) {
+      html += sumLine(`Ceiling ${Math.round(c.ceilSF)} SF × ${c.ceilCoats}ct`, c.ceilLabor * mult);
+    }
+    if (r.trim && c.trimLF > 0) {
+      html += sumLine(`Trim ${Math.round(c.trimLF)} LF × ${c.trimCoats}ct`, c.trimLabor * mult);
+    }
+    if (r.doorsWindows && c.doorTotal > 0) {
+      html += sumLine(`Doors ${r.doors} EA × ${c.wallCoats}ct`, c.doorTotal * mult);
+    }
+    if (r.doorsWindows && c.winTotal > 0) {
+      (r.windows || []).forEach(w => {
+        const qty = parseFloat(w.qty) || 0;
+        if (qty > 0) {
+          const lbl = GRID_OPTIONS.find(o => o.grids === w.grids)?.label || 'Custom';
+          html += sumLine(`Windows — ${lbl} × ${qty}`, qty * winPrice(w.grids, w.customGrids) * mult);
+        }
+      });
+    }
+    if (c.obsTotal > 0) {
+      html += sumLine('Ceiling obstacles', c.obsTotal * mult);
+    }
+    if (c.shelfTotal > 0) {
+      html += sumLine(`Shelf backs × ${r.shelfBacks}`, c.shelfTotal * mult);
+    }
+    if (c.matCost > 0) {
+      html += sumLine('Material (paint)', c.matCost * mult);
+    }
+
+    html += `<div class="sum-room-total"><span>Room Subtotal</span><span>${fmtPrice(roomTotal)}</span></div>`;
+    html += `</div>`;
+  });
+
+  body.innerHTML = html;
+  grandRow.classList.remove('hidden');
+  const grand = calcGrandTotal();
+  document.getElementById('grandTotalSum').textContent = fmtPrice(grand);
+  updateTotalBar();
+}
+
+function sumLine(label, price) {
+  return `<div class="sum-line"><span class="sl-label">${label}</span><span class="sl-price">${fmtPrice(price)}</span></div>`;
+}
+
+function updateTotalBar() {
+  const grand = calcGrandTotal();
+  document.getElementById('grandTotal').textContent = fmtPrice(grand);
+  document.getElementById('totalMeta').textContent = `${rooms.length} room${rooms.length!==1?'s':''}`;
+  document.getElementById('nightsBadge').classList.toggle('show', nightsOn);
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────────────────────
+function addRoom() {
+  const r = newRoom('New Room');
+  rooms.push(r);
+  renderAll();
+}
+
+function deleteRoom(id) {
+  rooms = rooms.filter(r => String(r.id) !== String(id));
+  closeMenu();
+  renderAll();
+}
+
+function setRoomProp(id, prop, value) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  if (['L','W','H','doors','reachInClosets','doubleReachIn','shelfBacks','wallCoats','ceilCoats','trimCoats'].includes(prop)) {
+    r[prop] = parseFloat(value) || 0;
+  } else {
+    r[prop] = value;
+  }
+  renderAll();
+}
+
+function toggleSurface(id, key) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  r[key] = !r[key];
+  if (key === 'doorsWindows' && r[key] && (!r.windows || r.windows.length === 0)) {
+    r.windows = [{grids: 0, qty: 1}];
+  }
+  renderAll();
+}
+
+function setObstacle(id, key, value) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  if (!r.obstacles) r.obstacles = {};
+  r.obstacles[key] = parseFloat(value) || 0;
+  renderAll();
+}
+
+function addWindow(id) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  if (!r.windows) r.windows = [];
+  r.windows.push({grids: 0, qty: 1});
+  renderAll();
+}
+
+function removeWindow(id, idx) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  r.windows.splice(idx, 1);
+  renderAll();
+}
+
+function setWindowGrids(id, idx, value) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  r.windows[idx].grids = parseInt(value);
+  renderAll();
+}
+
+function setWindowCustomGrids(id, idx, value) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  r.windows[idx].customGrids = parseFloat(value) || 0;
+  renderAll();
+}
+
+function setWindowQty(id, idx, value) {
+  const r = rooms.find(r => String(r.id) === String(id));
+  if (!r) return;
+  r.windows[idx].qty = parseFloat(value) || 0;
+  renderAll();
+}
+
+function onNightsChange() {
+  nightsOn = document.getElementById('nightsToggle').checked;
+  renderAll();
+}
+
+// ─── MENU ─────────────────────────────────────────────────────────────────────
+function toggleMenu(evt, id) {
+  evt.stopPropagation();
+  const menu = document.getElementById(`menu-${id}`);
+  const overlay = document.getElementById('menuOverlay');
+  if (openMenuId && openMenuId !== id) {
+    document.getElementById(`menu-${openMenuId}`)?.classList.add('hidden');
+  }
+  const isOpen = !menu.classList.contains('hidden');
+  if (isOpen) {
+    menu.classList.add('hidden');
+    overlay.classList.remove('open');
+    openMenuId = null;
+  } else {
+    menu.classList.remove('hidden');
+    overlay.classList.add('open');
+    openMenuId = id;
+  }
+}
+
+function closeMenu() {
+  if (openMenuId) {
+    document.getElementById(`menu-${openMenuId}`)?.classList.add('hidden');
+    openMenuId = null;
+  }
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function fmtPrice(n) {
+  return '$' + (n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
