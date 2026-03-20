@@ -297,6 +297,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 </style>
 </head>
 <body>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:8px;margin:16px 16px 0" id="nightsToggleBar"><div><div style="font-size:13px;font-weight:600">🌙 Nights / Weekends</div><div style="font-size:11px;color:#94a3b8">1.5× surcharge — auto-tags crew for night work</div></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:#94a3b8" id="nightsLabel">Off</span><div class="toggle" id="nightsToggle" onclick="toggleNights()" style="cursor:pointer"></div></div></div>
+
 <div class="shell">
 
 <!-- TOP BAR -->
@@ -1536,6 +1538,26 @@ function updateAdjust() {
     ? 'No adjustment — Total: $' + BASE_TOTAL.toLocaleString()
     : 'Adjusting by ' + (v >= 0 ? '+' : '') + v + '% → Total becomes $' + adj.toLocaleString();
 }
+
+let nightsWeekends = false;
+function toggleNights() {
+  nightsWeekends = !nightsWeekends;
+  const t = document.getElementById('nightsToggle');
+  const l = document.getElementById('nightsLabel');
+  if (nightsWeekends) {
+    t.classList.add('on');
+    l.textContent = '1.5× ON';
+    l.style.color = '#818cf8';
+  } else {
+    t.classList.remove('on');
+    l.textContent = 'Off';
+    l.style.color = '';
+  }
+  if (typeof updateTotal === 'function') updateTotal();
+  if (typeof updateTotals === 'function') updateTotals();
+  if (typeof recalcTotal === 'function') recalcTotal();
+}
+
 </script>
 </body>
 </html>
