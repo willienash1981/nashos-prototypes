@@ -498,13 +498,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- NOTES -->
-<div class="card">
+<div class="card" style="margin-bottom:80px">
   <div class="note-tabs">
     <div class="note-tab active" onclick="switchNote(this,0)">📋 Estimate Notes</div>
     <div class="note-tab" onclick="switchNote(this,1)">👷 Crew Notes</div>
+    <div class="note-tab" onclick="switchNote(this,2)">🔒 Internal</div>
   </div>
-  <textarea class="note-area" id="note-0" placeholder="Internal notes for this room on the estimate..."></textarea>
+  <textarea class="note-area" id="note-0" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
   <textarea class="note-area" id="note-1" style="display:none" placeholder="Notes the crew will see on the work order..."></textarea>
+  <textarea class="note-area" id="note-2" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
 </div>
 
 <div class="bot">
