@@ -163,6 +163,17 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <span class="badge">BETA</span>
   </div>
 
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#f0f4ff;border-bottom:1px solid #dce3f5">
+    <div>
+      <span style="font-size:13px;font-weight:600">🌙 Nights / Weekends</span>
+      <span style="font-size:11px;color:#6b7280;margin-left:6px">1.5× surcharge</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:#6b7280" id="nightsLabel">Off</span>
+      <div class="toggle" id="nightsToggle" onclick="toggleNights()"><div class="knob"></div></div>
+    </div>
+  </div>
+
   <div class="running-total">
     <div><span class="big" id="rtTotal">$0</span></div>
     <div class="detail" id="rtDetail">1 main door · Standalone</div>
@@ -522,7 +533,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <div class="total" id="bottomTotal">$0</div>
     <div class="maint-line" id="bottomMaint"></div>
   </div>
-  <button class="save-btn" onclick="alert('Saved to estimate! (prototype)')">Save</button>
+  <button class="save-btn" onclick="alert('Saved to estimate! (prototype)')">Save to Estimate</button>
 </div>
 
 <!-- Lightbox -->
@@ -878,7 +889,8 @@ function recalc() {
   }
 
   // Bottom bar
-  document.getElementById('bottomTotal').textContent = fmt(gt);
+  const displayTotal = nightsOn ? Math.round(gt * 1.5) : gt;
+  document.getElementById('bottomTotal').textContent = fmt(displayTotal);
   const bmEl = document.getElementById('bottomMaint');
   if (maintenancePlan) {
     bmEl.textContent = 'Maintenance: ' + fmt(maintenancePerVisit()) + '/visit';
@@ -1115,6 +1127,18 @@ function switchNoteTab(btn, tab) {
     const el=document.getElementById('note'+t.charAt(0).toUpperCase()+t.slice(1));
     if(el) el.style.display=t===tab?'':'none';
   });
+}
+
+let nightsOn = false;
+function toggleNights() {
+  nightsOn = !nightsOn;
+  document.getElementById('nightsToggle').classList.toggle('on', nightsOn);
+  const lbl = document.getElementById('nightsLabel');
+  lbl.textContent = nightsOn ? '1.5× ON' : 'Off';
+  lbl.style.color = nightsOn ? '#4f46e5' : '#6b7280';
+  if(typeof recalc==='function') recalc();
+  if(typeof calc==='function') calc();
+  if(typeof updateTotal==='function') updateTotal();
 }
 </script>
 </body>
