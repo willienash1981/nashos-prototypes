@@ -1534,29 +1534,105 @@ function openProductDefault(idx) {
 }
 
 function renderVolume(el) {
-  const tiers = [
-    {range:'< $1,000', mult:'1.15'},
-    {range:'$1,000 – $2,499', mult:'1.10'},
-    {range:'$2,500 – $4,999', mult:'1.05'},
-    {range:'$5,000 – $9,999', mult:'1.00', base:true},
-    {range:'$10,000 – $19,999', mult:'0.97'},
-    {range:'$20,000+', mult:'0.94'},
+  // Zone D: $10k+ progressive discount steps (1% per $5k, up to configurable cap)
+  const zoneD = [
+    {range:'$10,000 – $14,999', adj:'-1%'},
+    {range:'$15,000 – $19,999', adj:'-2%'},
+    {range:'$20,000 – $24,999', adj:'-3%'},
+    {range:'$25,000 – $29,999', adj:'-4%'},
+    {range:'$30,000 – $34,999', adj:'-5%'},
+    {range:'$35,000 – $39,999', adj:'-6%'},
+    {range:'$40,000 – $44,999', adj:'-7%'},
+    {range:'$45,000 – $49,999', adj:'-8%'},
+    {range:'$50,000 – $54,999', adj:'-9%'},
+    {range:'$55,000 – $59,999', adj:'-10%'},
+    {range:'$60,000 – $64,999', adj:'-11%'},
+    {range:'$65,000 – $69,999', adj:'-12%'},
+    {range:'$70,000 – $74,999', adj:'-13%'},
+    {range:'$75,000 – $79,999', adj:'-14%'},
+    {range:'$80,000 – $84,999', adj:'-15%'},
+    {range:'$85,000 – $89,999', adj:'-16%'},
+    {range:'$90,000 – $94,999', adj:'-17%'},
+    {range:'$95,000 – $99,999', adj:'-18%'},
+    {range:'$100,000+', adj:'-19% (cap)'},
   ];
   el.innerHTML = `
-    <div style="background:var(--navy-mid);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--text-dim);">
-      ℹ️ Multipliers apply to total estimated job value before financing/promotions.
+    <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--accent-light);">
+      📈 4-zone unified pricing curve — auto-applied to every estimate, hidden from salespeople. Admin-configurable. Self-improves via data feedback loop over time.
     </div>
-    <div class="card" style="max-width:520px;">
-      <table><thead><tr><th>Job Size</th><th>Multiplier</th><th></th></tr></thead><tbody>
-        ${tiers.map(t=>`<tr>
-          <td class="${t.base?'bright':'dim'}">${t.range}${t.base?' <span style="font-size:10px;color:var(--text-dim)">(base)</span>':''}</td>
-          <td><input style="width:80px;padding:5px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--accent-light);font-size:13px;font-family:monospace;text-align:center;" value="${t.mult}x" /></td>
-          <td class="dim" style="font-size:11px;">${t.base?'📍 base rate':''}</td>
-        </tr>`).join('')}
-      </tbody></table>
-      <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
-        <button class="btn btn-primary btn-sm">💾 Save Multipliers</button>
+
+    <!-- Zone A -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-h"><div class="card-t">🟡 Zone A — Flat Floor (≤ $450)</div></div>
+      <div class="card-b">
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px">Any job that calculates to ≤$450 gets a flat surcharge added. Covers drive time, setup, cleanup, admin overhead. A $200 touch-up becomes $650.</div>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+          <div><label class="form-label" style="font-size:11px">Floor Threshold</label>
+            <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--text-sec)">≤ $</span><input type="number" value="450" style="width:80px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"></div></div>
+          <div><label class="form-label" style="font-size:11px">Flat Surcharge Added</label>
+            <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--text-sec)">+ $</span><input type="number" value="450" style="width:80px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"></div></div>
+        </div>
       </div>
+    </div>
+
+    <!-- Zone B -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-h"><div class="card-t">🟠 Zone B — Logarithmic Surcharge ($451 – $3,500)</div></div>
+      <div class="card-b">
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px">Surcharge starts at ~100% at $451 and fades logarithmically to 0% at neutral zone. Drops aggressively at first, gently near the top. No cliffs — smooth transition from Zone A.</div>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+          <div><label class="form-label" style="font-size:11px">Zone Start</label>
+            <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--text-sec)">$</span><input type="number" value="451" style="width:80px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"></div></div>
+          <div><label class="form-label" style="font-size:11px">Fade-Out Point (0% surcharge)</label>
+            <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--text-sec)">$</span><input type="number" value="3500" style="width:90px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"></div></div>
+          <div><label class="form-label" style="font-size:11px">Peak Surcharge at Start</label>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" value="100" style="width:70px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"><span style="color:var(--text-sec)">%</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone C -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-h"><div class="card-t">🟢 Zone C — Neutral ($3,500 – $10,000)</div></div>
+      <div class="card-b">
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px">No adjustment. Base pricing applies. This is the 1.0× zone — the standard Nash job.</div>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+          <div><label class="form-label" style="font-size:11px">Zone Start</label>
+            <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--text-sec)">$</span><input type="number" value="3500" style="width:80px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"></div></div>
+          <div><label class="form-label" style="font-size:11px">Zone End</label>
+            <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--text-sec)">$</span><input type="number" value="10000" style="width:90px;padding:6px 10px;background:var(--navy-mid);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;font-weight:700;text-align:center"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone D -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-h">
+        <div class="card-t">🔵 Zone D — Volume Discount ($10,000+)</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--text-sec)">Max discount cap:</span>
+          <input type="number" value="19" min="5" max="30" style="width:60px;padding:4px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--accent-light);font-size:13px;font-weight:700;text-align:center" onchange="toast('Max discount cap updated to '+this.value+'%')">
+          <span style="font-size:11px;color:var(--text-sec)">%</span>
+        </div>
+      </div>
+      <div class="card-b">
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:12px">Progressive discount: 1% per $5K step above $10K. Each step is editable. Cap prevents over-discounting large jobs.</div>
+        <table style="width:100%;max-width:420px"><thead><tr>
+          <th style="font-size:11px">Job Range</th>
+          <th style="font-size:11px">Discount</th>
+          <th style="font-size:11px">Editable Rate</th>
+        </tr></thead><tbody>
+          ${zoneD.map(z=>`<tr>
+            <td style="font-size:12px;color:var(--text-sec)">${z.range}</td>
+            <td style="font-size:12px;color:var(--green)">${z.adj}</td>
+            <td><input type="text" value="${z.adj}" style="width:70px;padding:4px 8px;background:var(--navy-mid);border:1px solid var(--border);border-radius:5px;color:var(--accent-light);font-size:12px;font-weight:700;text-align:center"></td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div style="text-align:right;margin-bottom:20px">
+      <button class="btn btn-primary" onclick="toast('Volume pricing curve saved')">💾 Save All Zone Settings</button>
     </div>
     <div class="card" style="margin-top:16px">
       <div class="card-h"><div class="card-t">⚡ Job Condition Modifiers</div></div>
