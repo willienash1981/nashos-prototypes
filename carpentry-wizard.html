@@ -321,6 +321,9 @@ function addLocation() {
     id,
     label: '',
     photos: [], // { src: dataURL, caption: '' }
+    notesEstimate: '',
+    notesCrew: '',
+    notesInternal: '',
     items: []   // { itemId, qty }
   });
   renderAll();
@@ -334,6 +337,24 @@ function addLocation() {
 function removeLocation(locId) {
   locations = locations.filter(l => l.id !== locId);
   renderAll();
+}
+
+function locNoteChange(locId, field, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  if (field === 'estimate') loc.notesEstimate = val;
+  else if (field === 'crew') loc.notesCrew = val;
+  else if (field === 'internal') loc.notesInternal = val;
+}
+
+function switchLocNoteTab(btn, locId, tab) {
+  const card = btn.closest('[data-loc-card]') || btn.closest('.loc-card');
+  if (!card) return;
+  card.querySelectorAll('.note-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  card.querySelector(`.loc-note-estimate[data-loc="${locId}"]`).style.display = tab==='estimate' ? '' : 'none';
+  card.querySelector(`.loc-note-crew[data-loc="${locId}"]`).style.display = tab==='crew' ? '' : 'none';
+  card.querySelector(`.loc-note-internal[data-loc="${locId}"]`).style.display = tab==='internal' ? '' : 'none';
 }
 
 function locLabelChange(locId, val) {
@@ -620,6 +641,17 @@ function renderAll() {
           <button class="photo-btn" onclick="capturePhoto(${loc.id})"><span class="ico">📷</span> Take Photo</button>
           <button class="photo-btn" onclick="pickPhoto(${loc.id})"><span class="ico">🖼️</span> From Library</button>
         </div>
+      </div>
+
+      <div style="padding:8px 12px;border-bottom:1px solid var(--border);background:#fafafa">
+        <div style="display:flex;gap:4px;margin-bottom:6px">
+          <button class="note-pill${!loc.notesCrew&&!loc.notesInternal?' active':(!loc.notesEstimate&&(loc.notesCrew||loc.notesInternal)?'':' active')}" onclick="switchLocNoteTab(this,${loc.id},'estimate')">📋 Estimate</button>
+          <button class="note-pill" onclick="switchLocNoteTab(this,${loc.id},'crew')">👷 Crew</button>
+          <button class="note-pill" onclick="switchLocNoteTab(this,${loc.id},'internal')">🔒 Internal</button>
+        </div>
+        <textarea class="note-textarea loc-note-estimate" data-loc="${loc.id}" placeholder="Notes for customer..." oninput="locNoteChange(${loc.id},'estimate',this.value)" style="min-height:48px">${esc(loc.notesEstimate)}</textarea>
+        <textarea class="note-textarea loc-note-crew" data-loc="${loc.id}" placeholder="Notes for crew..." oninput="locNoteChange(${loc.id},'crew',this.value)" style="display:none;min-height:48px">${esc(loc.notesCrew)}</textarea>
+        <textarea class="note-textarea loc-note-internal" data-loc="${loc.id}" placeholder="Internal notes..." oninput="locNoteChange(${loc.id},'internal',this.value)" style="display:none;min-height:48px">${esc(loc.notesInternal)}</textarea>
       </div>
 
       <div class="loc-items">
