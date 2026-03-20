@@ -292,11 +292,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   </div>
 
   <!-- NOTES -->
-  <div class="step-header"><h2><span class="num">5</span> Notes</h2></div>
-  <div class="card">
-    <textarea id="notes" placeholder="Screen type, trim condition, paint color, access notes..." style="width:100%;min-height:70px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-  </div>
-  <!-- Photos — inside the body, not orphaned -->
+  <!-- Photos -->
   <div style="padding:12px 16px 4px;font-size:12px;font-weight:700;color:var(--navy)">📷 Job Photos</div>
   <div class="job-photo-card" style="margin:0 0 4px">
     <div class="jp-photo-row" id="jp-thumb-row"></div>
@@ -306,21 +302,15 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     </div>
     <input class="jp-caption" id="jp-caption" type="text" placeholder="Caption (e.g. Damaged frame, Window location)">
   </div>
-</div>
 
-<div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
-
-<!-- ═══ Notes ═══ -->
-<div class="card" style="margin-bottom:80px">
-  <div class="card-header" style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
-    <span>📝</span><h2 style="font-size:13px;font-weight:700;margin:0">Notes</h2>
-  </div>
-  <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
-    <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
-  </div>
-  <div style="padding:0 12px 12px">
+  <!-- Notes (3-tab) -->
+  <div class="step-header"><h2><span class="num">6</span> Notes</h2></div>
+  <div class="card" style="margin-bottom:80px">
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="noteTabs">
+      <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
+      <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
+      <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
+    </div>
     <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
     <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
     <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
@@ -333,7 +323,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     <div class="label">Screen Replacement</div>
     <div class="total" id="bottomTotal">$0</div>
   </div>
-  <button id="nightsIconBtn" onclick="toggleNights()" title="Nights / Weekends 1.5×" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 6px;border-radius:8px;transition:background .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'"><span id="nightsIcon" style="font-size:18px;line-height:1">☀️</span><span id="nightsIconLabel" style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);white-space:nowrap">NIGHTS</span></button>
   <button class="save-btn" onclick="alert('Saved to estimate! (prototype)')">Save to Estimate</button>
 </div>
 
