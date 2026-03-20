@@ -122,12 +122,13 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="step-header"><h2><span class="num">1</span> Condition Assessment</h2></div>
 
   <div class="card">
-    <div class="cq-label">Previous coating transparency?</div>
+    <div class="cq-label">Previous coating?</div>
     <div class="cq-chips" data-q="q1">
       <div class="cq-chip sel" data-v="bare" onclick="pick(this)">None (bare/new wood)</div>
       <div class="cq-chip" data-v="semi" onclick="pick(this)">Semi-transparent</div>
       <div class="cq-chip" data-v="solid" onclick="pick(this)">Solid</div>
       <div class="cq-chip" data-v="paint" onclick="pick(this)">Paint</div>
+      <div class="cq-chip" data-v="thick-coat" onclick="pick(this)">Thick Paint (DeckOver / Elastomeric)</div>
     </div>
 
     <div id="q2-section" style="display:none">
@@ -148,9 +149,11 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 
     <div class="cq-label">Overall condition?</div>
     <div class="cq-chips" data-q="q4">
-      <div class="cq-chip sel" data-v="good" onclick="pick(this)">Good (well-maintained)</div>
-      <div class="cq-chip" data-v="weathered" onclick="pick(this)">Weathered</div>
-      <div class="cq-chip" data-v="severe" onclick="pick(this)">Severely worn / failing</div>
+      <div class="cq-chip sel" data-v="great" onclick="pick(this)">Great — well maintained</div>
+      <div class="cq-chip" data-v="good" onclick="pick(this)">Good — some stains or patchiness</div>
+      <div class="cq-chip" data-v="ok" onclick="pick(this)">OK — drastic stains/patchiness, semi will improve but not hide</div>
+      <div class="cq-chip" data-v="damaged" onclick="pick(this)">Damaged — frayed wood fibers, cracks</div>
+      <div class="cq-chip" data-v="severe" onclick="pick(this)">Severe — big cracks, warped, splinters, nail pops</div>
     </div>
   </div>
 
@@ -356,47 +359,57 @@ function updateCondResult() {
   let isPaintJob = false;
   let cardColor = 'green';
 
+  const isPaintedSurface = prev === 'paint' || prev === 'thick-coat' || material === 'thick-paint' || material === 'thin-paint';
+
   // SELF-PRIMING SOLID triggers (highest priority)
   if (beading === 'yes') {
     rec = 'self-prime-solid';
     title = '✅ SW SuperDeck Self-Priming Solid';
-    reason = 'Active water beading — existing coating is still active. Self-priming solid is the only product that can adhere reliably over active repellency.';
+    reason = 'Active water beading — existing coating still active. Self-priming solid is the only product that adheres reliably over active repellency.';
     cardColor = 'yellow';
   }
   else if (cond === 'severe') {
     rec = 'self-prime-solid';
     title = '✅ SW SuperDeck Self-Priming Solid';
-    reason = 'Severely worn surface — self-priming solid provides maximum coverage and adhesion over failing or heavily weathered wood.';
+    reason = 'Severe condition — big cracks, warped wood, splinters, nail pops. Self-priming solid for maximum coverage and adhesion.';
     cardColor = 'yellow';
   }
-  else if (prev === 'paint' || material === 'thick-paint' || material === 'thin-paint') {
+  else if (isPaintedSurface) {
     rec = 'self-prime-solid';
     isPaintJob = true;
     title = '✅ SW SuperDeck Self-Priming Solid — Only Option';
     reason = 'Previously painted surface. Self-priming solid is the only viable product. Standard stain will not adhere.';
-    disclaimer = '⚠️ PAINTED DECK/FENCE DISCLAIMER: We do not restore decks or fences. We will pressure wash and scrape any loose or failing material, but the thick peeling chips and layers underneath could fail. Wood surfaces are not designed to be painted — they expand and contract and develop natural cracks that fill with water. The layer underneath our coating could and most likely will eventually let go or fail, which we cannot prevent. This work is NOT covered under warranty.';
+    disclaimer = '⚠️ PAINTED SURFACE DISCLAIMER: We do not restore decks or fences. We will pressure wash and scrape any loose or failing material, but thick peeling chips and layers underneath could fail. Wood surfaces are not designed to be painted — they expand and contract and develop natural cracks that fill with water. The layer underneath our coating could and most likely will eventually let go or fail, which we cannot prevent. This work is NOT covered under warranty.';
     cardColor = 'red';
   }
   // SOLID triggers
   else if (prev === 'solid' || material === 'solid-stain') {
     rec = 'solid';
     title = '✅ SW SuperDeck Solid Stain';
-    reason = 'Previously coated with solid stain — cannot revert to semi-transparent. Solid stain maintains coverage and adhesion.';
+    reason = 'Previously coated with solid stain — cannot revert to semi-transparent. Solid maintains coverage and adhesion.';
     cardColor = 'green';
   }
-  else if (cond === 'weathered') {
+  else if (cond === 'damaged') {
     rec = 'solid';
     title = '✅ SW SuperDeck Solid Stain';
-    reason = 'Weathered surface — solid stain recommended for full, even coverage over greying or damaged wood.';
+    reason = 'Damaged — frayed wood fibers and cracks. Solid stain provides full coverage over problem areas.';
     cardColor = 'green';
   }
-  // SEMI-TRANSPARENT (default for good/new/bare)
+  else if (cond === 'ok') {
+    rec = 'solid';
+    title = '✅ SW SuperDeck Solid Stain';
+    reason = 'OK condition — drastic stains or patchiness won\'t fully hide under semi-transparent. Solid gives even coverage.';
+    disclaimer = '💡 Semi-transparent is possible if customer prefers showing grain — will improve but bad areas remain visible.';
+    cardColor = 'green';
+  }
+  // SEMI-TRANSPARENT (great/good/bare)
   else {
     rec = 'semi-trans';
     title = '✅ SW SuperDeck Semi-Transparent';
+    const condLabel = cond === 'great' ? 'great condition' : 'good condition with some patchiness';
     reason = prev === 'bare'
-      ? 'Bare or new wood in good condition — semi-transparent preserves the natural grain and color.'
-      : 'Previously semi-transparent stain in good condition — maintain with semi-transparent.';
+      ? 'Bare or new wood — semi-transparent preserves the natural grain and color.'
+      : `Previously semi-transparent in ${condLabel} — maintain with semi-transparent.`;
     cardColor = 'green';
   }
 
