@@ -644,15 +644,30 @@ function getClosetSF(h){
 
 // --- NIGHTS/WEEKENDS ---
 let nightsOn = false;
+function effectiveNights() {
+  if (typeof window.estimateNightsWeekends !== 'undefined' && window.estimateNightsWeekends) return true;
+  return nightsOn;
+}
 function toggleNights(){
   nightsOn = !nightsOn;
-  const tog = document.getElementById('nightsToggle');
-  const lbl = document.getElementById('nightsLabel');
-  tog.classList.toggle('on', nightsOn);
-  lbl.textContent = nightsOn ? '1.5× ON' : 'Off';
-  lbl.style.color = nightsOn ? '#4f46e5' : '';
+  updateNightsUI();
   if (typeof prepCalc === 'function') prepCalc();
 }
+function updateNightsUI() {
+  const active = effectiveNights();
+  const tog = document.getElementById('nightsToggle');
+  const lbl = document.getElementById('nightsLabel');
+  if (tog) tog.classList.toggle('on', active);
+  if (lbl) { lbl.textContent = active ? '1.5× ON' : 'Off'; lbl.style.color = active ? '#4f46e5' : ''; }
+}
+// Listen for estimate-level nights signal from parent
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'estimateNights') {
+    window.estimateNightsWeekends = e.data.value;
+    updateNightsUI();
+    if (typeof prepCalc === 'function') prepCalc();
+  }
+});
 
 // --- WINDOW ROWS ---
 let winRows = [{grids:0, qty:1, coats:1}];

@@ -153,7 +153,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <span class="badge">BETA</span>
   </div>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:8px;margin:16px 16px 0" id="nightsToggleBar"><div><div style="font-size:13px;font-weight:600">🌙 Nights / Weekends</div><div style="font-size:11px;color:#94a3b8">1.5× surcharge — auto-tags crew for night work</div></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:#94a3b8" id="nightsLabel">Off</span><div class="toggle" id="nightsToggle" onclick="toggleNights()" style="cursor:pointer"></div></div></div>
+  
 
   <div class="running-total">
     <div><span class="big" id="rtTotal">$0</span></div>
@@ -216,6 +216,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <div class="label">Drywall Total</div>
     <div class="total" id="bottomTotal">$0</div>
   </div>
+  <button id="nightsIconBtn" onclick="toggleNights()" title="Nights / Weekends 1.5×" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 6px;border-radius:8px;transition:background .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'"><span id="nightsIcon" style="font-size:18px;line-height:1">☀️</span><span id="nightsIconLabel" style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);white-space:nowrap">NIGHTS</span></button>
   <button class="save-btn" onclick="alert('Saved to estimate! (prototype)')">Save to Estimate</button>
 </div>
 
@@ -607,16 +608,53 @@ function switchNoteTab(btn, tab) {
 }
 
 let nightsOn = false;
-function toggleNights() {
-  nightsOn = !nightsOn;
-  document.getElementById('nightsToggle').classList.toggle('on', nightsOn);
-  const lbl = document.getElementById('nightsLabel');
-  lbl.textContent = nightsOn ? '1.5× ON' : 'Off';
-  lbl.style.color = nightsOn ? '#4f46e5' : '#6b7280';
-  if(typeof recalc==='function') recalc();
-  if(typeof calc==='function') calc();
-  if(typeof updateTotal==='function') updateTotal();
+
+
+// Nights/Weekends — template-level (wizard) toggle
+// nightsWeekends = true means THIS template has nights ON
+// If estimate-level nights is ON, it overrides — no doubling
+let nightsWeekends = false;
+function effectiveNights() {
+  // Check if estimate-level nights is on (parent frame signal)
+  if (typeof window.estimateNightsWeekends !== 'undefined' && window.estimateNightsWeekends) return true;
+  return nightsWeekends;
 }
+function toggleNights() {
+  nightsWeekends = !nightsWeekends;
+  updateNightsUI();
+  if (typeof updateTotal === 'function') updateTotal();
+  if (typeof updateTotals === 'function') updateTotals();
+  if (typeof recalcTotal === 'function') recalcTotal();
+  if (typeof render === 'function') render();
+  if (typeof renderSections === 'function') renderSections();
+}
+function updateNightsUI() {
+  const active = effectiveNights();
+  const btn = document.getElementById('nightsIconBtn');
+  const icon = document.getElementById('nightsIcon');
+  const lbl = document.getElementById('nightsIconLabel');
+  // Legacy bar (interior only)
+  const bar = document.getElementById('nightsToggleBar');
+  const barToggle = document.getElementById('nightsToggle');
+  const barLabel = document.getElementById('nightsLabel');
+  if (icon) icon.textContent = active ? '🌙' : '☀️';
+  if (lbl) lbl.style.color = active ? '#818cf8' : 'rgba(255,255,255,0.6)';
+  if (btn) btn.style.background = active ? 'rgba(129,140,248,0.25)' : 'none';
+  if (barToggle) barToggle.classList.toggle('on', active);
+  if (barLabel) barLabel.textContent = active ? '1.5× ON' : 'Off';
+}
+// Listen for estimate-level nights signal from parent
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'estimateNights') {
+    window.estimateNightsWeekends = e.data.value;
+    updateNightsUI();
+    if (typeof updateTotal === 'function') updateTotal();
+    if (typeof updateTotals === 'function') updateTotals();
+    if (typeof recalcTotal === 'function') recalcTotal();
+    if (typeof render === 'function') render();
+    if (typeof renderSections === 'function') renderSections();
+  }
+});
 </script>
 </body>
 </html>
