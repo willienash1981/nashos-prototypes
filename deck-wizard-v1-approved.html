@@ -39,15 +39,10 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 .step-header h2 .num { background:var(--navy); color:#fff; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; }
 .card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); max-width:calc(100% - 24px); overflow:hidden; }
 .card-title { font-size:14px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
-.q-label { font-size:12px; font-weight:600; margin-bottom:5px; color:var(--text); }
-.radios { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
-.radios.horizontal { flex-direction:row; flex-wrap:wrap; }
-.radio-btn { display:flex; align-items:center; gap:8px; padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:12px; transition:all .15s; line-height:1.3; overflow-wrap:break-word; word-break:break-word; }
-.radio-btn:hover { border-color:var(--gold-light); }
-.radio-btn.selected { border-color:var(--gold); background:rgba(196,169,98,.08); }
-.radio-btn .dot { width:16px; height:16px; border-radius:50%; border:1.5px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-.radio-btn.selected .dot { border-color:var(--gold); }
-.radio-btn.selected .dot::after { content:''; width:8px; height:8px; border-radius:50%; background:var(--gold); }
+.cq-label{font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 5px;padding:0 12px}
+.cq-chips{display:flex;flex-wrap:wrap;gap:5px;padding:0 12px 8px}
+.cq-chip{padding:5px 11px;border-radius:20px;border:1.5px solid #e5e7eb;background:white;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;color:#374151;white-space:nowrap}
+.cq-chip.sel{border-color:#1a2332;background:#1a2332;color:white}
 .result-card { border:1.5px solid var(--green); background:var(--green-bg); border-radius:var(--radius); margin:6px 12px; padding:8px 10px; max-width:calc(100% - 24px); overflow:hidden; }
 .result-card.warn { border-color:var(--orange); background:#FFFBEB; }
 .result-card.error { border-color:var(--red); background:var(--red-bg); }
@@ -127,48 +122,48 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="step-header"><h2><span class="num">1</span> Condition Assessment</h2></div>
 
   <div class="card">
-    <div class="q-label">Is there active water beading on the deck?</div>
-    <div class="radios horizontal" data-q="q1">
-      <div class="radio-btn" data-v="yes" onclick="pick(this)"><div class="dot"></div>Yes</div>
-      <div class="radio-btn selected" data-v="no" onclick="pick(this)"><div class="dot"></div>No</div>
+    <div class="cq-label">Active water beading?</div>
+    <div class="cq-chips" data-q="q1">
+      <div class="cq-chip" data-v="yes" onclick="pick(this)">Yes</div>
+      <div class="cq-chip sel" data-v="no" onclick="pick(this)">No</div>
     </div>
 
     <div id="q1a" class="hidden">
-      <div class="q-label">When was it last coated?</div>
-      <div class="radios" data-q="q1a">
-        <div class="radio-btn" data-v="lt2" onclick="pick(this)"><div class="dot"></div>Less than 2 years ago</div>
-        <div class="radio-btn" data-v="gt2" onclick="pick(this)"><div class="dot"></div>2+ years ago</div>
-        <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
+      <div class="cq-label">When was it last coated?</div>
+      <div class="cq-chips" data-q="q1a">
+        <div class="cq-chip" data-v="lt2" onclick="pick(this)">< 2 years ago</div>
+        <div class="cq-chip" data-v="gt2" onclick="pick(this)">2+ years ago</div>
+        <div class="cq-chip" data-v="unknown" onclick="pick(this)">Unknown</div>
       </div>
     </div>
 
-    <div class="q-label">Previous coating type?</div>
-    <div class="radios" data-q="q2">
-      <div class="radio-btn" data-v="deckover" onclick="pick(this)"><div class="dot"></div>Behr DeckOver / Rustoleum Restore / thick-film</div>
-      <div class="radio-btn" data-v="stained-good" onclick="pick(this)"><div class="dot"></div>Previously stained (good condition)</div>
-      <div class="radio-btn" data-v="stained-weathered" onclick="pick(this)"><div class="dot"></div>Previously stained (weathered/patchy)</div>
-      <div class="radio-btn selected" data-v="bare" onclick="pick(this)"><div class="dot"></div>None (bare/new wood)</div>
-      <div class="radio-btn" data-v="oil-wax" onclick="pick(this)"><div class="dot"></div>Suspected oil-based or wax-based</div>
-      <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
+    <div class="cq-label">Previous coating type?</div>
+    <div class="cq-chips" data-q="q2">
+      <div class="cq-chip" data-v="deckover" onclick="pick(this)">DeckOver/thick-film</div>
+      <div class="cq-chip" data-v="stained-good" onclick="pick(this)">Stained (good)</div>
+      <div class="cq-chip" data-v="stained-weathered" onclick="pick(this)">Stained (weathered)</div>
+      <div class="cq-chip sel" data-v="bare" onclick="pick(this)">None (bare/new)</div>
+      <div class="cq-chip" data-v="oil-wax" onclick="pick(this)">Oil/wax</div>
+      <div class="cq-chip" data-v="unknown" onclick="pick(this)">Unknown</div>
     </div>
 
-    <div class="q-label">Mixed materials or wood species?</div>
-    <div class="radios horizontal" data-q="q3">
-      <div class="radio-btn" data-v="yes" onclick="pick(this)"><div class="dot"></div>Yes</div>
-      <div class="radio-btn selected" data-v="no" onclick="pick(this)"><div class="dot"></div>No</div>
+    <div class="cq-label">Mixed materials or wood species?</div>
+    <div class="cq-chips" data-q="q3">
+      <div class="cq-chip" data-v="yes" onclick="pick(this)">Yes</div>
+      <div class="cq-chip sel" data-v="no" onclick="pick(this)">No</div>
     </div>
 
-    <div class="q-label">Wood type?</div>
-    <div class="radios horizontal" data-q="q4">
-      <div class="radio-btn selected" data-v="standard" onclick="pick(this)"><div class="dot"></div>Standard (pressure-treated, cedar, etc.)</div>
-      <div class="radio-btn" data-v="ipe" onclick="pick(this)"><div class="dot"></div>IPE ⚠️</div>
+    <div class="cq-label">Wood type?</div>
+    <div class="cq-chips" data-q="q4">
+      <div class="cq-chip sel" data-v="standard" onclick="pick(this)">Standard (PT/cedar)</div>
+      <div class="cq-chip" data-v="ipe" onclick="pick(this)">IPE ⚠️</div>
     </div>
 
-    <div class="q-label">Overall condition?</div>
-    <div class="radios" data-q="q5">
-      <div class="radio-btn selected" data-v="minimal" onclick="pick(this)"><div class="dot"></div>Minimal (cosmetic only)</div>
-      <div class="radio-btn" data-v="moderate" onclick="pick(this)"><div class="dot"></div>Moderate (some greying, board damage)</div>
-      <div class="radio-btn" data-v="severe" onclick="pick(this)"><div class="dot"></div>Severe (multiple failing coats, mixed products, splintering, extremely weathered)</div>
+    <div class="cq-label">Overall condition?</div>
+    <div class="cq-chips" data-q="q5">
+      <div class="cq-chip sel" data-v="minimal" onclick="pick(this)">Minimal</div>
+      <div class="cq-chip" data-v="moderate" onclick="pick(this)">Moderate</div>
+      <div class="cq-chip" data-v="severe" onclick="pick(this)">Severe</div>
     </div>
   </div>
 
@@ -347,8 +342,8 @@ const state = {
 
 function pick(el) {
   const group = el.parentElement;
-  group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
+  group.querySelectorAll('.cq-chip').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
   const q = group.dataset.q;
   const v = el.dataset.v;
   state[q] = v;

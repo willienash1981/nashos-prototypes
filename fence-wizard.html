@@ -92,13 +92,10 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
 .sticky-bar .total-label{font-size:13px;opacity:.8}
 .sticky-bar .total-amount{font-size:22px;font-weight:700}
 .sticky-bar .seg-count{font-size:12px;opacity:.6}
-.q-label{font-size:12px;font-weight:700;color:var(--navy,#1a2332);margin:12px 0 6px}
-.radios{display:flex;flex-direction:column;gap:6px}
-.radios.horizontal{flex-direction:row;flex-wrap:wrap}
-.radio-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1.5px solid #e5e7eb;background:white;cursor:pointer;font-size:12px;transition:all .15s}
-.radio-btn.selected{border-color:var(--navy,#1a2332);background:#f0f4ff}
-.radio-btn .dot{width:14px;height:14px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;transition:all .15s}
-.radio-btn.selected .dot{border-color:var(--navy,#1a2332);background:var(--navy,#1a2332)}
+.cq-label{font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 5px;padding:0 12px}
+.cq-chips{display:flex;flex-wrap:wrap;gap:5px;padding:0 12px 8px}
+.cq-chip{padding:5px 11px;border-radius:20px;border:1.5px solid #e5e7eb;background:white;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;color:#374151;white-space:nowrap}
+.cq-chip.sel{border-color:#1a2332;background:#1a2332;color:white}
 .result-card{margin:12px;padding:14px;border-radius:10px;border:1px solid #86efac;background:#f0fdf4}
 </style>
 </head>
@@ -115,34 +112,34 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
   <div class="section-title">🔍 Fence Condition</div>
   <div class="global-card" id="conditionCard">
 
-    <div class="q-label">Active water beading on the fence?</div>
-    <div class="radios horizontal" data-q="q1">
-      <div class="radio-btn" data-v="yes" onclick="pick(this)"><div class="dot"></div>Yes</div>
-      <div class="radio-btn selected" data-v="no" onclick="pick(this)"><div class="dot"></div>No</div>
+    <div class="cq-label">Active water beading?</div>
+    <div class="cq-chips" data-q="q1">
+      <div class="cq-chip" data-v="yes" onclick="pick(this)">Yes</div>
+      <div class="cq-chip sel" data-v="no" onclick="pick(this)">No</div>
     </div>
 
-    <div class="q-label">Previous coating type?</div>
-    <div class="radios" data-q="q2">
-      <div class="radio-btn selected" data-v="bare" onclick="pick(this)"><div class="dot"></div>None (bare/new wood)</div>
-      <div class="radio-btn" data-v="stained-good" onclick="pick(this)"><div class="dot"></div>Previously stained (good condition)</div>
-      <div class="radio-btn" data-v="stained-weathered" onclick="pick(this)"><div class="dot"></div>Previously stained (weathered/patchy)</div>
-      <div class="radio-btn" data-v="painted" onclick="pick(this)"><div class="dot"></div>Previously painted</div>
-      <div class="radio-btn" data-v="oil-wax" onclick="pick(this)"><div class="dot"></div>Suspected oil-based or wax-based</div>
-      <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
+    <div class="cq-label">Previous coating type?</div>
+    <div class="cq-chips" data-q="q2">
+      <div class="cq-chip sel" data-v="bare" onclick="pick(this)">None (bare/new)</div>
+      <div class="cq-chip" data-v="stained-good" onclick="pick(this)">Stained (good)</div>
+      <div class="cq-chip" data-v="stained-weathered" onclick="pick(this)">Stained (weathered)</div>
+      <div class="cq-chip" data-v="painted" onclick="pick(this)">Painted</div>
+      <div class="cq-chip" data-v="oil-wax" onclick="pick(this)">Oil/wax</div>
+      <div class="cq-chip" data-v="unknown" onclick="pick(this)">Unknown</div>
     </div>
 
-    <div class="q-label">Wood type?</div>
-    <div class="radios" data-q="q3">
-      <div class="radio-btn selected" data-v="standard" onclick="pick(this)"><div class="dot"></div>Standard (cedar, pine, pressure-treated)</div>
-      <div class="radio-btn" data-v="redwood" onclick="pick(this)"><div class="dot"></div>Redwood</div>
-      <div class="radio-btn" data-v="ipe" onclick="pick(this)"><div class="dot"></div>IPE ⚠️</div>
+    <div class="cq-label">Wood type?</div>
+    <div class="cq-chips" data-q="q3">
+      <div class="cq-chip sel" data-v="standard" onclick="pick(this)">Standard (cedar/pine/PT)</div>
+      <div class="cq-chip" data-v="redwood" onclick="pick(this)">Redwood</div>
+      <div class="cq-chip" data-v="ipe" onclick="pick(this)">IPE ⚠️</div>
     </div>
 
-    <div class="q-label">Overall condition?</div>
-    <div class="radios" data-q="q4">
-      <div class="radio-btn selected" data-v="minimal" onclick="pick(this)"><div class="dot"></div>Minimal (cosmetic only)</div>
-      <div class="radio-btn" data-v="moderate" onclick="pick(this)"><div class="dot"></div>Moderate (some greying, board damage)</div>
-      <div class="radio-btn" data-v="severe" onclick="pick(this)"><div class="dot"></div>Severe (failing coats, splintering, extremely weathered)</div>
+    <div class="cq-label">Overall condition?</div>
+    <div class="cq-chips" data-q="q4">
+      <div class="cq-chip sel" data-v="minimal" onclick="pick(this)">Minimal</div>
+      <div class="cq-chip" data-v="moderate" onclick="pick(this)">Moderate</div>
+      <div class="cq-chip" data-v="severe" onclick="pick(this)">Severe</div>
     </div>
 
     <div id="condResult" style="margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12px;display:none">
@@ -239,12 +236,12 @@ let stainOpt='solid';
 
 
 function getQ(q) {
-  const el = document.querySelector(`[data-q="${q}"] .radio-btn.selected`);
+  const el = document.querySelector(`[data-q="${q}"] .cq-chip.sel`);
   return el ? el.dataset.v : null;
 }
 function pick(el) {
-  el.closest('[data-q]').querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
+  el.closest('[data-q]').querySelectorAll('.cq-chip').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
   updateCondResult();
 }
 function pickStainOpt(el){
