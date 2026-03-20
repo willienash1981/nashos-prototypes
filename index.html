@@ -348,8 +348,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <!-- WINDOWS — per-type rows with grid count -->
   <div style="padding:8px 12px 4px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--g100)">
     <span style="font-size:11px;font-weight:700;color:var(--navy)">Windows</span>
-    <span style="font-size:10px;color:var(--g500)">$35 base + $1/grid • no internal grids</span>
+    <span class="lnk-bar">
+      <span class="lnk-icon" id="win-link-icon">🔗</span>
+      <div class="coat-s locked" id="win-coat"><button onclick="scWin(this,-1)">−</button><span class="cv" id="win-cv">1</span><button onclick="scWin(this,1)">+</button></div>
+      <button class="lnk-btn" id="win-unlink" onclick="toggleWinLink()">Override</button>
+    </span>
   </div>
+  <div style="padding:0 12px 4px;font-size:10px;color:var(--g500)">$35 base + $1/grid per coat • no internal/between-glass grids</div>
   <div id="win-rows"></div>
   <div style="padding:4px 12px 10px">
     <div class="add-pill" style="display:inline-flex" onclick="addWinRow()">+ Add window type</div>
@@ -643,7 +648,8 @@ function toggleNights(){
 }
 
 // --- WINDOW ROWS ---
-let winRows = [{grids:0, qty:1}];
+let winRows = [{grids:0, qty:1, coats:1}];
+let winLinked = true;
 const WIN_BASE = 35, WIN_PER_GRID = 1;
 const GRID_OPTS = [
   {label:'No Grids', grids:0},
@@ -654,26 +660,66 @@ const GRID_OPTS = [
   {label:'16 Grids', grids:16},
   {label:'Custom', grids:-1},
 ];
+function getWinMasterCoats(){
+  const cv = document.getElementById('win-cv');
+  return cv ? parseInt(cv.textContent)||1 : 1;
+}
 function renderWinRows(){
   const box = document.getElementById('win-rows');
   if(!box) return;
+  const masterCoats = getWinMasterCoats();
   box.innerHTML = winRows.map((r,i) => {
-    const price = WIN_BASE + (r.grids < 0 ? (r.customGrids||0) : r.grids) * WIN_PER_GRID;
-    const opts = GRID_OPTS.map(o => `<option value="${o.grids}" ${r.grids===o.grids?'selected':''}>${o.label} ($${WIN_BASE + (o.grids<0?0:o.grids)*WIN_PER_GRID}${o.grids<0?'+':''})</option>`).join('');
+    const coats = winLinked ? masterCoats : (r.coats||1);
+    const basePrice = WIN_BASE + (r.grids < 0 ? (r.customGrids||0) : r.grids) * WIN_PER_GRID;
+    const totalEa = basePrice * coats;
+    const opts = GRID_OPTS.map(o => `<option value="${o.grids}" ${r.grids===o.grids?'selected':''}>${o.label} ($${WIN_BASE + (o.grids<0?0:o.grids)*WIN_PER_GRID}/coat)</option>`).join('');
+    const coatPicker = !winLinked ? `<div class="coat-tiny" style="flex-shrink:0"><button onclick="scWinRow(${i},-1)">−</button><span class="cv">${coats}</span><button onclick="scWinRow(${i},1)">+</button></div>` : '';
     return `<div style="display:flex;align-items:center;gap:6px;padding:4px 12px;border-bottom:1px solid var(--g100)">
       <select style="flex:1;padding:5px 6px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:12px;background:white" onchange="setWinGrids(${i},this.value)">${opts}</select>
-      ${r.grids===-1?`<input type="number" style="width:44px;padding:5px 4px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:12px;text-align:center" placeholder="grids" value="${r.customGrids||0}" min="0" onchange="setWinCustom(${i},this.value)">`:``}
+      ${r.grids===-1?`<input type="number" style="width:40px;padding:5px 4px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:12px;text-align:center" placeholder="#" value="${r.customGrids||0}" min="0" onchange="setWinCustom(${i},this.value)">`:``}
       <input type="number" class="inp-sm" value="${r.qty}" min="0" onchange="setWinQty(${i},this.value)">
-      <span style="font-size:11px;font-weight:700;color:var(--navy);min-width:36px;text-align:right">$${price}</span>
+      ${coatPicker}
+      <div style="font-size:11px;font-weight:700;color:var(--navy);min-width:40px;text-align:right">$${totalEa}<span style="font-size:9px;font-weight:400;color:var(--g500)">×${coats}c</span></div>
       <button onclick="removeWinRow(${i})" style="border:none;background:none;color:var(--g400);font-size:16px;cursor:pointer;padding:0 2px">×</button>
     </div>`;
   }).join('');
 }
-function addWinRow(){ winRows.push({grids:0,qty:1}); renderWinRows(); }
+function addWinRow(){ winRows.push({grids:0,qty:1,coats:getWinMasterCoats()}); renderWinRows(); }
 function removeWinRow(i){ winRows.splice(i,1); renderWinRows(); }
 function setWinGrids(i,v){ winRows[i].grids=parseInt(v); renderWinRows(); }
 function setWinQty(i,v){ winRows[i].qty=parseInt(v)||0; renderWinRows(); }
 function setWinCustom(i,v){ winRows[i].customGrids=parseInt(v)||0; renderWinRows(); }
+const winCoatOpts=['1','2','P+2','3'];
+function scWin(btn,dir){
+  const cv=document.getElementById('win-cv');
+  let i=winCoatOpts.indexOf(cv.textContent); if(i<0)i=0;
+  i+=dir; if(i<0)i=0; if(i>=winCoatOpts.length)i=winCoatOpts.length-1;
+  cv.textContent=winCoatOpts[i];
+  if(winLinked) renderWinRows();
+}
+function scWinRow(idx,dir){
+  const opts=['1','2','P+2','3'];
+  let i=opts.indexOf(String(winRows[idx].coats)); if(i<0)i=0;
+  i+=dir; if(i<0)i=0; if(i>=opts.length)i=opts.length-1;
+  winRows[idx].coats=opts[i];
+  renderWinRows();
+}
+function toggleWinLink(){
+  winLinked=!winLinked;
+  const pill=document.getElementById('win-coat');
+  const icon=document.getElementById('win-link-icon');
+  const btn=document.getElementById('win-unlink');
+  if(winLinked){
+    pill.classList.add('locked'); icon.textContent='🔗';
+    btn.textContent='Override'; btn.classList.remove('active');
+    showToast('🔗 Windows re-linked');
+  } else {
+    pill.classList.remove('locked'); icon.textContent='🔓';
+    btn.textContent='Re-link'; btn.classList.add('active');
+    showToast('🔓 Override — set coats per window type');
+  }
+  renderWinRows();
+}
 
 // --- HEIGHT TIER (invisible) ---
 function getHeightTier(h){
