@@ -438,7 +438,18 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
       <!-- Bundled info -->
       <div id="bundled-section" class="hidden">
         <div style="font-size:11px;color:var(--text-light);margin-bottom:8px;padding:6px 8px;background:#f0fdf4;border-radius:6px;border:1px solid #86efac">
-          ✅ Crew already on-site for paint job — trip charge waived. If painting work is removed, trip charge will be added back automatically.
+          ✅ Crew on-site for paint job — sliding scale: more work = more trips covered.
+        </div>
+        <div class="field-row" style="margin-bottom:8px">
+          <div class="field-label">Other work value on this estimate</div>
+          <div class="field-prefix">
+            <span style="font-size:13px;color:var(--text-light);padding-right:4px">$</span>
+            <input class="field-input" type="number" id="bundled-work-input" placeholder="0" min="0" step="500"
+              oninput="setBundledWork(this.value)">
+          </div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px;">
+            ≈ crew on-site for <strong id="site-days-bundled">0</strong> days · 1 trip covered per ~$1k/day
+          </div>
         </div>
         <div class="trip-visual" id="trip-visual-bundled"></div>
         <div style="font-size:12px;text-align:center;" id="trip-bundled-summary"></div>
@@ -590,9 +601,9 @@ function serviceTotal() {
 }
 
 function onSiteDays() {
-  if (tripMode === 'bundled') return R.doorVisits; // crew fully on-site
-  if (tripMode === 'other') return Math.floor(otherWork / R.crewDailyRate);
-  return 0;
+  if (tripMode === 'standalone') return 0;
+  // Both 'bundled' and 'other' use the sliding scale from otherWork
+  return Math.floor(otherWork / R.crewDailyRate);
 }
 
 function extraTrips() {
@@ -660,10 +671,20 @@ function setTripMode(mode) {
   document.getElementById('bundled-section').classList.toggle('hidden', mode !== 'bundled');
   document.getElementById('other-work-section').classList.toggle('hidden', mode !== 'other');
   if(mode === 'other') updateOtherWorkVisual();
+  if(mode === 'bundled') updateBundledVisual();
   recalc();
 }
 // legacy compat
 function setBundled(b) { setTripMode(b ? 'bundled' : 'standalone'); }
+
+function setBundledWork(val) {
+  otherWork = parseFloat(val) || 0;
+  const days = Math.floor(otherWork/R.crewDailyRate);
+  const el = document.getElementById('site-days-bundled');
+  if(el) el.textContent = days;
+  updateBundledVisual();
+  recalc();
+}
 
 function setOtherWork(val) {
   otherWork = parseFloat(val) || 0;
