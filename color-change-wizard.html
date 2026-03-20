@@ -303,7 +303,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <div class="label">Color Change Order</div>
     <div class="total" id="bottomTotal">$0</div>
   </div>
-  <button id="nightsIconBtn" onclick="toggleNights()" title="Nights / Weekends 1.5×" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 6px;border-radius:8px;transition:background .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'"><span id="nightsIcon" style="font-size:18px;line-height:1">☀️</span><span id="nightsIconLabel" style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);white-space:nowrap">NIGHTS</span></button>
   <button class="save-btn" onclick="alert('Saved to estimate! (prototype)')">Save to Estimate</button>
 </div>
 
@@ -341,7 +340,7 @@ function calc() {
   document.getElementById('surface-detail-field').style.display = scope === 'surface' ? '' : 'none';
 
   // Running total
-  const displayTotal = nightsOn ? Math.round(total * 1.5) : total;
+  const displayTotal = effectiveNights() ? Math.round(total * 1.5) : total;
   document.getElementById('rtTotal').textContent = '$' + displayTotal.toLocaleString();
   const items = [labor > 0, paint > 0, delivery > 0].filter(Boolean).length;
   document.getElementById('rtDetail').textContent = items + ' charge' + (items !== 1 ? 's' : '');
@@ -492,6 +491,7 @@ function effectiveNights() {
 function toggleNights() {
   nightsWeekends = !nightsWeekends;
   updateNightsUI();
+  if (typeof calc === 'function') calc();
   if (typeof updateTotal === 'function') updateTotal();
   if (typeof updateTotals === 'function') updateTotals();
   if (typeof recalcTotal === 'function') recalcTotal();
