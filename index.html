@@ -521,7 +521,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script>
 let dType='section',extras=[];
 const CLS={l:5,w:3},CLD={l:10,w:3};
-const linked={dw:true,spec:true,trim:true};
+const linked={dw:true,spec:true,trim:true,win:true};
 
 // Location prefix
 let currentPrefix='Main';
@@ -705,14 +705,18 @@ function scWinRow(idx,dir){
   renderWinRows();
 }
 function toggleWinLink(){
-  winLinked=!winLinked;
+  linked.win=!linked.win;
+  winLinked=linked.win;
   const pill=document.getElementById('win-coat');
   const icon=document.getElementById('win-link-icon');
   const btn=document.getElementById('win-unlink');
-  if(winLinked){
+  if(linked.win){
+    // re-link: snap win-cv back to trim master
+    const m=document.getElementById('tmv').textContent;
+    document.getElementById('win-cv').textContent=m;
     pill.classList.add('locked'); icon.textContent='🔗';
     btn.textContent='Override'; btn.classList.remove('active');
-    showToast('🔗 Windows re-linked');
+    showToast('🔗 Windows re-linked to trim master');
   } else {
     pill.classList.remove('locked'); icon.textContent='🔓';
     btn.textContent='Re-link'; btn.classList.add('active');
@@ -816,6 +820,7 @@ function syncAllTrim(){
   document.querySelectorAll('#trim-surf-ovr .cv').forEach(v=>v.textContent=m);
   if(linked.dw){document.getElementById('dw-cv').textContent=m;document.querySelectorAll('.dw-ovr-coat .cv').forEach(v=>v.textContent=m)}
   if(linked.spec){document.getElementById('spec-cv').textContent=m;document.querySelectorAll('.spec-ovr-coat .cv').forEach(v=>v.textContent=m)}
+  if(linked.win){document.getElementById('win-cv').textContent=m;renderWinRows();}
 }
 
 function toggleTrimOvr(){
@@ -1115,6 +1120,8 @@ function updateBotBar() {
 }
 
 recalc();
+// Sync win-cv to trim master on load
+document.getElementById('win-cv').textContent = document.getElementById('tmv').textContent;
 renderWinRows();
 </script>
 <!-- Photo lightbox for prep -->
