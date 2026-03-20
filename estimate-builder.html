@@ -699,7 +699,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div class="group-inner">
 
       <!-- Garage Exterior -->
-      <div class="type-group">
+      <div class="type-group" id="tg-gext">
         <div class="type-header" onclick="toggleType('gext')">
           <div class="type-header-left">
             <span class="type-icon">🏡</span>
@@ -709,6 +709,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
           <div class="type-header-right">
             <span class="type-subtotal">$2,200</span>
             <span class="type-arrow" id="typeArrow-gext">▶</span>
+            <span class="group-menu" onclick="event.stopPropagation();openTypeMenu(this,'gext','Exterior','Detached Garage','🏡','$2,200')" style="font-size:15px;padding:0 6px">⋯</span>
           </div>
         </div>
         <div class="type-body" id="typeBody-gext" style="max-height:1500px">
@@ -748,7 +749,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
       </div>
 
       <!-- Deck -->
-      <div class="type-group">
+      <div class="type-group" id="tg-deck">
         <div class="type-header" onclick="toggleType('deck')">
           <div class="type-header-left">
             <span class="type-icon">🪵</span>
@@ -758,6 +759,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
           <div class="type-header-right">
             <span class="type-subtotal">$680</span>
             <span class="type-arrow" id="typeArrow-deck">▶</span>
+            <span class="group-menu" onclick="event.stopPropagation();openTypeMenu(this,'deck','Deck','Detached Garage','🪵','$680')" style="font-size:15px;padding:0 6px">⋯</span>
           </div>
         </div>
         <div class="type-body" id="typeBody-deck" style="max-height:1000px">
@@ -1602,13 +1604,9 @@ function toggleGroupOptional() {
 
 function renderOptionalGroups() {
   const container = document.getElementById('optionalGroupsContainer');
-  const section = document.getElementById('optionalSection');
-  const keys = Object.keys(optionalGroups);
 
-  // Show/hide the static cabinet demo card when there are dynamic ones
-  const staticCard = document.getElementById('staticCabCard');
-
-  container.innerHTML = keys.map(id => {
+  // Group-level optionals
+  const groupCards = Object.keys(optionalGroups).map(id => {
     const g = optionalGroups[id];
     return `<div class="optional-card" style="margin-bottom:10px">
       <div class="optional-header">
@@ -1616,14 +1614,34 @@ function renderOptionalGroups() {
           <span class="optional-icon">${g.icon}</span>
           <div class="optional-info">
             <div class="opt-title">${g.name} <span class="opt-badge">OPTIONAL</span></div>
-            <div class="opt-sub">Customer can add to proposal</div>
+            <div class="opt-sub">Entire group · Customer can add to proposal</div>
           </div>
         </div>
         <span class="opt-price">${g.subtotal}</span>
         <button onclick="moveBackToIncluded('${id}')" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-light);font-family:inherit">Include</button>
       </div>
     </div>`;
-  }).join('');
+  });
+
+  // Type-level optionals (individual services)
+  const typeCards = Object.keys(optionalTypes).map(id => {
+    const t = optionalTypes[id];
+    return `<div class="optional-card" style="margin-bottom:10px">
+      <div class="optional-header">
+        <div class="optional-left">
+          <span class="optional-icon">${t.icon}</span>
+          <div class="optional-info">
+            <div class="opt-title">${t.name} <span class="opt-badge">OPTIONAL</span></div>
+            <div class="opt-sub" style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;background:var(--navy);color:#fff;border-radius:4px;padding:1px 5px;font-weight:700">📂 ${t.group}</span> part of this group</div>
+          </div>
+        </div>
+        <span class="opt-price">${t.price}</span>
+        <button onclick="moveTypeBackToIncluded('${id}')" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-light);font-family:inherit">Include</button>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = [...groupCards, ...typeCards].join('');
 }
 
 function moveBackToIncluded(id) {
@@ -1633,6 +1651,54 @@ function moveBackToIncluded(id) {
   renderOptionalGroups();
   toast('Moved back to included');
 }
+
+// ── Type-Group Optional Toggle ──
+let activeTypeId = null;
+let activeTypeMeta = {}; // {name, group, icon, price}
+const optionalTypes = {}; // typeId → {name, group, icon, price}
+
+function openTypeMenu(el, typeId, name, group, icon, price) {
+  activeTypeId = typeId;
+  activeTypeMeta = { name, group, icon, price };
+  const isOpt = !!optionalTypes[typeId];
+  document.getElementById('typeMenuTitle').textContent = name + ' — ' + group;
+  document.getElementById('typeMenuOptionalLabel').textContent = isOpt ? '✅ Move to Included' : 'Mark as Optional Add-On';
+  openSheet('typeMenuSheet');
+}
+
+function toggleTypeOptional() {
+  if (!activeTypeId) return;
+  const tg = document.getElementById('tg-' + activeTypeId);
+  if (!tg) return;
+  if (optionalTypes[activeTypeId]) {
+    tg.style.display = '';
+    delete optionalTypes[activeTypeId];
+    toast('Moved back to included');
+  } else {
+    optionalTypes[activeTypeId] = { ...activeTypeMeta, id: activeTypeId };
+    tg.style.display = 'none';
+    toast(activeTypeMeta.name + ' marked as optional add-on');
+  }
+  renderOptionalGroups();
+}
+
+function moveTypeBackToIncluded(id) {
+  const tg = document.getElementById('tg-' + id);
+  if (tg) tg.style.display = '';
+  delete optionalTypes[id];
+  renderOptionalGroups();
+  toast('Moved back to included');
+}
 </script>
+
+<!-- SHEET: Type Group Menu -->
+<div class="bottom-sheet" id="typeMenuSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="typeMenuTitle">Service Actions</div>
+  <div class="sheet-item" id="typeMenuOptionalBtn" onclick="toggleTypeOptional();closeAllSheets()"><span class="sheet-icon">🔘</span><span class="sheet-label" id="typeMenuOptionalLabel">Mark as Optional Add-On</span></div>
+  <div class="sheet-item" onclick="toast('Moved to group…');closeAllSheets()"><span class="sheet-icon">📂</span><span class="sheet-label">Move to Group…</span></div>
+  <div class="sheet-item" onclick="toast('Duplicate');closeAllSheets()"><span class="sheet-icon">📋</span><span class="sheet-label">Duplicate</span></div>
+  <div class="sheet-safe"></div>
+</div>
 </body>
 </html>
