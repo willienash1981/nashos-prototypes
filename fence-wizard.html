@@ -92,6 +92,14 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
 .sticky-bar .total-label{font-size:13px;opacity:.8}
 .sticky-bar .total-amount{font-size:22px;font-weight:700}
 .sticky-bar .seg-count{font-size:12px;opacity:.6}
+.q-label{font-size:12px;font-weight:700;color:var(--navy,#1a2332);margin:12px 0 6px}
+.radios{display:flex;flex-direction:column;gap:6px}
+.radios.horizontal{flex-direction:row;flex-wrap:wrap}
+.radio-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1.5px solid #e5e7eb;background:white;cursor:pointer;font-size:12px;transition:all .15s}
+.radio-btn.selected{border-color:var(--navy,#1a2332);background:#f0f4ff}
+.radio-btn .dot{width:14px;height:14px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;transition:all .15s}
+.radio-btn.selected .dot{border-color:var(--navy,#1a2332);background:var(--navy,#1a2332)}
+.result-card{margin:12px;padding:14px;border-radius:10px;border:1px solid #86efac;background:#f0fdf4}
 </style>
 </head>
 <body>
@@ -106,27 +114,41 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
   <!-- FENCE CONDITION ASSESSMENT -->
   <div class="section-title">🔍 Fence Condition</div>
   <div class="global-card" id="conditionCard">
-    <div class="global-row" style="flex-direction:column;align-items:flex-start;gap:8px">
-      <div class="gr-label">Previous coating?</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px" id="q-prev-coating">
-        <div class="toggle-btn active" data-v="bare" onclick="pickCond('prev',this)">None (bare/new)</div>
-        <div class="toggle-btn" data-v="stained-good" onclick="pickCond('prev',this)">Stained (good)</div>
-        <div class="toggle-btn" data-v="stained-weathered" onclick="pickCond('prev',this)">Stained (weathered)</div>
-        <div class="toggle-btn" data-v="painted" onclick="pickCond('prev',this)">Previously painted</div>
-        <div class="toggle-btn" data-v="unknown" onclick="pickCond('prev',this)">Unknown</div>
-      </div>
+
+    <div class="q-label">Active water beading on the fence?</div>
+    <div class="radios horizontal" data-q="q1">
+      <div class="radio-btn" data-v="yes" onclick="pick(this)"><div class="dot"></div>Yes</div>
+      <div class="radio-btn selected" data-v="no" onclick="pick(this)"><div class="dot"></div>No</div>
     </div>
-    <div class="global-row" style="flex-direction:column;align-items:flex-start;gap:8px;margin-top:8px">
-      <div class="gr-label">Overall condition?</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px" id="q-condition">
-        <div class="toggle-btn active" data-v="good" onclick="pickCond('cond',this)">Good</div>
-        <div class="toggle-btn" data-v="moderate" onclick="pickCond('cond',this)">Moderate</div>
-        <div class="toggle-btn" data-v="weathered" onclick="pickCond('cond',this)">Heavily weathered</div>
-      </div>
+
+    <div class="q-label">Previous coating type?</div>
+    <div class="radios" data-q="q2">
+      <div class="radio-btn selected" data-v="bare" onclick="pick(this)"><div class="dot"></div>None (bare/new wood)</div>
+      <div class="radio-btn" data-v="stained-good" onclick="pick(this)"><div class="dot"></div>Previously stained (good condition)</div>
+      <div class="radio-btn" data-v="stained-weathered" onclick="pick(this)"><div class="dot"></div>Previously stained (weathered/patchy)</div>
+      <div class="radio-btn" data-v="painted" onclick="pick(this)"><div class="dot"></div>Previously painted</div>
+      <div class="radio-btn" data-v="oil-wax" onclick="pick(this)"><div class="dot"></div>Suspected oil-based or wax-based</div>
+      <div class="radio-btn" data-v="unknown" onclick="pick(this)"><div class="dot"></div>Unknown</div>
     </div>
+
+    <div class="q-label">Wood type?</div>
+    <div class="radios" data-q="q3">
+      <div class="radio-btn selected" data-v="standard" onclick="pick(this)"><div class="dot"></div>Standard (cedar, pine, pressure-treated)</div>
+      <div class="radio-btn" data-v="redwood" onclick="pick(this)"><div class="dot"></div>Redwood</div>
+      <div class="radio-btn" data-v="ipe" onclick="pick(this)"><div class="dot"></div>IPE ⚠️</div>
+    </div>
+
+    <div class="q-label">Overall condition?</div>
+    <div class="radios" data-q="q4">
+      <div class="radio-btn selected" data-v="minimal" onclick="pick(this)"><div class="dot"></div>Minimal (cosmetic only)</div>
+      <div class="radio-btn" data-v="moderate" onclick="pick(this)"><div class="dot"></div>Moderate (some greying, board damage)</div>
+      <div class="radio-btn" data-v="severe" onclick="pick(this)"><div class="dot"></div>Severe (failing coats, splintering, extremely weathered)</div>
+    </div>
+
     <div id="condResult" style="margin-top:10px;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12px;display:none">
       <div style="font-weight:700;color:#166534" id="condResultTitle"></div>
       <div style="color:#15803d;margin-top:2px" id="condResultReason"></div>
+      <div id="condDisclaimer" style="margin-top:4px;font-size:11px;color:#92400e"></div>
     </div>
   </div>
 
@@ -214,92 +236,116 @@ const LABELS=['Front','Back','Left','Right','Pool Area'];
 let segments=[];
 let product='Stain';
 let stainOpt='solid';
-let condPrev='bare';
-let condCond='good';
 
-function pickCond(q,el){
-  const group=el.parentElement;
-  group.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  if(q==='prev') condPrev=el.dataset.v;
-  else condCond=el.dataset.v;
-  // If paint is selected, re-evaluate primer state
-  if(product==='Paint'){
-    const primerCoat=document.getElementById('primerCoat');
-    const primerNote=document.getElementById('primerNote');
-    if(condPrev==='painted'&&condCond==='good'){
-      primerCoat.checked=false;
-      primerCoat.disabled=true;
-      primerNote.textContent='Not required — existing paint in good condition';
-    } else if(condPrev==='painted'&&condCond!=='good'){
-      primerCoat.checked=true;
-      primerCoat.disabled=false;
-      primerNote.textContent='Recommended — existing paint worn/damaged';
-    } else {
-      primerCoat.checked=true;
-      primerCoat.disabled=true;
-      primerNote.textContent='Required for bare/stained/unknown surface';
-    }
-  }
+
+function getQ(q) {
+  const el = document.querySelector(`[data-q="${q}"] .radio-btn.selected`);
+  return el ? el.dataset.v : null;
+}
+function pick(el) {
+  el.closest('[data-q]').querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
   updateCondResult();
-  recalc();
 }
 function pickStainOpt(el){
   document.querySelectorAll('[data-so]').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   stainOpt=el.dataset.so;
-  updateCondResult();
   recalc();
 }
-function updateCondResult(){
-  const res=document.getElementById('condResult');
-  const title=document.getElementById('condResultTitle');
-  const reason=document.getElementById('condResultReason');
-  const alert=document.getElementById('productAlert');
-  const stainOptsEl=document.getElementById('stainOpts');
+function updateCondResult() {
+  const beading = getQ('q1');
+  const prev = getQ('q2');
+  const wood = getQ('q3');
+  const cond = getQ('q4');
 
-  // Clear alert
-  alert.style.display='none';
-  alert.textContent='';
+  let rec = 'semi-trans';
+  let reason = '';
+  let disclaimer = '';
+  let blocked = false;
 
-  // Re-enable stain opacity buttons
-  document.querySelectorAll('[data-so]').forEach(b=>{b.style.pointerEvents='';b.style.opacity='';});
-
-  if(product==='Stain'){
-    if(condPrev==='painted'){
-      // BLOCK
-      alert.style.cssText='display:block;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px;background:#fef2f2;border:1px solid #fca5a5;color:#991b1b';
-      alert.textContent='❌ Cannot stain over paint. Surface must be stripped or repainted.';
-      document.querySelectorAll('[data-so]').forEach(b=>{b.style.pointerEvents='none';b.style.opacity='0.4';});
-    } else if(condPrev==='stained-weathered'&&stainOpt==='semi-trans'){
-      // WARN
-      alert.style.cssText='display:block;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px;background:#fefce8;border:1px solid #fde047;color:#854d0e';
-      alert.textContent='⚠️ Semi-transparent over weathered/patchy stain may not cover evenly. Solid recommended.';
+  if (prev === 'painted') {
+    rec = 'paint';
+    reason = 'Previously painted surface — must use paint. Stain will not adhere over paint.';
+    blocked = true;
+  } else if (prev === 'oil-wax') {
+    rec = 'solid';
+    reason = 'Oil or wax-based coating detected. Solid stain after thorough prep and testing. Semi-transparent will not adhere reliably.';
+    disclaimer = '⚠️ Test adhesion before full application. May require stripper.';
+  } else if (cond === 'severe') {
+    rec = 'self-prime-solid';
+    reason = 'Severely weathered — self-priming solid stain recommended for maximum coverage and adhesion.';
+  } else if (beading === 'yes') {
+    rec = 'solid';
+    reason = 'Active water beading indicates previous coating is still repelling. Solid stain for best adhesion over existing coating.';
+    disclaimer = '⚠️ Surface may need light prep/sanding before application.';
+  } else if (prev === 'bare') {
+    if (cond === 'minimal' || cond === 'moderate') {
+      rec = 'semi-trans';
+      reason = 'Bare/new wood in ' + (cond === 'minimal' ? 'good' : 'moderate') + ' condition — semi-transparent preserves natural grain.';
+    } else {
+      rec = 'solid';
+      reason = 'Bare wood with heavy weathering — solid stain recommended for full coverage.';
     }
-  } else {
-    // Paint — primer logic handled in recalc/setProduct, no block
+  } else if (prev === 'stained-good') {
+    rec = 'semi-trans';
+    reason = 'Previously stained in good condition — semi-transparent maintains the look.';
+  } else if (prev === 'stained-weathered') {
+    rec = 'solid';
+    reason = 'Weathered/patchy previous stain — solid recommended for full, even coverage.';
+    disclaimer = cond === 'minimal' ? '⚠️ Semi-transparent possible with extra prep, but solid is strongly recommended.' : '';
   }
 
-  // Condition recommendation (green box)
-  let rec='solid', msg='';
-  if(product==='Paint'){
-    res.style.display='none';
-    return;
+  if (wood === 'ipe') {
+    disclaimer += (disclaimer ? ' ' : '') + '⚠️ IPE requires specific oil-based product and longer dry times. Confirm product compatibility.';
   }
-  if(condPrev==='bare'&&condCond==='good'){ rec='semi-trans'; msg='Bare/new wood in good condition — semi-transparent preserves grain.'; }
-  else if(condPrev==='bare'&&condCond!=='good'){ rec='solid'; msg='Bare but weathered — solid stain gives better coverage and protection.'; }
-  else if(condPrev==='stained-good'){ rec='semi-trans'; msg='Good existing stain — semi-transparent maintains the look.'; }
-  else if(condPrev==='stained-weathered'){ rec='solid'; msg='Weathered/patchy stain — solid recommended for full coverage.'; }
-  else if(condPrev==='painted'){ rec='solid'; msg='Previously painted — must use solid or paint to maintain opacity.'; }
-  else { rec='solid'; msg='Unknown history — default to solid stain for best results.'; }
-  // auto-select stain opt only if not blocked
-  if(condPrev!=='painted'){
-    stainOpt=rec;
-    document.querySelectorAll('[data-so]').forEach(b=>b.classList.toggle('active',b.dataset.so===rec));
+
+  if (rec === 'paint') {
+    product = 'Paint';
+    document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Paint'));
+    document.getElementById('stainOpts').style.display = 'none';
+    document.getElementById('paintWarn').style.display = '';
+    const coat2cb = document.getElementById('coat2');
+    if (coat2cb) { coat2cb.checked = true; coat2cb.disabled = true; }
+  } else {
+    product = 'Stain';
+    document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Stain'));
+    document.getElementById('stainOpts').style.display = '';
+    document.getElementById('paintWarn').style.display = 'none';
+    const coat2cb = document.getElementById('coat2');
+    if (coat2cb) coat2cb.disabled = false;
+    stainOpt = rec;
+    document.querySelectorAll('[data-so]').forEach(b => b.classList.toggle('active', b.dataset.so === rec));
   }
-  title.textContent='✅ Recommended: '+(rec==='semi-trans'?'Semi-Transparent Stain':'Solid Stain');
-  reason.textContent=msg;
-  res.style.display='';
+
+  const resultCard = document.getElementById('condResult');
+  const title = document.getElementById('condResultTitle');
+  const reasonEl = document.getElementById('condResultReason');
+  const discEl = document.getElementById('condDisclaimer');
+  const labels = {'semi-trans':'Semi-Transparent Stain','solid':'Solid Stain','self-prime-solid':'Self-Priming Solid Stain','paint':'Paint (see Product section)'};
+  title.textContent = (blocked ? '🎨' : '✅') + ' Recommended: ' + (labels[rec] || rec);
+  reasonEl.textContent = reason;
+  if (discEl) discEl.textContent = disclaimer;
+  resultCard.style.display = '';
+  resultCard.style.background = blocked ? '#fef2f2' : '#f0fdf4';
+  resultCard.style.borderColor = blocked ? '#fca5a5' : '#86efac';
+  title.style.color = blocked ? '#991b1b' : '#166534';
+  reasonEl.style.color = blocked ? '#b91c1c' : '#15803d';
+
+  const alert = document.getElementById('productAlert');
+  if (alert) {
+    if (blocked) {
+      alert.style.display = '';
+      alert.style.background = '#fef2f2';
+      alert.style.border = '1px solid #fca5a5';
+      alert.style.color = '#991b1b';
+      alert.textContent = '❌ Cannot apply stain over painted surface. Switch to Paint above.';
+    } else {
+      alert.style.display = 'none';
+    }
+  }
+
+  recalc();
 }
 
 function uid(){return '_'+Math.random().toString(36).slice(2,9)}
@@ -418,26 +464,23 @@ function setProduct(p,el){
   if(p==='Paint'){
     const primerCoat=document.getElementById('primerCoat');
     const primerNote=document.getElementById('primerNote');
-    if(condPrev==='painted'&&condCond==='good'){
-      // No primer needed
+    const curPrev=getQ('q2');
+    const curCond=getQ('q4');
+    if(curPrev==='painted'&&curCond==='minimal'){
       primerCoat.checked=false;
       primerCoat.disabled=true;
       primerNote.textContent='Not required — existing paint in good condition';
-    } else if(condPrev==='painted'&&condCond!=='good'){
-      // Recommended but optional
+    } else if(curPrev==='painted'&&curCond!=='minimal'){
       primerCoat.checked=true;
       primerCoat.disabled=false;
       primerNote.textContent='Recommended — existing paint worn/damaged';
     } else {
-      // Required (bare, stained, unknown)
       primerCoat.checked=true;
       primerCoat.disabled=true;
       primerNote.textContent='Required for bare/stained/unknown surface';
     }
   }
-  // Hide condResult green box when Paint
-  if(p==='Paint') document.getElementById('condResult').style.display='none';
-  else updateCondResult();
+  updateCondResult();
   recalc();
 }
 function recalc(){
