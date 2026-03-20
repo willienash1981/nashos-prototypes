@@ -413,12 +413,16 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
       </div>
 
       <div class="pill-group" id="bundle-pills">
-        <button class="pill active" onclick="setBundled(false)">🚪 Standalone</button>
-        <button class="pill" onclick="setBundled(true)">🎨 Bundled with Paint Job</button>
+        <button class="pill active" id="pill-standalone" onclick="setTripMode('standalone')">🚪 Standalone</button>
+        <button class="pill" id="pill-bundled" onclick="setTripMode('bundled')">🎨 Bundled</button>
+        <button class="pill" id="pill-other" onclick="setTripMode('other')">🏠 Other work</button>
       </div>
 
       <!-- Standalone info -->
       <div id="standalone-info">
+        <div style="font-size:11px;color:var(--text-light);margin-bottom:8px;padding:6px 8px;background:#fef9c3;border-radius:6px;border:1px solid #fde047">
+          🔒 Trip charge is fixed — scheduling requires dedicated visits regardless of other work.
+        </div>
         <div class="trip-visual" id="trip-visual">
           <div class="trip-dot extra">1</div>
           <div class="trip-line"></div>
@@ -431,20 +435,31 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
         </div>
       </div>
 
-      <!-- Bundled input -->
+      <!-- Bundled info -->
       <div id="bundled-section" class="hidden">
+        <div style="font-size:11px;color:var(--text-light);margin-bottom:8px;padding:6px 8px;background:#f0fdf4;border-radius:6px;border:1px solid #86efac">
+          ✅ Crew already on-site for paint job — trip charge waived. If painting work is removed, trip charge will be added back automatically.
+        </div>
+        <div class="trip-visual" id="trip-visual-bundled"></div>
+        <div style="font-size:12px;text-align:center;" id="trip-bundled-summary"></div>
+      </div>
+
+      <!-- Other work input -->
+      <div id="other-work-section" class="hidden">
         <div class="field-row">
-          <div class="field-label">Other work on this estimate</div>
+          <div class="field-label">Other work value on this estimate</div>
           <div class="field-prefix">
+            <span style="font-size:13px;color:var(--text-light);padding-right:4px">$</span>
             <input class="field-input" type="number" id="other-work-input" placeholder="0" min="0" step="500"
               oninput="setOtherWork(this.value)">
           </div>
           <div style="font-size:11px;color:var(--text-light);margin-top:4px;">
             ≈ crew on-site for <strong id="site-days">0</strong> days at ~$1k/day
           </div>
+          <div style="font-size:11px;margin-top:6px;padding:6px 8px;border-radius:6px" id="other-work-alert"></div>
         </div>
-        <div class="trip-visual" id="trip-visual-bundled"></div>
-        <div style="font-size:12px;text-align:center;" id="trip-bundled-summary"></div>
+        <div class="trip-visual" id="trip-visual-other"></div>
+        <div style="font-size:12px;text-align:center;" id="trip-other-summary"></div>
       </div>
     </div>
   </div>
@@ -512,6 +527,7 @@ let sidelights = 0;
 let transoms = 0;
 let doorRR = 0;
 let stainColor = 'match';    // 'match' | 'new'
+let tripMode = 'standalone'; // 'standalone' | 'bundled' | 'other'
 let bundled = false;
 let otherWork = 0;
 let maintenancePlan = false;
@@ -574,12 +590,14 @@ function serviceTotal() {
 }
 
 function onSiteDays() {
-  if (!bundled) return 0;
-  return Math.floor(otherWork / R.crewDailyRate);
+  if (tripMode === 'bundled') return R.doorVisits; // crew fully on-site
+  if (tripMode === 'other') return Math.floor(otherWork / R.crewDailyRate);
+  return 0;
 }
 
 function extraTrips() {
-  const covered = bundled ? onSiteDays() : 0;
+  if (tripMode === 'standalone') return R.doorVisits; // always full charge
+  const covered = Math.min(onSiteDays(), R.doorVisits);
   return Math.max(0, R.doorVisits - covered);
 }
 
@@ -630,19 +648,59 @@ function setColor(c) {
   recalc();
 }
 
-function setBundled(b) {
-  bundled = b;
-  setPills('bundle-pills', b ? 1 : 0);
-  document.getElementById('standalone-info').classList.toggle('hidden', b);
-  document.getElementById('bundled-section').classList.toggle('hidden', !b);
-  if (b) updateBundledVisual();
+function setTripMode(mode) {
+  tripMode = mode;
+  bundled = (mode === 'bundled');
+  // pill highlights
+  ['standalone','bundled','other'].forEach(m => {
+    const p = document.getElementById('pill-'+m);
+    if(p) p.classList.toggle('active', m === mode);
+  });
+  document.getElementById('standalone-info').classList.toggle('hidden', mode !== 'standalone');
+  document.getElementById('bundled-section').classList.toggle('hidden', mode !== 'bundled');
+  document.getElementById('other-work-section').classList.toggle('hidden', mode !== 'other');
+  if(mode === 'other') updateOtherWorkVisual();
   recalc();
 }
+// legacy compat
+function setBundled(b) { setTripMode(b ? 'bundled' : 'standalone'); }
 
 function setOtherWork(val) {
   otherWork = parseFloat(val) || 0;
-  updateBundledVisual();
+  // Smart auto-flip: if other work drops to $0, warn and suggest switching to standalone
+  const alert = document.getElementById('other-work-alert');
+  if(otherWork === 0 && alert) {
+    alert.style.background='#fef2f2'; alert.style.border='1px solid #fca5a5'; alert.style.color='#991b1b';
+    alert.textContent='⚠️ Other work is $0 — trip charge applies. Consider switching to Standalone.';
+  } else if(alert) {
+    alert.style.background='#f0fdf4'; alert.style.border='1px solid #86efac'; alert.style.color='#166534';
+    const days = Math.floor(otherWork/R.crewDailyRate);
+    const waived = Math.min(days, R.doorVisits);
+    alert.textContent = waived >= R.doorVisits
+      ? `✅ Crew on-site ${days}+ days — all 3 trips covered, trip charge waived`
+      : `🔶 Crew on-site ~${days} day${days!==1?'s':''} — ${waived} of 3 trips covered`;
+  }
+  document.getElementById('site-days').textContent = Math.floor(otherWork/R.crewDailyRate);
+  updateOtherWorkVisual();
   recalc();
+}
+
+function updateOtherWorkVisual() {
+  const days = Math.floor(otherWork/R.crewDailyRate);
+  const covered = Math.min(days, R.doorVisits);
+  const extra = Math.max(0, R.doorVisits - covered);
+  let vis = '';
+  for(let i=1;i<=R.doorVisits;i++){
+    if(i>1) vis+='<div class="trip-line"></div>';
+    vis+=`<div class="trip-dot ${i<=covered?'covered':'extra'}">${i}</div>`;
+  }
+  const vEl = document.getElementById('trip-visual-other');
+  if(vEl) vEl.innerHTML = vis;
+  const sum = document.getElementById('trip-other-summary');
+  if(sum) {
+    if(extra===0) sum.innerHTML='<span style="color:#166534;font-weight:600">✅ All trips covered — trip charge waived</span>';
+    else sum.innerHTML=`${extra} trip${extra!==1?'s':''} × $${R.tripPerVisit} = <strong style="color:var(--orange)">$${extra*R.tripPerVisit}</strong>`;
+  }
 }
 
 function toggleMaint() {
