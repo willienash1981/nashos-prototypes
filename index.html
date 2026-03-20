@@ -645,6 +645,7 @@ function toggleNights(){
   tog.classList.toggle('on', nightsOn);
   lbl.textContent = nightsOn ? '1.5× ON' : 'Off';
   lbl.style.color = nightsOn ? '#4f46e5' : '';
+  if (typeof prepCalc === 'function') prepCalc();
 }
 
 // --- WINDOW ROWS ---
@@ -1012,8 +1013,9 @@ function prepCalc() {
   const basePrice = 3450;
   const drywallTotal = Math.round(total);
   const popcornTotal = pcTotal || 0;
-  const roomTotal = basePrice + drywallTotal + popcornTotal;
-  document.getElementById('bot-price').textContent = '$' + roomTotal.toLocaleString();
+  let roomTotal = basePrice + drywallTotal + popcornTotal;
+  if (nightsOn) roomTotal = Math.round(roomTotal * 1.5);
+  document.getElementById('bot-price').textContent = '$' + roomTotal.toLocaleString() + (nightsOn ? ' 🌙' : '');
 
   // Build itemized subtitle
   const parts = ['Painting $' + basePrice.toLocaleString()];
