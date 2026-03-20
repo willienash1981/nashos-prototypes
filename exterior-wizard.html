@@ -205,22 +205,8 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
     <div class="chips" id="nameChips" style="margin-bottom:10px"></div>
     <button class="btn-gold" onclick="addSection()">+ Add Section</button>
   </div>
-  <!-- ═══ Notes ═══ -->
-  <div class="card" style="margin-bottom:80px">
-    <div style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
-      <span>📝</span><span style="font-size:13px;font-weight:700">Notes</span>
-    </div>
-    <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
-      <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
-      <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
-      <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
-    </div>
-    <div style="padding:0 12px 12px">
-      <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
-      <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
-      <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
-    </div>
-  </div>
+  <!-- ═══ Main Photos & Notes ═══ -->
+  <div id="mainPhotosNotesCard" class="card" style="margin-bottom:80px"></div>
 </div>
 
 <div id="formView" class="hidden"></div>
@@ -266,7 +252,7 @@ function mkSection(name=''){
     primerOn:false,primerOverride:null,
     pwSkip:false,pwSkipNote:'',
     pkg:'Premium',prep:'Standard',
-    notes:'',
+    notesEstimate:'',notesCrew:'',notesInternal:'',
     photos:[]
   };
 }
@@ -311,6 +297,12 @@ function demoData(){
 
 let sections=demoData();
 let editingIdx=-1;
+
+// Main-level (service area) photos & notes — not tagged to any section
+let mainPhotos=[];
+let mainNotesEstimate='';
+let mainNotesCrew='';
+let mainNotesInternal='';
 
 // ---- PRICING ----
 function calcSidingEntry(e,pkg,prep){
@@ -450,7 +442,100 @@ function renderList(){
   // Name chips
   const used=new Set(sections.map(s=>s.name));
   document.getElementById('nameChips').innerHTML=SECTION_NAMES.filter(n=>!used.has(n)).map(n=>`<span class="chip chip-sm" onclick="quickAdd('${n}')">${n}</span>`).join('');
+  renderMainPhotosNotes();
 }
+function renderMainPhotosNotes(){
+  const card = document.getElementById('mainPhotosNotesCard');
+  if(!card) return;
+
+  // Build section summary entries (tagged)
+  const sectionEntries = sections.map((sec,i)=>{
+    const hasPhotos = sec.photos && sec.photos.length;
+    const hasNotes = sec.notesEstimate || sec.notesCrew || sec.notesInternal;
+    if(!hasPhotos && !hasNotes) return '';
+
+    let html=`<div style="margin-bottom:14px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--gold)">`;
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">📍 ${sec.name||'Untitled'}</div>`;
+
+    if(hasPhotos){
+      html+=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">`;
+      sec.photos.forEach(ph=>{
+        html+=`<img src="${ph.src}" style="width:56px;height:56px;border-radius:6px;object-fit:cover;border:1px solid var(--border);cursor:pointer" onclick="extShowPhoto('${ph.src.replace(/'/g,"\\'")}')">`;
+      });
+      html+=`</div>`;
+    }
+    if(sec.notesEstimate) html+=`<div style="font-size:11px;color:var(--text-light);margin-bottom:2px"><span style="font-weight:600">📋</span> ${esc(sec.notesEstimate)}</div>`;
+    if(sec.notesCrew) html+=`<div style="font-size:11px;color:var(--text-light);margin-bottom:2px"><span style="font-weight:600">👷</span> ${esc(sec.notesCrew)}</div>`;
+    if(sec.notesInternal) html+=`<div style="font-size:11px;color:var(--text-light)"><span style="font-weight:600">🔒</span> ${esc(sec.notesInternal)}</div>`;
+    html+=`</div>`;
+    return html;
+  }).join('');
+
+  const hasMain = mainPhotos.length || mainNotesEstimate || mainNotesCrew || mainNotesInternal;
+  const hasSections = sectionEntries.trim().length > 0;
+
+  let h=`<div class="card-title">📝 Photos & Notes</div>`;
+
+  // Main area entry — always first, no tag
+  h+=`<div style="margin-bottom:14px">`;
+  h+=`<div style="font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Main House</div>`;
+  // Main photos
+  h+=`<div id="mainPhotoRow" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">`;
+  mainPhotos.forEach((ph,i)=>{
+    h+=`<div style="position:relative"><img src="${ph.src}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer" onclick="extShowPhoto('${ph.src.replace(/'/g,"\\'")}')"><button onclick="mainRemovePhoto(${i})" style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;border:none;background:var(--red);color:white;font-size:12px;cursor:pointer;padding:0;line-height:1">✕</button></div>`;
+  });
+  h+=`</div>`;
+  h+=`<div style="display:flex;gap:6px;margin-bottom:10px">
+    <button class="ext-photo-btn" onclick="mainCapturePhoto()">📷 Take Photo</button>
+    <button class="ext-photo-btn" onclick="mainPickPhoto()">🖼️ Library</button>
+  </div>`;
+  // Main notes tabs
+  h+=`<div style="display:flex;gap:4px;margin-bottom:6px" id="mainNoteTabs">
+    <button class="note-pill active" onclick="switchMainNoteTab(this,'estimate')">📋 Estimate</button>
+    <button class="note-pill" onclick="switchMainNoteTab(this,'crew')">👷 Crew</button>
+    <button class="note-pill" onclick="switchMainNoteTab(this,'internal')">🔒 Internal</button>
+  </div>
+  <textarea id="mainNoteEstimate" class="note-textarea" placeholder="Notes for the service area as a whole..." oninput="mainNotesEstimate=this.value">${esc(mainNotesEstimate)}</textarea>
+  <textarea id="mainNoteCrew" class="note-textarea" style="display:none" placeholder="Crew notes for the whole service area..." oninput="mainNotesCrew=this.value">${esc(mainNotesCrew)}</textarea>
+  <textarea id="mainNoteInternal" class="note-textarea" style="display:none" placeholder="Internal notes for the whole service area..." oninput="mainNotesInternal=this.value">${esc(mainNotesInternal)}</textarea>
+  </div>`;
+
+  // Section entries (tagged, below main)
+  if(hasSections){
+    h+=`<div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">`;
+    h+=`<div style="font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Section Notes & Photos</div>`;
+    h+=sectionEntries;
+    h+=`</div>`;
+  }
+
+  card.innerHTML=h;
+}
+
+function switchMainNoteTab(btn,tab){
+  document.querySelectorAll('#mainNoteTabs .note-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['estimate','crew','internal'].forEach(t=>{
+    const el=document.getElementById('mainNote'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el) el.style.display=t===tab?'':'none';
+  });
+}
+
+function mainCapturePhoto(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.capture='environment';
+  inp.onchange=e=>mainHandlePhoto(e.target.files[0]);inp.click();
+}
+function mainPickPhoto(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>mainHandlePhoto(e.target.files[0]);inp.click();
+}
+function mainHandlePhoto(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{mainPhotos.push({src:e.target.result});renderMainPhotosNotes();};
+  reader.readAsDataURL(file);
+}
+function mainRemovePhoto(i){mainPhotos.splice(i,1);renderMainPhotosNotes();}
+
 function sectionSummaryText(s){
   const parts=[];
   s.siding.forEach(e=>{if(e.sf)parts.push(`${e.type}: ${e.sf.toLocaleString()} SF (${e.height})${e.stain?' 🪵':''}`)});
@@ -483,24 +568,6 @@ function renderForm(){
     <div class="chips" style="margin-top:8px">${SECTION_NAMES.map(n=>`<span class="chip chip-sm" onclick="document.getElementById('secName').value='${n}';s().name='${n}';updForm()">${n}</span>`).join('')}</div></div>`;
 
 
-  // 1b. Section Photos
-  if(!s.photos) s.photos=[];
-  h+=`<div class="ext-photo-card fade-in">
-    <div class="ext-photo-title">📷 Section Photos <span style="font-size:11px;font-weight:400;color:var(--text-light)">(tap to view)</span></div>
-    <div class="ext-photo-row">`;
-  s.photos.forEach((ph,i) => {
-    h+=`<div class="ext-thumb-wrap">
-      <img class="ext-thumb" src="${ph.src}" onclick="extShowPhoto('${ph.src.replace(/'/g,"\\'")}')">
-      <button class="ext-remove" onclick="extRemovePhoto(${i})">✕</button>
-    </div>`;
-  });
-  h+=`</div>
-    <div class="ext-photo-actions">
-      <button class="ext-photo-btn" onclick="extCapturePhoto()">📷 Take Photo</button>
-      <button class="ext-photo-btn" onclick="extPickPhoto()">🖼️ From Library</button>
-    </div>
-  </div>`;
-
   // 2. Siding
   h+=`<div class="card fade-in"><div class="card-title">🏠 Siding</div><div id="sidingEntries">`;
   s.siding.forEach((e,i)=>{h+=sidingEntryHTML(e,i,s.siding.length,s);});
@@ -526,8 +593,33 @@ function renderForm(){
     ${['Standard','Heavy','Restoration'].map(p=>`<span class="chip${s.prep===p?' active':''}" onclick="s().prep='${p}';renderForm()">${p}<br><small>${PREP_MULTS[p]}×</small></span>`).join('')}</div>
     <div class="impact-text">${s.prep==='Standard'?'Normal prep — scrape, sand, spot-prime.':s.prep==='Heavy'?'Heavy prep adds 35% — extensive scraping, priming.':'Full restoration +150% — strip to bare, heavy repair.'}</div></div>`;
 
-  // 8. Notes
-  h+=`<div class="card fade-in"><div class="card-title">📝 Section Notes</div><textarea id="secNotes" oninput="s().notes=this.value">${esc(s.notes)}</textarea></div>`;
+  // 8. Photos (above notes)
+  if(!s.photos) s.photos=[];
+  h+=`<div class="card fade-in">
+    <div class="card-title">📷 Section Photos</div>
+    <div id="secPhotoRow" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">`;
+  s.photos.forEach((ph,i)=>{
+    h+=`<div style="position:relative"><img src="${ph.src}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer" onclick="extShowPhoto('${ph.src.replace(/'/g,"\\'")}')"><button onclick="extRemovePhoto(${i})" style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;border:none;background:var(--red);color:white;font-size:12px;cursor:pointer;padding:0;line-height:1">✕</button></div>`;
+  });
+  h+=`</div>
+    <div style="display:flex;gap:8px">
+      <button class="ext-photo-btn" onclick="extCapturePhoto()">📷 Take Photo</button>
+      <button class="ext-photo-btn" onclick="extPickPhoto()">🖼️ Library</button>
+    </div>
+  </div>`;
+
+  // 9. Notes (3-tab)
+  h+=`<div class="card fade-in">
+    <div class="card-title">📝 Section Notes</div>
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="secNoteTabs">
+      <button class="note-pill active" onclick="switchSecNoteTab(this,'estimate')">📋 Estimate</button>
+      <button class="note-pill" onclick="switchSecNoteTab(this,'crew')">👷 Crew</button>
+      <button class="note-pill" onclick="switchSecNoteTab(this,'internal')">🔒 Internal</button>
+    </div>
+    <textarea id="secNoteEstimate" class="note-textarea" placeholder="Notes visible to customer on estimate/proposal..." oninput="s().notesEstimate=this.value">${esc(s.notesEstimate)}</textarea>
+    <textarea id="secNoteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..." oninput="s().notesCrew=this.value">${esc(s.notesCrew)}</textarea>
+    <textarea id="secNoteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..." oninput="s().notesInternal=this.value">${esc(s.notesInternal)}</textarea>
+  </div>`;
 
   // 9. Sticky bar
   h+=`<div class="sticky-bottom"><div class="info"><div class="sec-name">${s.name||'New Section'}</div><div class="sec-price">${fmt(calcSection(s))}</div></div><button class="save-btn" onclick="saveAndBack()">Save Section</button></div>`;
@@ -1063,11 +1155,11 @@ function toggleNights() {
   if (typeof recalcTotal === 'function') recalcTotal();
 }
 
-function switchNoteTab(btn, tab) {
-  document.querySelectorAll('#noteTabs .note-pill').forEach(b=>b.classList.remove('active'));
+function switchSecNoteTab(btn,tab){
+  document.querySelectorAll('#secNoteTabs .note-pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   ['estimate','crew','internal'].forEach(t=>{
-    const el=document.getElementById('note'+t.charAt(0).toUpperCase()+t.slice(1));
+    const el=document.getElementById('secNote'+t.charAt(0).toUpperCase()+t.slice(1));
     if(el) el.style.display=t===tab?'':'none';
   });
 }
