@@ -323,31 +323,31 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
     </div>
   </div>
 
-  <!-- STEP 4: NOTES -->
-  <div class="step-header"><h2><span class="num">4</span> Notes</h2></div>
 
-  <div class="card">
-    <div class="q-label">Condition notes & color details for customer</div>
-    <textarea id="deck-notes" placeholder="Document deck condition, color selections, railing finish details, etc." style="width:100%;min-height:80px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-    <div class="calc-note">Include condition details for reference when processing submitted colors</div>
+</div>
+
+<!-- STEP 4: PHOTOS -->
+<div class="step-header"><h2><span class="num">4</span> Photos</h2></div>
+<div class="card">
+  <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px">📷 Job Photos</div>
+  <div id="deckMainPhotoRow" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"></div>
+  <div style="display:flex;gap:8px">
+    <button onclick="deckMainCapturePhoto()" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">📷 Take Photo</button>
+    <button onclick="deckMainPickPhoto()" style="display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🖼️ From Library</button>
   </div>
 </div>
 
-<!-- ═══ Notes ═══ -->
+<!-- STEP 5: NOTES -->
+<div class="step-header"><h2><span class="num">5</span> Notes</h2></div>
 <div class="card" style="margin-bottom:80px">
-  <div class="card-header" style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
-    <span>📝</span><h2 style="font-size:13px;font-weight:700;margin:0">Notes</h2>
-  </div>
-  <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
+  <div style="display:flex;gap:4px;margin-bottom:8px" id="noteTabs">
     <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
     <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
     <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
   </div>
-  <div style="padding:0 12px 12px">
-    <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
-    <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
-    <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
-  </div>
+  <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
+  <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
+  <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
 </div>
 
 <!-- Bottom Bar -->
@@ -1031,6 +1031,32 @@ function deckRemovePhoto(sid, idx) {
   const s = state.sections.find(x=>x.id===sid);
   if(s&&s.photos) { s.photos.splice(idx,1); renderSections(); }
 }
+// Main-level job photos
+let deckMainPhotos = [];
+function deckMainRenderPhotos() {
+  const row = document.getElementById('deckMainPhotoRow');
+  if (!row) return;
+  row.innerHTML = deckMainPhotos.map((p,i) => `<div style="position:relative">
+    <img src="${p.src}" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;cursor:pointer" onclick="deckShowPhoto('${p.src.replace(/'/g,"\\'")}')">
+    <button onclick="deckMainRemovePhoto(${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#ef4444;color:white;font-size:12px;cursor:pointer;padding:0;line-height:1">✕</button>
+  </div>`).join('');
+}
+function deckMainCapturePhoto() {
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.capture='environment';
+  inp.onchange = e => deckMainHandlePhoto(e.target.files[0]); inp.click();
+}
+function deckMainPickPhoto() {
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange = e => deckMainHandlePhoto(e.target.files[0]); inp.click();
+}
+function deckMainHandlePhoto(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { deckMainPhotos.push({src: e.target.result}); deckMainRenderPhotos(); };
+  reader.readAsDataURL(file);
+}
+function deckMainRemovePhoto(i) { deckMainPhotos.splice(i,1); deckMainRenderPhotos(); }
+
 function deckShowPhoto(src) {
   const ov = document.createElement('div');
   ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;display:flex;align-items:center;justify-content:center';
