@@ -108,6 +108,34 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 .bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
 .bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
 .hidden { display:none !important; }
+
+/* Room selector */
+.room-selector-wrap { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+.room-select { width:100%; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-weight:600; font-family:inherit; background:#fff; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B7280'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:28px; cursor:pointer; }
+.room-select:focus { outline:none; border-color:var(--gold); }
+.room-custom-input { width:100%; padding:6px 10px; border:1.5px solid var(--gold); border-radius:8px; font-size:13px; font-family:inherit; }
+.room-custom-input:focus { outline:none; border-color:var(--navy); }
+
+/* No-painting */
+.no-paint-row { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-light); cursor:pointer; }
+.no-paint-row input[type=checkbox] { width:15px; height:15px; cursor:pointer; accent-color:var(--orange); }
+.no-paint-banner { background:#FFFBEB; border:1.5px solid #F59E0B; border-radius:8px; padding:8px 10px; font-size:12px; color:#92400E; margin-top:6px; }
+.no-paint-banner strong { display:block; margin-bottom:4px; }
+.confirm-standalone-btn { margin-top:6px; padding:6px 14px; background:#F59E0B; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.confirm-standalone-btn:hover { background:#D97706; }
+.no-paint-desc { width:100%; margin-top:6px; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:12px; font-family:inherit; min-height:52px; resize:vertical; }
+.no-paint-desc:focus { outline:none; border-color:var(--gold); }
+
+/* Display mode toggle */
+.display-mode-section { padding:8px 12px; border-top:1px solid var(--border); background:#fafafa; }
+.display-mode-label { font-size:11px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+.mode-pill-row { display:flex; gap:6px; }
+.mode-pill { flex:1; padding:7px 6px; border-radius:8px; border:1.5px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; text-align:center; transition:all .15s; font-family:inherit; }
+.mode-pill.active { border-color:var(--gold); background:rgba(196,169,98,.10); color:var(--navy); }
+.mode-preview { margin-top:8px; background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:8px 10px; font-size:11px; color:var(--text); line-height:1.7; }
+.mode-preview .preview-label { font-size:10px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
+.mode-preview .sub-line { padding-left:12px; color:var(--text-light); }
+.crew-routing-note { margin-top:7px; font-size:11px; color:#1E40AF; background:var(--blue-bg); border-radius:6px; padding:6px 8px; line-height:1.4; }
 </style>
 </head>
 <body>
@@ -184,11 +212,15 @@ let crewMode = 'same';
 
 function addLocation() {
   const id = nextLocId++;
-  const labels = ['Living Room','Master Bedroom','Kitchen','Hallway','Bedroom 2','Bedroom 3','Bathroom','Dining Room'];
-  const label = locations.length < labels.length ? labels[locations.length] : 'Room ' + (locations.length + 1);
   locations.push({
     id,
-    label,
+    label: '',
+    roomSelect: 'Living Room',
+    roomCustom: '',
+    noPaint: false,
+    noPaintConfirmed: false,
+    noPaintDesc: '',
+    displayMode: 'tucked', // 'tucked' | 'subline'
     photos: [],
     items: ITEMS.map(i => ({ itemId: i.id, qty: 0 }))
   });
@@ -209,6 +241,50 @@ function locLabelChange(locId, val) {
   if (loc) loc.label = val;
   updateTotals();
   renderSummary();
+}
+
+function roomSelectChange(locId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.roomSelect = val;
+  if (val !== 'Custom') loc.label = val;
+  renderAll();
+}
+
+function roomCustomChange(locId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.roomCustom = val;
+  loc.label = val;
+  updateTotals();
+  renderSummary();
+}
+
+function noPaintChange(locId, checked) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.noPaint = checked;
+  if (!checked) { loc.noPaintConfirmed = false; loc.noPaintDesc = ''; }
+  renderAll();
+}
+
+function confirmStandalone(locId) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.noPaintConfirmed = true;
+  renderAll();
+}
+
+function noPaintDescChange(locId, val) {
+  const loc = locations.find(l => l.id === locId);
+  if (loc) loc.noPaintDesc = val;
+}
+
+function setDisplayMode(locId, mode) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.displayMode = mode;
+  renderAll();
 }
 
 // ── Photos ──
@@ -310,16 +386,58 @@ function renderAll() {
   locations.forEach(loc => {
     const lt = locTotal(loc);
     const activeCount = loc.items.filter(i => i.qty > 0).length;
+    const displayRoom = loc.roomSelect === 'Custom' ? (loc.roomCustom || 'Custom Room') : (loc.roomSelect || 'Room');
+    const displayPrice = lt > 0 ? lt.toLocaleString() : '0';
+    const activeItems = loc.items.filter(i => i.qty > 0);
+    const paintSurfaces = activeItems.length > 0 ? activeItems.map(i => ITEMS_MAP[i.itemId].name).join(', ') : 'repairs';
+
+    // Preview lines
+    let previewHtml;
+    if (loc.displayMode === 'tucked') {
+      const combined = lt > 0 ? `$${displayPrice}` : '$—';
+      previewHtml = `<div>${esc(displayRoom)} — walls, ceiling, trim, drywall repairs · <strong>${combined}</strong></div>`;
+    } else {
+      const half = lt > 0 ? Math.round(lt / 2).toLocaleString() : '—';
+      previewHtml = `<div>${esc(displayRoom)} — walls, ceiling, trim · <strong>$${half}</strong></div>
+        <div class="sub-line">↳ Drywall Repairs · <strong>$${half}</strong></div>`;
+    }
 
     html += `<div class="loc-card" data-loc="${loc.id}">
       <div class="loc-header">
         <div class="loc-header-row">
-          <input class="loc-label-input" value="${esc(loc.label)}" placeholder="Room / area name"
-            data-loc="${loc.id}" data-field="label"
-            oninput="locLabelChange(${loc.id}, this.value)">
+          <span style="font-size:13px;font-weight:700;color:var(--navy);flex:1">${esc(displayRoom)}</span>
           <button class="loc-remove" onclick="removeLocation(${loc.id})">✕</button>
         </div>
         ${lt > 0 ? `<div class="loc-subtotal">${activeCount} item${activeCount!==1?'s':''} · $${lt.toLocaleString()}</div>` : ''}
+
+        <!-- Room Selector -->
+        <div class="room-selector-wrap" style="margin-top:8px">
+          <select class="room-select" onchange="roomSelectChange(${loc.id}, this.value)">
+            <option value="Master Bedroom" ${loc.roomSelect==='Master Bedroom'?'selected':''}>Master Bedroom</option>
+            <option value="Bedroom 2 / Bedroom 3" ${loc.roomSelect==='Bedroom 2 / Bedroom 3'?'selected':''}>Bedroom 2 / Bedroom 3</option>
+            <option value="Living Room" ${loc.roomSelect==='Living Room'?'selected':''}>Living Room</option>
+            <option value="Kitchen" ${loc.roomSelect==='Kitchen'?'selected':''}>Kitchen</option>
+            <option value="Dining Room" ${loc.roomSelect==='Dining Room'?'selected':''}>Dining Room</option>
+            <option value="Bathroom / Master Bathroom" ${loc.roomSelect==='Bathroom / Master Bathroom'?'selected':''}>Bathroom / Master Bathroom</option>
+            <option value="Hallway" ${loc.roomSelect==='Hallway'?'selected':''}>Hallway</option>
+            <option value="Office" ${loc.roomSelect==='Office'?'selected':''}>Office</option>
+            <option value="Stairwell" ${loc.roomSelect==='Stairwell'?'selected':''}>Stairwell</option>
+            <option value="Basement" ${loc.roomSelect==='Basement'?'selected':''}>Basement</option>
+            <option disabled>───</option>
+            <option value="Custom" ${loc.roomSelect==='Custom'?'selected':''}>Custom (free text)</option>
+          </select>
+          ${loc.roomSelect === 'Custom' ? `<input class="room-custom-input" type="text" placeholder="Room name…" value="${esc(loc.roomCustom)}"
+            oninput="roomCustomChange(${loc.id}, this.value)">` : ''}
+          <label class="no-paint-row">
+            <input type="checkbox" ${loc.noPaint?'checked':''} onchange="noPaintChange(${loc.id}, this.checked)">
+            No painting in this room
+          </label>
+          ${loc.noPaint ? `<div class="no-paint-banner">
+            <strong>⚠️ Nash doesn't do drywall repairs without painting — are you sure? This is a rare standalone service.</strong>
+            ${!loc.noPaintConfirmed ? `<button class="confirm-standalone-btn" onclick="confirmStandalone(${loc.id})">Confirm standalone</button>` : ''}
+            ${loc.noPaintConfirmed ? `<textarea class="no-paint-desc" placeholder="Describe repairs (no painting)" oninput="noPaintDescChange(${loc.id}, this.value)">${esc(loc.noPaintDesc)}</textarea>` : ''}
+          </div>` : ''}
+        </div>
       </div>
 
       <div class="photo-section">
@@ -368,7 +486,23 @@ function renderAll() {
       </div>`;
     });
 
-    html += `</div></div>`;
+    html += `</div>
+
+      <!-- Display Mode Toggle -->
+      <div class="display-mode-section">
+        <div class="display-mode-label">Estimate Display</div>
+        <div class="mode-pill-row">
+          <button class="mode-pill ${loc.displayMode==='tucked'?'active':''}" onclick="setDisplayMode(${loc.id},'tucked')">🔗 Tucked In</button>
+          <button class="mode-pill ${loc.displayMode==='subline'?'active':''}" onclick="setDisplayMode(${loc.id},'subline')">↳ Sub-line</button>
+        </div>
+        <div class="mode-preview">
+          <div class="preview-label">Preview</div>
+          ${previewHtml}
+        </div>
+        <div class="crew-routing-note">🔧 Even when tucked in, drywall repairs carry their own service type and can be assigned to a separate crew on the work order.</div>
+      </div>
+
+    </div>`;
   });
 
   container.innerHTML = html;
@@ -386,6 +520,7 @@ function renderAll() {
       try { sel.setSelectionRange(focusPos, focusPos); } catch(e) {}
     }
   }
+
 
   updateTotals();
   renderSummary();
@@ -412,7 +547,8 @@ function renderSummary() {
   activeLocs.forEach(loc => {
     const lt = locTotal(loc);
     const hasPhoto = loc.photos.length > 0;
-    html += `<div class="sum-row loc"><span>${hasPhoto ? '📸 ' : ''}${esc(loc.label)}</span><span>$${lt.toLocaleString()}</span></div>`;
+    const sumRoom = loc.roomSelect === 'Custom' ? (loc.roomCustom || 'Custom Room') : (loc.roomSelect || loc.label || 'Room');
+    html += `<div class="sum-row loc"><span>${hasPhoto ? '📸 ' : ''}${esc(sumRoom)}</span><span>$${lt.toLocaleString()}</span></div>`;
     loc.items.filter(i => i.qty > 0).forEach(li => {
       const item = ITEMS_MAP[li.itemId];
       html += `<div class="sum-row sub"><span>${item.name} — ${li.qty} ${item.unit}</span><span>$${liCost(li.itemId, li.qty).toLocaleString()}</span></div>`;
