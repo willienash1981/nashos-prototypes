@@ -154,58 +154,62 @@ select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='ht
   </div>
 
 
-  <div class="section-title">🎨 Product</div>
+  <div class="section-title">🎨 Product & Coats</div>
   <div class="global-card">
-    <div class="global-row">
-      <div><div class="gr-label">Product Type</div><div class="gr-sub">Stain = any opacity. Paint = primer + 2 coats (rare).</div></div>
-      <div class="toggle-group" style="width:160px">
-        <div class="toggle-btn active" onclick="setProduct('Stain',this)" data-prod="Stain">Stain</div>
-        <div class="toggle-btn" onclick="setProduct('Paint',this)" data-prod="Paint">Paint</div>
+    <!-- Recommendation drives this — auto-set from condition assessment -->
+    <div id="stainSection">
+      <div class="global-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <div class="gr-label">Stain type <span style="font-size:10px;font-weight:400;color:#6b7280">(auto-set from condition — override if needed)</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <div class="toggle-btn active" data-so="semi-trans" onclick="pickStainOpt(this)">Semi-Transparent</div>
+          <div class="toggle-btn" data-so="solid" onclick="pickStainOpt(this)">Solid Stain</div>
+          <div class="toggle-btn" data-so="self-prime-solid" onclick="pickStainOpt(this)">Self-Priming Solid</div>
+        </div>
+      </div>
+      <div class="global-row">
+        <div><div class="gr-label">2nd Coat</div><div class="gr-sub">Usually 1 coat — add 2nd for heavily neglected fences</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="gr-val" id="coat2price">$0</span>
+          <label class="switch"><input type="checkbox" id="coat2" onchange="recalc()"><span class="slider"></span></label>
+        </div>
       </div>
     </div>
-    <div id="stainOpts" class="global-row" style="flex-direction:column;align-items:flex-start;gap:6px">
-      <div class="gr-label">Stain opacity</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <div class="toggle-btn" data-so="semi-trans" onclick="pickStainOpt(this)">Semi-Transparent</div>
-        <div class="toggle-btn active" data-so="solid" onclick="pickStainOpt(this)">Solid Stain</div>
-        <div class="toggle-btn" data-so="self-prime-solid" onclick="pickStainOpt(this)">Self-Priming Solid</div>
-      </div>
-    </div>
-    <div id="productAlert" style="display:none;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px"></div>
-    <div id="paintWarn" style="display:none;padding:8px 12px;background:#fef9c3;border:1px solid #fde047;border-radius:8px;font-size:11px;color:#854d0e;margin-top:4px">
-      ⚠️ Paint on fence is rare. Requires full primer coat + 2 finish coats. Labor multiplier: 1.4×. Warranty may not apply.
-    </div>
-    <div class="global-row" style="margin-top:8px">
-      <div><div class="gr-label">Color Name</div><div class="gr-sub">1 color included</div></div>
-      <input class="input" style="width:150px" placeholder="e.g. Cedar Tone" id="colorName" value="Natural Cedar">
-    </div>
-  </div>
 
-  <div class="section-title">➕ Add-Ons</div>
-  <div class="global-card">
-    <div class="global-row" id="primerRow" style="display:none">
-      <div>
-        <div class="gr-label">Primer Coat</div>
-        <div class="gr-sub" id="primerNote">Required for new/stained surface</div>
+    <!-- Paint mode — hidden by default, shown when Paint toggle activated -->
+    <div id="paintSection" style="display:none">
+      <div style="padding:8px 12px;background:#fef9c3;border:1px solid #fde047;border-radius:8px;font-size:11px;color:#854d0e;margin-bottom:8px">
+        🎨 Paint mode — fences can be painted, decks cannot. Always 2 finish coats. Primer toggle below.
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="gr-val" id="primerPrice">$0</span>
-        <label class="switch"><input type="checkbox" id="primerCoat" onchange="recalc()" checked><span class="slider"></span></label>
+      <div class="global-row">
+        <div><div class="gr-label">Primer Coat</div><div class="gr-sub" id="primerNote">Add primer for bare/stained surfaces</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="gr-val" id="primerPrice">$0</span>
+          <label class="switch"><input type="checkbox" id="primerCoat" onchange="recalc()" checked><span class="slider"></span></label>
+        </div>
       </div>
-    </div>
-    <div class="global-row">
-      <div><div class="gr-label">2nd Coat</div><div class="gr-sub">0.85× labor on full price</div></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="gr-val" id="coat2price">$0</span>
-        <label class="switch"><input type="checkbox" id="coat2" onchange="recalc()"><span class="slider"></span></label>
+      <div class="global-row">
+        <div><div class="gr-label">Finish Coats</div><div class="gr-sub">Always 2 coats for paint</div></div>
+        <div style="padding:6px 12px;background:#f3f4f6;border-radius:6px;font-size:13px;font-weight:700;color:#374151">2 coats 🔒</div>
       </div>
     </div>
-    <div class="global-row">
+
+    <!-- Paint mode toggle -->
+    <div class="global-row" style="border-top:1px solid #f3f4f6;margin-top:8px;padding-top:10px">
+      <div><div class="gr-label">🖌 Paint mode</div><div class="gr-sub">Fences can be painted — activate for paint settings</div></div>
+      <label class="switch"><input type="checkbox" id="paintModeToggle" onchange="togglePaintMode(this.checked)"><span class="slider"></span></label>
+    </div>
+
+    <div class="global-row" style="border-top:1px solid #f3f4f6;margin-top:4px;padding-top:10px">
       <div><div class="gr-label">Heavy Masking</div><div class="gr-sub">+$2.00/LF (~4ft masking width)</div></div>
       <div style="display:flex;align-items:center;gap:10px">
         <span class="gr-val" id="maskPrice">$0</span>
         <label class="switch"><input type="checkbox" id="masking" onchange="recalc()"><span class="slider"></span></label>
       </div>
+    </div>
+
+    <div class="global-row">
+      <div><div class="gr-label">Color Name</div><div class="gr-sub">1 color included</div></div>
+      <input class="input" style="width:150px" placeholder="e.g. Cedar Tone" id="colorName" value="Natural Cedar">
     </div>
   </div>
 
@@ -321,34 +325,15 @@ function updateCondResult() {
     cardColor = 'green';
   }
 
-  // Auto-switch product selection in the Product section
-  if (isPaintJob) {
-    const paintBtn = document.querySelector('[data-prod="Paint"]');
-    if (paintBtn) {
-      product = 'Paint';
-      document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Paint'));
-      const stainOpts = document.getElementById('stainOpts');
-      if (stainOpts) stainOpts.style.display = 'none';
-      const paintWarn = document.getElementById('paintWarn');
-      if (paintWarn) paintWarn.style.display = '';
-      const coat2cb = document.getElementById('coat2');
-      if (coat2cb) { coat2cb.checked = true; coat2cb.disabled = true; }
-    }
-  } else {
-    const stainBtn = document.querySelector('[data-prod="Stain"]');
-    if (stainBtn) {
-      product = 'Stain';
-      document.querySelectorAll('[data-prod]').forEach(b => b.classList.toggle('active', b.dataset.prod === 'Stain'));
-      const stainOpts = document.getElementById('stainOpts');
-      if (stainOpts) stainOpts.style.display = '';
-      const paintWarn = document.getElementById('paintWarn');
-      if (paintWarn) paintWarn.style.display = 'none';
-      const coat2cb = document.getElementById('coat2');
-      if (coat2cb) coat2cb.disabled = false;
-    }
-    // auto-select stain opacity
+  // Auto-switch stain opacity (condition drives recommendation)
+  if (!isPaintJob) {
     stainOpt = rec;
     document.querySelectorAll('[data-so]').forEach(b => b.classList.toggle('active', b.dataset.so === rec));
+  }
+  // If painted surface detected, suggest switching to paint mode (but don't force it — estimator controls the toggle)
+  const paintToggle = document.getElementById('paintModeToggle');
+  if (isPaintJob && paintToggle && !paintToggle.checked) {
+    // Just note in disclaimer that paint mode should be activated — don't auto-toggle
   }
 
   // Show/hide Q2 based on Q1
@@ -480,46 +465,29 @@ function setLF(id,raw){
   }
   recalc();
 }
-function setProduct(p,el){
-  product=p;
-  document.querySelectorAll('[data-prod]').forEach(b=>b.classList.toggle('active',b.dataset.prod===p));
-  document.getElementById('stainOpts').style.display=p==='Stain'?'':'none';
-  document.getElementById('paintWarn').style.display=p==='Paint'?'':'none';
-  // Paint locks 2nd coat on (always 2 finish coats)
-  const coat2cb=document.getElementById('coat2');
-  if(p==='Paint'){
-    coat2cb.checked=true;
-    coat2cb.disabled=true;
-    coat2cb.parentElement.title='Paint always has 2 finish coats';
-  } else {
-    coat2cb.disabled=false;
-  }
-  // Show/hide primer row
-  const primerRow=document.getElementById('primerRow');
-  primerRow.style.display=p==='Paint'?'':'none';
-  // Set primer state based on condition
-  if(p==='Paint'){
-    const primerCoat=document.getElementById('primerCoat');
-    const primerNote=document.getElementById('primerNote');
-    const curPrev=getQ('q2');
-    const curCond=getQ('q4');
-    if(curPrev==='painted'&&curCond==='minimal'){
+let paintMode = false;
+function togglePaintMode(on) {
+  paintMode = on;
+  product = on ? 'Paint' : 'Stain';
+  document.getElementById('stainSection').style.display = on ? 'none' : '';
+  document.getElementById('paintSection').style.display = on ? '' : 'none';
+  // Auto-set primer based on condition when switching to paint
+  if(on){
+    const primerCoat = document.getElementById('primerCoat');
+    const primerNote = document.getElementById('primerNote');
+    const curPrev = getQ('q1');
+    const curCond = getQ('q4');
+    if(curPrev==='paint'&&(curCond==='great'||curCond==='good')){
       primerCoat.checked=false;
-      primerCoat.disabled=true;
       primerNote.textContent='Not required — existing paint in good condition';
-    } else if(curPrev==='painted'&&curCond!=='minimal'){
-      primerCoat.checked=true;
-      primerCoat.disabled=false;
-      primerNote.textContent='Recommended — existing paint worn/damaged';
     } else {
       primerCoat.checked=true;
-      primerCoat.disabled=true;
-      primerNote.textContent='Required for bare/stained/unknown surface';
+      primerNote.textContent='Recommended for bare/stained/worn surfaces';
     }
   }
-  updateCondResult();
   recalc();
 }
+function setProduct(p){product=p;}
 function recalc(){
   const coat2On=document.getElementById('coat2').checked;
   const maskOn=document.getElementById('masking').checked;
