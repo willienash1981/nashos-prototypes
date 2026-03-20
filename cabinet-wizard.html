@@ -411,8 +411,24 @@ function render() {
   h+=`<div class="color-note">1 color included · +$300 per additional color</div>`;
   h+=`</div></div>`;
 
-  // Step 2: Cabinet Details (single location — one wizard per cabinet job)
-  h+=`<div class="card"><div class="card-title">② Cabinet Details</div>`;
+  // Location Name
+  const loc0 = state.locations[0];
+  h+=`<div class="card">
+    <div class="card-title">② Location Name</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+      ${LOC_PRESETS.map(p=>`<span class="chip${loc0.name===p?' active':''}" onclick="state.locations[0].name='${p.replace(/'/g,"\\'")}';render()">${p}</span>`).join('')}
+      <span class="chip${!LOC_PRESETS.includes(loc0.name)&&loc0.name?' active':''}" onclick="document.getElementById('locCustomToggle').style.display='';document.getElementById('locCustomInput').focus()">✏️ Custom</span>
+    </div>
+    <div id="locCustomToggle" style="${!LOC_PRESETS.includes(loc0.name)&&loc0.name?'':'display:none'}">
+      <input type="text" value="${loc0.name&&!LOC_PRESETS.includes(loc0.name)?loc0.name:''}" placeholder="e.g. Master Bath, Island, Laundry…" id="locCustomInput"
+        style="width:100%;padding:8px 12px;border:1.5px solid var(--gold);border-radius:8px;font-size:14px;font-family:inherit"
+        oninput="state.locations[0].name=this.value;document.querySelector('.topbar .title')&&(document.querySelector('.topbar .title').textContent=this.value||'Cabinets')">
+    </div>
+    ${loc0.name?`<div style="font-size:12px;color:var(--text-light);margin-top:6px">Estimate line item: <strong style="color:var(--navy)">${loc0.name} — Cabinet Painting</strong></div>`:''}
+  </div>`;
+
+  // Step 3: Cabinet Details (single location — one wizard per cabinet job)
+  h+=`<div class="card"><div class="card-title">③ Cabinet Details</div>`;
   h+=renderLocationBody(state.locations[0], 0);
   h+=`</div>`;
 
@@ -423,7 +439,7 @@ function render() {
   h+=renderHardware();
 
   // Step 4: Package
-  h+=`<div class="card"><div class="card-title">④ Package</div>`;
+  h+=`<div class="card"><div class="card-title">⑤ Package</div>`;
   h+=`<div class="pills">`;
   h+=`<div class="pill${state.pkg==='Premium'?' active':''}" onclick="setPkg('Premium')" style="flex:1">Premium (1.0×)</div>`;
   h+=`<div class="pill${state.pkg==='Premium Plus'?' active':''}" onclick="setPkg('Premium Plus')" style="flex:1">Premium Plus (2.10×)</div>`;
@@ -561,7 +577,7 @@ function renderWarnings() {
 
 function renderHardware() {
   const hw=state.hardware;
-  let h=`<div class="card"><div class="card-title">③ Hardware</div>`;
+  let h=`<div class="card"><div class="card-title">④ Hardware</div>`;
 
   // Knobs
   h+=`<div class="sgrp-title">Knobs / Pulls</div>`;
