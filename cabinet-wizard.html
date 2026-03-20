@@ -116,6 +116,10 @@ input[type=text].has-val{border-color:var(--success);background:rgba(46,125,50,.
 .loc-name-dd.open{display:block}
 .loc-name-dd div{padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f5f5}
 .loc-name-dd div:active,.loc-name-dd div:hover{background:var(--bg)}
+.toggle{width:36px;height:20px;background:#d1d5db;border-radius:10px;cursor:pointer;position:relative;transition:background .15s;flex-shrink:0}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:2px;left:2px;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.toggle.on{background:#4f46e5}
+.toggle.on::after{transform:translateX(16px)}
 </style>
 </head>
 <body>
@@ -362,7 +366,7 @@ function render() {
   h+=`<div class="pill${state.finish==='spray'?' active':''}" onclick="setFinish('spray')">🔫 Spray</div>`;
   h+=`<div class="pill${state.finish==='roll'?' active':''}" onclick="setFinish('roll')">🖌 Roll</div>`;
   h+=`</div>`;
-  h+=`<div class="info-note">${state.finish==='spray'?'Renner 2K or system default':'SW Emerald Urethane — for vanities/built-ins'}</div>`;
+  h+=`<div class="info-note">${state.finish==='spray'?'Full spray — Renner 2K or system default. Doors + bodies sprayed.':'Roll bodies, spray doors — SW Emerald Urethane. Bodies rolled on-site, doors removed and sprayed in shop.'}</div>`;
   h+=`</div>`;
 
   // Color
