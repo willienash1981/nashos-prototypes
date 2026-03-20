@@ -165,50 +165,11 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
   <button class="add-loc-btn" onclick="addLocation()">
     <span style="font-size:20px">+</span> Add Room / Area
   </button>
-
-  <!-- Crew Assignment -->
-  <div class="section-header"><span style="font-size:16px">👷</span><h2>Crew Assignment</h2></div>
-  <div class="crew-card">
-    <div style="font-size:12px;font-weight:600">Who handles the drywall work?</div>
-    <div class="crew-opts">
-      <div class="crew-btn active" id="crew-same" onclick="setCrew('same')">🎨 Same as paint crew</div>
-      <div class="crew-btn" id="crew-separate" onclick="setCrew('separate')">👷 Separate drywall crew</div>
-    </div>
     <div class="crew-note" id="crew-note">Drywall repairs included on paint work order</div>
   </div>
 
-  <!-- Notes -->
-  <div class="section-header"><span style="font-size:16px">📝</span><h2>Notes</h2></div>
-  <div style="margin:4px 12px">
-    <textarea id="notes" placeholder="Drywall condition, special requirements, wallpaper history..." style="width:100%;min-height:60px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;resize:vertical;background:var(--card)" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-  </div>
-
-  <div class="disclaimer info">ℹ️ Painting repaired surfaces is included in the paint estimate — NOT in drywall pricing.</div>
-
-  <!-- Summary -->
-  <div class="section-header"><span style="font-size:16px">📋</span><h2>Summary</h2></div>
-  <div id="summary"></div>
-</div>
-
 <!-- Lightbox -->
 <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
-
-<!-- ═══ Notes ═══ -->
-<div class="card" style="margin-bottom:80px">
-  <div class="card-header" style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
-    <span>📝</span><h2 style="font-size:13px;font-weight:700;margin:0">Notes</h2>
-  </div>
-  <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
-    <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
-  </div>
-  <div style="padding:0 12px 12px">
-    <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
-    <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
-    <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
-  </div>
-</div>
 
 <!-- Bottom Bar -->
 <div class="bottom-bar">
@@ -216,7 +177,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     <div class="label">Drywall Total</div>
     <div class="total" id="bottomTotal">$0</div>
   </div>
-  <button id="nightsIconBtn" onclick="toggleNights()" title="Nights / Weekends 1.5×" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 6px;border-radius:8px;transition:background .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'"><span id="nightsIcon" style="font-size:18px;line-height:1">☀️</span><span id="nightsIconLabel" style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);white-space:nowrap">NIGHTS</span></button>
   <button class="save-btn" onclick="alert('Saved to estimate! (prototype)')">Save to Estimate</button>
 </div>
 
@@ -245,6 +205,7 @@ function addLocation() {
     label: '',
     roomSelect: 'Living Room',
     roomCustom: '',
+    isCustom: false,
     noPaint: false,
     noPaintConfirmed: false,
     noPaintDesc: '',
@@ -275,7 +236,7 @@ function roomSelectChange(locId, val) {
   const loc = locations.find(l => l.id === locId);
   if (!loc) return;
   loc.roomSelect = val;
-  if (val !== 'Custom') loc.label = val;
+  loc.label = val;
   renderAll();
 }
 
@@ -286,6 +247,14 @@ function roomCustomChange(locId, val) {
   loc.label = val;
   updateTotals();
   renderSummary();
+}
+
+function toggleCustomArea(locId, on) {
+  const loc = locations.find(l => l.id === locId);
+  if (!loc) return;
+  loc.isCustom = on;
+  if (!on) { loc.roomCustom = ''; loc.label = loc.roomSelect; }
+  renderAll();
 }
 
 function noPaintChange(locId, checked) {
@@ -385,15 +354,6 @@ function grandTotal() {
   return locations.reduce((sum, l) => sum + locTotal(l), 0);
 }
 
-// ── Crew ──
-function setCrew(mode) {
-  crewMode = mode;
-  document.getElementById('crew-same').classList.toggle('active', mode === 'same');
-  document.getElementById('crew-separate').classList.toggle('active', mode === 'separate');
-  document.getElementById('crew-note').textContent = mode === 'same'
-    ? 'Drywall repairs included on paint work order'
-    : 'Separate drywall work order generated';
-}
 
 // ── Render ──
 function renderAll() {
@@ -414,7 +374,7 @@ function renderAll() {
   locations.forEach(loc => {
     const lt = locTotal(loc);
     const activeCount = loc.items.filter(i => i.qty > 0).length;
-    const displayRoom = loc.roomSelect === 'Custom' ? (loc.roomCustom || 'Custom Room') : (loc.roomSelect || 'Room');
+    const displayRoom = loc.isCustom ? (loc.roomCustom || 'Custom Area') : (loc.roomSelect || 'Room');
     const displayPrice = lt > 0 ? lt.toLocaleString() : '0';
     const activeItems = loc.items.filter(i => i.qty > 0);
     const paintSurfaces = activeItems.length > 0 ? activeItems.map(i => ITEMS_MAP[i.itemId].name).join(', ') : 'repairs';
@@ -451,12 +411,16 @@ function renderAll() {
             <option value="Office" ${loc.roomSelect==='Office'?'selected':''}>Office</option>
             <option value="Stairwell" ${loc.roomSelect==='Stairwell'?'selected':''}>Stairwell</option>
             <option value="Basement" ${loc.roomSelect==='Basement'?'selected':''}>Basement</option>
-            <option disabled>───</option>
-            <option value="Custom" ${loc.roomSelect==='Custom'?'selected':''}>Custom (free text)</option>
+
           </select>
-          ${loc.roomSelect === 'Custom' ? `<input class="room-custom-input" type="text" placeholder="Room name…" value="${esc(loc.roomCustom)}"
-            oninput="roomCustomChange(${loc.id}, this.value)">` : ''}
-          <label class="no-paint-row">
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-light);cursor:pointer;margin-top:6px">
+            <input type="checkbox" ${loc.roomCustom!==undefined&&loc.isCustom?'checked':''} onchange="toggleCustomArea(${loc.id},this.checked)" style="width:15px;height:15px;cursor:pointer;accent-color:var(--gold)">
+            <span>Custom Area</span>
+          </label>
+          ${loc.isCustom ? `<div style="background:var(--orange-bg);border:1.5px solid #F59E0B;border-radius:8px;padding:6px 10px;font-size:11px;color:#92400E;margin-top:4px">⚡ Only use when a room doesn't apply — e.g. "Whole House Ceilings" or "All Hallways"</div>
+          <input class="room-custom-input" type="text" placeholder="e.g. Whole House Ceilings, All Hallways…" value="${esc(loc.roomCustom)}"
+            style="margin-top:6px" oninput="roomCustomChange(${loc.id}, this.value)">` : ''}
+          <label class="no-paint-row" style="margin-top:6px">
             <input type="checkbox" ${loc.noPaint?'checked':''} onchange="noPaintChange(${loc.id}, this.checked)">
             No painting in this room
           </label>
@@ -520,8 +484,8 @@ function renderAll() {
       <div class="display-mode-section">
         <div class="display-mode-label">Estimate Display</div>
         <div class="mode-pill-row">
-          <button class="mode-pill ${loc.displayMode==='tucked'?'active':''}" onclick="setDisplayMode(${loc.id},'tucked')">🔗 Tucked In</button>
-          <button class="mode-pill ${loc.displayMode==='subline'?'active':''}" onclick="setDisplayMode(${loc.id},'subline')">↳ Sub-line</button>
+          <button class="mode-pill ${loc.displayMode==='tucked'?'active':''}" onclick="setDisplayMode(${loc.id},'tucked')" title="Drywall repairs merge into the room painting line item on the estimate — customer sees one combined price">🔗 Tucked In</button>
+          <button class="mode-pill ${loc.displayMode==='subline'?'active':''}" onclick="setDisplayMode(${loc.id},'subline')" title="Drywall repairs show as a separate indented line under the room — customer sees the repair cost broken out">↳ Sub-line</button>
         </div>
         <div class="mode-preview">
           <div class="preview-label">Preview</div>
@@ -557,7 +521,7 @@ function renderAll() {
 function updateTotals() {
   const gt = grandTotal();
   const itemCount = locations.reduce((s, l) => s + l.items.filter(i => i.qty > 0).length, 0);
-  const displayTotal = nightsOn ? Math.round(gt * 1.5) : gt;
+  const displayTotal = effectiveNights() ? Math.round(gt * 1.5) : gt;
   document.getElementById('rtTotal').textContent = '$' + displayTotal.toLocaleString();
   document.getElementById('rtDetail').textContent = `${locations.length} room${locations.length!==1?'s':''} · ${itemCount} item${itemCount!==1?'s':''}`;
   document.getElementById('bottomTotal').textContent = '$' + displayTotal.toLocaleString();
@@ -576,7 +540,7 @@ function renderSummary() {
   activeLocs.forEach(loc => {
     const lt = locTotal(loc);
     const hasPhoto = loc.photos.length > 0;
-    const sumRoom = loc.roomSelect === 'Custom' ? (loc.roomCustom || 'Custom Room') : (loc.roomSelect || loc.label || 'Room');
+    const sumRoom = loc.isCustom ? (loc.roomCustom || 'Custom Area') : (loc.roomSelect || loc.label || 'Room');
     html += `<div class="sum-row loc"><span>${hasPhoto ? '📸 ' : ''}${esc(sumRoom)}</span><span>$${lt.toLocaleString()}</span></div>`;
     loc.items.filter(i => i.qty > 0).forEach(li => {
       const item = ITEMS_MAP[li.itemId];
