@@ -289,21 +289,19 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="card">
     <textarea id="notes" placeholder="Screen type, trim condition, paint color, access notes..." style="width:100%;min-height:70px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
   </div>
-</div>
-
-
-  <!-- JOB PHOTOS -->
-  <div class="step-header"><h2><span class="num" style="background:var(--gold);color:var(--navy);font-size:13px;width:24px;height:24px">📷</span> Job Photos</h2></div>
-  <div class="job-photo-card">
-    <div class="job-photo-title">📸 Screen Replacement Photos</div>
+  <!-- Photos — inside the body, not orphaned -->
+  <div style="padding:12px 16px 4px;font-size:12px;font-weight:700;color:var(--navy)">📷 Job Photos</div>
+  <div class="job-photo-card" style="margin:0 0 4px">
     <div class="jp-photo-row" id="jp-thumb-row"></div>
     <div class="jp-actions">
       <button class="jp-btn" onclick="jpCapture()"><span class="ico">📷</span> Take Photo</button>
       <button class="jp-btn" onclick="jpPick()"><span class="ico">🖼️</span> From Library</button>
     </div>
-    <input class="jp-caption" id="jp-caption" type="text" placeholder="Caption (e.g. Screen - Damaged frame, Screen - Window location)">
+    <input class="jp-caption" id="jp-caption" type="text" placeholder="Caption (e.g. Damaged frame, Window location)">
   </div>
-  <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+</div>
+
+<div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
 
 <!-- Bottom Bar -->
 <div class="bottom-bar">
