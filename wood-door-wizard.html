@@ -493,28 +493,27 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
     ℹ️ Product: PROLUXE® Door & Window Wood Finish. 1-year warranty. Recoat recommended every 2 years.
   </div>
 
+  <!-- ═══ Notes ═══ -->
+  <div class="card" style="margin-bottom:80px">
+    <div class="card-header" style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
+      <span>📝</span><h2 style="font-size:13px;font-weight:700;margin:0">Notes</h2>
+    </div>
+    <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
+      <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
+      <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
+      <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
+    </div>
+    <div style="padding:0 12px 12px">
+      <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
+      <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
+      <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
+    </div>
+  </div>
+
   </div><!-- /main-content -->
 </div>
 
-
   <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
-
-<!-- ═══ Notes ═══ -->
-<div class="card" style="margin-bottom:80px">
-  <div class="card-header" style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
-    <span>📝</span><h2 style="font-size:13px;font-weight:700;margin:0">Notes</h2>
-  </div>
-  <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
-    <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
-    <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
-  </div>
-  <div style="padding:0 12px 12px">
-    <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
-    <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
-    <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
-  </div>
-</div>
 
 <!-- Bottom Bar -->
 <div class="bottom-bar">
