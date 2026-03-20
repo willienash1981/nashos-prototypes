@@ -136,6 +136,10 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 .mode-preview .preview-label { font-size:10px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
 .mode-preview .sub-line { padding-left:12px; color:var(--text-light); }
 .crew-routing-note { margin-top:7px; font-size:11px; color:#1E40AF; background:var(--blue-bg); border-radius:6px; padding:6px 8px; line-height:1.4; }
+.note-pill{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;border:1.5px solid #e5e7eb;background:white;color:#6b7280;cursor:pointer;transition:all .15s;font-family:inherit}
+.note-pill.active{background:#1a2332;color:white;border-color:#1a2332}
+.note-textarea{width:100%;min-height:60px;border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 10px;font-size:12px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box}
+.note-textarea:focus{border-color:#c8a85c}
 </style>
 </head>
 <body>
@@ -182,6 +186,23 @@ body { font-family: system-ui, -apple-system, sans-serif; background:var(--bg); 
 
 <!-- Lightbox -->
 <div id="lightbox" class="lightbox hidden" onclick="this.classList.add('hidden')"></div>
+
+<!-- ═══ Notes ═══ -->
+<div class="card" style="margin-bottom:80px">
+  <div class="card-header" style="display:flex;align-items:center;gap:6px;padding:10px 14px 6px">
+    <span>📝</span><h2 style="font-size:13px;font-weight:700;margin:0">Notes</h2>
+  </div>
+  <div style="display:flex;gap:4px;padding:0 12px 8px" id="noteTabs">
+    <button class="note-pill active" onclick="switchNoteTab(this,'estimate')">📋 Estimate</button>
+    <button class="note-pill" onclick="switchNoteTab(this,'crew')">👷 Crew</button>
+    <button class="note-pill" onclick="switchNoteTab(this,'internal')">🔒 Internal</button>
+  </div>
+  <div style="padding:0 12px 12px">
+    <textarea id="noteEstimate" class="note-textarea" placeholder="Notes visible to customer on the estimate/proposal..."></textarea>
+    <textarea id="noteCrew" class="note-textarea" style="display:none" placeholder="Notes for the crew on the work order (not visible to customer)..."></textarea>
+    <textarea id="noteInternal" class="note-textarea" style="display:none" placeholder="Internal office notes — not visible to customer or crew..."></textarea>
+  </div>
+</div>
 
 <!-- Bottom Bar -->
 <div class="bottom-bar">
@@ -569,6 +590,14 @@ function esc(s) {
 
 // Init — start with one room
 addLocation();
+function switchNoteTab(btn, tab) {
+  document.querySelectorAll('#noteTabs .note-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['estimate','crew','internal'].forEach(t=>{
+    const el=document.getElementById('note'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(el) el.style.display=t===tab?'':'none';
+  });
+}
 </script>
 </body>
 </html>

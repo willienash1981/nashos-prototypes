@@ -887,6 +887,7 @@ function switchNote(tab,idx){
   tab.classList.add('active');
   document.getElementById('note-0').style.display=idx===0?'':'none';
   document.getElementById('note-1').style.display=idx===1?'':'none';
+  document.getElementById('note-2').style.display=idx===2?'':'none';
 }
 
 function openD(type){
@@ -1128,6 +1129,11 @@ renderWinRows();
 </script>
 <!-- Photo lightbox for prep -->
 <div id="prep-lb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;cursor:pointer" onclick="this.style.display='none'">
+  <img id="lb-img" style="max-width:95%;max-height:90vh;border-radius:8px">
+</div>
+</body>
+</html>
+ter;cursor:pointer" onclick="this.style.display='none'">
   <img id="lb-img" style="max-width:95%;max-height:90vh;border-radius:8px">
 </div>
 </body>
