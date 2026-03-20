@@ -794,7 +794,7 @@ function updateBundledVisual() {
   const extra = extraTrips();
   const covered = R.doorVisits - extra;
 
-  document.getElementById('site-days').textContent = days;
+  const sdEl2 = document.getElementById('site-days-bundled'); if(sdEl2) sdEl2.textContent = days;
 
   // Build trip dots
   const el = document.getElementById('trip-visual-bundled');
