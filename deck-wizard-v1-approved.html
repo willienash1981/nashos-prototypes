@@ -116,6 +116,23 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="running-total" id="runningTotal">
     <div><span class="big" id="rtTotal">$0</span> <span class="detail" id="rtProduct">Semi-Transparent Stain</span></div>
     <div class="detail" id="rtDetail">Flooring: 0 SF · Stairs: 0 SF · Rail: 0 LF</div>
+    <div class="detail" id="rtName" style="opacity:.6;font-size:10px">Back Deck · Sections for work order only</div>
+  </div>
+
+  <!-- DECK NAME -->
+  <div style="padding:10px 12px 4px">
+    <div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Deck Name</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px" id="deckNameChips">
+      <div class="cq-chip sel" data-dn="Back Deck" onclick="setDeckName(this)">Back Deck</div>
+      <div class="cq-chip" data-dn="Front Deck" onclick="setDeckName(this)">Front Deck</div>
+      <div class="cq-chip" data-dn="Left Side" onclick="setDeckName(this)">Left Side</div>
+      <div class="cq-chip" data-dn="Right Side" onclick="setDeckName(this)">Right Side</div>
+      <div class="cq-chip" data-dn="Pool Deck" onclick="setDeckName(this)">Pool Deck</div>
+      <div class="cq-chip" data-dn="Wrap-Around" onclick="setDeckName(this)">Wrap-Around</div>
+      <div class="cq-chip" data-dn="custom" onclick="setDeckName(this)">Custom…</div>
+    </div>
+    <input type="text" id="deckNameCustom" placeholder="Deck name" style="display:none;width:100%;padding:7px 10px;border:1.5px solid #d1d5db;border-radius:8px;font-size:13px;font-family:inherit" oninput="updateDeckNameFromCustom(this.value)">
+    <div style="font-size:10px;color:#9ca3af;margin-top:4px">Appears on estimate as a single line. Sections are for work order detail only.</div>
   </div>
 
   <!-- STEP 1: CONDITION ASSESSMENT -->
@@ -316,6 +333,33 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
 </div>
 
 <script>
+let deckName = 'Back Deck';
+function setDeckName(el) {
+  document.querySelectorAll('#deckNameChips .cq-chip').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  const customInput = document.getElementById('deckNameCustom');
+  if(el.dataset.dn === 'custom') {
+    customInput.style.display = '';
+    customInput.focus();
+    deckName = customInput.value || 'Custom Deck';
+  } else {
+    customInput.style.display = 'none';
+    deckName = el.dataset.dn;
+  }
+  updateRunningTotal();
+}
+function updateDeckNameFromCustom(val) {
+  deckName = val || 'Custom Deck';
+  updateRunningTotal();
+}
+function updateRunningTotal() {
+  const el = document.getElementById('rtTotal');
+  if(el) {
+    // just re-run calc to refresh display
+    if(typeof calc==='function') calc();
+  }
+}
+
 const RATES = { floor:2.03, stair:3.35, skirting:1.39, underside:1.39 };
 const RAIL_RATES = { wood:13.49, 'wood-metal':18.39, painted:16.50, metal:0 };
 
@@ -896,9 +940,12 @@ function calc() {
 
   const totalRound = Math.round(total);
   document.getElementById('rtTotal').textContent = '$'+totalRound.toLocaleString();
+  document.getElementById('runningTotal').title = deckName;
   document.getElementById('bottomTotal').textContent = '$'+totalRound.toLocaleString();
   document.getElementById('rtProduct').textContent = state.productName || 'Semi-Transparent Stain';
   document.getElementById('rtDetail').textContent = `Floor: ${Math.round(sumFloorSF)} SF · Stairs: ${Math.round(sumStairSF)} SF · Rail: ${Math.round(sumRailLF)} LF`;
+  const rtName = document.getElementById('rtName');
+  if(rtName) rtName.textContent = deckName + ' · Sections for work order only';
 }
 
 function buildPhotos(s) {
