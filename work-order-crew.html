@@ -199,11 +199,12 @@ a { color: inherit; text-decoration: none; }
 .job-headline {
   font-family: 'Sora', sans-serif;
   font-weight: 700;
-  font-size: 36px;
+  font-size: clamp(24px, 7.2vw, 34px);
   line-height: 1.05;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
   color: var(--ink);
   margin-bottom: 14px;
+  overflow-wrap: break-word;
 }
 .job-address {
   display: flex;
@@ -234,11 +235,12 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 16px;
+  gap: 4px 12px;
   padding-top: 16px;
   border-top: 1px solid var(--hairline);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 700;
   color: var(--meta);
@@ -250,8 +252,9 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: -0.005em;
   font-variant-numeric: tabular-nums;
   text-transform: none;
+  font-size: 12px;
 }
-.job-meta-row .sep { color: var(--hairline); margin: 0 2px; }
+.job-meta-row .sep { color: var(--hairline); margin: 0 1px; }
 .progress-inline-wrap {
   display: flex;
   align-items: center;
@@ -335,24 +338,28 @@ a { color: inherit; text-decoration: none; }
 
 /* ── CREW SCORE ── */
 .crew-score {
-  padding: 28px 20px;
+  padding: 24px 20px;
   display: flex;
-  gap: 24px;
+  gap: 20px;
   align-items: stretch;
   border-top: 1px solid var(--hairline);
 }
+.cs-number-col {
+  flex-shrink: 0;
+}
 .cs-label {
   font-family: 'Inter', sans-serif;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--meta);
   margin-bottom: 6px;
+  white-space: nowrap;
 }
 .cs-big {
   font-family: 'Sora', sans-serif;
-  font-size: 72px;
+  font-size: 60px;
   font-weight: 700;
   color: var(--navy);
   line-height: 0.88;
@@ -360,24 +367,26 @@ a { color: inherit; text-decoration: none; }
 }
 .cs-denom {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--meta);
-  margin-left: 4px;
+  margin-left: 2px;
 }
 .cs-metrics {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 4px;
 }
 .cs-metric {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 8px;
   font-family: 'Inter', sans-serif;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -385,8 +394,8 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--hairline);
 }
 .cs-metric:last-child { border-bottom: none; padding-bottom: 0; }
-.cs-metric .label { color: var(--meta); }
-.cs-metric .pct { color: var(--ink); font-variant-numeric: tabular-nums; }
+.cs-metric .label { color: var(--meta); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-metric .pct { color: var(--ink); font-variant-numeric: tabular-nums; flex-shrink: 0; }
 .cs-metric.low .pct { color: var(--orange); }
 .cs-motivation {
   font-size: 10.5px;
@@ -1904,7 +1913,7 @@ body.role-crew .scope-item-photo-link { display: none !important; } /* hide esti
 
 <!-- ── CREW SCORE (Field Sup only) ── -->
 <div class="crew-score sup-only-el">
-  <div>
+  <div class="cs-number-col">
     <div class="cs-label">Crew Score</div>
     <div class="cs-big">82<span class="cs-denom">/100</span></div>
   </div>
