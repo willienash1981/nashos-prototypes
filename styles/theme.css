@@ -27,7 +27,7 @@
   --gold-light: #FFB366;
   --purple: #FF8200;
   --blue: #0B1F3A;
-  --blue-light: #0B1F3A;
+  --blue-light: #F5F6F8;
   --blue-bg: #F5F6F8;
 
   /* Surfaces */
@@ -254,4 +254,49 @@ input[type="checkbox"], input[type="radio"] { accent-color: #FF8200; }
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   background: #FFFFFF !important;
+}
+
+/* ── Wizard "add pill" buttons (+ Section / + Wall / + Accent Wall / + Add Window etc.) ── */
+/* These were navy-on-navy in the shim's first cut. Rebuild as outlined navy pills. */
+.add-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 6px 12px !important;
+  border: 1px dashed #0B1F3A !important;
+  border-radius: 999px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: #0B1F3A !important;
+  background: #FFFFFF !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background 0.15s, border-color 0.15s !important;
+}
+.add-pill:hover { background: #F5F6F8 !important; border-color: #061228 !important; }
+.add-pill.accent, .add-pill.accent-wall {
+  border-color: #FF8200 !important;
+  color: #CC6600 !important;
+  background: #FFF4E6 !important;
+}
+.add-pill.accent:hover { background: #FFE4CC !important; }
+
+/* Room-preset chips / simple pill rows (.pill, .preset, .chip-action) */
+.pill, .preset-chip, .chip-action {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  background: #FFFFFF;
+  border: 1px solid #E2E5EA;
+  color: #0E0E10;
+  cursor: pointer;
+}
+.pill.active, .preset-chip.active {
+  background: #0B1F3A !important;
+  color: #FFFFFF !important;
+  border-color: #0B1F3A !important;
 }
