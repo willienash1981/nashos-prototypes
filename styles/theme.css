@@ -1,0 +1,257 @@
+/* ============================================================
+   NashOS · Editorial Industrialism theme shim
+   Drop-in that repaints existing prototypes onto the approved
+   design system (see design.md). Loads AFTER each prototype's
+   inline <style> block so it wins the cascade.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  /* Canonical tokens */
+  --navy: #0B1F3A;
+  --navy-light: #0B1F3A;
+  --navy-mid: #0B1F3A;
+  --navy-dark: #061228;
+  --navy-deep: #061228;
+  --ink: #0E0E10;
+
+  /* Accent → Tennessee orange (replaces blue/gold/purple) */
+  --orange: #FF8200;
+  --orange-deep: #CC6600;
+  --orange-bg: #FFF4E6;
+  --orange-light: #FFB366;
+  --accent: #FF8200;
+  --accent-light: #FFB366;
+  --gold: #FF8200;
+  --gold-light: #FFB366;
+  --purple: #FF8200;
+  --blue: #0B1F3A;
+  --blue-light: #0B1F3A;
+  --blue-bg: #F5F6F8;
+
+  /* Surfaces */
+  --paper: #FFFFFF;
+  --card: #FFFFFF;
+  --bg: #FFFFFF;
+  --surface: #F5F6F8;
+  --surface-dim: #EDEFF3;
+
+  /* Text */
+  --text: #0E0E10;
+  --text-bright: #0E0E10;
+  --text-light: #64748B;
+  --text-dim: #64748B;
+  --text-muted: #9AA4B2;
+  --meta: #64748B;
+  --meta-soft: #9AA4B2;
+
+  /* Dividers */
+  --border: #E2E5EA;
+  --hairline: #E2E5EA;
+
+  /* Gray scale (for old Google-Material-style grays) */
+  --g50: #F5F6F8;
+  --g100: #F5F6F8;
+  --g200: #E2E5EA;
+  --g300: #E2E5EA;
+  --g400: #9AA4B2;
+  --g500: #9AA4B2;
+  --g600: #64748B;
+  --g700: #64748B;
+  --g800: #0E0E10;
+  --g900: #0E0E10;
+
+  /* Status */
+  --green: #15803D;
+  --green-bg: #DCFCE7;
+  --yellow: #CA8A04;
+  --yellow-bg: #FEF3C7;
+  --red: #B91C1C;
+  --red-bg: #FEE2E2;
+
+  /* Radii — sharpen up, 4px across the board */
+  --r: 4px;
+  --rs: 4px;
+  --rl: 4px;
+}
+
+html { background: #FFFFFF; }
+
+body {
+  background: #FFFFFF !important;
+  color: #0E0E10 !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sora for all headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: #0E0E10 !important;
+}
+
+/* Sora for explicit "display" / "headline" classes commonly used */
+.display, .headline, .hero-title, .page-title, .logo, .hero {
+  font-family: 'Sora', sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Top bars: force navy→orange spine + white content */
+.topbar, .top-bar, .app-bar, .header-bar, .nav-bar {
+  background: #FFFFFF !important;
+  color: #0E0E10 !important;
+  border-bottom: 1px solid #E2E5EA !important;
+}
+.topbar.navy, .top-bar.navy, header.navy { background: #FFFFFF !important; color: #0E0E10 !important; }
+
+/* Kill dark backgrounds that reference old navy tokens */
+[style*="background:#1a2332"],
+[style*="background: #1a2332"],
+[style*="background:#1B2A4A"],
+[style*="background: #1B2A4A"],
+[style*="background-color:#1a2332"],
+[style*="background-color: #1a2332"],
+[style*="background-color:#1B2A4A"],
+[style*="background-color: #1B2A4A"] {
+  background: #FFFFFF !important;
+}
+
+/* Gold / amber text → navy for reading, orange only for UI accent */
+[style*="color:#C4A962"],
+[style*="color: #C4A962"],
+[style*="color:#c8a85c"],
+[style*="color: #c8a85c"],
+[style*="color:#D4C182"],
+[style*="color: #D4C182"] { color: #0B1F3A !important; }
+
+/* Common gold/accent backgrounds → replace with neutral surface or orange for CTAs */
+[style*="background:#C4A962"],
+[style*="background: #C4A962"],
+[style*="background:#c8a85c"],
+[style*="background: #c8a85c"] { background: #FF8200 !important; color: #FFFFFF !important; }
+
+/* Border radius softening — clamp anything above 8px back to 4px */
+/* (Kept as suggestion; only applies to elements we target by class) */
+
+/* Consistent focus state */
+*:focus { outline-color: #FF8200; }
+
+/* "Gold" / amber CTAs common in existing prototypes */
+.btn-gold, .btn-primary, .cta, .button-primary {
+  background: #FF8200 !important;
+  color: #FFFFFF !important;
+  border-color: #FF8200 !important;
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  border-radius: 4px !important;
+}
+.btn-gold:hover, .btn-primary:hover, .cta:hover { background: #CC6600 !important; }
+
+/* Secondary / navy CTAs */
+.btn-navy, .btn-secondary {
+  background: #0B1F3A !important;
+  color: #FFFFFF !important;
+  border-color: #0B1F3A !important;
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  border-radius: 4px !important;
+}
+
+/* Sharpen rounded pills in common selectors */
+.pill, .btn, button, .chip, .tag {
+  border-radius: 4px;
+}
+.chip.status-pending, .chip-pending, .status-pending,
+.badge.pending { background: #FEF3C7 !important; color: #CC6600 !important; border-radius: 999px !important; }
+.chip.status-approved, .chip-approved, .status-approved,
+.badge.approved, .badge.complete { background: #DCFCE7 !important; color: #15803D !important; border-radius: 999px !important; }
+
+/* Cards: remove fat borders, use hairline + surface */
+.card, .panel-card, .wizard-card, .dash-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E5EA !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+/* Progress bars → orange fill on grey track */
+.progress-bar, .progress, [class*="progress"] { border-radius: 2px; }
+.progress-fill, .progress-bar-fill, .progress > .fill,
+.progress > [class*="fill"] { background: #FF8200 !important; }
+
+/* Tables: airy hairline rows */
+table { border-collapse: collapse; }
+table th {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: #64748B !important;
+  border-bottom: 2px solid #E2E5EA !important;
+  background: transparent !important;
+  padding: 10px 6px !important;
+}
+table td {
+  border-bottom: 1px solid #E2E5EA !important;
+  padding: 10px 6px !important;
+  color: #0E0E10;
+}
+table tr:last-child td { border-bottom: none !important; }
+
+/* Inputs */
+input[type="text"], input[type="email"], input[type="tel"], input[type="number"],
+input[type="date"], input[type="search"], textarea, select {
+  border-radius: 4px;
+  border-color: #E2E5EA;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #FF8200 !important;
+}
+input[type="checkbox"], input[type="radio"] { accent-color: #FF8200; }
+
+/* Heading-numerals helper (used across dashboards) */
+.big-number, .metric-value, .stat-number, .kpi {
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  color: #0B1F3A !important;
+}
+
+/* Caps metadata helper */
+.caps-label, .label-caps, .overline {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: #64748B !important;
+}
+
+/* Orange accent left border for active state (reusable) */
+.accent-left, .active-left {
+  border-left: 4px solid #FF8200 !important;
+  padding-left: 12px;
+}
+
+/* Site-spine (thin orange line at top) — inject by adding <div class="spine"></div> */
+.spine { height: 4px; background: #FF8200; width: 100%; }
+
+/* Remove any leftover heavy drop shadows */
+.shadow, .elevated, .floating { box-shadow: none !important; }
+
+/* Remove any "glass" effects */
+.glass, .glassmorphic, [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: #FFFFFF !important;
+}
