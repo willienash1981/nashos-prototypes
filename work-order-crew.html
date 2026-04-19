@@ -407,67 +407,106 @@ a { color: inherit; text-decoration: none; }
   margin-top: -4px;
 }
 
-/* ── JOB START BANNER ── */
+/* ── START CHECKLIST (day 1 only; reuses section scaffolding) ── */
 .start-banner {
-  margin: 20px;
-  padding: 20px;
+  padding: 24px 20px;
+  border-top: 1px solid var(--hairline);
   background: var(--paper);
-  border-left: 4px solid var(--orange);
-  background: var(--yellow-bg);
 }
-.start-banner.complete {
-  border-left-color: var(--green);
-  background: var(--green-bg);
-}
-.start-title {
-  font-family: 'Sora', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--orange-deep);
-  letter-spacing: -0.015em;
+.start-banner.complete .start-row,
+.start-banner.complete .start-btns,
+.start-banner.complete .start-lede { display: none; }
+.start-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   margin-bottom: 6px;
 }
-.start-banner.complete .start-title { color: var(--green); }
-.start-score {
-  font-size: 11px;
-  color: var(--meta);
-  margin-bottom: 14px;
-  letter-spacing: 0.06em;
-  line-height: 1.45;
+.start-h {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--ink);
 }
-.start-btns { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.start-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+.start-lede {
+  font-size: 13px;
+  color: var(--meta);
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+.start-btns {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
 .start-cam-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: var(--paper);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r);
+  gap: 14px;
+  padding: 16px 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--hairline);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
   width: 100%;
-  transition: border-color 0.15s, opacity 0.15s;
+  transition: opacity 0.15s;
 }
-.start-cam-btn.dmg { border-color: var(--orange); }
-.start-cam-btn.bef { border-color: var(--navy); }
-.start-cam-btn .cam-icon { font-size: 22px; flex-shrink: 0; }
+.start-cam-btn:last-child { border-bottom: 1px solid var(--hairline); }
+.start-cam-btn .cam-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border-radius: var(--r);
+  flex-shrink: 0;
+  font-size: 16px;
+}
 .start-cam-btn .cam-label {
   flex: 1;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
+  line-height: 1.3;
 }
 .start-cam-btn .cam-count {
-  font-size: 10.5px;
-  color: var(--meta);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: var(--orange);
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
-.start-cam-btn.has-photos { opacity: 0.5; }
-.start-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+.start-cam-btn::after {
+  content: '›';
+  color: var(--meta-soft);
+  font-size: 20px;
+  line-height: 1;
+  margin-left: 4px;
+}
+.start-cam-btn.has-photos .cam-icon { background: var(--green-bg); color: var(--green); }
+.start-cam-btn.has-photos .cam-label { color: var(--meta); text-decoration: line-through; text-decoration-thickness: 1px; }
+.start-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.start-row:last-of-type { margin-bottom: 0; }
 .start-row-label {
   font-family: 'Inter', sans-serif;
   font-size: 10.5px;
@@ -475,17 +514,17 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 700;
-  width: 76px;
+  width: 60px;
   flex-shrink: 0;
 }
 .start-crew-btns { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
 .start-crew-btn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border: 1px solid var(--hairline);
   background: var(--paper);
   color: var(--ink);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   border-radius: var(--r);
@@ -493,29 +532,39 @@ a { color: inherit; text-decoration: none; }
   transition: all 0.15s;
 }
 .start-crew-btn.active {
-  border-color: var(--orange);
-  color: var(--orange);
-  background: #FFF4E6;
+  background: var(--navy);
+  color: white;
+  border-color: var(--navy);
 }
 .start-crew-btn.custom { font-size: 12px; }
 .start-date-input {
   flex: 1;
-  background: var(--paper);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r);
-  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--hairline);
+  border-radius: 0;
+  padding: 8px 0;
   color: var(--ink);
   font-size: 14px;
   font-family: inherit;
 }
+.start-date-input:focus { outline: none; border-bottom-color: var(--orange); }
 .start-done {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: 'Sora', sans-serif;
-  font-size: 15px;
-  color: var(--green);
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.start-done::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: var(--green);
 }
 
 /* ── ESTIMATOR NOTES ── */
@@ -1925,17 +1974,20 @@ body.role-crew .scope-item-photo-link { display: none !important; } /* hide esti
 </div>
 <div class="cs-motivation sup-only-el">Higher score → priority scheduling</div>
 
-<!-- ── JOB START BANNER ── -->
+<!-- ── START CHECKLIST (day 1) ── -->
 <div class="start-banner" id="start-banner">
-  <div class="start-title">⚠ New Job — Complete Before Starting</div>
-  <div class="start-score">Good photos = Nash gear rewards. These become your before-and-after pairs.</div>
+  <div class="start-head">
+    <h2 class="start-h">Start Checklist</h2>
+    <span class="start-sub">Before Day 1</span>
+  </div>
+  <div class="start-lede">Capture damage + before photos and set your crew plan. These photos protect you and Nash — and become the before-and-after pairs we use for marketing.</div>
   <div class="start-btns">
-    <button class="start-cam-btn dmg" id="btn-dmg-photos" onclick="startCamera('damage')">
+    <button class="start-cam-btn" id="btn-dmg-photos" onclick="startCamera('damage')">
       <span class="cam-icon">📸</span>
       <span class="cam-label">Pre-Existing Damage Photos</span>
       <span class="cam-count" id="dmg-count"></span>
     </button>
-    <button class="start-cam-btn bef" id="btn-bef-photos" onclick="startCamera('before')">
+    <button class="start-cam-btn" id="btn-bef-photos" onclick="startCamera('before')">
       <span class="cam-icon">📸</span>
       <span class="cam-label">Before Photos — Work Surfaces</span>
       <span class="cam-count" id="bef-count"></span>
