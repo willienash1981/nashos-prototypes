@@ -3,455 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NashOS — Executive Dashboard</title>
-<style>
-:root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3D5F;
-  --gold: #C4A962;
-  --gold-light: #D4BE82;
-  --bg: #F5F3EF;
-  --white: #FFFFFF;
-  --border: #E2DFD8;
-  --text: #1B2A4A;
-  --text-sec: #6B7280;
-  --text-muted: #9CA3AF;
-  --green: #16A34A;
-  --green-bg: #F0FDF4;
-  --red: #DC2626;
-  --red-bg: #FEF2F2;
-  --yellow: #F59E0B;
-  --yellow-bg: #FFFBEB;
-  --blue: #2563EB;
-  --blue-bg: #EFF6FF;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(27,42,74,.08);
-  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+<title>Nash Painting — Executive Dashboard</title>
+<link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body class="ed-dashboard">
 
-.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
-.back-link{color:var(--gold);font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px}
-.back-link:hover{opacity:.8}
-.topbar-right{display:flex;align-items:center;gap:14px}
-.topbar-date{font-size:13px;opacity:.7}
-.page-title{font-size:15px;font-weight:700;opacity:.95}
+<div class="ed-spine"></div>
 
-.main{max-width:1400px;margin:0 auto;padding:24px}
-@media(max-width:480px){.main{padding:12px}}
-
-.qa-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.qa-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--white);font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;box-shadow:var(--shadow);transition:all .15s}
-.qa-btn:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:var(--shadow-md)}
-.qa-btn.disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
-
-.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:22px}
-.kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.kpi.hl{border-left:4px solid var(--gold)}
-.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
-.kpi-val{font-size:26px;font-weight:700;color:var(--navy);line-height:1.1}
-.kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
-.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
-.kpi-trend.up{background:var(--green-bg);color:var(--green)}
-.kpi-trend.down{background:var(--red-bg);color:var(--red)}
-.kpi-trend.flat{background:var(--bg);color:var(--text-sec)}
-.kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
-
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:0}
-.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
-.card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
-.card-a:hover{text-decoration:underline}
-.card-b{padding:18px}
-
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
-.gf{margin-bottom:22px}
-@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
-@media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr;gap:10px}.kpi-val{font-size:22px}}
-
-.prog{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:6px 0}
-.prog-fill{height:100%;border-radius:4px;transition:width .5s}
-.green-f{background:var(--green)}.gold-f{background:var(--gold)}.red-f{background:var(--red)}.blue-f{background:var(--blue)}.navy-f{background:var(--navy)}
-
-.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bg);font-size:13px}
-.sr:last-child{border-bottom:none}
-.sr-l{color:var(--text-sec)}.sr-v{font-weight:600}
-
-.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.b-g{background:var(--green-bg);color:var(--green)}.b-y{background:var(--yellow-bg);color:var(--yellow)}
-.b-r{background:var(--red-bg);color:var(--red)}.b-b{background:var(--blue-bg);color:var(--blue)}
-.b-x{background:var(--bg);color:var(--text-sec)}.b-p{background:#F3E8FF;color:#6B21A8}
-
-.lr{display:flex;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bg);gap:10px;transition:background .1s}
-.lr:last-child{border-bottom:none}.lr:hover{background:#FAFAF8}
-.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.dot-g{background:var(--green)}.dot-y{background:var(--yellow)}.dot-r{background:var(--red)}.dot-b{background:var(--blue)}.dot-x{background:#D1D5DB}
-.lr-p{font-size:13px;font-weight:600;flex:1}
-.lr-s{font-size:12px;color:var(--text-sec)}
-.lr-m{font-size:11px;color:var(--text-muted);text-align:right}
-
-/* sparkline bars */
-.spark{display:flex;align-items:flex-end;gap:4px;height:80px;margin:14px 0 6px}
-.spark-grp{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
-.spark-bars{display:flex;gap:2px;align-items:flex-end;width:100%}
-.spark-bar{flex:1;border-radius:2px 2px 0 0}
-.spark-bar.actual{background:var(--navy)}
-.spark-bar.target{background:var(--gold);opacity:.5}
-.spark-lbl{font-size:9px;color:var(--text-muted);white-space:nowrap}
-
-/* bar chart crew GP */
-.bar-row{display:flex;align-items:center;gap:10px;padding:6px 0}
-.bar-label{font-size:12px;color:var(--text-sec);min-width:80px}
-.bar-track{flex:1;height:20px;background:var(--bg);border-radius:4px;overflow:hidden;position:relative}
-.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff}
-.bar-val{font-size:12px;font-weight:700;min-width:52px;text-align:right}
-
-/* month glance grid */
-.glance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.glance-item{background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center}
-.glance-v{font-size:22px;font-weight:700;color:var(--navy)}
-.glance-l{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-top:2px}
-
-/* table */
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);padding:6px 8px;border-bottom:1px solid var(--border)}
-.tbl td{padding:8px 8px;border-bottom:1px solid var(--bg);vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:#FAFAF8}
-.tbl td:not(:first-child){text-align:right}
-
-.sticky-footer{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);padding:12px 16px;display:flex;justify-content:center;gap:10px;z-index:100;box-shadow:0 -2px 8px rgba(27,42,74,.08)}
-.footer-btn{padding:10px 20px;border-radius:var(--radius);border:none;font-size:13px;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;transition:all .15s}
-.footer-btn:hover{background:var(--navy-light)}
-.footer-btn.outline{background:transparent;border:1px solid var(--border);color:var(--navy)}
-
-.section-gap{margin-bottom:22px}
-</style>
-<link rel="stylesheet" href="styles/theme.css"></head>
-<body>
-<div class="spine"></div>
-
-<div class="topbar">
-  <div class="topbar-left">
-    <a class="back-link" href="dashboard.html">← Back</a>
-    <div class="topbar-logo">Nash<span>OS</span></div>
-    <div class="page-title">Executive Dashboard</div>
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
   </div>
-  <div class="topbar-right">
-    <div class="topbar-date">March 20, 2026</div>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role active">CEO</a>
+    <a class="ed-role" href="cmo-dashboard.html">CMO</a>
+    <a class="ed-role" href="cfr-dashboard.html">CFO</a>
+  </nav>
+</div>
+
+<div class="ed-subbar">
+  <h1 class="ed-title">Executive Dashboard</h1>
+  <div class="ed-submeta">March 20, 2026 · <strong>Owner View</strong></div>
+</div>
+
+<div class="ed-shell">
+  <div class="ed-section"><h2>Quick Actions</h2></div>
+  <div class="ed-qa-row">
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New Estimate</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg>View Pipeline</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Payout Commissions</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>Lock Month</button>
   </div>
 </div>
 
-<div class="main" style="padding-bottom:80px">
-
-<!-- QUICK ACTIONS -->
-<div class="qa-row">
-  <button class="qa-btn">✏️ New Estimate</button>
-  <button class="qa-btn">📋 View Pipeline</button>
-  <button class="qa-btn">💳 Payout Commissions</button>
-  <button class="qa-btn">🔒 Lock Month</button>
-</div>
-
-<!-- KPI STRIP -->
-<div class="kpi-strip section-gap">
-  <div class="kpi hl">
-    <div class="kpi-icon">💰</div>
-    <div class="kpi-lbl">Revenue MTD</div>
-    <div class="kpi-val">$187,400</div>
-    <div class="kpi-sub">of $210K target</div>
-    <div class="prog"><div class="prog-fill gold-f" style="width:89.2%"></div></div>
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-sec);margin-top:2px"><span>89% to goal</span><span>$22.6K gap</span></div>
-    <div class="kpi-trend up">↑ 14% vs Feb</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">📊</div>
-    <div class="kpi-lbl">Gross Margin %</div>
-    <div class="kpi-val">49.3%</div>
-    <div class="kpi-sub">Target: ≥45% · Gate: ≥40%</div>
-    <div class="kpi-trend up">↑ 1.1% vs Feb</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">🏗️</div>
-    <div class="kpi-lbl">Pipeline Value</div>
-    <div class="kpi-val">$312,800</div>
-    <div class="kpi-sub">18 active estimates</div>
-    <div class="kpi-trend up">↑ $28K vs last week</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">🎯</div>
-    <div class="kpi-lbl">Close Rate (30d)</div>
-    <div class="kpi-val">61%</div>
-    <div class="kpi-sub">29 sold of 47 estimated</div>
-    <div class="kpi-trend up">↑ 4pts vs trailing 60d</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">📏</div>
-    <div class="kpi-lbl">Avg Job Size</div>
-    <div class="kpi-val">$9,840</div>
-    <div class="kpi-sub">Rolling 30 days · 29 jobs</div>
-    <div class="kpi-trend up">↑ $620 vs Feb avg</div>
-  </div>
-</div>
-
-<!-- REVENUE TREND + MONTH AT A GLANCE -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h">
-      <div class="card-t">📈 Revenue Trend — Last 6 Months</div>
-      <span style="font-size:11px;color:var(--text-sec)">■ Actual &nbsp; <span style="color:var(--gold)">■</span> Target</span>
+<div class="ed-shell" style="margin-top:32px">
+  <div class="ed-kpis">
+    <div class="ed-kpi hl">
+      <span class="ed-cap">Revenue MTD</span>
+      <div class="ed-kpi-val">$187,400</div>
+      <div class="ed-kpi-sub">89% of $210K target · $22.6K gap</div>
+      <span class="ed-kpi-trend up">↑ 14% vs Feb</span>
     </div>
-    <div class="card-b">
-      <div class="spark">
-        <div class="spark-grp">
-          <div class="spark-bars">
-            <div class="spark-bar actual" style="height:52px"></div>
-            <div class="spark-bar target" style="height:62px"></div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Gross Margin %</span>
+      <div class="ed-kpi-val">49.3%</div>
+      <div class="ed-kpi-sub">Target: 45% · Gate: 40%</div>
+      <span class="ed-kpi-trend up">↑ 1.1% vs Feb</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Pipeline Value</span>
+      <div class="ed-kpi-val">$312,800</div>
+      <div class="ed-kpi-sub">18 active estimates</div>
+      <span class="ed-kpi-trend up">↑ $28K vs last week</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Close Rate (30D)</span>
+      <div class="ed-kpi-val">61%</div>
+      <div class="ed-kpi-sub">29 sold of 47 estimated</div>
+      <span class="ed-kpi-trend up">↑ 4 pts vs trailing 60d</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Avg Job Size</span>
+      <div class="ed-kpi-val">$9,840</div>
+      <div class="ed-kpi-sub">Rolling 30 days · 29 jobs</div>
+      <span class="ed-kpi-trend up">↑ $620 vs Feb avg</span>
+    </div>
+  </div>
+</div>
+
+<div class="ed-shell">
+  <div class="ed-monolith">
+    <div class="ed-monolith-head">
+      <div>
+        <div class="ed-monolith-eyebrow">Month in Numbers</div>
+        <h3 class="ed-monolith-subtitle">March 2026 YTD performance</h3>
+        <div class="ed-monolith-big">$1.48M<small>YTD revenue</small></div>
+      </div>
+      <div class="ed-progress-col">
+        <div class="ed-progress-row ed-cap"><span>Of $5M annual goal</span><span>30%</span></div>
+        <div class="ed-progress green"><span style="width:30%"></span></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--ed-green);font-weight:600;letter-spacing:0.08em;text-transform:uppercase">↑ 22% ahead of Q1 pace</div>
+      </div>
+    </div>
+    <div class="ed-monolith-breakdown">
+      <div>
+        <div class="ed-cap">Jobs Completed</div>
+        <div class="ed-breakdown-val">78</div>
+        <div class="ed-breakdown-meta">YTD · 22 this month</div>
+      </div>
+      <div>
+        <div class="ed-cap">New Customers</div>
+        <div class="ed-breakdown-val">54</div>
+        <div class="ed-breakdown-meta">41 jobs · 13 estimate-only</div>
+      </div>
+      <div>
+        <div class="ed-cap">Repeat Rate</div>
+        <div class="ed-breakdown-val">28%</div>
+        <div class="ed-breakdown-meta">22 of 78 jobs from prior clients</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ed-shell">
+  <div class="ed-two-col wide-left">
+    <div>
+      <div class="ed-section">
+        <h2>Revenue Trend — Last 6 Months</h2>
+        <a class="ed-link">Full Chart →</a>
+      </div>
+      <div class="ed-spark" style="height:110px">
+        <div class="ed-spark-bar" style="height:62%" title="Oct $154k"></div>
+        <div class="ed-spark-bar mid" style="height:56%" title="Nov $143k"></div>
+        <div class="ed-spark-bar" style="height:44%" title="Dec $112k"></div>
+        <div class="ed-spark-bar mid" style="height:72%" title="Jan $182k"></div>
+        <div class="ed-spark-bar" style="height:68%" title="Feb $170k"></div>
+        <div class="ed-spark-bar hi" style="height:76%" title="Mar $187k"></div>
+      </div>
+      <div class="ed-spark-label">
+        <div>Oct</div><div>Nov</div><div>Dec</div><div>Jan</div><div>Feb</div><div>Mar</div>
+      </div>
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--ed-hairline)">
+        <table class="ed-ledger">
+          <thead><tr><th>Month</th><th class="num">Revenue</th><th class="num">GP</th><th class="num">Jobs</th></tr></thead>
+          <tbody>
+            <tr><td>Oct 2025</td><td class="num">$154,200</td><td class="num">47.8%</td><td class="num">14</td></tr>
+            <tr><td>Nov 2025</td><td class="num">$143,600</td><td class="num">46.1%</td><td class="num">13</td></tr>
+            <tr><td>Dec 2025</td><td class="num amber">$112,800</td><td class="num">44.2%</td><td class="num">9</td></tr>
+            <tr><td>Jan 2026</td><td class="num">$182,400</td><td class="num">48.0%</td><td class="num">16</td></tr>
+            <tr><td>Feb 2026</td><td class="num">$170,100</td><td class="num">48.2%</td><td class="num">15</td></tr>
+            <tr class="active"><td>Mar 2026</td><td class="num">$187,400</td><td class="num green">49.3%</td><td class="num">22</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="ed-section">
+        <h2>Month-at-a-Glance</h2>
+      </div>
+      <div class="ed-action-list">
+        <div class="ed-action good">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">22 jobs completed</div>
+            <div class="ed-action-meta">Best month in 14-month tracking history</div>
           </div>
-          <div class="spark-lbl">Oct</div>
         </div>
-        <div class="spark-grp">
-          <div class="spark-bars">
-            <div class="spark-bar actual" style="height:48px"></div>
-            <div class="spark-bar target" style="height:58px"></div>
+        <div class="ed-action">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">7 in progress · 14 scheduled</div>
+            <div class="ed-action-meta">All 5 crews booked through Apr 3</div>
           </div>
-          <div class="spark-lbl">Nov</div>
         </div>
-        <div class="spark-grp">
-          <div class="spark-bars">
-            <div class="spark-bar actual" style="height:38px"></div>
-            <div class="spark-bar target" style="height:52px"></div>
+        <div class="ed-action warn">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">34 estimates sent · 11 pending</div>
+            <div class="ed-action-meta">3 followups overdue &gt; 7 days</div>
           </div>
-          <div class="spark-lbl">Dec</div>
+          <a class="ed-action-right">Chase →</a>
         </div>
-        <div class="spark-grp">
-          <div class="spark-bars">
-            <div class="spark-bar actual" style="height:62px"></div>
-            <div class="spark-bar target" style="height:65px"></div>
+        <div class="ed-action good">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">$218K invoiced · $67K outstanding</div>
+            <div class="ed-action-meta">AR aging healthy · $8.2K overdue</div>
           </div>
-          <div class="spark-lbl">Jan</div>
-        </div>
-        <div class="spark-grp">
-          <div class="spark-bars">
-            <div class="spark-bar actual" style="height:74px"></div>
-            <div class="spark-bar target" style="height:68px"></div>
-          </div>
-          <div class="spark-lbl">Feb</div>
-        </div>
-        <div class="spark-grp">
-          <div class="spark-bars">
-            <div class="spark-bar actual" style="height:80px;background:var(--gold)"></div>
-            <div class="spark-bar target" style="height:72px"></div>
-          </div>
-          <div class="spark-lbl" style="color:var(--gold);font-weight:700">Mar</div>
         </div>
       </div>
-      <div style="display:flex;gap:14px;font-size:11px;color:var(--text-sec);margin-bottom:12px">
-        <span>Mar MTD: <strong style="color:var(--navy)">$187K</strong></span>
-        <span>Target: <strong>$210K</strong></span>
-        <span>Forecast: <strong style="color:var(--green)">$224K</strong></span>
-      </div>
-      <div class="sr"><span class="sr-l">Oct</span><span class="sr-v">$154,200 <span style="color:var(--red-bg);"></span></span></div>
-      <div class="sr"><span class="sr-l">Nov</span><span class="sr-v">$143,600</span></div>
-      <div class="sr"><span class="sr-l">Dec</span><span class="sr-v">$112,800 <span class="badge b-y">Slow</span></span></div>
-      <div class="sr"><span class="sr-l">Jan</span><span class="sr-v">$182,400</span></div>
-      <div class="sr"><span class="sr-l">Feb</span><span class="sr-v">$218,900 <span class="badge b-g">Best</span></span></div>
-      <div class="sr" style="background:var(--green-bg);border-radius:var(--radius-sm);padding:6px 8px;margin-top:4px"><span class="sr-l" style="color:var(--green);font-weight:600">Mar (pace)</span><span class="sr-v" style="color:var(--green)">$224K forecast</span></div>
-    </div>
-  </div>
 
-  <div class="card">
-    <div class="card-h"><div class="card-t">📅 Month-at-a-Glance</div><span style="font-size:11px;color:var(--text-sec)">March 2026</span></div>
-    <div class="card-b">
-      <div class="glance-grid" style="margin-bottom:18px">
-        <div class="glance-item"><div class="glance-v" style="color:var(--green)">22</div><div class="glance-l">Jobs Completed</div></div>
-        <div class="glance-item"><div class="glance-v" style="color:var(--blue)">7</div><div class="glance-l">In Progress</div></div>
-        <div class="glance-item"><div class="glance-v">14</div><div class="glance-l">Scheduled</div></div>
-        <div class="glance-item"><div class="glance-v" style="color:var(--gold)">34</div><div class="glance-l">Estimates Sent</div></div>
-        <div class="glance-item"><div class="glance-v" style="color:var(--yellow)">11</div><div class="glance-l">Est. Pending</div></div>
-        <div class="glance-item"><div class="glance-v" style="color:var(--green)">$218K</div><div class="glance-l">Invoiced</div></div>
+      <div class="ed-section" style="margin-top:32px">
+        <h2>Crew Utilization</h2>
       </div>
-      <div style="font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Crew Utilization</div>
-      <div class="sr"><span class="sr-l">Days utilized (month)</span><span class="sr-v">86 of 110 crew-days</span></div>
-      <div class="prog"><div class="prog-fill navy-f" style="width:78%"></div></div>
-      <div class="sr" style="margin-top:4px"><span class="sr-l">Avg revenue/crew-day</span><span class="sr-v" style="color:var(--green)">$2,180</span></div>
-      <div class="sr"><span class="sr-l">Rain days lost</span><span class="sr-v" style="color:var(--yellow)">3</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- TOP 5 JOBS THIS MONTH -->
-<div class="gf section-gap">
-  <div class="card">
-    <div class="card-h"><div class="card-t">🏆 Top 5 Jobs This Month</div><a class="card-a">All Jobs →</a></div>
-    <div style="overflow-x:auto">
-      <table class="tbl" style="min-width:560px">
-        <thead>
-          <tr>
-            <th>Job / Client</th>
-            <th>Service Type</th>
-            <th>Revenue</th>
-            <th>Margin %</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Henderson Whole House</strong><div style="font-size:11px;color:var(--text-muted)">220 Riverside Dr, Franklin</div></td>
-            <td style="text-align:left">Interior + Exterior + Deck</td>
-            <td><strong>$34,200</strong></td>
-            <td><strong style="color:var(--green)">52%</strong></td>
-            <td><span class="badge b-g">Completed</span></td>
-          </tr>
-          <tr>
-            <td><strong>Martinez Family Exterior</strong><div style="font-size:11px;color:var(--text-muted)">892 Hillwood Dr, Nashville</div></td>
-            <td style="text-align:left">Exterior Full</td>
-            <td><strong>$28,000</strong></td>
-            <td><strong style="color:var(--green)">49%</strong></td>
-            <td><span class="badge b-b">In Progress</span></td>
-          </tr>
-          <tr>
-            <td><strong>Thompson Residence</strong><div style="font-size:11px;color:var(--text-muted)">410 Birch Rd, Nashville</div></td>
-            <td style="text-align:left">Interior Full</td>
-            <td><strong>$19,500</strong></td>
-            <td><strong style="color:var(--green)">47%</strong></td>
-            <td><span class="badge b-g">Completed</span></td>
-          </tr>
-          <tr>
-            <td><strong>Johnson Exterior</strong><div style="font-size:11px;color:var(--text-muted)">1234 Oak Rd, Nashville</div></td>
-            <td style="text-align:left">Exterior + Carpentry</td>
-            <td><strong>$18,600</strong></td>
-            <td><strong style="color:var(--yellow)">44%</strong></td>
-            <td><span class="badge b-g">Completed</span></td>
-          </tr>
-          <tr>
-            <td><strong>Rivera Whole Interior</strong><div style="font-size:11px;color:var(--text-muted)">445 Fieldstone Way, Franklin</div></td>
-            <td style="text-align:left">Interior Full + Ceilings</td>
-            <td><strong>$16,400</strong></td>
-            <td><strong style="color:var(--green)">54%</strong></td>
-            <td><span class="badge b-b">In Progress</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- CLOSE RATE BY LEAD SOURCE + CREW GP -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h"><div class="card-t">🎯 Close Rate by Lead Source</div><span style="font-size:11px;color:var(--text-sec)">Rolling 30 days</span></div>
-    <div style="overflow-x:auto">
-      <table class="tbl" style="min-width:420px">
-        <thead>
-          <tr>
-            <th>Source</th>
-            <th>Leads</th>
-            <th>Est.</th>
-            <th>Sold</th>
-            <th>Close %</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="text-align:left">🔵 Google Ads</td>
-            <td>24</td>
-            <td>18</td>
-            <td>11</td>
-            <td><strong style="color:var(--green)">61%</strong></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">🟠 Angi</td>
-            <td>16</td>
-            <td>14</td>
-            <td>7</td>
-            <td><strong style="color:var(--yellow)">50%</strong></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">🟢 Referral</td>
-            <td>19</td>
-            <td>18</td>
-            <td>14</td>
-            <td><strong style="color:var(--green)">78%</strong></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">📬 Direct Mail</td>
-            <td>11</td>
-            <td>8</td>
-            <td>4</td>
-            <td><strong style="color:var(--yellow)">50%</strong></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">🚶 Walk-in / GBP</td>
-            <td>8</td>
-            <td>7</td>
-            <td>5</td>
-            <td><strong style="color:var(--green)">71%</strong></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--text-sec)">
-      Best channel: <strong style="color:var(--navy)">Referral 78%</strong> · Best volume: <strong>Google Ads</strong>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-h"><div class="card-t">👷 Crew GP Contribution — March</div><span style="font-size:11px;color:var(--text-sec)">Gross profit by crew</span></div>
-    <div class="card-b">
-      <div class="bar-row">
-        <div class="bar-label">Mike & Julie</div>
-        <div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--green)">$24.8K</div></div>
-        <div class="bar-val">54% GP</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Carlos</div>
-        <div class="bar-track"><div class="bar-fill" style="width:74%;background:var(--green)">$20.9K</div></div>
-        <div class="bar-val">50% GP</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Javier</div>
-        <div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--navy)">$17.4K</div></div>
-        <div class="bar-val">48% GP</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Roberto</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--navy)">$14.1K</div></div>
-        <div class="bar-val">46% GP</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Team B</div>
-        <div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--yellow)">$10.7K</div></div>
-        <div class="bar-val">43% GP</div>
-      </div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
-        <div class="sr"><span class="sr-l">Total Crew GP — March</span><span class="sr-v" style="color:var(--green)">$87,900</span></div>
-        <div class="sr"><span class="sr-l">Avg GP across crews</span><span class="sr-v">48.2%</span></div>
-        <div class="sr"><span class="sr-l">Top performer</span><span class="sr-v">Mike & Julie — 54%</span></div>
+      <div>
+        <div class="ed-channels">
+          <div class="ed-channel"><div class="ed-channel-name">Rivera Crew</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:92%;background:var(--ed-green)"></div></div><div class="ed-channel-val">92%</div></div>
+          <div class="ed-channel"><div class="ed-channel-name">Santiago Crew</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:88%;background:var(--ed-green)"></div></div><div class="ed-channel-val">88%</div></div>
+          <div class="ed-channel"><div class="ed-channel-name">Torres Crew</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:76%"></div></div><div class="ed-channel-val">76%</div></div>
+          <div class="ed-channel"><div class="ed-channel-name">Luna Crew</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:71%"></div></div><div class="ed-channel-val">71%</div></div>
+          <div class="ed-channel"><div class="ed-channel-name">Herrera Crew</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:65%;background:var(--ed-navy)"></div></div><div class="ed-channel-val">65%</div></div>
+        </div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--ed-hairline);display:flex;justify-content:space-between;align-items:baseline">
+          <div class="ed-cap">Avg utilization</div>
+          <div class="ed-kpi-val small">78%</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-</div><!-- /main -->
+<footer class="ed-footer">
+  <div class="ed-cap" style="color:var(--ed-meta-soft)">Data refreshed 2:45 PM · Month lock scheduled Mar 31 · 11 days remaining</div>
+</footer>
 
-<div class="sticky-footer">
-  <button class="footer-btn outline" onclick="toast('Dashboard saved to home screen')">⭐ Save to Dashboard</button>
-  <button class="footer-btn" onclick="toast('Opening reports…')">📊 Full Report</button>
-</div>
+<button class="ed-fab" title="Full report">
+  <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+</button>
 
-<script>
-function toast(msg) {
-  const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1B2B4B;color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;z-index:9999;white-space:nowrap;pointer-events:none';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
-</script>
 </body>
 </html>

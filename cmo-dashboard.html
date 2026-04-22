@@ -3,529 +3,274 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NashOS — CMO Dashboard</title>
-<style>
-:root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3D5F;
-  --gold: #C4A962;
-  --gold-light: #D4BE82;
-  --bg: #F5F3EF;
-  --white: #FFFFFF;
-  --border: #E2DFD8;
-  --text: #1B2A4A;
-  --text-sec: #6B7280;
-  --text-muted: #9CA3AF;
-  --green: #16A34A;
-  --green-bg: #F0FDF4;
-  --red: #DC2626;
-  --red-bg: #FEF2F2;
-  --yellow: #F59E0B;
-  --yellow-bg: #FFFBEB;
-  --blue: #2563EB;
-  --blue-bg: #EFF6FF;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(27,42,74,.08);
-  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+<title>Nash Painting — CMO Dashboard</title>
+<link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body class="ed-dashboard">
 
-.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
-.back-link{color:var(--gold);font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px}
-.back-link:hover{opacity:.8}
-.topbar-right{display:flex;align-items:center;gap:14px}
-.topbar-date{font-size:13px;opacity:.7}
-.page-title{font-size:15px;font-weight:700}
+<div class="ed-spine"></div>
 
-.main{max-width:1400px;margin:0 auto;padding:24px;padding-bottom:80px}
-@media(max-width:480px){.main{padding:12px;padding-bottom:80px}}
-
-.qa-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.qa-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--white);font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;box-shadow:var(--shadow);transition:all .15s}
-.qa-btn:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:var(--shadow-md)}
-
-.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:22px}
-.kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.kpi.hl{border-left:4px solid var(--gold)}
-.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
-.kpi-val{font-size:26px;font-weight:700;color:var(--navy);line-height:1.1}
-.kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
-.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
-.kpi-trend.up{background:var(--green-bg);color:var(--green)}
-.kpi-trend.down{background:var(--red-bg);color:var(--red)}
-.kpi-trend.flat{background:var(--bg);color:var(--text-sec)}
-.kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
-
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
-.card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
-.card-a:hover{text-decoration:underline}
-.card-b{padding:18px}
-
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
-.gf{margin-bottom:22px}
-@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
-@media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr;gap:10px}.kpi-val{font-size:22px}}
-
-.prog{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:6px 0}
-.prog-fill{height:100%;border-radius:4px;transition:width .5s}
-.green-f{background:var(--green)}.gold-f{background:var(--gold)}.red-f{background:var(--red)}.blue-f{background:var(--blue)}.navy-f{background:var(--navy)}
-
-.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bg);font-size:13px}
-.sr:last-child{border-bottom:none}
-.sr-l{color:var(--text-sec)}.sr-v{font-weight:600}
-
-.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.b-g{background:var(--green-bg);color:var(--green)}.b-y{background:var(--yellow-bg);color:var(--yellow)}
-.b-r{background:var(--red-bg);color:var(--red)}.b-b{background:var(--blue-bg);color:var(--blue)}
-.b-x{background:var(--bg);color:var(--text-sec)}.b-p{background:#F3E8FF;color:#6B21A8}
-
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:right;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);padding:6px 8px;border-bottom:1px solid var(--border)}
-.tbl th:first-child{text-align:left}
-.tbl td{padding:8px 8px;border-bottom:1px solid var(--bg);vertical-align:middle;text-align:right}
-.tbl td:first-child{text-align:left}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:#FAFAF8}
-
-.bar-row{display:flex;align-items:center;gap:10px;padding:6px 0}
-.bar-label{font-size:12px;color:var(--text-sec);min-width:100px}
-.bar-track{flex:1;height:18px;background:var(--bg);border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#fff}
-.bar-val{font-size:12px;font-weight:700;min-width:48px;text-align:right}
-
-/* funnel */
-.funnel{display:flex;flex-direction:column;gap:6px;margin:10px 0}
-.funnel-step{display:flex;align-items:center;gap:10px}
-.funnel-bar-wrap{flex:1;height:28px;background:var(--bg);border-radius:6px;overflow:hidden}
-.funnel-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;font-weight:700;color:#fff;transition:width .6s}
-.funnel-meta{min-width:80px;text-align:right;font-size:11px}
-
-/* velocity bars */
-.vel-bar-wrap{display:flex;align-items:flex-end;gap:10px;height:80px;margin:10px 0}
-.vel-bar-grp{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.vel-bar{width:100%;border-radius:4px 4px 0 0}
-.vel-lbl{font-size:10px;color:var(--text-muted);text-align:center}
-.vel-val{font-size:11px;font-weight:700;color:var(--text-sec)}
-
-.sticky-footer{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);padding:12px 16px;display:flex;justify-content:center;gap:10px;z-index:100;box-shadow:0 -2px 8px rgba(27,42,74,.08)}
-.footer-btn{padding:10px 20px;border-radius:var(--radius);border:none;font-size:13px;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;transition:all .15s}
-.footer-btn:hover{background:var(--navy-light)}
-.footer-btn.outline{background:transparent;border:1px solid var(--border);color:var(--navy)}
-
-.highlight-card{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);border-radius:var(--radius);padding:20px;color:#fff;position:relative;overflow:hidden}
-.highlight-card::before{content:'⭐';position:absolute;right:16px;top:12px;font-size:40px;opacity:.15}
-</style>
-<link rel="stylesheet" href="styles/theme.css"></head>
-<body>
-<div class="spine"></div>
-
-<div class="topbar">
-  <div class="topbar-left">
-    <a class="back-link" href="dashboard.html">← Back</a>
-    <div class="topbar-logo">Nash<span>OS</span></div>
-    <div class="page-title">CMO Dashboard</div>
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
   </div>
-  <div class="topbar-right">
-    <div class="topbar-date">March 20, 2026</div>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role" href="executive-dashboard.html">CEO</a>
+    <a class="ed-role active">CMO</a>
+    <a class="ed-role" href="cfr-dashboard.html">CFO</a>
+  </nav>
+</div>
+
+<div class="ed-subbar">
+  <h1 class="ed-title">CMO Dashboard</h1>
+  <div class="ed-submeta">March 20, 2026 · <strong>Marketing Command</strong></div>
+</div>
+
+<div class="ed-shell">
+  <div class="ed-section"><h2>Quick Actions</h2></div>
+  <div class="ed-qa-row">
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4l16 8-16 8V4z"/></svg>New Campaign</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add Spend</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>View Direct Mail</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>GBP Dashboard</button>
   </div>
 </div>
 
-<div class="main">
-
-<!-- QUICK ACTIONS -->
-<div class="qa-row">
-  <button class="qa-btn">📣 New Campaign</button>
-  <button class="qa-btn">💸 Add Spend</button>
-  <button class="qa-btn">📬 View Direct Mail</button>
-  <button class="qa-btn">⭐ GBP Dashboard</button>
-</div>
-
-<!-- KPI STRIP -->
-<div class="kpi-strip" style="margin-bottom:22px">
-  <div class="kpi hl">
-    <div class="kpi-icon">📞</div>
-    <div class="kpi-lbl">Leads This Month</div>
-    <div class="kpi-val">78</div>
-    <div class="kpi-sub">vs 62 last month</div>
-    <div class="kpi-trend up">↑ 26% vs Feb</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">💵</div>
-    <div class="kpi-lbl">Total Ad Spend MTD</div>
-    <div class="kpi-val">$8,420</div>
-    <div class="kpi-sub">Google $5.2K + Angi $2.1K + Other $1.1K</div>
-    <div class="kpi-trend flat">→ On budget</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">🎯</div>
-    <div class="kpi-lbl">Blended Cost/Lead</div>
-    <div class="kpi-val">$108</div>
-    <div class="kpi-sub">Target: &lt;$130</div>
-    <div class="kpi-trend up">↑ Below target ✅</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">⭐</div>
-    <div class="kpi-lbl">Google Avg Rating</div>
-    <div class="kpi-val">4.9</div>
-    <div class="kpi-sub">487 reviews total · 8 this month</div>
-    <div class="kpi-trend up">↑ 2 new this week</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">📈</div>
-    <div class="kpi-lbl">Blended ROI</div>
-    <div class="kpi-val">14.2x</div>
-    <div class="kpi-sub">$8.4K spend → $119K revenue</div>
-    <div class="kpi-trend up">↑ Strong month</div>
-  </div>
-</div>
-
-<!-- CHANNEL PERFORMANCE TABLE -->
-<div class="gf">
-  <div class="card">
-    <div class="card-h"><div class="card-t">📊 Channel Performance — March MTD</div><a class="card-a">Export →</a></div>
-    <div style="overflow-x:auto">
-      <table class="tbl" style="min-width:700px">
-        <thead>
-          <tr>
-            <th>Channel</th>
-            <th>Spend</th>
-            <th>Calls</th>
-            <th>Leads</th>
-            <th>Est.</th>
-            <th>Sold</th>
-            <th>Revenue</th>
-            <th>Cost/Lead</th>
-            <th>Cost/Sale</th>
-            <th>ROI</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>🔵 Google Ads</strong></td>
-            <td>$5,200</td>
-            <td>38</td>
-            <td>28</td>
-            <td>22</td>
-            <td>14</td>
-            <td><strong style="color:var(--green)">$138,600</strong></td>
-            <td>$186</td>
-            <td>$371</td>
-            <td><strong style="color:var(--green)">26.7x</strong></td>
-          </tr>
-          <tr>
-            <td><strong>🟠 Angi</strong></td>
-            <td>$2,100</td>
-            <td>24</td>
-            <td>18</td>
-            <td>15</td>
-            <td>8</td>
-            <td><strong>$64,800</strong></td>
-            <td>$117</td>
-            <td>$263</td>
-            <td><strong style="color:var(--green)">30.9x</strong></td>
-          </tr>
-          <tr>
-            <td><strong>📬 Direct Mail</strong></td>
-            <td>$3,400</td>
-            <td>14</td>
-            <td>11</td>
-            <td>9</td>
-            <td>5</td>
-            <td><strong>$44,200</strong></td>
-            <td>$309</td>
-            <td>$680</td>
-            <td><strong style="color:var(--yellow)">13.0x</strong></td>
-          </tr>
-          <tr style="background:var(--green-bg)">
-            <td><strong style="color:var(--green)">🟢 Referral</strong></td>
-            <td>$0</td>
-            <td>19</td>
-            <td>19</td>
-            <td>18</td>
-            <td>14</td>
-            <td><strong style="color:var(--green)">$136,800</strong></td>
-            <td>$0</td>
-            <td>$0</td>
-            <td><strong style="color:var(--green)">∞</strong></td>
-          </tr>
-          <tr>
-            <td><strong>🗺️ GBP Organic</strong></td>
-            <td>$0</td>
-            <td>12</td>
-            <td>10</td>
-            <td>8</td>
-            <td>6</td>
-            <td><strong>$52,400</strong></td>
-            <td>$0</td>
-            <td>$0</td>
-            <td><strong style="color:var(--green)">∞</strong></td>
-          </tr>
-          <tr>
-            <td><strong>🪧 Yard Signs</strong></td>
-            <td>$180</td>
-            <td>6</td>
-            <td>5</td>
-            <td>5</td>
-            <td>3</td>
-            <td><strong>$22,400</strong></td>
-            <td>$36</td>
-            <td>$60</td>
-            <td><strong style="color:var(--green)">124x</strong></td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr style="border-top:2px solid var(--border)">
-            <td><strong>Total</strong></td>
-            <td><strong>$10,880</strong></td>
-            <td><strong>113</strong></td>
-            <td><strong>91</strong></td>
-            <td><strong>77</strong></td>
-            <td><strong>50</strong></td>
-            <td><strong style="color:var(--green)">$459,200</strong></td>
-            <td><strong>$119</strong></td>
-            <td><strong>$218</strong></td>
-            <td><strong style="color:var(--green)">42.2x</strong></td>
-          </tr>
-        </tfoot>
-      </table>
+<div class="ed-shell" style="margin-top:32px">
+  <div class="ed-kpis">
+    <div class="ed-kpi hl">
+      <span class="ed-cap">Leads This Month</span>
+      <div class="ed-kpi-val">78</div>
+      <div class="ed-kpi-sub">vs 62 last month</div>
+      <span class="ed-kpi-trend up">↑ 26% vs Feb</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Total Ad Spend MTD</span>
+      <div class="ed-kpi-val">$8,420</div>
+      <div class="ed-kpi-sub">Google $5.2K · Angi $2.1K · Other $1.1K</div>
+      <span class="ed-kpi-trend flat">→ On budget</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Blended Cost/Lead</span>
+      <div class="ed-kpi-val">$108</div>
+      <div class="ed-kpi-sub">Target: &lt;$130</div>
+      <span class="ed-kpi-trend up">↑ Below target</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Google Avg Rating</span>
+      <div class="ed-kpi-val">4.9</div>
+      <div class="ed-kpi-sub">487 reviews · 8 this month</div>
+      <span class="ed-kpi-trend up">↑ 2 new this week</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Blended ROI</span>
+      <div class="ed-kpi-val">14.2x</div>
+      <div class="ed-kpi-sub">$8.4K spend → $119K revenue</div>
+      <span class="ed-kpi-trend up">↑ Strong month</span>
     </div>
   </div>
 </div>
 
-<!-- LEAD VELOCITY + TOP CAMPAIGN -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h"><div class="card-t">⚡ Lead Velocity</div><span style="font-size:11px;color:var(--text-sec)">Leads per period</span></div>
-    <div class="card-b">
-      <div class="vel-bar-wrap">
-        <div class="vel-bar-grp">
-          <div class="vel-val">18</div>
-          <div class="vel-bar" style="height:40px;background:var(--text-muted)"></div>
-          <div class="vel-lbl">Last Week</div>
-        </div>
-        <div class="vel-bar-grp">
-          <div class="vel-val">26</div>
-          <div class="vel-bar" style="height:60px;background:var(--navy)"></div>
-          <div class="vel-lbl">This Week</div>
-        </div>
-        <div class="vel-bar-grp">
-          <div class="vel-val">21</div>
-          <div class="vel-bar" style="height:48px;background:var(--gold);opacity:.7"></div>
-          <div class="vel-lbl">30-day Avg</div>
-        </div>
+<div class="ed-shell">
+  <div class="ed-monolith">
+    <div class="ed-monolith-head">
+      <div>
+        <div class="ed-monolith-eyebrow">Pipeline Attribution</div>
+        <h3 class="ed-monolith-subtitle">March marketing-sourced revenue</h3>
+        <div class="ed-monolith-big">$119,400<small>closed revenue</small></div>
       </div>
-      <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;margin-top:8px">
-        <strong style="color:var(--green)">↑ 44% above 30-day avg this week</strong>
-        <div style="color:var(--text-sec);margin-top:2px">Spike driven by Google Ads campaign launch Tue 3/17</div>
-      </div>
-      <div style="margin-top:14px">
-        <div class="sr"><span class="sr-l">Mon–Wed this week</span><span class="sr-v">16 leads</span></div>
-        <div class="sr"><span class="sr-l">Thu–Fri this week</span><span class="sr-v">10 leads</span></div>
-        <div class="sr"><span class="sr-l">Best day (Wed)</span><span class="sr-v" style="color:var(--green)">7 leads</span></div>
-        <div class="sr"><span class="sr-l">Conversion → Estimate</span><span class="sr-v">84%</span></div>
+      <div class="ed-progress-col">
+        <div class="ed-progress-row ed-cap"><span>Of total revenue</span><span>63.7%</span></div>
+        <div class="ed-progress"><span style="width:63.7%"></span></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--ed-green);font-weight:600;letter-spacing:0.08em;text-transform:uppercase">↑ Marketing-sourced up 18% vs Feb</div>
       </div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-h"><div class="card-t">🏆 Top Performing Campaign</div></div>
-    <div class="card-b" style="padding:0">
-      <div class="highlight-card" style="margin:14px;border-radius:var(--radius-sm)">
-        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">Best ROI — March 2026</div>
-        <div style="font-size:18px;font-weight:700;margin-bottom:4px">Google Ads — Spring Exterior Push</div>
-        <div style="font-size:12px;opacity:.8;margin-bottom:14px">Targeting Nashville + Brentwood homeowners · Launched Mar 17</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          <div style="text-align:center;background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
-            <div style="font-size:18px;font-weight:700;color:var(--gold)">$2,840</div>
-            <div style="font-size:10px;opacity:.7">Spend (4 days)</div>
-          </div>
-          <div style="text-align:center;background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
-            <div style="font-size:18px;font-weight:700;color:#4ADE80">$74,200</div>
-            <div style="font-size:10px;opacity:.7">Revenue Won</div>
-          </div>
-          <div style="text-align:center;background:rgba(255,255,255,.1);border-radius:8px;padding:10px">
-            <div style="font-size:18px;font-weight:700;color:var(--gold-light)">26.1x</div>
-            <div style="font-size:10px;opacity:.7">ROI</div>
-          </div>
-        </div>
+    <div class="ed-monolith-breakdown">
+      <div>
+        <div class="ed-cap">Paid Channels</div>
+        <div class="ed-breakdown-val">$68,200</div>
+        <div class="ed-breakdown-meta">Google Ads, Angi, Direct Mail</div>
       </div>
-      <div style="padding:0 14px 14px">
-        <div class="sr"><span class="sr-l">Leads generated</span><span class="sr-v">16 leads (4 days)</span></div>
-        <div class="sr"><span class="sr-l">Estimates sent</span><span class="sr-v">13</span></div>
-        <div class="sr"><span class="sr-l">Jobs sold</span><span class="sr-v">8</span></div>
-        <div class="sr"><span class="sr-l">Avg job size</span><span class="sr-v">$9,275</span></div>
-        <div class="sr"><span class="sr-l">Close rate</span><span class="sr-v" style="color:var(--green)">62%</span></div>
+      <div>
+        <div class="ed-cap">Organic</div>
+        <div class="ed-breakdown-val">$32,800</div>
+        <div class="ed-breakdown-meta">GBP, yard signs, neighbor-reach</div>
+      </div>
+      <div>
+        <div class="ed-cap">Referral</div>
+        <div class="ed-breakdown-val">$18,400</div>
+        <div class="ed-breakdown-meta">6 jobs from 4 referrers</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- REVIEW VELOCITY + DIRECT MAIL -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h"><div class="card-t">⭐ Review Velocity</div><a class="card-a">GBP Dashboard →</a></div>
-    <div class="card-b">
-      <div style="display:flex;gap:16px;margin-bottom:16px;align-items:center">
-        <div style="text-align:center">
-          <div style="font-size:32px;font-weight:700;color:var(--navy)">4.9</div>
-          <div style="color:var(--gold);font-size:18px;letter-spacing:2px">★★★★★</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">487 total reviews</div>
-        </div>
-        <div style="flex:1">
-          <div class="sr"><span class="sr-l">Reviews this month</span><span class="sr-v" style="color:var(--green)">8 new</span></div>
-          <div class="sr"><span class="sr-l">Avg days to review</span><span class="sr-v">3.1 days</span></div>
-          <div class="sr"><span class="sr-l">Request → Review</span><span class="sr-v">34%</span></div>
-          <div class="sr"><span class="sr-l">5-star rate</span><span class="sr-v" style="color:var(--green)">88%</span></div>
-        </div>
+<div class="ed-shell">
+  <div class="ed-section">
+    <h2>Channel Performance — March MTD</h2>
+    <a class="ed-link">Export →</a>
+  </div>
+  <table class="ed-ledger">
+    <thead>
+      <tr>
+        <th>Channel</th>
+        <th class="num">Spend</th>
+        <th class="num">Leads</th>
+        <th class="num">Est</th>
+        <th class="num">Sold</th>
+        <th class="num">Revenue</th>
+        <th class="num">ROI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="active">
+        <td>Angi<div class="meta">Avg cost/sale $263</div></td>
+        <td class="num">$2,100</td>
+        <td class="num">18</td>
+        <td class="num">15</td>
+        <td class="num">8</td>
+        <td class="num">$64,800</td>
+        <td class="num green">30.9x</td>
+      </tr>
+      <tr>
+        <td>Google Ads<div class="meta">Avg cost/sale $371</div></td>
+        <td class="num">$5,200</td>
+        <td class="num">28</td>
+        <td class="num">22</td>
+        <td class="num">14</td>
+        <td class="num">$138,600</td>
+        <td class="num green">26.7x</td>
+      </tr>
+      <tr>
+        <td>Direct Mail<div class="meta">Avg cost/sale $680</div></td>
+        <td class="num">$3,400</td>
+        <td class="num">11</td>
+        <td class="num">9</td>
+        <td class="num">5</td>
+        <td class="num">$44,200</td>
+        <td class="num amber">13.0x</td>
+      </tr>
+      <tr>
+        <td>Referral<div class="meta">$0 acquisition cost</div></td>
+        <td class="num">—</td>
+        <td class="num">19</td>
+        <td class="num">18</td>
+        <td class="num">14</td>
+        <td class="num">$136,800</td>
+        <td class="num green">∞</td>
+      </tr>
+      <tr>
+        <td>GBP Organic<div class="meta">Google Business Profile</div></td>
+        <td class="num">—</td>
+        <td class="num">10</td>
+        <td class="num">8</td>
+        <td class="num">6</td>
+        <td class="num">$52,400</td>
+        <td class="num green">∞</td>
+      </tr>
+      <tr>
+        <td>Yard Signs<div class="meta">Avg cost/sale $60</div></td>
+        <td class="num">$180</td>
+        <td class="num">5</td>
+        <td class="num">5</td>
+        <td class="num">3</td>
+        <td class="num">$22,400</td>
+        <td class="num green">124x</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="ed-shell">
+  <div class="ed-two-col">
+    <div>
+      <div class="ed-section">
+        <h2>Campaign Pulse</h2>
+        <a class="ed-link">All Campaigns →</a>
       </div>
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:8px">GBP Ranking Trend — "Nashville House Painting"</div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:6px">
-        <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:var(--text-sec)">#4</div><div style="font-size:9px;color:var(--text-muted)">Oct</div></div>
-        <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:var(--text-sec)">#3</div><div style="font-size:9px;color:var(--text-muted)">Nov</div></div>
-        <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:var(--text-sec)">#3</div><div style="font-size:9px;color:var(--text-muted)">Dec</div></div>
-        <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:var(--navy)">#2</div><div style="font-size:9px;color:var(--text-muted)">Jan</div></div>
-        <div style="text-align:center"><div style="font-size:13px;font-weight:700;color:var(--navy)">#2</div><div style="font-size:9px;color:var(--text-muted)">Feb</div></div>
-        <div style="text-align:center"><div style="font-size:15px;font-weight:700;color:var(--green)">#1</div><div style="font-size:9px;color:var(--gold);font-weight:600">Mar ✨</div></div>
-      </div>
-      <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px">
-        <strong style="color:var(--green)">🎉 Ranked #1</strong> for "Nashville House Painting" as of this week
+      <div class="ed-action-list">
+        <div class="ed-action good">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">Spring Exterior Drip — 23 active</div>
+            <div class="ed-action-meta">5 emails over 5 days · 38% open rate · 12 estimates booked</div>
+          </div>
+          <a class="ed-action-right">View →</a>
+        </div>
+        <div class="ed-action good">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">Estimate Follow-Up — 147 active</div>
+            <div class="ed-action-meta">6 emails + 2 tasks over 45 days · 42% re-engagement</div>
+          </div>
+          <a class="ed-action-right">View →</a>
+        </div>
+        <div class="ed-action warn">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">Post-Completion Survey — 89 active</div>
+            <div class="ed-action-meta">5 touches over 30 days · response rate dropped 4 pts</div>
+          </div>
+          <a class="ed-action-right">Tune →</a>
+        </div>
+        <div class="ed-action muted">
+          <span class="ed-action-bar"></span>
+          <div>
+            <div class="ed-action-title">Long-Term Lifecycle — 1,619 active</div>
+            <div class="ed-action-meta">7 emails over 6 years · steady 8% re-hire rate</div>
+          </div>
+          <a class="ed-action-right">View →</a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-h"><div class="card-t">📬 Direct Mail</div><a class="card-a">View Campaigns →</a></div>
-    <div class="card-b">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--navy)">3</div>
-          <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Active Campaigns</div>
-        </div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--navy)">12,400</div>
-          <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Pieces Mailed MTD</div>
-        </div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--green)">0.9%</div>
-          <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Response Rate</div>
-        </div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--navy)">$44.2K</div>
-          <div style="font-size:10px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Pipeline from Mail</div>
-        </div>
+    <div>
+      <div class="ed-section">
+        <h2>Lead Source Mix — March</h2>
       </div>
-      <div style="font-size:11px;font-weight:600;color:var(--text-sec);margin-bottom:8px">Active Campaigns</div>
-      <div class="sr"><span class="sr-l">Spring Brentwood Exterior</span><span class="sr-v">6,000 pcs · Mar 10</span></div>
-      <div class="sr"><span class="sr-l">Green Hills Interior Push</span><span class="sr-v">3,800 pcs · Mar 14</span></div>
-      <div class="sr"><span class="sr-l">Franklin New Neighborhoods</span><span class="sr-v">2,600 pcs · Mar 18</span></div>
+      <div class="ed-channels">
+        <div class="ed-channel"><div class="ed-channel-name">Google Ads</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:36%"></div></div><div class="ed-channel-val">28</div></div>
+        <div class="ed-channel"><div class="ed-channel-name">Referral</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:24%;background:var(--ed-green)"></div></div><div class="ed-channel-val">19</div></div>
+        <div class="ed-channel"><div class="ed-channel-name">Angi</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:23%"></div></div><div class="ed-channel-val">18</div></div>
+        <div class="ed-channel"><div class="ed-channel-name">Direct Mail</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:14%"></div></div><div class="ed-channel-val">11</div></div>
+        <div class="ed-channel"><div class="ed-channel-name">GBP Organic</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:13%;background:var(--ed-green)"></div></div><div class="ed-channel-val">10</div></div>
+        <div class="ed-channel"><div class="ed-channel-name">Yard Signs</div><div class="ed-channel-track"><div class="ed-channel-fill" style="width:6%"></div></div><div class="ed-channel-val">5</div></div>
+      </div>
+
+      <div class="ed-section" style="margin-top:32px">
+        <h2>Reviews — Last 30 Days</h2>
+      </div>
+      <div class="ed-spark">
+        <div class="ed-spark-bar" style="height:20%"></div>
+        <div class="ed-spark-bar mid" style="height:35%"></div>
+        <div class="ed-spark-bar" style="height:25%"></div>
+        <div class="ed-spark-bar hi" style="height:65%"></div>
+        <div class="ed-spark-bar" style="height:40%"></div>
+        <div class="ed-spark-bar mid" style="height:55%"></div>
+        <div class="ed-spark-bar hi" style="height:80%"></div>
+        <div class="ed-spark-bar" style="height:45%"></div>
+      </div>
+      <div class="ed-spark-label">
+        <div>W1</div><div>W2</div><div>W3</div><div>W4</div>
+        <div>W5</div><div>W6</div><div>W7</div><div>W8</div>
+      </div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--ed-hairline);display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div><div class="ed-cap">New Reviews</div><div class="ed-kpi-val small">+8</div></div>
+        <div><div class="ed-cap">Avg Rating</div><div class="ed-kpi-val small">4.9 / 5</div></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- REVIEW FUNNEL + LEAD LEVER COMPARISON -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h"><div class="card-t">📩 Review Funnel — March</div><span style="font-size:11px;color:var(--text-sec)">Request → Left review</span></div>
-    <div class="card-b">
-      <div class="funnel">
-        <div class="funnel-step">
-          <div style="font-size:11px;color:var(--text-sec);min-width:80px">Sent</div>
-          <div class="funnel-bar-wrap">
-            <div class="funnel-bar" style="width:100%;background:var(--navy)">42 requests</div>
-          </div>
-          <div class="funnel-meta"><strong>42</strong> <span style="color:var(--text-muted)">100%</span></div>
-        </div>
-        <div class="funnel-step">
-          <div style="font-size:11px;color:var(--text-sec);min-width:80px">Opened</div>
-          <div class="funnel-bar-wrap">
-            <div class="funnel-bar" style="width:76%;background:var(--blue)">32 opened</div>
-          </div>
-          <div class="funnel-meta"><strong>32</strong> <span style="color:var(--text-muted)">76%</span></div>
-        </div>
-        <div class="funnel-step">
-          <div style="font-size:11px;color:var(--text-sec);min-width:80px">Clicked</div>
-          <div class="funnel-bar-wrap">
-            <div class="funnel-bar" style="width:52%;background:var(--gold)">22 clicked</div>
-          </div>
-          <div class="funnel-meta"><strong>22</strong> <span style="color:var(--text-muted)">52%</span></div>
-        </div>
-        <div class="funnel-step">
-          <div style="font-size:11px;color:var(--text-sec);min-width:80px">Left Review</div>
-          <div class="funnel-bar-wrap">
-            <div class="funnel-bar" style="width:38%;background:var(--green)">16 reviews ★</div>
-          </div>
-          <div class="funnel-meta"><strong style="color:var(--green)">16</strong> <span style="color:var(--text-muted)">38%</span></div>
-        </div>
-      </div>
-      <div style="margin-top:12px;font-size:11px;color:var(--text-sec)">
-        <strong>Drop-off insight:</strong> Biggest drop is Clicked → Left Review (52% → 38%). Consider shorter review link flow.
-      </div>
-    </div>
-  </div>
+<footer class="ed-footer">
+  <div class="ed-cap" style="color:var(--ed-meta-soft)">Last attribution sync 1:08 PM · Google Analytics + GBP live</div>
+</footer>
 
-  <div class="card">
-    <div class="card-h"><div class="card-t">🎚️ Lead Lever — Cost Per Sale</div><span style="font-size:11px;color:var(--text-sec)">Which lever to pull?</span></div>
-    <div class="card-b">
-      <div style="font-size:11px;color:var(--text-sec);margin-bottom:12px">Lower bar = better ROI per dollar spent</div>
-      <div class="bar-row">
-        <div class="bar-label">Yard Signs</div>
-        <div class="bar-track"><div class="bar-fill" style="width:4%;background:var(--green)"></div></div>
-        <div class="bar-val" style="color:var(--green)">$60</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Referral</div>
-        <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--green)"></div></div>
-        <div class="bar-val" style="color:var(--green)">$0 🏆</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">GBP Organic</div>
-        <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--green)"></div></div>
-        <div class="bar-val" style="color:var(--green)">$0 🏆</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Angi</div>
-        <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--blue)"></div></div>
-        <div class="bar-val">$263</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Google Ads</div>
-        <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--blue)"></div></div>
-        <div class="bar-val">$371</div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Direct Mail</div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--yellow)"></div></div>
-        <div class="bar-val" style="color:var(--yellow)">$680</div>
-      </div>
-      <div style="margin-top:14px;background:var(--navy);border-radius:var(--radius-sm);padding:12px;color:#fff;font-size:12px">
-        💡 <strong>Lever to pull:</strong> Referral program + GBP reviews — highest ROI, zero marginal cost. Yard signs low-cost, high-return amplifier.
-      </div>
-    </div>
-  </div>
-</div>
+<button class="ed-fab" title="New campaign">
+  <svg viewBox="0 0 24 24"><path d="M4 4l16 8-16 8V4z"/></svg>
+</button>
 
-</div>
-
-<div class="sticky-footer">
-  <button class="footer-btn outline" onclick="toast('Dashboard saved to home screen')">⭐ Save to Dashboard</button>
-  <button class="footer-btn" onclick="toast('Exporting channel report…')">📊 Export Report</button>
-</div>
-
-<script>
-function toast(msg) {
-  const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1B2B4B;color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;z-index:9999;white-space:nowrap;pointer-events:none';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
-</script>
 </body>
 </html>

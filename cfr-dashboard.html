@@ -3,522 +3,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NashOS — CFO Dashboard</title>
-<style>
-:root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3D5F;
-  --gold: #C4A962;
-  --gold-light: #D4BE82;
-  --bg: #F5F3EF;
-  --white: #FFFFFF;
-  --border: #E2DFD8;
-  --text: #1B2A4A;
-  --text-sec: #6B7280;
-  --text-muted: #9CA3AF;
-  --green: #16A34A;
-  --green-bg: #F0FDF4;
-  --red: #DC2626;
-  --red-bg: #FEF2F2;
-  --yellow: #F59E0B;
-  --yellow-bg: #FFFBEB;
-  --blue: #2563EB;
-  --blue-bg: #EFF6FF;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(27,42,74,.08);
-  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+<title>Nash Painting — CFO Dashboard</title>
+<link rel="stylesheet" href="styles/dashboard.css">
+</head>
+<body class="ed-dashboard">
 
-.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:100}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
-.back-link{color:var(--gold);font-size:13px;font-weight:600;text-decoration:none}
-.back-link:hover{opacity:.8}
-.topbar-right{display:flex;align-items:center;gap:14px}
-.topbar-date{font-size:13px;opacity:.7}
-.page-title{font-size:15px;font-weight:700}
+<div class="ed-spine"></div>
 
-.main{max-width:1400px;margin:0 auto;padding:24px;padding-bottom:80px}
-@media(max-width:480px){.main{padding:12px;padding-bottom:80px}}
-
-.qa-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.qa-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--white);font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;box-shadow:var(--shadow);transition:all .15s}
-.qa-btn:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:var(--shadow-md)}
-.qa-btn.disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
-
-.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:22px}
-.kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.kpi.hl{border-left:4px solid var(--gold)}
-.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
-.kpi-val{font-size:26px;font-weight:700;color:var(--navy);line-height:1.1}
-.kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
-.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
-.kpi-trend.up{background:var(--green-bg);color:var(--green)}
-.kpi-trend.down{background:var(--red-bg);color:var(--red)}
-.kpi-trend.flat{background:var(--bg);color:var(--text-sec)}
-.kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
-
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
-.card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
-.card-a:hover{text-decoration:underline}
-.card-b{padding:18px}
-
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
-.gf{margin-bottom:22px}
-@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
-@media(max-width:480px){.kpi-strip{grid-template-columns:1fr 1fr;gap:10px}.kpi-val{font-size:22px}}
-
-.prog{width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin:6px 0}
-.prog-fill{height:100%;border-radius:4px;transition:width .5s}
-.green-f{background:var(--green)}.gold-f{background:var(--gold)}.red-f{background:var(--red)}.blue-f{background:var(--blue)}.navy-f{background:var(--navy)}
-
-.sr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bg);font-size:13px}
-.sr:last-child{border-bottom:none}
-.sr-l{color:var(--text-sec)}.sr-v{font-weight:600}
-
-.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.b-g{background:var(--green-bg);color:var(--green)}.b-y{background:var(--yellow-bg);color:var(--yellow)}
-.b-r{background:var(--red-bg);color:var(--red)}.b-b{background:var(--blue-bg);color:var(--blue)}
-.b-x{background:var(--bg);color:var(--text-sec)}.b-p{background:#F3E8FF;color:#6B21A8}
-
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:right;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);padding:6px 8px;border-bottom:1px solid var(--border)}
-.tbl th:first-child{text-align:left}
-.tbl td{padding:8px 8px;border-bottom:1px solid var(--bg);vertical-align:middle;text-align:right}
-.tbl td:first-child{text-align:left}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:#FAFAF8}
-
-/* aging bars */
-.aging-bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin:10px 0}
-.aging-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;transition:width .5s}
-
-/* cost breakdown stacked */
-.cost-row{display:flex;align-items:center;gap:10px;padding:6px 0}
-.cost-label{font-size:12px;color:var(--text-sec);min-width:110px}
-.cost-bar-track{flex:1;height:20px;background:var(--bg);border-radius:4px;overflow:hidden}
-.cost-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#fff}
-.cost-val{font-size:12px;font-weight:700;min-width:68px;text-align:right}
-
-/* trend bars */
-.trend-bars{display:flex;align-items:flex-end;gap:6px;height:80px;margin:12px 0}
-.trend-grp{flex:1;display:flex;gap:2px;flex-direction:column;align-items:center}
-.trend-bars-inner{display:flex;gap:2px;align-items:flex-end;width:100%}
-.trend-bar{flex:1;border-radius:2px 2px 0 0}
-.trend-lbl{font-size:9px;color:var(--text-muted)}
-
-.invoice-row{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--bg)}
-.invoice-row:last-child{border-bottom:none}
-
-.sticky-footer{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);padding:12px 16px;display:flex;justify-content:center;gap:10px;z-index:100;box-shadow:0 -2px 8px rgba(27,42,74,.08)}
-.footer-btn{padding:10px 20px;border-radius:var(--radius);border:none;font-size:13px;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;transition:all .15s}
-.footer-btn:hover{background:var(--navy-light)}
-.footer-btn.outline{background:transparent;border:1px solid var(--border);color:var(--navy)}
-</style>
-<link rel="stylesheet" href="styles/theme.css"></head>
-<body>
-<div class="spine"></div>
-
-<div class="topbar">
-  <div class="topbar-left">
-    <a class="back-link" href="dashboard.html">← Back</a>
-    <div class="topbar-logo">Nash<span>OS</span></div>
-    <div class="page-title">CFO Dashboard</div>
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
   </div>
-  <div class="topbar-right">
-    <div class="topbar-date">March 20, 2026</div>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role" href="executive-dashboard.html">CEO</a>
+    <a class="ed-role" href="cmo-dashboard.html">CMO</a>
+    <a class="ed-role active">CFO</a>
+  </nav>
+</div>
+
+<div class="ed-subbar">
+  <h1 class="ed-title">CFO Dashboard</h1>
+  <div class="ed-submeta">March 20, 2026 · <strong>Financial Command</strong></div>
+</div>
+
+<div class="ed-shell">
+  <div class="ed-section"><h2>Quick Actions</h2></div>
+  <div class="ed-qa-row">
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M7 7h10v10H7zM11 11h2v2h-2z"/></svg>Export Report</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg>View AR</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></svg>Record Payment</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 10h6M9 14h6"/></svg>QuickBooks Sync</button>
+    <button class="ed-qa"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>Lock Month</button>
   </div>
 </div>
 
-<div class="main">
-
-<!-- QUICK ACTIONS -->
-<div class="qa-row">
-  <button class="qa-btn">📄 Export Report</button>
-  <button class="qa-btn">📋 View AR</button>
-  <button class="qa-btn">💳 Record Payment</button>
-  <button class="qa-btn disabled" title="Coming V3">🔗 QuickBooks Sync</button>
-</div>
-
-<!-- CASH SNAPSHOT -->
-<div class="kpi-strip" style="margin-bottom:22px">
-  <div class="kpi hl">
-    <div class="kpi-icon">🏦</div>
-    <div class="kpi-lbl">Cash in Bank</div>
-    <div class="kpi-val">$84,200</div>
-    <div class="kpi-sub">As of today (mock)</div>
-    <div class="kpi-trend up">↑ $18K vs last month</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">📥</div>
-    <div class="kpi-lbl">AR Outstanding</div>
-    <div class="kpi-val">$67,400</div>
-    <div class="kpi-sub">12 open invoices</div>
-    <div class="kpi-trend down">⚠️ $8.2K overdue</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-icon">📤</div>
-    <div class="kpi-lbl">AP Total Due</div>
-    <div class="kpi-val">$22,800</div>
-    <div class="kpi-sub">Vendors + payroll run</div>
-    <div class="kpi-trend flat">→ Due by Mar 25</div>
-  </div>
-  <div class="kpi hl">
-    <div class="kpi-icon">💰</div>
-    <div class="kpi-lbl">Net Position</div>
-    <div class="kpi-val" style="color:var(--green)">+$61,400</div>
-    <div class="kpi-sub">Cash + AR - AP</div>
-    <div class="kpi-trend up">↑ Healthy</div>
+<div class="ed-shell" style="margin-top:32px">
+  <div class="ed-kpis four">
+    <div class="ed-kpi hl">
+      <span class="ed-cap">Cash in Bank</span>
+      <div class="ed-kpi-val">$84,200</div>
+      <div class="ed-kpi-sub">As of today (mock)</div>
+      <span class="ed-kpi-trend up">↑ $18K vs last month</span>
+    </div>
+    <div class="ed-kpi alert">
+      <span class="ed-cap">AR Outstanding</span>
+      <div class="ed-kpi-val">$67,400</div>
+      <div class="ed-kpi-sub">12 open invoices</div>
+      <span class="ed-kpi-trend warn">⚠ $8.2K overdue</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">AP Total Due</span>
+      <div class="ed-kpi-val">$22,800</div>
+      <div class="ed-kpi-sub">Vendors + payroll run</div>
+      <span class="ed-kpi-trend flat">→ Due by Mar 25</span>
+    </div>
+    <div class="ed-kpi">
+      <span class="ed-cap">Net Position</span>
+      <div class="ed-kpi-val">+$61,400</div>
+      <div class="ed-kpi-sub">Cash + AR − AP</div>
+      <span class="ed-kpi-trend up">↑ Healthy</span>
+    </div>
   </div>
 </div>
 
-<!-- AR AGING + REVENUE VS COSTS -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h"><div class="card-t">📊 AR Aging</div><a class="card-a">View All AR →</a></div>
-    <div class="card-b">
-      <div class="aging-bar">
-        <div class="aging-seg" style="width:52%;background:var(--green)">0–30d $35K</div>
-        <div class="aging-seg" style="width:26%;background:var(--yellow)">31–60d $17.4K</div>
-        <div class="aging-seg" style="width:14%;background:var(--red);opacity:.8">61–90d $9.4K</div>
-        <div class="aging-seg" style="width:8%;background:#7F1D1D">90+ $5.6K</div>
+<div class="ed-shell">
+  <div class="ed-two-col wide-left">
+    <div>
+      <div class="ed-section">
+        <h2>AR Aging</h2>
+        <a class="ed-link">View All AR →</a>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px;margin-bottom:14px">
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--green);display:inline-block"></span> 0–30d: $35,200</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--yellow);display:inline-block"></span> 31–60d: $17,400</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block"></span> 61–90d: $9,400</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#7F1D1D;display:inline-block"></span> 90+: $5,400</span>
+      <div class="ed-aging">
+        <div class="ed-aging-seg current" style="flex:35">0–30d</div>
+        <div class="ed-aging-seg a30" style="flex:17">31–60d</div>
+        <div class="ed-aging-seg a60" style="flex:9">61–90d</div>
+        <div class="ed-aging-seg a90" style="flex:6">90+d</div>
       </div>
-      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:8px">Top 5 Overdue</div>
-      <table class="tbl">
+      <div class="ed-aging-legend">
+        <div><strong>$35,200</strong>0–30 days</div>
+        <div><strong>$17,400</strong>31–60 days</div>
+        <div><strong>$9,400</strong>61–90 days</div>
+        <div><strong>$5,400</strong>90+ days</div>
+      </div>
+
+      <div class="ed-section" style="margin-top:32px">
+        <h2>Top 5 Overdue</h2>
+      </div>
+      <table class="ed-ledger">
         <thead>
           <tr>
             <th>Client</th>
-            <th>Amount</th>
-            <th>Days</th>
-            <th></th>
+            <th class="num">Amount</th>
+            <th class="num">Days</th>
+            <th class="num">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><strong>Thompson</strong></td>
-            <td>$8,200</td>
-            <td><strong style="color:var(--red)">48d</strong></td>
-            <td><button onclick="toast('Sending reminder to Thompson…')" style="font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Remind</button></td>
+          <tr class="active">
+            <td>Thompson<div class="meta">INV-0217 · Feb 8</div></td>
+            <td class="num">$8,200</td>
+            <td class="num red">48d</td>
+            <td class="num"><a class="ed-link">Remind</a></td>
           </tr>
           <tr>
-            <td><strong>Williams</strong></td>
-            <td>$5,400</td>
-            <td><strong style="color:var(--red)">35d</strong></td>
-            <td><button onclick="toast('Sending reminder to Williams…')" style="font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Remind</button></td>
+            <td>Williams<div class="meta">INV-0214 · Feb 14</div></td>
+            <td class="num">$5,400</td>
+            <td class="num red">35d</td>
+            <td class="num"><a class="ed-link">Remind</a></td>
           </tr>
           <tr>
-            <td><strong>Garcia</strong></td>
-            <td>$4,200</td>
-            <td><strong style="color:var(--yellow)">22d</strong></td>
-            <td><button onclick="toast('Sending reminder to Garcia…')" style="font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Remind</button></td>
+            <td>Garcia<div class="meta">INV-0218 · Feb 27</div></td>
+            <td class="num">$4,200</td>
+            <td class="num amber">22d</td>
+            <td class="num"><a class="ed-link">Remind</a></td>
           </tr>
           <tr>
-            <td><strong>Kim Residence</strong></td>
-            <td>$3,800</td>
-            <td><strong style="color:var(--yellow)">18d</strong></td>
-            <td><button onclick="toast('Sending reminder to Kim…')" style="font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Remind</button></td>
+            <td>Kim Residence<div class="meta">INV-0221 · Mar 2</div></td>
+            <td class="num">$3,800</td>
+            <td class="num amber">18d</td>
+            <td class="num"><a class="ed-link">Remind</a></td>
           </tr>
           <tr>
-            <td><strong>Park Interior</strong></td>
-            <td>$2,600</td>
-            <td><strong>8d</strong></td>
-            <td><button onclick="toast('Sending reminder to Park…')" style="font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer">Remind</button></td>
+            <td>Patterson<div class="meta">INV-0223 · Mar 5</div></td>
+            <td class="num">$3,100</td>
+            <td class="num amber">15d</td>
+            <td class="num"><a class="ed-link">Remind</a></td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-h"><div class="card-t">💹 Revenue vs Costs — March MTD</div></div>
-    <div class="card-b">
-      <div style="display:flex;gap:10px;margin-bottom:16px">
-        <div style="flex:1;background:var(--green-bg);border-radius:var(--radius-sm);padding:12px;text-align:center">
-          <div style="font-size:18px;font-weight:700;color:var(--green)">$187,400</div>
-          <div style="font-size:10px;color:var(--text-sec)">Revenue</div>
+    <div>
+      <div class="ed-section">
+        <h2>Revenue vs Costs — March MTD</h2>
+      </div>
+      <div style="padding:20px 0">
+        <div class="ed-cap" style="margin-bottom:10px">Revenue</div>
+        <div class="ed-kpi-val" style="color:var(--ed-green)">$187,400</div>
+        <div class="ed-kpi-sub" style="margin-top:4px">MTD as of Mar 20</div>
+      </div>
+
+      <div class="ed-channels">
+        <div class="ed-channel">
+          <div class="ed-channel-name">Labor Cost</div>
+          <div class="ed-channel-track"><div class="ed-channel-fill" style="width:40%;background:var(--ed-navy)"></div></div>
+          <div class="ed-channel-val">$74,960</div>
         </div>
-        <div style="flex:1;background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center">
-          <div style="font-size:18px;font-weight:700;color:var(--navy)">$92,400</div>
-          <div style="font-size:10px;color:var(--text-sec)">Gross Profit</div>
+        <div class="ed-channel">
+          <div class="ed-channel-name">Material Cost</div>
+          <div class="ed-channel-track"><div class="ed-channel-fill" style="width:11%;background:var(--ed-navy)"></div></div>
+          <div class="ed-channel-val">$20,600</div>
+        </div>
+        <div class="ed-channel">
+          <div class="ed-channel-name">Overhead</div>
+          <div class="ed-channel-track"><div class="ed-channel-fill" style="width:8%;background:var(--ed-orange)"></div></div>
+          <div class="ed-channel-val">$14,900</div>
+        </div>
+        <div class="ed-channel">
+          <div class="ed-channel-name">Marketing</div>
+          <div class="ed-channel-track"><div class="ed-channel-fill" style="width:6%;background:var(--ed-orange)"></div></div>
+          <div class="ed-channel-val">$11,200</div>
         </div>
       </div>
 
-      <div class="cost-row">
-        <div class="cost-label">Labor Cost</div>
-        <div class="cost-bar-track"><div class="cost-bar-fill" style="width:40%;background:var(--navy)">$74,960</div></div>
-        <div class="cost-val">40% <span style="font-size:10px;color:var(--text-sec)">$74.9K</span></div>
-      </div>
-      <div class="cost-row">
-        <div class="cost-label">Material Cost</div>
-        <div class="cost-bar-track"><div class="cost-bar-fill" style="width:11%;background:var(--blue)">$20,600</div></div>
-        <div class="cost-val">11% <span style="font-size:10px;color:var(--text-sec)">$20.6K</span></div>
-      </div>
-      <div class="cost-row">
-        <div class="cost-label">Overhead</div>
-        <div class="cost-bar-track"><div class="cost-bar-fill" style="width:8%;background:var(--gold)">$14,900</div></div>
-        <div class="cost-val">8% <span style="font-size:10px;color:var(--text-sec)">$14.9K</span></div>
-      </div>
-      <div class="cost-row">
-        <div class="cost-label">Marketing</div>
-        <div class="cost-bar-track"><div class="cost-bar-fill" style="width:6%;background:var(--yellow)">$11,240</div></div>
-        <div class="cost-val">6% <span style="font-size:10px;color:var(--text-sec)">$11.2K</span></div>
-      </div>
-
-      <div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px">
-        <div class="sr"><span class="sr-l">Gross Profit</span><span class="sr-v" style="color:var(--green)">$92,400 (49.3%)</span></div>
-        <div class="sr"><span class="sr-l">Net Profit (est.)</span><span class="sr-v" style="color:var(--green)">$65,700 (35.1%)</span></div>
-        <div class="sr"><span class="sr-l">vs Target Net</span><span class="sr-v">Target: 30% ✅</span></div>
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--ed-hairline);display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <div class="ed-cap">Gross Profit</div>
+          <div class="ed-kpi-val small" style="color:var(--ed-green)">$91,840</div>
+          <div class="ed-kpi-sub">49.0% GP</div>
+        </div>
+        <div>
+          <div class="ed-cap">Net Profit (est)</div>
+          <div class="ed-kpi-val small" style="color:var(--ed-ink)">$65,740</div>
+          <div class="ed-kpi-sub">35.1% NP</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- OVER-BUDGET JOBS + PAYROLL VS REVENUE -->
-<div class="g2">
-  <div class="card" style="border-left:3px solid var(--red)">
-    <div class="card-h"><div class="card-t">⚠️ Over-Budget Jobs</div><span style="font-size:11px;color:var(--text-sec)">Actual exceeded estimate</span></div>
-    <div class="card-b" style="padding:0">
-      <table class="tbl" style="width:100%">
-        <thead>
-          <tr>
-            <th>Job</th>
-            <th>Estimated</th>
-            <th>Actual</th>
-            <th>Variance</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:var(--red-bg)">
-            <td>
-              <strong>Johnson Exterior</strong>
-              <div style="font-size:10px;color:var(--text-muted)">Carlos · completed Mar 12</div>
-            </td>
-            <td>$18,200</td>
-            <td>$21,400</td>
-            <td><strong style="color:var(--red)">+$3,200 (+18%)</strong></td>
-          </tr>
-          <tr style="background:var(--yellow-bg)">
-            <td>
-              <strong>Garcia Deck</strong>
-              <div style="font-size:10px;color:var(--text-muted)">Team B · rain delay +1d</div>
-            </td>
-            <td>$5,800</td>
-            <td>$6,460</td>
-            <td><strong style="color:var(--yellow)">+$660 (+11%)</strong></td>
-          </tr>
-          <tr style="background:var(--yellow-bg)">
-            <td>
-              <strong>Rivera Interior</strong>
-              <div style="font-size:10px;color:var(--text-muted)">Javier · in progress</div>
-            </td>
-            <td>$7,400</td>
-            <td>$7,960</td>
-            <td><strong style="color:var(--yellow)">+$560 (+8%)</strong></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="padding:10px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--text-sec)">
-        Total over-budget impact: <strong style="color:var(--red)">−$4,420</strong> in margin this month
-      </div>
-    </div>
+<div class="ed-shell">
+  <div class="ed-section">
+    <h2>Upcoming Cash Events — 14 Days</h2>
+    <a class="ed-link">Full Schedule →</a>
   </div>
-
-  <div class="card">
-    <div class="card-h"><div class="card-t">📉 Payroll vs Revenue Ratio</div><span style="font-size:11px;color:var(--text-sec)">Rolling 3-month</span></div>
-    <div class="card-b">
-      <div class="trend-bars">
-        <div class="trend-grp">
-          <div style="font-size:10px;font-weight:700;color:var(--text-sec)">41%</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:65px;background:var(--navy);width:100%;border-radius:3px 3px 0 0"></div>
-          </div>
-          <div class="trend-lbl">Jan</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:10px;font-weight:700;color:var(--text-sec)">39%</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:60px;background:var(--navy);width:100%;border-radius:3px 3px 0 0"></div>
-          </div>
-          <div class="trend-lbl">Feb</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:10px;font-weight:700;color:var(--green)">40%</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:62px;background:var(--green);width:100%;border-radius:3px 3px 0 0"></div>
-          </div>
-          <div class="trend-lbl" style="color:var(--gold);font-weight:600">Mar</div>
-        </div>
-        <div class="trend-grp" style="opacity:.4">
-          <div style="font-size:10px;font-weight:700;color:var(--text-sec)">—</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:62px;background:var(--text-muted);width:100%;border-radius:3px 3px 0 0;border:1px dashed var(--text-muted)"></div>
-          </div>
-          <div class="trend-lbl">Target</div>
-        </div>
+  <div class="ed-action-list">
+    <div class="ed-action good">
+      <span class="ed-action-bar"></span>
+      <div>
+        <div class="ed-action-title">Mitchell Int/Ext — $11,200 invoice due Mar 22</div>
+        <div class="ed-action-meta">ACH on file · auto-remind 3 days out</div>
       </div>
-      <div style="margin-top:8px">
-        <div class="sr"><span class="sr-l">Payroll MTD</span><span class="sr-v">$74,960</span></div>
-        <div class="sr"><span class="sr-l">Revenue MTD</span><span class="sr-v">$187,400</span></div>
-        <div class="sr"><span class="sr-l">Ratio</span><span class="sr-v" style="color:var(--green)">40% ✅ (target ≤42%)</span></div>
-        <div class="sr"><span class="sr-l">3-month avg</span><span class="sr-v">40.0%</span></div>
-        <div class="sr"><span class="sr-l">Trend</span><span class="sr-v" style="color:var(--green)">↓ Improving</span></div>
+      <a class="ed-action-right">Preview →</a>
+    </div>
+    <div class="ed-action muted">
+      <span class="ed-action-bar"></span>
+      <div>
+        <div class="ed-action-title">Sherwin-Williams — AP $4,820 due Mar 25</div>
+        <div class="ed-action-meta">Net-30 terms · schedule payment</div>
       </div>
+      <a class="ed-action-right">Schedule →</a>
+    </div>
+    <div class="ed-action muted">
+      <span class="ed-action-bar"></span>
+      <div>
+        <div class="ed-action-title">Payroll Run — $38,400 on Mar 28</div>
+        <div class="ed-action-meta">5 crews · Gusto auto-run</div>
+      </div>
+      <a class="ed-action-right">Review →</a>
+    </div>
+    <div class="ed-action good">
+      <span class="ed-action-bar"></span>
+      <div>
+        <div class="ed-action-title">Henderson Ext — $38,500 invoice due Apr 1</div>
+        <div class="ed-action-meta">Credit card on file</div>
+      </div>
+      <a class="ed-action-right">Preview →</a>
+    </div>
+    <div class="ed-action alert">
+      <span class="ed-action-bar"></span>
+      <div>
+        <div class="ed-action-title">Credit line draw decision — review Mar 29</div>
+        <div class="ed-action-meta">Current utilization 8% · model $0 draw if AR holds</div>
+      </div>
+      <a class="ed-action-right">Model →</a>
     </div>
   </div>
 </div>
 
-<!-- MATERIAL COST TREND + INVOICE STATUS -->
-<div class="g2">
-  <div class="card">
-    <div class="card-h"><div class="card-t">🪣 Material Cost Trend</div><span style="font-size:11px;color:var(--text-sec)">Last 6 months actual vs budget</span></div>
-    <div class="card-b">
-      <div class="trend-bars" style="height:90px">
-        <div class="trend-grp">
-          <div style="font-size:9px;font-weight:600;color:var(--text-sec)">$18.2K</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:42px;background:var(--navy);border-radius:2px 2px 0 0;flex:1"></div>
-            <div class="trend-bar" style="height:50px;background:var(--gold);opacity:.4;border-radius:2px 2px 0 0;flex:1"></div>
-          </div>
-          <div class="trend-lbl">Oct</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:9px;font-weight:600;color:var(--text-sec)">$16.4K</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:36px;background:var(--navy);border-radius:2px 2px 0 0;flex:1"></div>
-            <div class="trend-bar" style="height:46px;background:var(--gold);opacity:.4;border-radius:2px 2px 0 0;flex:1"></div>
-          </div>
-          <div class="trend-lbl">Nov</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:9px;font-weight:600;color:var(--text-sec)">$12.8K</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:28px;background:var(--navy);border-radius:2px 2px 0 0;flex:1"></div>
-            <div class="trend-bar" style="height:38px;background:var(--gold);opacity:.4;border-radius:2px 2px 0 0;flex:1"></div>
-          </div>
-          <div class="trend-lbl">Dec</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:9px;font-weight:600;color:var(--text-sec)">$19.6K</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:46px;background:var(--navy);border-radius:2px 2px 0 0;flex:1"></div>
-            <div class="trend-bar" style="height:50px;background:var(--gold);opacity:.4;border-radius:2px 2px 0 0;flex:1"></div>
-          </div>
-          <div class="trend-lbl">Jan</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:9px;font-weight:600;color:var(--text-sec)">$22.4K</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:54px;background:var(--red);border-radius:2px 2px 0 0;flex:1"></div>
-            <div class="trend-bar" style="height:50px;background:var(--gold);opacity:.4;border-radius:2px 2px 0 0;flex:1"></div>
-          </div>
-          <div class="trend-lbl" style="color:var(--red)">Feb ⚠</div>
-        </div>
-        <div class="trend-grp">
-          <div style="font-size:9px;font-weight:600;color:var(--green)">$20.6K</div>
-          <div class="trend-bars-inner">
-            <div class="trend-bar" style="height:50px;background:var(--green);border-radius:2px 2px 0 0;flex:1"></div>
-            <div class="trend-bar" style="height:52px;background:var(--gold);opacity:.4;border-radius:2px 2px 0 0;flex:1"></div>
-          </div>
-          <div class="trend-lbl" style="color:var(--gold);font-weight:700">Mar</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:14px;font-size:10px;color:var(--text-sec);margin-bottom:12px">
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--navy);display:inline-block"></span> Actual</span>
-        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--gold);opacity:.7;display:inline-block"></span> Budget</span>
-      </div>
-      <div class="sr"><span class="sr-l">Feb overage (high)</span><span class="sr-v" style="color:var(--red)">+$2.4K vs budget</span></div>
-      <div class="sr"><span class="sr-l">Mar YTD</span><span class="sr-v">On track — 11% of revenue</span></div>
-      <div class="sr"><span class="sr-l">Hoover Paint YTD spend</span><span class="sr-v">$109,900</span></div>
-    </div>
-  </div>
+<footer class="ed-footer">
+  <div class="ed-cap" style="color:var(--ed-meta-soft)">Last QuickBooks sync 11:42 AM · Next auto-sync in 18 min</div>
+</footer>
 
-  <div class="card">
-    <div class="card-h"><div class="card-t">🧾 Invoice Status</div><a class="card-a">View All →</a></div>
-    <div class="card-b" style="padding:0">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
-        <div style="padding:16px;text-align:center;border-right:1px solid var(--border)">
-          <div style="font-size:22px;font-weight:700;color:var(--green)">$218,400</div>
-          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-top:4px">Paid This Month</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">34 invoices</div>
-        </div>
-        <div style="padding:16px;text-align:center;border-right:1px solid var(--border)">
-          <div style="font-size:22px;font-weight:700;color:var(--navy)">$42,800</div>
-          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-top:4px">Pending</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">7 invoices</div>
-        </div>
-        <div style="padding:16px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:var(--red)">$24,600</div>
-          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--red);margin-top:4px">Overdue</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">5 invoices</div>
-        </div>
-      </div>
-      <div class="invoice-row">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600">Thompson Residence</div>
-          <div style="font-size:11px;color:var(--text-sec)">INV-2026-0214 · 48 days overdue</div>
-        </div>
-        <div style="text-align:right"><strong>$8,200</strong><br><span class="badge b-r">Overdue</span></div>
-      </div>
-      <div class="invoice-row">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600">Williams Kitchen</div>
-          <div style="font-size:11px;color:var(--text-sec)">INV-2026-0228 · 21 days overdue</div>
-        </div>
-        <div style="text-align:right"><strong>$5,400</strong><br><span class="badge b-r">Overdue</span></div>
-      </div>
-      <div class="invoice-row">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0"></div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600">Henderson Whole House</div>
-          <div style="font-size:11px;color:var(--text-sec)">INV-2026-0318 · Sent 2 days ago</div>
-        </div>
-        <div style="text-align:right"><strong>$34,200</strong><br><span class="badge b-y">Pending</span></div>
-      </div>
-      <div class="invoice-row">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0"></div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600">Martinez Exterior</div>
-          <div style="font-size:11px;color:var(--text-sec)">INV-2026-0315 · Net 14d</div>
-        </div>
-        <div style="text-align:right"><strong>$28,000</strong><br><span class="badge b-y">Pending</span></div>
-      </div>
-      <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:11px;display:flex;justify-content:space-between;color:var(--text-sec)">
-        <span>Collection rate MTD: <strong style="color:var(--green)">89.2%</strong></span>
-        <span>Avg days to pay: <strong>12.4d</strong></span>
-      </div>
-    </div>
-  </div>
-</div>
+<button class="ed-fab" title="Record payment">
+  <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+</button>
 
-</div>
-
-<div class="sticky-footer">
-  <button class="footer-btn outline" onclick="toast('Dashboard saved to home screen')">⭐ Save to Dashboard</button>
-  <button class="footer-btn" onclick="toast('Generating financial export…')">📄 Export Report</button>
-</div>
-
-<script>
-function toast(msg) {
-  const t = document.createElement('div');
-  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1B2B4B;color:#fff;padding:8px 16px;border-radius:20px;font-size:12px;z-index:9999;white-space:nowrap;pointer-events:none';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
-</script>
 </body>
 </html>
