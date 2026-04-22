@@ -3,115 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nash Painting — Revisión de Traducción / Translation Review</title>
+<title>Nash Painting — Revisión de Traducción</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #1a2332;
-    --navy-light: #243044;
-    --navy-mid: #2a3a52;
-    --accent: #3b82f6;
-    --accent-light: #60a5fa;
-    --green: #22c55e;
-    --green-bg: rgba(34,197,94,0.12);
-    --yellow: #eab308;
-    --yellow-bg: rgba(234,179,8,0.1);
-    --red: #ef4444;
-    --red-bg: rgba(239,68,68,0.08);
-    --text: #e2e8f0;
-    --text-dim: #94a3b8;
-    --text-bright: #f8fafc;
-    --border: #334155;
-    --card: #1e293b;
+    --navy: #0B1F3A;
+    --navy-deep: #061228;
+    --ink: #0E0E10;
+    --orange: #FF8200;
+    --orange-deep: #CC6600;
+    --orange-tint: #FFF4E6;
+    --paper: #FFFFFF;
+    --surface: #F5F6F8;
+    --surface-dim: #EDEFF3;
+    --hairline: #E2E5EA;
+    --meta: #64748B;
+    --meta-soft: #9AA4B2;
+    --green: #15803D;
+    --green-bg: #DCFCE7;
+    --yellow: #CA8A04;
+    --yellow-bg: #FEF3C7;
+    --red: #B91C1C;
+    --red-bg: #FEE2E2;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #FFFFFF; color: var(--text); min-height: 100vh; max-width: 720px; margin: 0 auto; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  body { max-width: 720px; margin: 0 auto; padding-bottom: 80px; }
 
+  .spine { height: 4px; background: var(--orange); }
+
+  /* Header */
   .header {
-    background: var(--navy-light);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 16px;
-    text-align: center;
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid var(--hairline);
   }
-  .header h1 { font-size: 20px; color: var(--text-bright); margin-bottom: 6px; }
-  .header p { font-size: 14px; color: var(--text-dim); line-height: 1.5; max-width: 600px; margin: 0 auto; }
-
-  .instructions {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin: 16px;
-    line-height: 1.7;
+  .header-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .header p {
     font-size: 14px;
+    color: var(--meta);
+    line-height: 1.5;
   }
-  .instructions h2 { font-size: 16px; color: var(--accent-light); margin-bottom: 8px; }
-  .instructions li { margin-left: 20px; margin-bottom: 4px; }
-  .instructions .es-text { color: var(--yellow); font-style: italic; }
+  .header p em {
+    color: var(--yellow);
+    font-style: italic;
+  }
 
+  /* Instructions */
+  .instructions {
+    margin: 20px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border-left: 4px solid var(--orange);
+  }
+  .instructions h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--meta);
+    margin-bottom: 12px;
+  }
+  .instructions ol {
+    margin-left: 22px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .instructions li { margin-bottom: 2px; }
+  .instructions li strong { color: var(--ink); font-weight: 700; }
+  .instructions p.es {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline);
+    font-size: 13px;
+    color: var(--yellow);
+    font-style: italic;
+    line-height: 1.55;
+  }
+
+  /* Name input */
+  .name-row {
+    padding: 0 20px;
+    margin-bottom: 12px;
+  }
+  .name-field {
+    padding: 14px 16px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .name-field label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--meta);
+    white-space: nowrap;
+  }
+  .name-field input {
+    flex: 1;
+    min-width: 140px;
+    padding: 8px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--hairline);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .name-field input:focus {
+    outline: none;
+    border-bottom-color: var(--orange);
+  }
+
+  /* Stats bar */
   .stats-bar {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding: 12px 16px;
-    font-size: 13px;
+    gap: 24px;
+    padding: 16px 20px;
+    font-size: 12px;
+    color: var(--meta);
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
     flex-wrap: wrap;
   }
-  .stat { display: flex; align-items: center; gap: 6px; }
-  .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-pending { background: var(--text-dim); }
+  .stat { display: flex; align-items: center; gap: 8px; }
+  .stat strong {
+    color: var(--ink);
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-pending { background: var(--meta-soft); }
   .dot-good { background: var(--green); }
   .dot-fix { background: var(--yellow); }
 
+  /* Section header */
   .section-header {
-    padding: 14px 16px;
-    background: var(--navy-mid);
-    font-size: 13px;
+    padding: 14px 20px;
+    background: var(--surface);
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
     font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--accent-light);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin-top: 8px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--hairline);
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
+  /* Term row */
   .term-row {
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(51,65,85,0.5);
-    transition: background 0.15s;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--hairline);
+    transition: background .15s;
   }
-  .term-row.reviewed-good { background: rgba(34,197,94,0.06); }
-  .term-row.reviewed-fix { background: rgba(234,179,8,0.06); }
+  .term-row.reviewed-good { background: #F0FDF4; }
+  .term-row.reviewed-fix { background: var(--yellow-bg); }
 
   .term-en {
-    font-size: 14px;
-    color: var(--text-bright);
-    font-weight: 600;
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
     margin-bottom: 4px;
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 8px;
   }
-  .term-en .flag { font-size: 16px; }
+  .term-en .flag { font-size: 14px; }
 
   .term-es {
     font-size: 14px;
     color: var(--yellow);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 8px;
+    font-style: italic;
   }
-  .term-es .flag { font-size: 16px; }
+  .term-es .flag { font-size: 14px; font-style: normal; }
 
   .term-context {
     font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-    font-style: italic;
+    color: var(--meta);
+    margin-bottom: 12px;
+    line-height: 1.45;
   }
 
   .term-actions {
@@ -121,210 +224,219 @@
     flex-wrap: wrap;
   }
   .btn-vote {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     cursor: pointer;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-dim);
-    transition: all 0.15s;
+    border: 1px solid var(--hairline);
+    background: var(--paper);
+    color: var(--meta);
+    transition: border-color .15s, background .15s, color .15s;
   }
-  .btn-vote:hover { border-color: var(--accent); color: var(--text); }
-  .btn-good { }
-  .btn-good.active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
-  .btn-fix { }
-  .btn-fix.active { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
+  .btn-vote:hover { border-color: var(--navy); color: var(--ink); }
+  .btn-good.active {
+    background: var(--green-bg);
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .btn-fix.active {
+    background: var(--yellow-bg);
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
 
   .fix-input {
     width: 100%;
-    margin-top: 8px;
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--yellow);
-    background: rgba(234,179,8,0.06);
-    color: var(--text-bright);
+    margin-top: 10px;
+    padding: 10px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--yellow);
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
-    font-family: inherit;
-    outline: none;
+    color: var(--ink);
     display: none;
+    transition: border-color .15s;
   }
-  .fix-input:focus { border-color: var(--accent-light); background: var(--navy-mid); }
+  .fix-input:focus {
+    outline: none;
+    border-bottom-color: var(--orange);
+  }
   .fix-input.visible { display: block; }
-  .fix-input::placeholder { color: var(--text-dim); }
+  .fix-input::placeholder { color: var(--meta-soft); }
 
+  /* Bottom bar */
   .bottom-bar {
     position: sticky;
     bottom: 0;
-    background: var(--navy-light);
-    border-top: 1px solid var(--border);
-    padding: 12px 16px;
+    background: var(--paper);
+    border-top: 1px solid var(--hairline);
+    padding: 14px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     z-index: 20;
+    box-shadow: 0 -4px 20px rgba(11, 31, 58, 0.04);
   }
-  .progress-text { font-size: 13px; color: var(--text-dim); }
-  .progress-text strong { color: var(--text-bright); }
+  .progress-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--meta);
+  }
+  .progress-text strong {
+    color: var(--ink);
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
   .btn-send {
-    padding: 10px 24px;
-    border-radius: 8px;
-    background: var(--green);
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 12px 20px;
+    background: var(--orange);
+    color: #fff;
     border: none;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     cursor: pointer;
     white-space: nowrap;
+    transition: background .15s;
   }
-  .btn-send:hover { opacity: 0.9; }
-  .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-send:hover { background: var(--orange-deep); }
+  .btn-send:active { transform: translateY(1px); }
+  .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
 
+  /* Toast */
   .toast {
     position: fixed;
-    bottom: 80px;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--green);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 14px;
+    background: var(--navy);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
     font-weight: 600;
     display: none;
     z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 20px 40px rgba(11, 31, 58, 0.2);
   }
-  .toast.show { display: block; animation: fadeInUp 0.3s ease; }
-
+  .toast.show { display: block; animation: fadeInUp .3s ease; }
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateX(-50%) translateY(10px); }
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
   }
 
+  /* Done screen */
   .done-screen {
     display: none;
     text-align: center;
-    padding: 60px 20px;
+    padding: 72px 24px;
   }
   .done-screen.show { display: block; }
-  .done-screen h2 { font-size: 24px; color: var(--green); margin-bottom: 12px; }
-  .done-screen p { font-size: 15px; color: var(--text-dim); line-height: 1.6; max-width: 400px; margin: 0 auto; }
-  .done-screen .big-emoji { font-size: 64px; margin-bottom: 16px; }
+  .done-screen .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+  .done-screen h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .done-screen p {
+    font-size: 15px;
+    color: var(--meta);
+    line-height: 1.6;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .done-screen p em {
+    color: var(--yellow);
+    font-style: italic;
+  }
 
-  @media (max-width: 430px) {
-    .header h1 { font-size: 17px; }
+  @media (max-width: 480px) {
+    .header h1 { font-size: 22px; }
     .term-actions { flex-direction: column; align-items: stretch; }
     .btn-vote { text-align: center; }
-  }
-</style>
-<link rel="stylesheet" href="styles/theme.css">
-<style>
-  /* Editorial Industrialism page overrides — applied after theme.css */
-  body { background: #FFFFFF !important; color: #0E0E10 !important; max-width: 720px; margin: 0 auto; }
-  .header { background: #FFFFFF !important; border-bottom: 1px solid #E2E5EA !important; text-align: left !important; padding: 28px 20px 16px !important; }
-  .header h1 { color: #0E0E10 !important; font-size: 24px !important; line-height: 1.2 !important; letter-spacing: -0.025em !important; margin-bottom: 8px !important; }
-  .header p { color: #64748B !important; font-size: 14px !important; max-width: none !important; text-align: left !important; }
-  .header p em { color: #CA8A04 !important; }
-  .instructions { background: #F5F6F8 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; color: #0E0E10 !important; }
-  .instructions h2 { color: #0E0E10 !important; font-size: 14px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.12em !important; }
-  .instructions li, .instructions p { color: #0E0E10 !important; }
-  .instructions li strong { color: #0E0E10 !important; }
-  .instructions p[style*="color:var(--yellow)"] { color: #CA8A04 !important; }
-  .section-header { background: #F5F6F8 !important; color: #64748B !important; letter-spacing: 0.14em !important; font-size: 10.5px !important; border-top: 1px solid #E2E5EA !important; border-bottom: 1px solid #E2E5EA !important; }
-  .term-row { border-bottom: 1px solid #E2E5EA !important; }
-  .term-row.reviewed-good { background: #F0FDF4 !important; }
-  .term-row.reviewed-fix { background: #FEF3C7 !important; }
-  .term-en { color: #0E0E10 !important; }
-  .term-es { color: #CA8A04 !important; }
-  .term-context { color: #64748B !important; }
-  .btn-vote { background: #FFFFFF !important; border: 1px solid #E2E5EA !important; color: #64748B !important; border-radius: 999px !important; }
-  .btn-vote:hover { border-color: #0B1F3A !important; color: #0B1F3A !important; }
-  .btn-good.active { background: #DCFCE7 !important; border-color: #15803D !important; color: #15803D !important; }
-  .btn-fix.active { background: #FEF3C7 !important; border-color: #CA8A04 !important; color: #CA8A04 !important; }
-  .fix-input { border: 1px solid #CA8A04 !important; background: #FFFFFF !important; color: #0E0E10 !important; border-radius: 4px !important; }
-  .fix-input:focus { border-color: #FF8200 !important; background: #FFFFFF !important; }
-  .fix-input::placeholder { color: #9AA4B2 !important; }
-  .stats-bar { color: #64748B !important; padding: 16px 20px !important; border-bottom: 1px solid #E2E5EA !important; }
-  .dot-pending { background: #9AA4B2 !important; }
-  .dot-good { background: #15803D !important; }
-  .dot-fix { background: #CA8A04 !important; }
-  .bottom-bar { background: #FFFFFF !important; border-top: 1px solid #E2E5EA !important; }
-  .progress-text, .progress-text strong { color: #0E0E10 !important; }
-  .btn-send { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; font-size: 12px !important; padding: 12px 20px !important; }
-  .btn-send:hover { background: #CC6600 !important; }
-  /* Name input card */
-  div[style*="background:var(--card)"] { background: #F5F6F8 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; }
-  div[style*="background:var(--card)"] label { color: #0E0E10 !important; }
-  div[style*="background:var(--card)"] input { background: #FFFFFF !important; color: #0E0E10 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; }
-  .done-screen h2 { color: #15803D !important; }
-  .done-screen p { color: #64748B !important; }
-  .done-screen p em { color: #CA8A04 !important; }
-  @media (max-width: 430px) {
-    .header h1 { font-size: 20px !important; }
+    .stats-bar { gap: 16px; font-size: 11.5px; }
   }
 </style>
 </head>
 <body>
+
 <div class="spine"></div>
 
 <div class="header">
-  <h1>🎨 Nash Painting — Translation Review</h1>
+  <div class="header-eyebrow">Nash Painting · Internal</div>
+  <h1>Translation Review</h1>
   <p>Help us get the Spanish work order translations right.<br>
-  <em style="color:var(--yellow)">Ayúdanos a corregir las traducciones en español para las órdenes de trabajo.</em></p>
+  <em>Ayúdanos a corregir las traducciones en español para las órdenes de trabajo.</em></p>
 </div>
 
 <div class="instructions">
-  <h2>How this works / Cómo funciona:</h2>
+  <h2>How this works / Cómo funciona</h2>
   <ol>
     <li>Enter your name below</li>
     <li>Each row shows an <strong>English term</strong> and our <strong>proposed Spanish translation</strong></li>
-    <li>Tap <strong>👍 Correct</strong> if the Spanish is what you'd actually say on a job site</li>
-    <li>Tap <strong>✏️ Fix</strong> if it's wrong or sounds weird — type what you'd actually say</li>
+    <li>Tap <strong>Correct</strong> if the Spanish is what you'd actually say on a job site</li>
+    <li>Tap <strong>Fix</strong> if it's wrong or sounds weird — type what you'd actually say</li>
     <li>When you're done, hit <strong>Send Results</strong> at the bottom</li>
   </ol>
-  <p style="margin-top:10px;color:var(--yellow);font-size:13px;">
-    🇪🇸 Escribe tu nombre abajo. Cada fila muestra un término en inglés y nuestra traducción propuesta. Toca 👍 si está bien, o ✏️ si necesita corrección y escribe cómo lo dirías tú.
+  <p class="es">
+    Escribe tu nombre abajo. Cada fila muestra un término en inglés y nuestra traducción propuesta. Toca <strong>Correcto</strong> si está bien, o <strong>Corregir</strong> si necesita corrección y escribe cómo lo dirías tú.
   </p>
 </div>
 
-<div style="padding:0 16px;margin-bottom:8px;">
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-    <label style="font-size:14px;font-weight:600;color:var(--text-bright);white-space:nowrap;">👤 Your name / Tu nombre:</label>
-    <input type="text" id="reviewer-name" placeholder="e.g. Carlos, Miguel..." 
-      style="flex:1;min-width:150px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--navy-mid);color:var(--text-bright);font-size:15px;font-family:inherit;outline:none;"
-      oninput="localStorage.setItem('nash-reviewer-name',this.value)">
+<div class="name-row">
+  <div class="name-field">
+    <label>Your Name / Tu Nombre</label>
+    <input type="text" id="reviewer-name" placeholder="e.g. Carlos, Miguel…" oninput="localStorage.setItem('nash-reviewer-name', this.value)">
   </div>
 </div>
 
 <div class="stats-bar">
-  <div class="stat"><div class="stat-dot dot-pending"></div> <span id="stat-pending">0</span> Pending</div>
-  <div class="stat"><div class="stat-dot dot-good"></div> <span id="stat-good">0</span> Correct</div>
-  <div class="stat"><div class="stat-dot dot-fix"></div> <span id="stat-fix">0</span> Needs Fix</div>
+  <div class="stat"><span class="stat-dot dot-pending"></span><strong id="stat-pending">0</strong> Pending</div>
+  <div class="stat"><span class="stat-dot dot-good"></span><strong id="stat-good">0</strong> Correct</div>
+  <div class="stat"><span class="stat-dot dot-fix"></span><strong id="stat-fix">0</strong> Needs Fix</div>
 </div>
 
 <div id="terms-container"></div>
 
 <div class="bottom-bar">
   <div class="progress-text"><strong id="progress-count">0</strong> of <strong id="progress-total">0</strong> reviewed</div>
-  <button class="btn-send" id="send-btn" onclick="sendResults()">📤 Send Results</button>
+  <button class="btn-send" id="send-btn" onclick="sendResults()">Send Results →</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <div class="done-screen" id="done-screen">
-  <div class="big-emoji">🎉</div>
-  <h2>Thank you! / ¡Gracias!</h2>
+  <div class="eyebrow">Review Complete</div>
+  <h2>Thank you — ¡Gracias!</h2>
   <p>Your corrections have been saved. Bill and the team will review them and update NashOS.<br><br>
-  <em style="color:var(--yellow)">Tus correcciones han sido guardadas. Bill y el equipo las revisarán.</em></p>
+  <em>Tus correcciones han sido guardadas. Bill y el equipo las revisarán.</em></p>
 </div>
 
 <script>
 const terms = [
-  // === PAINT TRADE TERMS ===
-  { section: '🎨 Paint & Surface Terms / Términos de Pintura y Superficies', items: [
+  { section: 'Paint & Surface Terms · Términos de Pintura y Superficies', items: [
     { en: 'Pressure Washing', es: 'Lavado a Presión', ctx: 'When we spray the house before painting' },
     { en: 'Spray + Backroll', es: 'Rociado + Repaso con Rodillo', ctx: 'Spray then go over with roller' },
     { en: 'Fascia boards', es: 'Tablas de Fascia / Alero', ctx: 'The boards along the roofline' },
@@ -345,9 +457,7 @@ const terms = [
     { en: 'Satin (paint finish)', es: 'Satinado', ctx: 'The sheen level of paint' },
     { en: 'Semi-transparent (stain)', es: 'Semi-transparente', ctx: 'Deck/fence stain type' },
   ]},
-
-  // === DECK & FENCE TERMS ===
-  { section: '🪵 Deck & Fence / Terraza y Cerca', items: [
+  { section: 'Deck & Fence · Terraza y Cerca', items: [
     { en: 'Deck Flooring', es: 'Piso de Terraza', ctx: 'The walking surface of a deck' },
     { en: 'Deck Railing', es: 'Barandal de Terraza', ctx: 'Railing around the deck' },
     { en: 'Wood Railing', es: 'Barandal de Madera', ctx: '' },
@@ -360,18 +470,14 @@ const terms = [
     { en: 'Screen Frame', es: 'Marco de Malla', ctx: 'The frame that holds the screen' },
     { en: 'Stain — Roll & Back-brush', es: 'Teñir — Rodillo y Repaso con Brocha', ctx: 'Staining technique' },
   ]},
-
-  // === PREP & PROCESS TERMS ===
-  { section: '🔧 Prep & Process / Preparación y Proceso', items: [
+  { section: 'Prep & Process · Preparación y Proceso', items: [
     { en: 'Scrape, caulk, and prime raw wood', es: 'Raspar, calafatear y aplicar impresión a madera cruda', ctx: 'Standard prep steps' },
     { en: 'Paint 2 coats', es: 'Pintar 2 capas', ctx: '' },
     { en: 'Prime raw wood', es: 'Imprimar madera cruda', ctx: '' },
     { en: 'Caulk / Caulking', es: 'Calafatear', ctx: 'Filling gaps and seams' },
     { en: 'Skim Coat', es: 'Capa de Alisado / Resane', ctx: 'Thin layer to smooth a surface' },
   ]},
-
-  // === WORK ORDER INSTRUCTIONS ===
-  { section: '📋 Work Instructions / Instrucciones de Trabajo', items: [
+  { section: 'Work Instructions · Instrucciones de Trabajo', items: [
     { en: 'Avoid window and door openings. Use appropriate pressure to avoid damage to wood.', es: 'Evitar aberturas de ventanas y puertas. Usar presión apropiada para evitar daño a la madera.', ctx: 'Pressure washing note' },
     { en: 'Watch closely on decks. Catch paint chips to minimize cleanup.', es: 'Vigilar de cerca en las terrazas. Atrapar los pedazos de pintura para minimizar la limpieza.', ctx: 'Pressure washing note' },
     { en: 'Unpainted areas behind downspouts should not be visible. Use sprayers, small rollers, or brushes to cover.', es: 'Las áreas sin pintar detrás de los bajantes no deben ser visibles. Usar rociadores, rodillos pequeños o brochas para cubrir.', ctx: 'Downspout painting note' },
@@ -381,9 +487,7 @@ const terms = [
     { en: 'Match board gaps with existing. See pics for exact locations.', es: 'Igualar los espacios entre tablas con los existentes. Ver fotos para ubicaciones exactas.', ctx: 'Deck board replacement' },
     { en: 'Start with fascia, trim, and deck work. Save gutters/downspouts for last.', es: 'Empezar con fascia, molduras y trabajo de terraza. Dejar canaletas/bajantes para el final.', ctx: 'Estimator tip on work order' },
   ]},
-
-  // === SITE ACCESS ===
-  { section: '🏠 Site Access / Acceso al Sitio', items: [
+  { section: 'Site Access · Acceso al Sitio', items: [
     { en: 'Gate guard opens at 8:00 AM', es: 'Guardia del portón abre a las 8:00 AM', ctx: 'Gated community access' },
     { en: 'Park at the tennis courts', es: 'Estacionar en las canchas de tenis', ctx: 'Parking instructions' },
     { en: 'No restroom on site', es: 'Sin acceso a baño', ctx: '' },
@@ -392,9 +496,7 @@ const terms = [
     { en: 'No food in yard — dog safety', es: 'NO dejar comida en el patio — seguridad del perro', ctx: '' },
     { en: 'Haul away trash — do not leave bags on site', es: 'Llevar la basura — no dejar bolsas en el sitio', ctx: 'Cleanup instructions' },
   ]},
-
-  // === DAILY UPDATE / APP UI ===
-  { section: '📱 Work Order App Labels / Etiquetas de la App', items: [
+  { section: 'Work Order App Labels · Etiquetas de la App', items: [
     { en: 'Daily Update', es: 'Actualización Diaria', ctx: 'Section header on the work order' },
     { en: 'How many on site today?', es: '¿Cuántos en el sitio hoy?', ctx: 'Headcount question' },
     { en: 'When do you think you\'ll finish?', es: '¿Cuándo crees que terminarás?', ctx: 'Estimated completion question' },
@@ -419,11 +521,10 @@ const terms = [
     { en: 'Day 3 of 5', es: 'Día 3 de 5', ctx: 'Progress tracker' },
     { en: 'Started', es: 'Iniciado', ctx: '' },
     { en: 'Scheduled finish', es: 'Finalización programada', ctx: '' },
-    { en: 'Your estimate', es: 'Tu estimación', ctx: 'Crew\'s own finish date' },
+    { en: 'Your estimate', es: 'Tu estimación', ctx: "Crew's own finish date" },
   ]},
 ];
 
-// State
 const reviews = {};
 let totalTerms = 0;
 
@@ -431,26 +532,28 @@ function init() {
   const container = document.getElementById('terms-container');
   let globalIdx = 0;
 
-  terms.forEach(section => {
+  terms.forEach(function(section) {
     const sectionEl = document.createElement('div');
-    sectionEl.innerHTML = `<div class="section-header">${section.section}</div>`;
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.textContent = section.section;
+    sectionEl.appendChild(header);
 
-    section.items.forEach(item => {
+    section.items.forEach(function(item) {
       const idx = globalIdx++;
       totalTerms++;
       const div = document.createElement('div');
       div.className = 'term-row';
-      div.id = `term-${idx}`;
-      div.innerHTML = `
-        <div class="term-en"><span class="flag">🇺🇸</span> ${escHtml(item.en)}</div>
-        <div class="term-es"><span class="flag">🇪🇸</span> ${escHtml(item.es)}</div>
-        ${item.ctx ? `<div class="term-context">Context: ${escHtml(item.ctx)}</div>` : ''}
-        <div class="term-actions">
-          <button class="btn-vote btn-good" onclick="vote(${idx},'good')">👍 Correct / Correcto</button>
-          <button class="btn-vote btn-fix" onclick="vote(${idx},'fix')">✏️ Fix / Corregir</button>
-        </div>
-        <input class="fix-input" id="fix-${idx}" placeholder="Type the correct translation here / Escribe la traducción correcta aquí" oninput="saveFix(${idx},this.value)">
-      `;
+      div.id = 'term-' + idx;
+      div.innerHTML =
+        '<div class="term-en"><span class="flag">🇺🇸</span> ' + escHtml(item.en) + '</div>' +
+        '<div class="term-es"><span class="flag">🇪🇸</span> ' + escHtml(item.es) + '</div>' +
+        (item.ctx ? '<div class="term-context">Context: ' + escHtml(item.ctx) + '</div>' : '') +
+        '<div class="term-actions">' +
+          '<button class="btn-vote btn-good" onclick="vote(' + idx + ',\'good\')">Correct / Correcto</button>' +
+          '<button class="btn-vote btn-fix" onclick="vote(' + idx + ',\'fix\')">Fix / Corregir</button>' +
+        '</div>' +
+        '<input class="fix-input" id="fix-' + idx + '" placeholder="Type the correct translation here / Escribe la traducción correcta aquí" oninput="saveFix(' + idx + ', this.value)">';
       sectionEl.appendChild(div);
     });
 
@@ -461,20 +564,19 @@ function init() {
   updateStats();
   loadSaved();
 
-  // Restore reviewer name
   const savedName = localStorage.getItem('nash-reviewer-name');
   if (savedName) document.getElementById('reviewer-name').value = savedName;
 }
 
 function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function vote(idx, type) {
-  const row = document.getElementById(`term-${idx}`);
+  const row = document.getElementById('term-' + idx);
   const goodBtn = row.querySelector('.btn-good');
   const fixBtn = row.querySelector('.btn-fix');
-  const fixInput = document.getElementById(`fix-${idx}`);
+  const fixInput = document.getElementById('fix-' + idx);
 
   goodBtn.classList.remove('active');
   fixBtn.classList.remove('active');
@@ -506,7 +608,7 @@ function saveFix(idx, value) {
 
 function updateStats() {
   let good = 0, fix = 0;
-  Object.values(reviews).forEach(r => {
+  Object.values(reviews).forEach(function(r) {
     if (r.status === 'good') good++;
     if (r.status === 'fix') fix++;
   });
@@ -525,9 +627,11 @@ function loadSaved() {
   const saved = localStorage.getItem('nash-translation-review');
   if (!saved) return;
   const data = JSON.parse(saved);
-  Object.entries(data).forEach(([idx, r]) => {
+  Object.entries(data).forEach(function(entry) {
+    const idx = entry[0];
+    const r = entry[1];
     reviews[idx] = r;
-    const row = document.getElementById(`term-${idx}`);
+    const row = document.getElementById('term-' + idx);
     if (!row) return;
     if (r.status === 'good') {
       row.querySelector('.btn-good').classList.add('active');
@@ -535,7 +639,7 @@ function loadSaved() {
     } else if (r.status === 'fix') {
       row.querySelector('.btn-fix').classList.add('active');
       row.classList.add('reviewed-fix');
-      const fixInput = document.getElementById(`fix-${idx}`);
+      const fixInput = document.getElementById('fix-' + idx);
       fixInput.classList.add('visible');
       fixInput.value = r.fix || '';
     }
@@ -543,27 +647,23 @@ function loadSaved() {
   updateStats();
 }
 
-// ============================================================
 // Google Apps Script endpoint — Bill deploys this, paste URL here
-// ============================================================
-const BACKEND_URL = ''; // Paste your Apps Script web app URL here
+const BACKEND_URL = '';
 
 function sendResults() {
   const reviewerName = document.getElementById('reviewer-name').value.trim();
   if (!reviewerName) {
-    showToast('⚠️ Please enter your name first / Escribe tu nombre primero');
+    showToast('Please enter your name first / Escribe tu nombre primero');
     document.getElementById('reviewer-name').focus();
-    document.getElementById('reviewer-name').style.borderColor = 'var(--yellow)';
     return;
   }
 
-  // Build structured data for backend
   let globalIdx = 0;
   let termsData = [];
   let good = 0, fixes = 0, reviewed = 0;
 
-  terms.forEach(section => {
-    section.items.forEach(item => {
+  terms.forEach(function(section) {
+    section.items.forEach(function(item) {
       const idx = globalIdx++;
       const r = reviews[idx];
       termsData.push({
@@ -582,36 +682,32 @@ function sendResults() {
 
   const payload = {
     reviewer: reviewerName,
-    stats: { reviewed, correct: good, fixes, total: totalTerms },
+    stats: { reviewed: reviewed, correct: good, fixes: fixes, total: totalTerms },
     terms: termsData,
     submittedAt: new Date().toISOString()
   };
 
-  // Send to backend if configured
   if (BACKEND_URL) {
     const btn = document.getElementById('send-btn');
     btn.disabled = true;
-    btn.textContent = '⏳ Sending...';
-
+    btn.textContent = 'Sending…';
     fetch(BACKEND_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }).then(() => {
-      btn.textContent = '✅ Sent!';
+    }).then(function() {
+      btn.textContent = 'Sent ✓';
       btn.style.background = 'var(--green)';
-      showToast(`✅ Saved! ${reviewed} reviewed, ${fixes} corrections. ¡Gracias ${reviewerName}!`);
-      // Also build text summary as backup
+      showToast('Saved — ' + reviewed + ' reviewed, ' + fixes + ' corrections. Gracias ' + reviewerName + '!');
       buildAndShareText(reviewerName, fixes, reviewed);
-    }).catch(err => {
-      btn.textContent = '📤 Send Results';
+    }).catch(function() {
+      btn.textContent = 'Send Results →';
       btn.disabled = false;
-      showToast('⚠️ Could not save online — downloading backup file');
+      showToast('Could not save online — downloading backup file');
       buildAndShareText(reviewerName, fixes, reviewed);
     });
   } else {
-    // No backend configured — use text export
     buildAndShareText(reviewerName, fixes, reviewed);
   }
 }
@@ -619,26 +715,23 @@ function sendResults() {
 function buildAndShareText(reviewerName, fixCount, reviewedCount) {
   let globalIdx = 0;
   let lines = [];
-
-  lines.push(`NASH PAINTING — TRANSLATION REVIEW`);
-  lines.push(`Reviewer: ${reviewerName}`);
-  lines.push(`Date: ${new Date().toLocaleDateString()}`);
+  lines.push('NASH PAINTING — TRANSLATION REVIEW');
+  lines.push('Reviewer: ' + reviewerName);
+  lines.push('Date: ' + new Date().toLocaleDateString());
   lines.push('==========================================\n');
-
   if (fixCount === 0) {
-    lines.push('✅ All translations marked as correct! No fixes needed.\n');
+    lines.push('All translations marked as correct. No fixes needed.\n');
   }
-
-  terms.forEach(section => {
+  terms.forEach(function(section) {
     let sectionLines = [];
-    section.items.forEach(item => {
+    section.items.forEach(function(item) {
       const idx = globalIdx++;
       const r = reviews[idx];
       if (!r) return;
       if (r.status === 'fix') {
-        sectionLines.push(`❌ "${item.en}"`);
-        sectionLines.push(`   Our translation: "${item.es}"`);
-        sectionLines.push(`   ${reviewerName}'s correction: "${r.fix || '(no correction entered)'}"`);
+        sectionLines.push('✗ "' + item.en + '"');
+        sectionLines.push('   Our translation: "' + item.es + '"');
+        sectionLines.push('   ' + reviewerName + '\'s correction: "' + (r.fix || '(no correction entered)') + '"');
         sectionLines.push('');
       }
     });
@@ -648,27 +741,24 @@ function buildAndShareText(reviewerName, fixCount, reviewedCount) {
       lines = lines.concat(sectionLines);
     }
   });
-
-  lines.push(`\n--- ${reviewedCount}/${totalTerms} reviewed, ${fixCount} corrections ---`);
+  lines.push('\n--- ' + reviewedCount + '/' + totalTerms + ' reviewed, ' + fixCount + ' corrections ---');
   const text = lines.join('\n');
-
-  // Try native share (mobile), fall back to clipboard + download
   if (navigator.share) {
     navigator.share({
-      title: `Translation Review — ${reviewerName}`,
+      title: 'Translation Review — ' + reviewerName,
       text: text
-    }).catch(() => clipboardFallback(text));
+    }).catch(function() { clipboardFallback(text); });
   } else {
     clipboardFallback(text);
   }
 }
 
 function clipboardFallback(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('📋 Results copied to clipboard!');
-  }).catch(() => {});
-
-  // Also download as file
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('Results copied to clipboard');
+    }).catch(function(){});
+  }
   const blob = new Blob([text], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -680,7 +770,7 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
 init();
