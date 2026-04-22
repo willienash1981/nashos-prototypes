@@ -205,7 +205,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .ai-analyze-btn{background:linear-gradient(135deg,#C4A962,#D4BE82);color:var(--navy);border:none;padding:8px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:12px;transition:opacity .15s}
 .ai-analyze-btn:hover{opacity:.9}
 </style>
-<link rel="stylesheet" href="styles/theme.css"></head>
+<link rel="stylesheet" href="styles/theme.css">
+<style>
+  /* Editorial Industrialism: AI Insights panel + related overrides */
+  .ai-panel { background: #FFFFFF !important; color: #0E0E10 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; box-shadow: none !important; }
+  .ai-panel-header:hover { background: #F5F6F8 !important; }
+  .ai-panel-title { color: #0E0E10 !important; font-family: 'Sora', sans-serif !important; }
+  .ai-panel-title .ai-badge { background: #FFF4E6 !important; color: #CC6600 !important; border-radius: 999px !important; letter-spacing: 0.14em !important; }
+  .ai-panel-meta { color: #64748B !important; opacity: 1 !important; }
+  .ai-panel-toggle { color: #64748B !important; }
+  .ai-panel-body { border-top: 1px solid #E2E5EA !important; }
+  .ai-section { border-bottom: 1px solid #E2E5EA !important; }
+  .ai-section-title { color: #64748B !important; font-family: 'Inter', sans-serif !important; font-size: 10.5px !important; font-weight: 700 !important; letter-spacing: 0.14em !important; opacity: 1 !important; }
+  .ai-insight { background: #F5F6F8 !important; color: #0E0E10 !important; border-radius: 4px !important; }
+  .ai-insight.alert { border-left-color: #B91C1C !important; }
+  .ai-insight.warn { border-left-color: #CA8A04 !important; }
+  .ai-insight.good { border-left-color: #15803D !important; }
+  .ai-insight.idea { border-left-color: #FF8200 !important; }
+  .ai-insight-text, .ai-insight-text strong { color: #0E0E10 !important; }
+  .ai-insight-evidence { color: #64748B !important; opacity: 1 !important; }
+  .ai-act-btn { background: #FFFFFF !important; border: 1px solid #E2E5EA !important; color: #0B1F3A !important; border-radius: 999px !important; font-weight: 700 !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; }
+  .ai-act-btn:hover { background: #F5F6F8 !important; }
+  .ai-act-btn.accept { border-color: #15803D !important; color: #15803D !important; }
+  .ai-act-btn.accept:hover { background: #DCFCE7 !important; }
+  .ai-act-btn.dismiss { opacity: 0.6 !important; }
+  .ai-act-btn.pin { border-color: #FF8200 !important; color: #CC6600 !important; }
+  .ai-software { background: #FFF4E6 !important; border: 1px solid #FFB366 !important; color: #0E0E10 !important; border-radius: 4px !important; }
+  .ai-software-title { color: #CC6600 !important; }
+  .ai-software-desc { color: #0E0E10 !important; opacity: 1 !important; }
+  .ai-software-meta { color: #64748B !important; opacity: 1 !important; }
+  .ai-analyze-btn { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; font-size: 11px !important; padding: 10px 16px !important; }
+  .date-select { background: #FFFFFF !important; color: #0E0E10 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; }
+  .date-select option { background: #FFFFFF !important; color: #0E0E10 !important; }
+  .btn-gold { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; font-size: 11px !important; }
+</style>
+</head>
 <body>
 <div class="spine"></div>
 <div class="topbar">
