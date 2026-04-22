@@ -183,15 +183,23 @@
     <div class="brand-name">NASH PAINTING</div>
   </div>
   <nav class="roles">
-    <button class="role active" data-role="admin">Admin</button>
-    <button class="role" data-role="office">Office</button>
-    <button class="role" data-role="field">Field Sup</button>
+    <a class="role active">Ops</a>
+    <a class="role" href="executive-dashboard.html">CEO</a>
+    <a class="role" href="cmo-dashboard.html">CMO</a>
+    <a class="role" href="cfr-dashboard.html">CFO</a>
   </nav>
 </div>
 
 <div class="subbar">
-  <h1 class="subbar-title">Operations Dashboard</h1>
-  <div class="subbar-meta">Saturday, Feb 28, 2026 · <strong>Welcome, Bill</strong></div>
+  <div>
+    <h1 class="subbar-title">Operations Dashboard</h1>
+    <div class="subbar-meta" style="margin-top:6px">Saturday, Feb 28, 2026 · <strong>Welcome, Bill</strong></div>
+  </div>
+  <nav class="roles" id="view-tabs">
+    <button class="role active" data-role="admin">Admin</button>
+    <button class="role" data-role="office">Office</button>
+    <button class="role" data-role="field">Field Sup</button>
+  </nav>
 </div>
 
 <!-- ═══ ADMIN VIEW ═══ -->
@@ -467,10 +475,10 @@
 </button>
 
 <script>
-  // Role switcher
-  document.querySelectorAll('.role').forEach(b => {
+  // View-within-ops switcher (Admin / Office / Field Sup)
+  document.querySelectorAll('#view-tabs .role').forEach(b => {
     b.addEventListener('click', () => {
-      document.querySelectorAll('.role').forEach(r => r.classList.remove('active'));
+      document.querySelectorAll('#view-tabs .role').forEach(r => r.classList.remove('active'));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       b.classList.add('active');
       document.getElementById('view-' + b.dataset.role).classList.add('active');
