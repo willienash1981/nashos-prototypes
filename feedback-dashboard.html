@@ -3,350 +3,873 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NashOS — Customer Feedback</title>
+<title>Nash Painting — Customer Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/dashboard.css">
 <style>
-:root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3D5F;
-  --gold: #C4A962;
-  --gold-light: #D4BE82;
-  --bg: #F5F3EF;
-  --white: #FFFFFF;
-  --border: #E2DFD8;
-  --text: #1B2A4A;
-  --text-sec: #6B7280;
-  --text-muted: #9CA3AF;
-  --green: #16A34A;
-  --green-bg: #F0FDF4;
-  --red: #DC2626;
-  --red-bg: #FEF2F2;
-  --yellow: #F59E0B;
-  --yellow-bg: #FFFBEB;
-  --blue: #2563EB;
-  --blue-bg: #EFF6FF;
-  --purple: #7C3AED;
-  --purple-bg: #F5F3FF;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(27,42,74,.08);
-  --shadow-md: 0 4px 12px rgba(27,42,74,.1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
-.topbar{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
-.topbar-left{display:flex;align-items:center;gap:16px}
-.topbar-logo{font-size:20px;font-weight:700;letter-spacing:-.5px}.topbar-logo span{color:var(--gold)}
-.topbar-title{font-size:15px;opacity:.85;border-left:1px solid rgba(255,255,255,.2);padding-left:16px}
-.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.date-select{background:var(--navy-light);color:#fff;border:1px solid rgba(255,255,255,.15);padding:6px 12px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer}
-.date-select option{background:var(--navy);color:#fff}
-.btn-gold{background:var(--gold);color:var(--navy);border:none;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s}
-.btn-gold:hover{background:var(--gold-light)}
-.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.btn-outline:hover{background:rgba(255,255,255,.1)}
-.main{max-width:1400px;margin:0 auto;padding:24px}
-.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px}
-.kpi{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.kpi.alert{border-left:4px solid var(--red)}
-.kpi.gold-hl{border-left:4px solid var(--gold)}
-.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:6px}
-.kpi-val{font-size:28px;font-weight:700;color:var(--navy);line-height:1.1}
-.kpi-sub{font-size:12px;color:var(--text-sec);margin-top:4px}
-.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:6px}
-.kpi-trend.up{background:var(--green-bg);color:var(--green)}
-.kpi-trend.down{background:var(--red-bg);color:var(--red)}
-.kpi-icon{position:absolute;top:14px;right:14px;font-size:22px;opacity:.12}
-.tab-bar{display:flex;gap:2px;background:var(--white);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tab-btn{padding:9px 16px;border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-sec);transition:all .2s;white-space:nowrap}
-.tab-btn:hover{background:var(--bg);color:var(--text)}
-.tab-btn.active{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
-.card-h{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-t{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
-.card-a{font-size:12px;color:var(--gold);font-weight:600;cursor:pointer;text-decoration:none}
-.card-b{padding:18px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
-.bar-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
-.bar-row:last-child{border-bottom:none}
-.bar-label{width:130px;font-size:13px;font-weight:500;flex-shrink:0}
-.bar-track{flex:1;height:24px;background:#f0eeea;border-radius:12px;overflow:hidden}
-.bar-fill{height:100%;border-radius:12px;transition:width .5s ease}
-.bar-val{width:50px;text-align:right;font-size:13px;font-weight:600;flex-shrink:0}
-.chart-wrap{position:relative;width:100%;overflow-x:auto}
-.tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);border-bottom:2px solid var(--border);white-space:nowrap}
-.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-.tbl tr:hover{background:var(--bg)}
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
-.badge-green{background:var(--green-bg);color:var(--green)}
-.badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
-.badge-red{background:var(--red-bg);color:var(--red)}
-.badge-blue{background:var(--blue-bg);color:var(--blue)}
-.badge-purple{background:var(--purple-bg);color:var(--purple)}
-.stars{color:var(--gold);font-size:14px;letter-spacing:1px}
-.stars-dim{color:#ddd}
-.person-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;position:relative}
-.person-name{font-size:15px;font-weight:700;margin-bottom:4px}
-.person-role{font-size:12px;color:var(--text-sec);margin-bottom:12px}
-.person-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.person-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec)}
-.person-stat-val{font-size:16px;font-weight:700;color:var(--navy)}
-.person-cats{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.person-cat{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:3px 0}
-.sparkline{display:block;margin:8px 0}
-.person-flag{position:absolute;top:12px;right:12px;font-size:18px}
-.flag-item{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
-.flag-item:last-child{border-bottom:none}
-.flag-icon{font-size:20px;flex-shrink:0;margin-top:2px}
-.flag-body{flex:1;min-width:0}
-.flag-title{font-size:14px;font-weight:600;margin-bottom:2px}
-.flag-detail{font-size:12px;color:var(--text-sec);margin-bottom:6px}
-.flag-actions{display:flex;gap:8px;margin-top:8px}
-.flag-btn{font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-weight:500;transition:all .15s}
-.flag-btn:hover{border-color:var(--navy);background:var(--bg)}
-.flag-btn.resolve{background:var(--green-bg);color:var(--green);border-color:transparent}
-.testimonial{padding:16px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:10px;border-left:3px solid var(--gold)}
-.testimonial:last-child{margin-bottom:0}
-.testimonial-text{font-size:13px;font-style:italic;margin-bottom:6px;line-height:1.6}
-.testimonial-author{font-size:12px;font-weight:600;color:var(--text-sec)}
-.svc-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
-.svc-icon{font-size:28px;margin-bottom:8px}
-.svc-name{font-size:15px;font-weight:700;margin-bottom:4px}
-.svc-stats{display:flex;gap:16px;margin:10px 0;flex-wrap:wrap}
-.svc-stat{font-size:11px;color:var(--text-sec)}
-.svc-stat strong{display:block;font-size:15px;color:var(--navy)}
-.svc-feedback{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.svc-fb-row{display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-bottom:4px}
-.svc-fb-row .lbl{font-weight:600;flex-shrink:0;width:70px;color:var(--text-sec)}
-.ref-kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
-.ref-kpi{background:var(--bg);border-radius:var(--radius-sm);padding:14px;text-align:center}
-.ref-kpi-val{font-size:22px;font-weight:700;color:var(--navy)}
-.ref-kpi-lbl{font-size:11px;color:var(--text-sec);margin-top:2px}
-.pipeline-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(27,42,74,.5);z-index:200;justify-content:center;align-items:flex-start;padding:40px 16px;overflow-y:auto}
-.modal-overlay.show{display:flex}
-.modal{background:var(--white);border-radius:var(--radius);max-width:700px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
-.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);border-radius:var(--radius) var(--radius) 0 0;z-index:1}
-.modal-title{font-size:16px;font-weight:700}
-.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-sec);padding:4px}
-.modal-body{padding:24px}
-.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
-.digest{max-width:560px;margin:0 auto;font-size:13px}
-.digest-header{background:var(--navy);color:#fff;padding:20px;text-align:center;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
-.digest-header h2{font-size:18px;margin-bottom:4px}
-.digest-header p{opacity:.7;font-size:12px}
-.digest-section{padding:16px 0;border-bottom:1px solid var(--border)}
-.digest-section:last-child{border-bottom:none}
-.digest-section h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-sec);margin-bottom:10px}
-.digest-score{display:flex;gap:24px;flex-wrap:wrap}
-.digest-score-item{text-align:center}
-.digest-score-val{font-size:24px;font-weight:700;color:var(--navy)}
-.digest-score-lbl{font-size:11px;color:var(--text-sec)}
-.digest-score-trend{font-size:11px;font-weight:600}
-.report{font-size:13px;line-height:1.7}
-.report h2{font-size:18px;font-weight:700;margin-bottom:4px;color:var(--navy)}
-.report h3{font-size:14px;font-weight:700;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.report .date{font-size:12px;color:var(--text-sec);margin-bottom:16px}
-.report-scores{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px}
-.report-score{text-align:center;padding:10px 16px;background:var(--bg);border-radius:var(--radius-sm)}
-.report-score strong{display:block;font-size:20px;color:var(--navy)}
-.report-score span{font-size:11px;color:var(--text-sec)}
-.report blockquote{border-left:3px solid var(--gold);padding:8px 14px;margin:8px 0;background:var(--bg);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-style:italic}
-.report .action-item{display:flex;align-items:center;gap:8px;padding:4px 0}
-.report .action-item input[type=checkbox]{accent-color:var(--navy)}
-@media(max-width:600px){
-  .main{padding:12px}
-  .topbar{padding:10px 12px}
-  .kpi-strip{grid-template-columns:repeat(2,1fr)}
-  .grid-2{grid-template-columns:1fr}
-  .tab-btn{padding:7px 10px;font-size:12px}
-  .tbl{font-size:12px}
-  .tbl th,.tbl td{padding:8px 10px}
-}
+  body.ed-dashboard { padding-bottom: 40px; }
 
-/* ─── AI INSIGHTS ─── */
-.ai-panel{background:linear-gradient(135deg,#1B2A4A 0%,#2A3D5F 100%);border-radius:var(--radius);color:#fff;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow-md)}
-.ai-panel-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.ai-panel-header:hover{background:rgba(255,255,255,.05)}
-.ai-panel-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
-.ai-panel-title .ai-badge{background:linear-gradient(135deg,#C4A962,#D4BE82);color:var(--navy);font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px}
-.ai-panel-meta{font-size:11px;opacity:.6;display:flex;align-items:center;gap:12px}
-.ai-panel-toggle{font-size:18px;transition:transform .2s}
-.ai-panel.collapsed .ai-panel-toggle{transform:rotate(-90deg)}
-.ai-panel.collapsed .ai-panel-body{display:none}
-.ai-panel-body{border-top:1px solid rgba(255,255,255,.1)}
-.ai-section{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
-.ai-section:last-child{border-bottom:none}
-.ai-section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.6;margin-bottom:10px}
-.ai-insight{background:rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;position:relative;border-left:3px solid transparent}
-.ai-insight:last-child{margin-bottom:0}
-.ai-insight.alert{border-left-color:#ef4444}
-.ai-insight.warn{border-left-color:#f59e0b}
-.ai-insight.good{border-left-color:#22c55e}
-.ai-insight.idea{border-left-color:#a78bfa}
-.ai-insight-text{font-size:13px;line-height:1.5;margin-bottom:8px}
-.ai-insight-evidence{font-size:11px;opacity:.5;margin-bottom:8px}
-.ai-insight-actions{display:flex;gap:6px}
-.ai-act-btn{font-size:10px;padding:3px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;cursor:pointer;font-weight:500;transition:all .15s}
-.ai-act-btn:hover{background:rgba(255,255,255,.15)}
-.ai-act-btn.accept{border-color:var(--green);color:var(--green)}
-.ai-act-btn.accept:hover{background:rgba(22,163,74,.2)}
-.ai-act-btn.dismiss{opacity:.5}
-.ai-act-btn.pin{border-color:var(--gold);color:var(--gold)}
-.ai-software{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px}
-.ai-software:last-child{margin-bottom:0}
-.ai-software-title{font-size:13px;font-weight:600;margin-bottom:4px;color:#c4b5fd}
-.ai-software-desc{font-size:12px;opacity:.8;line-height:1.5;margin-bottom:6px}
-.ai-software-meta{display:flex;gap:12px;font-size:10px;opacity:.5}
-.ai-analyze-btn{background:linear-gradient(135deg,#C4A962,#D4BE82);color:var(--navy);border:none;padding:8px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;margin-top:12px;transition:opacity .15s}
-.ai-analyze-btn:hover{opacity:.9}
-</style>
-<link rel="stylesheet" href="styles/theme.css">
-<style>
-  /* Editorial Industrialism: AI Insights panel + related overrides */
-  .ai-panel { background: #FFFFFF !important; color: #0E0E10 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; box-shadow: none !important; }
-  .ai-panel-header:hover { background: #F5F6F8 !important; }
-  .ai-panel-title { color: #0E0E10 !important; font-family: 'Sora', sans-serif !important; }
-  .ai-panel-title .ai-badge { background: #FFF4E6 !important; color: #CC6600 !important; border-radius: 999px !important; letter-spacing: 0.14em !important; }
-  .ai-panel-meta { color: #64748B !important; opacity: 1 !important; }
-  .ai-panel-toggle { color: #64748B !important; }
-  .ai-panel-body { border-top: 1px solid #E2E5EA !important; }
-  .ai-section { border-bottom: 1px solid #E2E5EA !important; }
-  .ai-section-title { color: #64748B !important; font-family: 'Inter', sans-serif !important; font-size: 10.5px !important; font-weight: 700 !important; letter-spacing: 0.14em !important; opacity: 1 !important; }
-  .ai-insight { background: #F5F6F8 !important; color: #0E0E10 !important; border-radius: 4px !important; }
-  .ai-insight.alert { border-left-color: #B91C1C !important; }
-  .ai-insight.warn { border-left-color: #CA8A04 !important; }
-  .ai-insight.good { border-left-color: #15803D !important; }
-  .ai-insight.idea { border-left-color: #FF8200 !important; }
-  .ai-insight-text, .ai-insight-text strong { color: #0E0E10 !important; }
-  .ai-insight-evidence { color: #64748B !important; opacity: 1 !important; }
-  .ai-act-btn { background: #FFFFFF !important; border: 1px solid #E2E5EA !important; color: #0B1F3A !important; border-radius: 999px !important; font-weight: 700 !important; letter-spacing: 0.08em !important; text-transform: uppercase !important; }
-  .ai-act-btn:hover { background: #F5F6F8 !important; }
-  .ai-act-btn.accept { border-color: #15803D !important; color: #15803D !important; }
-  .ai-act-btn.accept:hover { background: #DCFCE7 !important; }
-  .ai-act-btn.dismiss { opacity: 0.6 !important; }
-  .ai-act-btn.pin { border-color: #FF8200 !important; color: #CC6600 !important; }
-  .ai-software { background: #FFF4E6 !important; border: 1px solid #FFB366 !important; color: #0E0E10 !important; border-radius: 4px !important; }
-  .ai-software-title { color: #CC6600 !important; }
-  .ai-software-desc { color: #0E0E10 !important; opacity: 1 !important; }
-  .ai-software-meta { color: #64748B !important; opacity: 1 !important; }
-  .ai-analyze-btn { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; font-size: 11px !important; padding: 10px 16px !important; }
-  .date-select { background: #FFFFFF !important; color: #0E0E10 !important; border: 1px solid #E2E5EA !important; border-radius: 4px !important; }
-  .date-select option { background: #FFFFFF !important; color: #0E0E10 !important; }
-  .btn-gold { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; font-size: 11px !important; }
+  /* View tabs (in-page sub-nav) — matches subbar pattern from dashboard.html */
+  .fb-tabs {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px 6px;
+    display: flex;
+    gap: 26px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .fb-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 0 10px;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta-soft);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .fb-tab:hover { color: var(--ed-ink); }
+  .fb-tab.active { color: var(--ed-ink); border-bottom-color: var(--ed-orange); }
+  .fb-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--ed-red-bg);
+    color: var(--ed-red);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .fb-panel { display: none; }
+  .fb-panel.active { display: block; }
+
+  /* Section heads within feedback */
+  .fb-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 40px 0 16px;
+    flex-wrap: wrap;
+  }
+  .fb-section-head h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .fb-section-meta { font-size: 12px; color: var(--ed-meta); }
+  .fb-section-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-orange);
+    cursor: pointer;
+  }
+  .fb-section-link:hover { color: var(--ed-orange-deep); }
+
+  /* AI Intelligence Brief — replaces navy AI panel */
+  .ai-brief {
+    margin-top: 40px;
+    padding: 0;
+    background: var(--ed-paper);
+    border-top: 4px solid var(--ed-orange);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .ai-brief-head {
+    padding: 20px 24px 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--ed-hairline);
+    cursor: pointer;
+  }
+  .ai-brief-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+  }
+  .ai-brief-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-orange);
+    margin-bottom: 6px;
+  }
+  .ai-brief-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    align-items: center;
+  }
+  .ai-brief-toggle {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    color: var(--ed-ink);
+    transition: transform .2s;
+  }
+  .ai-brief.collapsed .ai-brief-toggle { transform: rotate(-90deg); }
+  .ai-brief-body { padding: 4px 24px 20px; }
+  .ai-brief.collapsed .ai-brief-body { display: none; }
+
+  .ai-sub-section {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .ai-sub-section:last-child { border-bottom: none; }
+  .ai-sub-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 14px;
+  }
+
+  .ai-insight {
+    padding: 14px 18px;
+    background: var(--ed-surface);
+    border-left: 4px solid var(--ed-orange);
+    margin-bottom: 10px;
+  }
+  .ai-insight.alert { border-left-color: var(--ed-red); background: var(--ed-red-bg); }
+  .ai-insight.warn { border-left-color: var(--ed-yellow); background: var(--ed-yellow-bg); }
+  .ai-insight.good { border-left-color: var(--ed-green); background: var(--ed-green-bg); }
+  .ai-insight-text { font-size: 14px; color: var(--ed-ink); line-height: 1.5; }
+  .ai-insight-text strong { color: var(--ed-ink); font-weight: 700; }
+  .ai-insight-evidence {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--ed-meta);
+    line-height: 1.45;
+  }
+  .ai-insight-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ai-act-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--ed-hairline);
+    background: var(--ed-paper);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    cursor: pointer;
+    transition: border-color .15s, background .15s, color .15s;
+  }
+  .ai-act-btn:hover { border-color: var(--ed-navy); }
+  .ai-act-btn.accept:hover { border-color: var(--ed-orange); color: var(--ed-orange); }
+
+  .ai-software {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .ai-software:last-child { border-bottom: none; }
+  .ai-software-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ed-ink);
+    margin-bottom: 4px;
+  }
+  .ai-software-desc {
+    font-size: 13px;
+    color: var(--ed-ink);
+    line-height: 1.5;
+  }
+  .ai-software-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .ai-software-meta span { display: inline-block; }
+  .ai-brief-footer {
+    padding: 16px 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11.5px;
+    color: var(--ed-meta);
+  }
+  .ai-analyze-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 4px;
+    background: var(--ed-orange);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .ai-analyze-btn:hover { background: var(--ed-orange-deep); }
+
+  /* Chart panels (editorial — no bordered card) */
+  .fb-chart {
+    padding: 24px 0;
+    border-top: 1px solid var(--ed-hairline);
+    margin-top: 8px;
+  }
+  .fb-chart-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .fb-chart-legend {
+    display: flex;
+    gap: 16px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    align-items: center;
+  }
+  .fb-chart-legend .sw {
+    display: inline-block;
+    width: 10px;
+    height: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .fb-two-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  @media (min-width: 960px) {
+    .fb-two-col { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Satisfaction bars */
+  .fb-cat-bar {
+    display: grid;
+    grid-template-columns: 150px 1fr 44px;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .fb-cat-bar:last-child { border-bottom: none; }
+  .fb-cat-name { font-size: 13px; font-weight: 600; color: var(--ed-ink); }
+  .fb-cat-track { height: 8px; background: var(--ed-surface); }
+  .fb-cat-fill { height: 100%; background: var(--ed-green); }
+  .fb-cat-fill.warn { background: var(--ed-yellow); }
+  .fb-cat-fill.alert { background: var(--ed-red); }
+  .fb-cat-val { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; color: var(--ed-ink); }
+
+  /* Testimonials */
+  .fb-testimonial {
+    padding: 16px 20px;
+    background: var(--ed-surface);
+    border-left: 4px solid var(--ed-orange);
+    margin-bottom: 12px;
+  }
+  .fb-testimonial-text {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--ed-ink);
+    letter-spacing: -0.005em;
+  }
+  .fb-testimonial-author {
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+
+  /* Status chip (pill) */
+  .fb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .fb-chip.great, .fb-chip.good, .fb-chip.resolved { background: var(--ed-green-bg); color: var(--ed-green); }
+  .fb-chip.ok { background: var(--ed-surface); color: var(--ed-meta); }
+  .fb-chip.watch, .fb-chip.warn { background: var(--ed-yellow-bg); color: var(--ed-yellow); }
+  .fb-chip.concern, .fb-chip.urgent { background: var(--ed-red-bg); color: var(--ed-red); }
+  .fb-chip.in-progress, .fb-chip.info { background: #DBEAFE; color: #1D4ED8; }
+
+  /* Person card — editorial (no border) */
+  .fb-person-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--ed-hairline);
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .fb-person {
+    background: var(--ed-paper);
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+  .fb-person.alert::before, .fb-person.watch::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .fb-person.alert::before { background: var(--ed-red); }
+  .fb-person.watch::before { background: var(--ed-yellow); }
+  .fb-person-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .fb-person-name {
+    font-family: 'Sora', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ed-ink);
+  }
+  .fb-person-role {
+    font-size: 11.5px;
+    color: var(--ed-meta);
+    margin-top: 2px;
+  }
+  .fb-person-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .fb-person-stat-lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 3px;
+  }
+  .fb-person-stat-val {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .fb-person-stat-val.alert { color: var(--ed-red); }
+  .fb-person-stat-val.warn { color: var(--ed-yellow); }
+  .fb-spark { width: 100%; height: 32px; }
+  .fb-spark path, .fb-spark polyline { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .fb-person-cats {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ed-ink);
+    border-top: 1px solid var(--ed-hairline);
+    padding-top: 10px;
+  }
+  .fb-person-cats .row { display: flex; justify-content: space-between; gap: 10px; }
+  .fb-person-cats .row + .row { margin-top: 4px; }
+  .fb-person-note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--ed-red-bg);
+    color: var(--ed-red);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.45;
+    border-left: 4px solid var(--ed-red);
+  }
+  .fb-person-note.warn { background: var(--ed-yellow-bg); color: var(--ed-yellow); border-left-color: var(--ed-yellow); }
+
+  /* Flagged item blocks */
+  .fb-flag {
+    display: grid;
+    grid-template-columns: 4px 1fr;
+    gap: 16px;
+    padding: 18px 20px 18px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .fb-flag-bar { background: var(--ed-red); }
+  .fb-flag.watch .fb-flag-bar { background: var(--ed-yellow); }
+  .fb-flag.resolved .fb-flag-bar { background: var(--ed-green); }
+  .fb-flag.resolved { opacity: 0.65; }
+  .fb-flag-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ed-ink);
+    margin-bottom: 6px;
+  }
+  .fb-flag-meta {
+    font-size: 12px;
+    color: var(--ed-meta);
+    line-height: 1.5;
+  }
+  .fb-flag-quote {
+    margin: 8px 0;
+    padding-left: 12px;
+    border-left: 2px solid var(--ed-hairline);
+    font-size: 13px;
+    color: var(--ed-ink);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .fb-flag-chips {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+  .fb-flag-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .fb-flag-btn {
+    padding: 7px 12px;
+    background: var(--ed-paper);
+    border: 1px solid var(--ed-hairline);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--ed-ink);
+  }
+  .fb-flag-btn:hover { border-color: var(--ed-navy); }
+  .fb-flag-btn.resolve { background: var(--ed-navy); color: #fff; border-color: var(--ed-navy); }
+  .fb-flag-btn.resolve:hover { background: var(--ed-navy-deep); }
+
+  /* Sort chips in crew tab */
+  .fb-sort-bar {
+    display: flex;
+    gap: 22px;
+    align-items: baseline;
+    margin: 20px 0 20px;
+    flex-wrap: wrap;
+  }
+  .fb-sort-bar-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .fb-sort-opt {
+    background: none;
+    border: none;
+    padding: 0 0 4px;
+    border-bottom: 2px solid transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta-soft);
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+  .fb-sort-opt:hover { color: var(--ed-ink); }
+  .fb-sort-opt.active { color: var(--ed-ink); border-bottom-color: var(--ed-orange); }
+
+  /* Service cards */
+  .fb-svc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--ed-hairline);
+    border-top: 4px solid var(--ed-orange);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .fb-svc {
+    background: var(--ed-paper);
+    padding: 20px 18px;
+  }
+  .fb-svc-name {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ed-ink);
+  }
+  .fb-svc-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+    margin: 12px 0;
+  }
+  .fb-svc-stat strong {
+    display: block;
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 2px;
+  }
+  .fb-svc-stat .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .fb-svc-fb-row {
+    font-size: 12.5px;
+    color: var(--ed-ink);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .fb-svc-fb-row .lbl {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-right: 6px;
+  }
+  .fb-svc-fb-row.praise .lbl { color: var(--ed-green); }
+  .fb-svc-fb-row.issue .lbl { color: var(--ed-yellow); }
+
+  /* Modal — editorial */
+  .fb-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 31, 58, 0.4);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 40px 20px;
+  }
+  .fb-modal-overlay.show { display: flex; }
+  .fb-modal {
+    background: var(--ed-paper);
+    max-width: 720px;
+    width: 100%;
+    max-height: 86dvh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(11, 31, 58, 0.12);
+    border-top: 4px solid var(--ed-orange);
+  }
+  .fb-modal-head {
+    padding: 20px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .fb-modal-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ed-ink);
+  }
+  .fb-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--ed-meta);
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .fb-modal-close:hover { color: var(--ed-ink); }
+  .fb-modal-body { padding: 20px 24px; }
+  .fb-modal-foot {
+    padding: 16px 24px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--ed-hairline);
+  }
+
+  /* Subbar action buttons */
+  .fb-subbar-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-self: flex-start;
+  }
+  .fb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: 1px solid var(--ed-hairline);
+    background: var(--ed-paper);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .fb-btn:hover { border-color: var(--ed-navy); background: var(--ed-surface); }
+  .fb-btn.primary { background: var(--ed-orange); color: #fff; border-color: var(--ed-orange); }
+  .fb-btn.primary:hover { background: var(--ed-orange-deep); border-color: var(--ed-orange-deep); }
+  .fb-btn.navy { background: var(--ed-navy); color: #fff; border-color: var(--ed-navy); }
+  .fb-btn.navy:hover { background: var(--ed-navy-deep); }
+
+  /* Ref pipeline KPIs — smaller 4-up */
+  .fb-ref-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--ed-hairline);
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  @media (min-width: 720px) {
+    .fb-ref-kpis { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* Pipeline dot */
+  .fb-pipeline-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* KPI cluster: 6 items */
+  .fb-kpis-six {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--ed-hairline);
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  @media (min-width: 720px) { .fb-kpis-six { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1024px) { .fb-kpis-six { grid-template-columns: repeat(6, 1fr); } }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .fb-tabs { gap: 18px; }
+    .ai-brief-head { padding: 16px 18px 12px; }
+    .ai-brief-body { padding: 4px 18px 18px; }
+  }
 </style>
 </head>
-<body>
-<div class="spine"></div>
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-logo">Nash<span>OS</span></div>
-    <div class="topbar-title">📊 Customer Feedback</div>
+<body class="ed-dashboard">
+
+<div class="ed-spine"></div>
+
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
   </div>
-  <div class="topbar-right">
-    <select class="date-select" id="dateRange">
-      <option value="week">This Week</option>
-      <option value="30">Last 30 Days</option>
-      <option value="90" selected>Last 90 Days</option>
-      <option value="year">This Year</option>
-    </select>
-    <button class="btn-gold" onclick="openModal('reportModal')">📋 Meeting Report</button>
-    <button class="btn-outline" onclick="openModal('digestModal')">✉️ Weekly Digest</button>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role" href="executive-dashboard.html">CEO</a>
+    <a class="ed-role" href="cmo-dashboard.html">CMO</a>
+    <a class="ed-role" href="cfr-dashboard.html">CFO</a>
+    <a class="ed-role" href="reporting-hub.html">Reports</a>
+    <a class="ed-role active">Feedback</a>
+  </nav>
+</div>
+
+<div class="ed-subbar">
+  <div>
+    <h1 class="ed-title">Customer Feedback</h1>
+    <div class="ed-submeta" style="margin-top:6px">Feb 24 – Mar 1, 2026 · <strong>34 surveys analyzed</strong></div>
+  </div>
+  <div class="fb-subbar-actions">
+    <button class="fb-btn" onclick="openModal('digestModal')">Weekly Digest</button>
+    <button class="fb-btn navy" onclick="openModal('reportModal')">Meeting Report</button>
   </div>
 </div>
-<div class="main">
-<div class="kpi-strip">
-  <div class="kpi gold-hl">
-    <div class="kpi-lbl">NPS Score</div>
-    <div class="kpi-val">72</div>
-    <div class="kpi-sub">vs 68 last period</div>
-    <div class="kpi-trend up">▲ +4 pts</div>
-    <div class="kpi-icon">📈</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-lbl">Avg Satisfaction</div>
-    <div class="kpi-val">4.6<span style="font-size:16px;font-weight:400;color:var(--text-sec)">/5.0</span></div>
-    <div class="kpi-sub">★★★★★</div>
-    <div class="kpi-trend up">▲ +0.2</div>
-    <div class="kpi-icon">⭐</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-lbl">Response Rate</div>
-    <div class="kpi-val">78%</div>
-    <div class="kpi-sub">34 of 44 projects</div>
-    <div class="kpi-trend up">▲ +5%</div>
-    <div class="kpi-icon">📬</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-lbl">Surveys Completed</div>
-    <div class="kpi-val">34</div>
-    <div class="kpi-sub">This period</div>
-    <div class="kpi-trend up">▲ +8</div>
-    <div class="kpi-icon">📝</div>
-  </div>
-  <div class="kpi alert">
-    <div class="kpi-lbl">Flagged Concerns</div>
-    <div class="kpi-val" style="color:var(--red)">3</div>
-    <div class="kpi-sub">Need attention</div>
-    <div class="kpi-icon">⚠️</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-lbl">Referrals Generated</div>
-    <div class="kpi-val">8</div>
-    <div class="kpi-sub">$600 in gift cards</div>
-    <div class="kpi-trend up">▲ +3</div>
-    <div class="kpi-icon">🎁</div>
+
+<!-- KPI strip -->
+<div class="ed-shell">
+  <div class="fb-kpis-six" style="margin-top:20px">
+    <div class="ed-kpi hl">
+      <div class="ed-cap">NPS Score</div>
+      <div class="ed-kpi-val">72</div>
+      <div class="ed-kpi-sub">vs 68 last period</div>
+      <span class="ed-kpi-trend up">↑ +4 pts</span>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Avg Satisfaction</div>
+      <div class="ed-kpi-val">4.6<span style="font-family:'Sora';font-size:18px;font-weight:500;color:var(--ed-meta);letter-spacing:-0.01em;margin-left:2px">/5</span></div>
+      <div class="ed-kpi-sub">★★★★★</div>
+      <span class="ed-kpi-trend up">↑ +0.2</span>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Response Rate</div>
+      <div class="ed-kpi-val">78%</div>
+      <div class="ed-kpi-sub">34 of 44 projects</div>
+      <span class="ed-kpi-trend up">↑ +5%</span>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Surveys Completed</div>
+      <div class="ed-kpi-val">34</div>
+      <div class="ed-kpi-sub">This period</div>
+      <span class="ed-kpi-trend up">↑ +8</span>
+    </div>
+    <div class="ed-kpi alert">
+      <div class="ed-cap">Flagged Concerns</div>
+      <div class="ed-kpi-val" style="color:var(--ed-red)">3</div>
+      <div class="ed-kpi-sub">Need attention</div>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Referrals Generated</div>
+      <div class="ed-kpi-val">8</div>
+      <div class="ed-kpi-sub">$600 in gift cards</div>
+      <span class="ed-kpi-trend up">↑ +3</span>
+    </div>
   </div>
 </div>
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="showTab('overview',this)">Overview</button>
-  <button class="tab-btn" onclick="showTab('crew',this)">By Crew</button>
-  <button class="tab-btn" onclick="showTab('estimator',this)">By Estimator</button>
-  <button class="tab-btn" onclick="showTab('service',this)">By Service Type</button>
-  <button class="tab-btn" onclick="showTab('flagged',this)">Flagged Items <span class="badge badge-red" style="margin-left:4px">3</span></button>
-  <button class="tab-btn" onclick="showTab('referrals',this)">Referral Pipeline</button>
+
+<!-- Tabs -->
+<div class="fb-tabs" style="margin-top:28px">
+  <button class="fb-tab active" onclick="showFbTab('overview', this)">Overview</button>
+  <button class="fb-tab" onclick="showFbTab('crew', this)">By Crew</button>
+  <button class="fb-tab" onclick="showFbTab('estimator', this)">By Estimator</button>
+  <button class="fb-tab" onclick="showFbTab('service', this)">By Service</button>
+  <button class="fb-tab" onclick="showFbTab('flagged', this)">Flagged <span class="fb-tab-count">3</span></button>
+  <button class="fb-tab" onclick="showFbTab('referrals', this)">Referrals</button>
 </div>
+
+<div class="ed-shell">
 
 <!-- OVERVIEW -->
-<div class="tab-content active" id="tab-overview">
+<section class="fb-panel active" id="fb-overview">
 
-  <!-- AI Insights Panel -->
-  <div class="ai-panel" id="aiPanel">
-    <div class="ai-panel-header" onclick="toggleAI()">
-      <div class="ai-panel-title">🧠 AI Insights <span class="ai-badge">Beta</span></div>
-      <div style="display:flex;align-items:center;gap:16px">
-        <div class="ai-panel-meta"><span>Last analysis: Today 6:00 AM</span><span>34 surveys analyzed</span></div>
-        <div class="ai-panel-toggle">▼</div>
+  <!-- AI Intelligence Brief -->
+  <div class="ai-brief" id="aiBrief">
+    <div class="ai-brief-head" onclick="toggleAI()">
+      <div>
+        <div class="ai-brief-eyebrow">AI Intelligence Brief · Beta</div>
+        <div class="ai-brief-title">Patterns, Alerts &amp; Suggestions</div>
+      </div>
+      <div class="ai-brief-meta">
+        <span>Last analysis: Today 6:00 AM</span>
+        <span>34 surveys analyzed</span>
+        <span class="ai-brief-toggle">▼</span>
       </div>
     </div>
-    <div class="ai-panel-body">
-      <div class="ai-section">
-        <div class="ai-section-title">🚨 Alerts</div>
+    <div class="ai-brief-body">
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Alerts</div>
         <div class="ai-insight alert">
-          <div class="ai-insight-text"><strong>Thompson Crew quality decline is accelerating.</strong> 3 quality complaints in 6 weeks (up from 1 per quarter historically). If this trend continues, projected NPS impact: -3 points company-wide by end of March.</div>
+          <div class="ai-insight-text"><strong>Thompson Crew quality decline is accelerating.</strong> 3 quality complaints in 6 weeks (up from 1 per quarter historically). If this trend continues, projected NPS impact: −3 points company-wide by end of March.</div>
           <div class="ai-insight-evidence">Based on: 3 surveys (Daniel P., Laura G., Karen D.) · Thompson Crew historical avg was 4.3, now 3.8 · Quality category dropped 1.1 pts in 45 days</div>
           <div class="ai-insight-actions">
-            <button class="ai-act-btn accept" onclick="this.textContent='✅ Action Created'">✅ Create Action Item</button>
-            <button class="ai-act-btn pin">📌 Pin</button>
-            <button class="ai-act-btn dismiss">🚫 Dismiss</button>
+            <button class="ai-act-btn accept" onclick="this.textContent='✓ Action Created'">Create Action Item</button>
+            <button class="ai-act-btn">Pin</button>
+            <button class="ai-act-btn">Dismiss</button>
           </div>
         </div>
         <div class="ai-insight warn">
           <div class="ai-insight-text"><strong>Tom B. expectation gap widening.</strong> "Didn't match description" complaints at 5 of 22 jobs (23%). Jake M. is at 3% for comparison. Recommend ride-along or estimate language review.</div>
           <div class="ai-insight-evidence">Based on: 5 open-text mentions of "different than expected" or "not what was described" on Tom B. jobs since October</div>
           <div class="ai-insight-actions">
-            <button class="ai-act-btn accept" onclick="this.textContent='✅ Action Created'">✅ Create Action Item</button>
-            <button class="ai-act-btn dismiss">🚫 Dismiss</button>
+            <button class="ai-act-btn accept" onclick="this.textContent='✓ Action Created'">Create Action Item</button>
+            <button class="ai-act-btn">Dismiss</button>
           </div>
         </div>
       </div>
 
-      <div class="ai-section">
-        <div class="ai-section-title">📈 Trends</div>
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Trends</div>
         <div class="ai-insight good">
           <div class="ai-insight-text"><strong>Cabinet satisfaction at all-time high (4.8).</strong> Williams Crew driving this — "look brand new" is the #1 phrase in cabinet testimonials. Consider featuring cabinet work more prominently in marketing.</div>
           <div class="ai-insight-evidence">18 cabinet reviews · 8.8 NPS · Highest-rated service type for 3 consecutive months</div>
@@ -361,587 +884,715 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </div>
       </div>
 
-      <div class="ai-section">
-        <div class="ai-section-title">💡 Software Improvement Suggestions</div>
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Software Improvement Suggestions</div>
         <div class="ai-software">
-          <div class="ai-software-title">📸 Add progress photos to Customer Portal</div>
-          <div class="ai-software-desc">8 customers mentioned wanting to see job progress while at work. "Wish I could see how it's going without having to call." Recommend crew check-in photos that auto-post to Customer Portal timeline.</div>
+          <div class="ai-software-title">Add progress photos to Customer Portal</div>
+          <div class="ai-software-desc">8 customers mentioned wanting to see job progress while at work. "Wish I could see how it's going without having to call." Recommend crew check-in photos that auto-post to the Customer Portal timeline.</div>
           <div class="ai-software-meta"><span>Frequency: 8 mentions</span><span>Impact: High</span><span>Effort: Medium</span><span>§3.13D + §7.5</span></div>
-          <div class="ai-insight-actions" style="margin-top:8px">
-            <button class="ai-act-btn accept" onclick="this.textContent='✅ Added to Backlog'">✅ Add to Backlog</button>
-            <button class="ai-act-btn dismiss">🚫 Not Now</button>
+          <div class="ai-insight-actions" style="margin-top:10px">
+            <button class="ai-act-btn accept" onclick="this.textContent='✓ Added to Backlog'">Add to Backlog</button>
+            <button class="ai-act-btn">Not Now</button>
           </div>
         </div>
         <div class="ai-software">
-          <div class="ai-software-title">🎨 Color test-patch photo approval step</div>
-          <div class="ai-software-desc">5 complaints about final color not matching expectations. Suggest adding a step where crew paints a test patch, photos it, and customer approves in-app before full application.</div>
+          <div class="ai-software-title">Color test-patch photo approval step</div>
+          <div class="ai-software-desc">5 complaints about final color not matching expectations. Suggest adding a step where the crew paints a test patch, photographs it, and the customer approves in-app before full application.</div>
           <div class="ai-software-meta"><span>Frequency: 5 mentions</span><span>Impact: High</span><span>Effort: Low</span><span>§3.8B</span></div>
-          <div class="ai-insight-actions" style="margin-top:8px">
-            <button class="ai-act-btn accept" onclick="this.textContent='✅ Added to Backlog'">✅ Add to Backlog</button>
-            <button class="ai-act-btn dismiss">🚫 Not Now</button>
+          <div class="ai-insight-actions" style="margin-top:10px">
+            <button class="ai-act-btn accept" onclick="this.textContent='✓ Added to Backlog'">Add to Backlog</button>
+            <button class="ai-act-btn">Not Now</button>
           </div>
         </div>
         <div class="ai-software">
-          <div class="ai-software-title">📅 Crew schedule visibility for customers</div>
-          <div class="ai-software-desc">3 customers frustrated by not knowing exact arrival time. "I took the day off and they showed up at 2pm." Recommend ETA notifications via SMS when crew is en route.</div>
+          <div class="ai-software-title">Crew schedule visibility for customers</div>
+          <div class="ai-software-desc">3 customers frustrated by not knowing exact arrival time. "I took the day off and they showed up at 2pm." Recommend ETA notifications via SMS when the crew is en route.</div>
           <div class="ai-software-meta"><span>Frequency: 3 mentions</span><span>Impact: Medium</span><span>Effort: Medium</span><span>§5.2 + §3.13D</span></div>
-          <div class="ai-insight-actions" style="margin-top:8px">
-            <button class="ai-act-btn accept" onclick="this.textContent='✅ Added to Backlog'">✅ Add to Backlog</button>
-            <button class="ai-act-btn dismiss">🚫 Not Now</button>
+          <div class="ai-insight-actions" style="margin-top:10px">
+            <button class="ai-act-btn accept" onclick="this.textContent='✓ Added to Backlog'">Add to Backlog</button>
+            <button class="ai-act-btn">Not Now</button>
           </div>
         </div>
       </div>
 
-      <div class="ai-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;opacity:.5">Next scheduled analysis: Sunday Mar 7, 11:00 PM CT</div>
-        <button class="ai-analyze-btn" onclick="this.innerHTML='⏳ Analyzing...';setTimeout(()=>{this.innerHTML='✅ Analysis Complete'},2000)">🧠 Run Analysis Now</button>
+      <div class="ai-brief-footer">
+        <span>Next scheduled analysis: Sunday Mar 7, 11:00 PM CT</span>
+        <button class="ai-analyze-btn" onclick="this.textContent='Analyzing…';setTimeout(()=>this.textContent='Analysis Complete',2000)">Run Analysis Now</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NPS Trend chart -->
+  <div class="fb-chart">
+    <div class="fb-chart-title">
+      <span>NPS Trend — 12 Months</span>
+      <div class="fb-chart-legend">
+        <span><span class="sw" style="background:var(--ed-navy)"></span>30-day</span>
+        <span><span class="sw" style="background:var(--ed-orange); border-top:2px dashed var(--ed-orange); height:0; width:14px;"></span>90-day</span>
+      </div>
+    </div>
+    <svg viewBox="0 0 700 200" style="width:100%;height:200px;display:block">
+      <line x1="40" y1="20" x2="680" y2="20" stroke="var(--ed-hairline)"/>
+      <line x1="40" y1="60" x2="680" y2="60" stroke="var(--ed-hairline)"/>
+      <line x1="40" y1="100" x2="680" y2="100" stroke="var(--ed-hairline)"/>
+      <line x1="40" y1="140" x2="680" y2="140" stroke="var(--ed-hairline)"/>
+      <line x1="40" y1="180" x2="680" y2="180" stroke="var(--ed-hairline)"/>
+      <text x="32" y="24" text-anchor="end" fill="#9AA4B2" font-size="10" font-family="Inter">100</text>
+      <text x="32" y="64" text-anchor="end" fill="#9AA4B2" font-size="10" font-family="Inter">80</text>
+      <text x="32" y="104" text-anchor="end" fill="#9AA4B2" font-size="10" font-family="Inter">60</text>
+      <text x="32" y="144" text-anchor="end" fill="#9AA4B2" font-size="10" font-family="Inter">40</text>
+      <text x="32" y="184" text-anchor="end" fill="#9AA4B2" font-size="10" font-family="Inter">20</text>
+      <text x="93" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Apr</text>
+      <text x="146" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">May</text>
+      <text x="199" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Jun</text>
+      <text x="252" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Jul</text>
+      <text x="305" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Aug</text>
+      <text x="358" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Sep</text>
+      <text x="411" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Oct</text>
+      <text x="464" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Nov</text>
+      <text x="517" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Dec</text>
+      <text x="570" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Jan</text>
+      <text x="623" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Feb</text>
+      <text x="666" y="198" text-anchor="middle" fill="#9AA4B2" font-size="10" font-family="Inter">Mar</text>
+      <polyline points="93,52 146,56 199,64 252,58 305,48 358,54 411,60 464,50 517,46 570,44 623,48 666,42" fill="none" stroke="#0B1F3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="93" cy="52" r="3" fill="#0B1F3A"/><circle cx="146" cy="56" r="3" fill="#0B1F3A"/>
+      <circle cx="199" cy="64" r="3" fill="#0B1F3A"/><circle cx="252" cy="58" r="3" fill="#0B1F3A"/>
+      <circle cx="305" cy="48" r="3" fill="#0B1F3A"/><circle cx="358" cy="54" r="3" fill="#0B1F3A"/>
+      <circle cx="411" cy="60" r="3" fill="#0B1F3A"/><circle cx="464" cy="50" r="3" fill="#0B1F3A"/>
+      <circle cx="517" cy="46" r="3" fill="#0B1F3A"/><circle cx="570" cy="44" r="3" fill="#0B1F3A"/>
+      <circle cx="623" cy="48" r="3" fill="#0B1F3A"/><circle cx="666" cy="42" r="3" fill="#0B1F3A"/>
+      <line x1="93" y1="58" x2="666" y2="46" stroke="#FF8200" stroke-width="1.8" stroke-dasharray="6,3"/>
+    </svg>
+  </div>
+
+  <div class="fb-two-col">
+    <div class="fb-chart">
+      <div class="fb-chart-title">Satisfaction by Category</div>
+      <div class="fb-cat-bar"><span class="fb-cat-name">Promptness</span><div class="fb-cat-track"><div class="fb-cat-fill" style="width:92%"></div></div><span class="fb-cat-val">4.6</span></div>
+      <div class="fb-cat-bar"><span class="fb-cat-name">Efficiency</span><div class="fb-cat-track"><div class="fb-cat-fill" style="width:88%"></div></div><span class="fb-cat-val">4.4</span></div>
+      <div class="fb-cat-bar"><span class="fb-cat-name">Well Mannered</span><div class="fb-cat-track"><div class="fb-cat-fill" style="width:96%"></div></div><span class="fb-cat-val">4.8</span></div>
+      <div class="fb-cat-bar"><span class="fb-cat-name">Clean &amp; Uniformed</span><div class="fb-cat-track"><div class="fb-cat-fill" style="width:94%"></div></div><span class="fb-cat-val">4.7</span></div>
+      <div class="fb-cat-bar"><span class="fb-cat-name">Overall Quality</span><div class="fb-cat-track"><div class="fb-cat-fill" style="width:90%"></div></div><span class="fb-cat-val">4.5</span></div>
+      <div class="fb-cat-bar"><span class="fb-cat-name">Overall Value</span><div class="fb-cat-track"><div class="fb-cat-fill warn" style="width:86%"></div></div><span class="fb-cat-val">4.3</span></div>
+    </div>
+
+    <div class="fb-chart">
+      <div class="fb-chart-title">Top Praise This Week</div>
+      <div class="fb-testimonial">
+        <div class="fb-testimonial-text">"Marcus and his crew were incredible. They showed up on time every day, covered everything carefully, and the final result looks better than we imagined. Our neighbors have already asked for Nash Painting's number."</div>
+        <div class="fb-testimonial-author">Jennifer &amp; David R. · Interior — Franklin · NPS 10</div>
+      </div>
+      <div class="fb-testimonial">
+        <div class="fb-testimonial-text">"The exterior of our Tudor looks brand new. The crew was meticulous about prep work, especially around the trim and stonework. Worth every penny."</div>
+        <div class="fb-testimonial-author">Michael S. · Exterior — Belle Meade · NPS 10</div>
+      </div>
+      <div class="fb-testimonial">
+        <div class="fb-testimonial-text">"We had our kitchen cabinets refinished and they look like we bought brand new ones. Professional from start to finish."</div>
+        <div class="fb-testimonial-author">Amanda &amp; Chris L. · Cabinets — Brentwood · NPS 9</div>
       </div>
     </div>
   </div>
 
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-h">
-      <div class="card-t">📈 NPS Trend</div>
-      <div style="display:flex;gap:12px;font-size:11px;color:var(--text-sec)">
-        <span>— 30-day avg</span>
-        <span style="color:var(--gold)">— 90-day avg</span>
-      </div>
-    </div>
-    <div class="card-b">
-      <div class="chart-wrap">
-        <svg viewBox="0 0 700 200" style="width:100%;min-width:500px;height:200px">
-          <line x1="40" y1="20" x2="680" y2="20" stroke="#f0eeea" stroke-width="1"/>
-          <line x1="40" y1="60" x2="680" y2="60" stroke="#f0eeea" stroke-width="1"/>
-          <line x1="40" y1="100" x2="680" y2="100" stroke="#f0eeea" stroke-width="1"/>
-          <line x1="40" y1="140" x2="680" y2="140" stroke="#f0eeea" stroke-width="1"/>
-          <line x1="40" y1="180" x2="680" y2="180" stroke="#f0eeea" stroke-width="1"/>
-          <text x="32" y="24" text-anchor="end" fill="#9CA3AF" font-size="10">100</text>
-          <text x="32" y="64" text-anchor="end" fill="#9CA3AF" font-size="10">80</text>
-          <text x="32" y="104" text-anchor="end" fill="#9CA3AF" font-size="10">60</text>
-          <text x="32" y="144" text-anchor="end" fill="#9CA3AF" font-size="10">40</text>
-          <text x="32" y="184" text-anchor="end" fill="#9CA3AF" font-size="10">20</text>
-          <text x="93" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Apr</text>
-          <text x="146" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">May</text>
-          <text x="199" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Jun</text>
-          <text x="252" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Jul</text>
-          <text x="305" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Aug</text>
-          <text x="358" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Sep</text>
-          <text x="411" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Oct</text>
-          <text x="464" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Nov</text>
-          <text x="517" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Dec</text>
-          <text x="570" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Jan</text>
-          <text x="623" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Feb</text>
-          <text x="666" y="198" text-anchor="middle" fill="#9CA3AF" font-size="10">Mar</text>
-          <polyline points="93,52 146,56 199,64 252,58 305,48 358,54 411,60 464,50 517,46 570,44 623,48 666,42" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="93" cy="52" r="4" fill="#1B2A4A"/><circle cx="146" cy="56" r="4" fill="#1B2A4A"/>
-          <circle cx="199" cy="64" r="4" fill="#1B2A4A"/><circle cx="252" cy="58" r="4" fill="#1B2A4A"/>
-          <circle cx="305" cy="48" r="4" fill="#1B2A4A"/><circle cx="358" cy="54" r="4" fill="#1B2A4A"/>
-          <circle cx="411" cy="60" r="4" fill="#1B2A4A"/><circle cx="464" cy="50" r="4" fill="#1B2A4A"/>
-          <circle cx="517" cy="46" r="4" fill="#1B2A4A"/><circle cx="570" cy="44" r="4" fill="#1B2A4A"/>
-          <circle cx="623" cy="48" r="4" fill="#1B2A4A"/><circle cx="666" cy="42" r="4" fill="#1B2A4A"/>
-          <line x1="517" y1="45" x2="666" y2="45" stroke="#C4A962" stroke-width="1.5" stroke-dasharray="6,3"/>
-          <line x1="623" y1="44" x2="666" y2="44" stroke="#6B7280" stroke-width="1" stroke-dasharray="4,3"/>
-        </svg>
-      </div>
-    </div>
+  <div class="fb-section-head" style="margin-top:48px">
+    <h2>Recent Surveys</h2>
+    <span class="fb-section-link">View All →</span>
   </div>
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-h"><div class="card-t">⭐ Satisfaction by Category</div></div>
-      <div class="card-b">
-        <div class="bar-row"><div class="bar-label">Promptness</div><div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--green)"></div></div><div class="bar-val">4.6</div></div>
-        <div class="bar-row"><div class="bar-label">Efficiency</div><div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--green)"></div></div><div class="bar-val">4.4</div></div>
-        <div class="bar-row"><div class="bar-label">Well Mannered</div><div class="bar-track"><div class="bar-fill" style="width:96%;background:var(--green)"></div></div><div class="bar-val">4.8</div></div>
-        <div class="bar-row"><div class="bar-label">Clean & Uniformed</div><div class="bar-track"><div class="bar-fill" style="width:94%;background:var(--green)"></div></div><div class="bar-val">4.7</div></div>
-        <div class="bar-row"><div class="bar-label">Overall Quality</div><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--green)"></div></div><div class="bar-val">4.5</div></div>
-        <div class="bar-row"><div class="bar-label">Overall Value</div><div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--gold)"></div></div><div class="bar-val">4.3</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div class="card-t">🌟 Top Praise This Week</div></div>
-      <div class="card-b">
-        <div class="testimonial">
-          <div class="testimonial-text">"Marcus and his crew were incredible. They showed up on time every day, covered everything carefully, and the final result looks better than we imagined. Our neighbors have already asked for Nash Painting's number."</div>
-          <div class="testimonial-author">— Jennifer & David R. · Interior — 2,400 SF Ranch, Franklin · NPS: 10</div>
-        </div>
-        <div class="testimonial">
-          <div class="testimonial-text">"The exterior of our Tudor looks brand new. The crew was meticulous about prep work, especially around the trim and stonework. Worth every penny."</div>
-          <div class="testimonial-author">— Michael S. · Exterior — Tudor Revival, Belle Meade · NPS: 10</div>
-        </div>
-        <div class="testimonial">
-          <div class="testimonial-text">"We had our kitchen cabinets refinished and they look like we bought brand new ones. Professional from start to finish."</div>
-          <div class="testimonial-author">— Amanda & Chris L. · Cabinets — Kitchen, Brentwood · NPS: 9</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="card" style="margin-top:16px">
-    <div class="card-h"><div class="card-t">📝 Recent Surveys</div><span class="card-a">View All →</span></div>
-    <div style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr><th>Customer</th><th>Project</th><th>NPS</th><th>Satisfaction</th><th>Crew</th><th>Date</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Jennifer R.</strong></td><td>Interior — 2,400 SF Ranch, Franklin</td><td><strong>10</strong></td><td><span class="stars">★★★★★</span></td><td>Marcus T.</td><td>Feb 28</td><td><span class="badge badge-green">🟢 Great</span></td></tr>
-          <tr><td><strong>Michael S.</strong></td><td>Exterior — Tudor Revival, Belle Meade</td><td><strong>10</strong></td><td><span class="stars">★★★★★</span></td><td>Rodriguez</td><td>Feb 27</td><td><span class="badge badge-green">🟢 Great</span></td></tr>
-          <tr><td><strong>Amanda L.</strong></td><td>Cabinets — Kitchen, Brentwood</td><td><strong>9</strong></td><td><span class="stars">★★★★★</span></td><td>Williams</td><td>Feb 26</td><td><span class="badge badge-green">🟢 Great</span></td></tr>
-          <tr><td><strong>Robert & Lisa K.</strong></td><td>Interior — Master Suite, Mt. Juliet</td><td><strong>8</strong></td><td><span class="stars">★★★★<span class="stars-dim">★</span></span></td><td>Marcus T.</td><td>Feb 25</td><td><span class="badge badge-green">🟢 Good</span></td></tr>
-          <tr><td><strong>Patricia M.</strong></td><td>Exterior — Craftsman, Germantown</td><td><strong>8</strong></td><td><span class="stars">★★★★<span class="stars-dim">★</span></span></td><td>Davis</td><td>Feb 24</td><td><span class="badge badge-green">🟢 Good</span></td></tr>
-          <tr><td><strong>Thomas W.</strong></td><td>Deck — Cedar, Hendersonville</td><td><strong>7</strong></td><td><span class="stars">★★★★<span class="stars-dim">★</span></span></td><td>Johnson</td><td>Feb 23</td><td><span class="badge badge-green">🟢 OK</span></td></tr>
-          <tr style="background:var(--yellow-bg)"><td><strong>Karen & Steve D.</strong></td><td>Interior — Full Home, Nolensville</td><td><strong style="color:var(--yellow)">6</strong></td><td><span class="stars">★★★<span class="stars-dim">★★</span></span></td><td>Thompson</td><td>Feb 22</td><td><span class="badge badge-yellow">🟡 Watch</span></td></tr>
-          <tr><td><strong>James H.</strong></td><td>Exterior — Colonial, Green Hills</td><td><strong>9</strong></td><td><span class="stars">★★★★★</span></td><td>Rodriguez</td><td>Feb 21</td><td><span class="badge badge-green">🟢 Great</span></td></tr>
-          <tr style="background:var(--red-bg)"><td><strong>Daniel & Megan P.</strong></td><td>Interior — Kitchen/Living, Murfreesboro</td><td><strong style="color:var(--red)">4</strong></td><td><span class="stars">★★<span class="stars-dim">★★★</span></span></td><td>Thompson</td><td>Feb 20</td><td><span class="badge badge-red">🔴 Concern</span></td></tr>
-          <tr><td><strong>Susan & Mark E.</strong></td><td>Fence — Privacy, Spring Hill</td><td><strong>8</strong></td><td><span class="stars">★★★★<span class="stars-dim">★</span></span></td><td>Johnson</td><td>Feb 19</td><td><span class="badge badge-green">🟢 Good</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+  <table class="ed-ledger">
+    <thead><tr><th>Customer</th><th>Project</th><th class="num">NPS</th><th>Satisfaction</th><th>Crew</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Jennifer R.</strong></td><td>Interior — 2,400 SF Ranch, Franklin</td><td class="num"><strong>10</strong></td><td>★★★★★</td><td>Marcus T.</td><td>Feb 28</td><td><span class="fb-chip great">Great</span></td></tr>
+      <tr><td><strong>Michael S.</strong></td><td>Exterior — Tudor Revival, Belle Meade</td><td class="num"><strong>10</strong></td><td>★★★★★</td><td>Rodriguez</td><td>Feb 27</td><td><span class="fb-chip great">Great</span></td></tr>
+      <tr><td><strong>Amanda L.</strong></td><td>Cabinets — Kitchen, Brentwood</td><td class="num"><strong>9</strong></td><td>★★★★★</td><td>Williams</td><td>Feb 26</td><td><span class="fb-chip great">Great</span></td></tr>
+      <tr><td><strong>Robert &amp; Lisa K.</strong></td><td>Interior — Master Suite, Mt. Juliet</td><td class="num"><strong>8</strong></td><td>★★★★☆</td><td>Marcus T.</td><td>Feb 25</td><td><span class="fb-chip good">Good</span></td></tr>
+      <tr><td><strong>Patricia M.</strong></td><td>Exterior — Craftsman, Germantown</td><td class="num"><strong>8</strong></td><td>★★★★☆</td><td>Davis</td><td>Feb 24</td><td><span class="fb-chip good">Good</span></td></tr>
+      <tr><td><strong>Thomas W.</strong></td><td>Deck — Cedar, Hendersonville</td><td class="num"><strong>7</strong></td><td>★★★★☆</td><td>Johnson</td><td>Feb 23</td><td><span class="fb-chip ok">OK</span></td></tr>
+      <tr><td><strong>Karen &amp; Steve D.</strong></td><td>Interior — Full Home, Nolensville</td><td class="num"><strong style="color:var(--ed-yellow)">6</strong></td><td>★★★☆☆</td><td>Thompson</td><td>Feb 22</td><td><span class="fb-chip watch">Watch</span></td></tr>
+      <tr><td><strong>James H.</strong></td><td>Exterior — Colonial, Green Hills</td><td class="num"><strong>9</strong></td><td>★★★★★</td><td>Rodriguez</td><td>Feb 21</td><td><span class="fb-chip great">Great</span></td></tr>
+      <tr><td><strong>Daniel &amp; Megan P.</strong></td><td>Interior — Kitchen/Living, Murfreesboro</td><td class="num"><strong style="color:var(--ed-red)">4</strong></td><td>★★☆☆☆</td><td>Thompson</td><td>Feb 20</td><td><span class="fb-chip concern">Concern</span></td></tr>
+      <tr><td><strong>Susan &amp; Mark E.</strong></td><td>Fence — Privacy, Spring Hill</td><td class="num"><strong>8</strong></td><td>★★★★☆</td><td>Johnson</td><td>Feb 19</td><td><span class="fb-chip good">Good</span></td></tr>
+    </tbody>
+  </table>
+</section>
 
 <!-- BY CREW -->
-<div class="tab-content" id="tab-crew">
-  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
-    <span style="font-size:12px;color:var(--text-sec);font-weight:600">Sort by:</span>
-    <button class="tab-btn active" style="padding:5px 12px;font-size:12px" onclick="sortCrew(this,'rating')">Rating</button>
-    <button class="tab-btn" style="padding:5px 12px;font-size:12px" onclick="sortCrew(this,'reviews')">Reviews</button>
-    <button class="tab-btn" style="padding:5px 12px;font-size:12px" onclick="sortCrew(this,'trend')">Trend</button>
+<section class="fb-panel" id="fb-crew">
+  <div class="fb-sort-bar">
+    <span class="fb-sort-bar-label">Sort by</span>
+    <button class="fb-sort-opt active" onclick="sortCrew(this,'rating')">Rating</button>
+    <button class="fb-sort-opt" onclick="sortCrew(this,'reviews')">Reviews</button>
+    <button class="fb-sort-opt" onclick="sortCrew(this,'trend')">Trend</button>
   </div>
-  <div class="grid-3" id="crewGrid">
-    <div class="person-card" data-rating="4.8" data-reviews="42" data-trend="up">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Marcus T. Crew</div>
-      <div class="person-role">Interior Specialist · 3 members</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Rating</div><div class="person-stat-val">4.8 ⭐</div></div>
-        <div><div class="person-stat-lbl">Reviews</div><div class="person-stat-val">42</div></div>
+
+  <div class="fb-person-grid" id="crewGrid">
+    <div class="fb-person" data-rating="4.8" data-reviews="42" data-trend="up">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Marcus T. Crew</div>
+          <div class="fb-person-role">Interior Specialist · 3 members</div>
+        </div>
+        <span class="fb-chip great">Top</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,22 20,18 40,20 60,15 80,12 100,10 120,8" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats">
-        <div class="person-cat"><span>Best: Well Mannered</span><span style="color:var(--green);font-weight:600">4.9</span></div>
-        <div class="person-cat"><span>Lowest: Efficiency</span><span style="color:var(--text-sec)">4.5</span></div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Rating</div><div class="fb-person-stat-val">4.8</div></div>
+        <div><div class="fb-person-stat-lbl">Reviews</div><div class="fb-person-stat-val">42</div></div>
       </div>
-    </div>
-    <div class="person-card" data-rating="4.7" data-reviews="38" data-trend="up">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Rodriguez Crew</div>
-      <div class="person-role">Exterior Specialist · 4 members</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Rating</div><div class="person-stat-val">4.7 ⭐</div></div>
-        <div><div class="person-stat-lbl">Reviews</div><div class="person-stat-val">38</div></div>
-      </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,20 20,22 40,18 60,16 80,14 100,12 120,10" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats">
-        <div class="person-cat"><span>Best: Promptness</span><span style="color:var(--green);font-weight:600">4.9</span></div>
-        <div class="person-cat"><span>Lowest: Overall Value</span><span style="color:var(--text-sec)">4.4</span></div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,22 20,18 40,20 60,15 80,12 100,10 120,8" stroke="#15803D"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span>Best: Well Mannered</span><strong style="color:var(--ed-green)">4.9</strong></div>
+        <div class="row"><span>Lowest: Efficiency</span><span style="color:var(--ed-meta)">4.5</span></div>
       </div>
     </div>
-    <div class="person-card" data-rating="4.6" data-reviews="28" data-trend="stable">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Williams Crew</div>
-      <div class="person-role">Cabinets & Interior · 2 members</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Rating</div><div class="person-stat-val">4.6 ⭐</div></div>
-        <div><div class="person-stat-lbl">Reviews</div><div class="person-stat-val">28</div></div>
+
+    <div class="fb-person" data-rating="4.7" data-reviews="38" data-trend="up">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Rodriguez Crew</div>
+          <div class="fb-person-role">Exterior Specialist · 4 members</div>
+        </div>
+        <span class="fb-chip great">Good</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,14 20,16 40,14 60,15 80,14 100,15 120,14" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats">
-        <div class="person-cat"><span>Best: Quality</span><span style="color:var(--green);font-weight:600">4.9</span></div>
-        <div class="person-cat"><span>Lowest: Promptness</span><span style="color:var(--text-sec)">4.3</span></div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Rating</div><div class="fb-person-stat-val">4.7</div></div>
+        <div><div class="fb-person-stat-lbl">Reviews</div><div class="fb-person-stat-val">38</div></div>
       </div>
-    </div>
-    <div class="person-card" data-rating="4.5" data-reviews="31" data-trend="up">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Davis Crew</div>
-      <div class="person-role">Exterior & Deck · 3 members</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Rating</div><div class="person-stat-val">4.5 ⭐</div></div>
-        <div><div class="person-stat-lbl">Reviews</div><div class="person-stat-val">31</div></div>
-      </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,22 20,20 40,22 60,18 80,16 100,14 120,12" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats">
-        <div class="person-cat"><span>Best: Clean & Uniformed</span><span style="color:var(--green);font-weight:600">4.8</span></div>
-        <div class="person-cat"><span>Lowest: Efficiency</span><span style="color:var(--text-sec)">4.2</span></div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,20 20,22 40,18 60,16 80,14 100,12 120,10" stroke="#15803D"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span>Best: Promptness</span><strong style="color:var(--ed-green)">4.9</strong></div>
+        <div class="row"><span>Lowest: Overall Value</span><span style="color:var(--ed-meta)">4.4</span></div>
       </div>
     </div>
-    <div class="person-card" data-rating="4.3" data-reviews="24" data-trend="stable">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Johnson Crew</div>
-      <div class="person-role">Deck & Fence · 3 members</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Rating</div><div class="person-stat-val">4.3 ⭐</div></div>
-        <div><div class="person-stat-lbl">Reviews</div><div class="person-stat-val">24</div></div>
+
+    <div class="fb-person" data-rating="4.6" data-reviews="28" data-trend="stable">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Williams Crew</div>
+          <div class="fb-person-role">Cabinets &amp; Interior · 2 members</div>
+        </div>
+        <span class="fb-chip ok">Stable</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,14 20,16 40,14 60,16 80,14 100,15 120,15" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats">
-        <div class="person-cat"><span>Best: Well Mannered</span><span style="color:var(--green);font-weight:600">4.6</span></div>
-        <div class="person-cat"><span>Lowest: Efficiency</span><span style="color:var(--text-sec)">3.9</span></div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Rating</div><div class="fb-person-stat-val">4.6</div></div>
+        <div><div class="fb-person-stat-lbl">Reviews</div><div class="fb-person-stat-val">28</div></div>
+      </div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,14 20,16 40,14 60,15 80,14 100,15 120,14" stroke="#FF8200"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span>Best: Quality</span><strong style="color:var(--ed-green)">4.9</strong></div>
+        <div class="row"><span>Lowest: Promptness</span><span style="color:var(--ed-meta)">4.3</span></div>
       </div>
     </div>
-    <div class="person-card" data-rating="3.8" data-reviews="19" data-trend="down" style="border:2px solid var(--red)">
-      <div class="person-flag">🔴</div>
-      <div class="person-name">Thompson Crew</div>
-      <div class="person-role">Interior · 2 members</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Rating</div><div class="person-stat-val" style="color:var(--red)">3.8 ⭐</div></div>
-        <div><div class="person-stat-lbl">Reviews</div><div class="person-stat-val">19</div></div>
+
+    <div class="fb-person" data-rating="4.5" data-reviews="31" data-trend="up">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Davis Crew</div>
+          <div class="fb-person-role">Exterior &amp; Deck · 3 members</div>
+        </div>
+        <span class="fb-chip great">Up</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,10 20,12 40,14 60,16 80,18 100,20 120,24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats">
-        <div class="person-cat"><span>Best: Promptness</span><span style="color:var(--text-sec)">4.2</span></div>
-        <div class="person-cat"><span style="color:var(--red)">Lowest: Quality</span><span style="color:var(--red);font-weight:600">3.2</span></div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Rating</div><div class="fb-person-stat-val">4.5</div></div>
+        <div><div class="fb-person-stat-lbl">Reviews</div><div class="fb-person-stat-val">31</div></div>
       </div>
-      <div style="margin-top:10px;padding:8px;background:var(--red-bg);border-radius:var(--radius-sm);font-size:11px;color:var(--red);font-weight:500">⚠️ 2 flagged concerns in last 30 days — declining trend</div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,22 20,20 40,22 60,18 80,16 100,14 120,12" stroke="#15803D"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span>Best: Clean &amp; Uniformed</span><strong style="color:var(--ed-green)">4.8</strong></div>
+        <div class="row"><span>Lowest: Efficiency</span><span style="color:var(--ed-meta)">4.2</span></div>
+      </div>
+    </div>
+
+    <div class="fb-person" data-rating="4.3" data-reviews="24" data-trend="stable">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Johnson Crew</div>
+          <div class="fb-person-role">Deck &amp; Fence · 3 members</div>
+        </div>
+        <span class="fb-chip ok">Stable</span>
+      </div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Rating</div><div class="fb-person-stat-val">4.3</div></div>
+        <div><div class="fb-person-stat-lbl">Reviews</div><div class="fb-person-stat-val">24</div></div>
+      </div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,14 20,16 40,14 60,16 80,14 100,15 120,15" stroke="#FF8200"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span>Best: Well Mannered</span><strong style="color:var(--ed-green)">4.6</strong></div>
+        <div class="row"><span>Lowest: Efficiency</span><span style="color:var(--ed-meta)">3.9</span></div>
+      </div>
+    </div>
+
+    <div class="fb-person alert" data-rating="3.8" data-reviews="19" data-trend="down">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Thompson Crew</div>
+          <div class="fb-person-role">Interior · 2 members</div>
+        </div>
+        <span class="fb-chip concern">Declining</span>
+      </div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Rating</div><div class="fb-person-stat-val alert">3.8</div></div>
+        <div><div class="fb-person-stat-lbl">Reviews</div><div class="fb-person-stat-val">19</div></div>
+      </div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,10 20,12 40,14 60,16 80,18 100,20 120,24" stroke="#B91C1C"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span>Best: Promptness</span><span style="color:var(--ed-meta)">4.2</span></div>
+        <div class="row"><span style="color:var(--ed-red)">Lowest: Quality</span><strong style="color:var(--ed-red)">3.2</strong></div>
+      </div>
+      <div class="fb-person-note">2 flagged concerns in last 30 days — declining trend</div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- BY ESTIMATOR -->
-<div class="tab-content" id="tab-estimator">
-  <div class="grid-2">
-    <div class="person-card">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Jake M.</div>
-      <div class="person-role">Senior Estimator · 6 years</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Avg NPS on Jobs</div><div class="person-stat-val">8.4</div></div>
-        <div><div class="person-stat-lbl">Close Rate</div><div class="person-stat-val">68%</div></div>
-        <div><div class="person-stat-lbl">Expectation Match</div><div class="person-stat-val" style="color:var(--green)">94%</div></div>
-        <div><div class="person-stat-lbl">Jobs Reviewed</div><div class="person-stat-val">48</div></div>
+<section class="fb-panel" id="fb-estimator">
+  <div class="fb-person-grid" style="grid-template-columns:repeat(auto-fit,minmax(420px,1fr))">
+    <div class="fb-person">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Jake M.</div>
+          <div class="fb-person-role">Senior Estimator · 6 years</div>
+        </div>
+        <span class="fb-chip great">Excellent</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,18 20,16 40,14 60,15 80,12 100,10 120,8" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats" style="font-size:12px">
-        <div style="margin-bottom:4px"><strong>Common praise:</strong> "Accurate estimate" · "Explained process well"</div>
-        <div><strong>Rare complaint:</strong> "Timeline was slightly off" (2 instances)</div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Avg NPS</div><div class="fb-person-stat-val">8.4</div></div>
+        <div><div class="fb-person-stat-lbl">Close Rate</div><div class="fb-person-stat-val">68%</div></div>
+        <div><div class="fb-person-stat-lbl">Expectation Match</div><div class="fb-person-stat-val" style="color:var(--ed-green)">94%</div></div>
+        <div><div class="fb-person-stat-lbl">Jobs</div><div class="fb-person-stat-val">48</div></div>
       </div>
-    </div>
-    <div class="person-card">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Sarah K.</div>
-      <div class="person-role">Estimator · 3 years</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Avg NPS on Jobs</div><div class="person-stat-val">8.1</div></div>
-        <div><div class="person-stat-lbl">Close Rate</div><div class="person-stat-val">72%</div></div>
-        <div><div class="person-stat-lbl">Expectation Match</div><div class="person-stat-val" style="color:var(--green)">91%</div></div>
-        <div><div class="person-stat-lbl">Jobs Reviewed</div><div class="person-stat-val">36</div></div>
-      </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,20 20,18 40,16 60,18 80,14 100,12 120,10" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats" style="font-size:12px">
-        <div style="margin-bottom:4px"><strong>Common praise:</strong> "Very thorough walkthrough" · "Great communication"</div>
-        <div><strong>Rare complaint:</strong> "Price was higher than expected" (3 instances)</div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,18 20,16 40,14 60,15 80,12 100,10 120,8" stroke="#15803D"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span><strong>Common praise</strong></span><span style="color:var(--ed-meta); text-align:right">"Accurate estimate" · "Explained process well"</span></div>
+        <div class="row"><span><strong>Rare complaint</strong></span><span style="color:var(--ed-meta); text-align:right">"Timeline slightly off" (2)</span></div>
       </div>
     </div>
-    <div class="person-card" style="border:2px solid var(--yellow)">
-      <div class="person-flag">🟡</div>
-      <div class="person-name">Tom B.</div>
-      <div class="person-role">Estimator · 1 year</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Avg NPS on Jobs</div><div class="person-stat-val" style="color:var(--yellow)">6.8</div></div>
-        <div><div class="person-stat-lbl">Close Rate</div><div class="person-stat-val">55%</div></div>
-        <div><div class="person-stat-lbl">Expectation Match</div><div class="person-stat-val" style="color:var(--yellow)">76%</div></div>
-        <div><div class="person-stat-lbl">Jobs Reviewed</div><div class="person-stat-val">22</div></div>
+
+    <div class="fb-person">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Sarah K.</div>
+          <div class="fb-person-role">Estimator · 3 years</div>
+        </div>
+        <span class="fb-chip great">Strong</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,14 20,16 40,18 60,16 80,18 100,20 120,18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats" style="font-size:12px">
-        <div style="margin-bottom:4px"><strong>Common praise:</strong> "Friendly and professional"</div>
-        <div style="color:var(--red)"><strong>Recurring issue:</strong> "Finished result didn't match what was described" (5 instances) — <em>coaching recommended</em></div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Avg NPS</div><div class="fb-person-stat-val">8.1</div></div>
+        <div><div class="fb-person-stat-lbl">Close Rate</div><div class="fb-person-stat-val">72%</div></div>
+        <div><div class="fb-person-stat-lbl">Expectation Match</div><div class="fb-person-stat-val" style="color:var(--ed-green)">91%</div></div>
+        <div><div class="fb-person-stat-lbl">Jobs</div><div class="fb-person-stat-val">36</div></div>
+      </div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,20 20,18 40,16 60,18 80,14 100,12 120,10" stroke="#15803D"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span><strong>Common praise</strong></span><span style="color:var(--ed-meta); text-align:right">"Very thorough walkthrough" · "Great communication"</span></div>
+        <div class="row"><span><strong>Rare complaint</strong></span><span style="color:var(--ed-meta); text-align:right">"Price higher than expected" (3)</span></div>
       </div>
     </div>
-    <div class="person-card">
-      <div class="person-flag">🟢</div>
-      <div class="person-name">Mike R.</div>
-      <div class="person-role">Estimator · 4 years</div>
-      <div class="person-stats">
-        <div><div class="person-stat-lbl">Avg NPS on Jobs</div><div class="person-stat-val">7.9</div></div>
-        <div><div class="person-stat-lbl">Close Rate</div><div class="person-stat-val">63%</div></div>
-        <div><div class="person-stat-lbl">Expectation Match</div><div class="person-stat-val" style="color:var(--green)">89%</div></div>
-        <div><div class="person-stat-lbl">Jobs Reviewed</div><div class="person-stat-val">34</div></div>
+
+    <div class="fb-person watch">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Tom B.</div>
+          <div class="fb-person-role">Estimator · 1 year</div>
+        </div>
+        <span class="fb-chip watch">Coaching</span>
       </div>
-      <svg class="sparkline" viewBox="0 0 120 30" width="120" height="30"><polyline points="0,16 20,14 40,16 60,12 80,14 100,12 120,10" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
-      <div class="person-cats" style="font-size:12px">
-        <div style="margin-bottom:4px"><strong>Common praise:</strong> "Knows his stuff" · "Quick turnaround on estimate"</div>
-        <div><strong>Rare complaint:</strong> "Hard to reach after estimate" (2 instances)</div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Avg NPS</div><div class="fb-person-stat-val warn">6.8</div></div>
+        <div><div class="fb-person-stat-lbl">Close Rate</div><div class="fb-person-stat-val">55%</div></div>
+        <div><div class="fb-person-stat-lbl">Expectation Match</div><div class="fb-person-stat-val warn">76%</div></div>
+        <div><div class="fb-person-stat-lbl">Jobs</div><div class="fb-person-stat-val">22</div></div>
+      </div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,14 20,16 40,18 60,16 80,18 100,20 120,18" stroke="#CA8A04"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span><strong>Common praise</strong></span><span style="color:var(--ed-meta); text-align:right">"Friendly and professional"</span></div>
+      </div>
+      <div class="fb-person-note warn"><strong>Recurring issue:</strong> "Finished result didn't match what was described" (5 instances) — coaching recommended</div>
+    </div>
+
+    <div class="fb-person">
+      <div class="fb-person-head">
+        <div>
+          <div class="fb-person-name">Mike R.</div>
+          <div class="fb-person-role">Estimator · 4 years</div>
+        </div>
+        <span class="fb-chip great">Solid</span>
+      </div>
+      <div class="fb-person-stats">
+        <div><div class="fb-person-stat-lbl">Avg NPS</div><div class="fb-person-stat-val">7.9</div></div>
+        <div><div class="fb-person-stat-lbl">Close Rate</div><div class="fb-person-stat-val">63%</div></div>
+        <div><div class="fb-person-stat-lbl">Expectation Match</div><div class="fb-person-stat-val" style="color:var(--ed-green)">89%</div></div>
+        <div><div class="fb-person-stat-lbl">Jobs</div><div class="fb-person-stat-val">34</div></div>
+      </div>
+      <svg class="fb-spark" viewBox="0 0 120 30"><polyline points="0,16 20,14 40,16 60,12 80,14 100,12 120,10" stroke="#15803D"/></svg>
+      <div class="fb-person-cats">
+        <div class="row"><span><strong>Common praise</strong></span><span style="color:var(--ed-meta); text-align:right">"Knows his stuff" · "Quick turnaround"</span></div>
+        <div class="row"><span><strong>Rare complaint</strong></span><span style="color:var(--ed-meta); text-align:right">"Hard to reach after estimate" (2)</span></div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- BY SERVICE TYPE -->
-<div class="tab-content" id="tab-service">
-  <div class="grid-3">
-    <div class="svc-card" style="border-top:4px solid var(--navy)"><div class="svc-icon">🏠</div><div class="svc-name">Interior</div>
-      <div class="svc-stats"><div class="svc-stat"><strong>8.2</strong>Avg NPS</div><div class="svc-stat"><strong>4.6</strong>Satisfaction</div><div class="svc-stat"><strong>52</strong>Reviews</div></div>
-      <div class="svc-feedback"><div class="svc-fb-row"><span class="lbl">👍 Praise:</span><span>"Clean work, protected furniture" · "Color turned out perfect"</span></div><div class="svc-fb-row"><span class="lbl">👎 Issue:</span><span>"Paint smell lingered" (4) · "Touch-ups needed" (2)</span></div></div>
+<section class="fb-panel" id="fb-service">
+  <div class="fb-svc-grid">
+    <div class="fb-svc">
+      <div class="fb-svc-name">Interior</div>
+      <div class="fb-svc-stats">
+        <div class="fb-svc-stat"><strong>8.2</strong><span class="lbl">Avg NPS</span></div>
+        <div class="fb-svc-stat"><strong>4.6</strong><span class="lbl">Satisfaction</span></div>
+        <div class="fb-svc-stat"><strong>52</strong><span class="lbl">Reviews</span></div>
+      </div>
+      <div class="fb-svc-fb-row praise"><span class="lbl">Praise</span>"Clean work, protected furniture" · "Color turned out perfect"</div>
+      <div class="fb-svc-fb-row issue"><span class="lbl">Issue</span>"Paint smell lingered" (4) · "Touch-ups needed" (2)</div>
     </div>
-    <div class="svc-card" style="border-top:4px solid var(--blue)"><div class="svc-icon">🏡</div><div class="svc-name">Exterior</div>
-      <div class="svc-stats"><div class="svc-stat"><strong>8.5</strong>Avg NPS</div><div class="svc-stat"><strong>4.7</strong>Satisfaction</div><div class="svc-stat"><strong>38</strong>Reviews</div></div>
-      <div class="svc-feedback"><div class="svc-fb-row"><span class="lbl">👍 Praise:</span><span>"Thorough prep work" · "Curb appeal transformed"</span></div><div class="svc-fb-row"><span class="lbl">👎 Issue:</span><span>"Landscaping disturbed" (2) · "Weather delays" (3)</span></div></div>
+    <div class="fb-svc">
+      <div class="fb-svc-name">Exterior</div>
+      <div class="fb-svc-stats">
+        <div class="fb-svc-stat"><strong>8.5</strong><span class="lbl">Avg NPS</span></div>
+        <div class="fb-svc-stat"><strong>4.7</strong><span class="lbl">Satisfaction</span></div>
+        <div class="fb-svc-stat"><strong>38</strong><span class="lbl">Reviews</span></div>
+      </div>
+      <div class="fb-svc-fb-row praise"><span class="lbl">Praise</span>"Thorough prep work" · "Curb appeal transformed"</div>
+      <div class="fb-svc-fb-row issue"><span class="lbl">Issue</span>"Landscaping disturbed" (2) · "Weather delays" (3)</div>
     </div>
-    <div class="svc-card" style="border-top:4px solid var(--gold)"><div class="svc-icon">🗄️</div><div class="svc-name">Cabinets</div>
-      <div class="svc-stats"><div class="svc-stat"><strong>8.8</strong>Avg NPS</div><div class="svc-stat"><strong>4.8</strong>Satisfaction</div><div class="svc-stat"><strong>18</strong>Reviews</div></div>
-      <div class="svc-feedback"><div class="svc-fb-row"><span class="lbl">👍 Praise:</span><span>"Look brand new" · "Smooth finish, no drips"</span></div><div class="svc-fb-row"><span class="lbl">👎 Issue:</span><span>"Kitchen unusable during work" (3) — expected</span></div></div>
+    <div class="fb-svc">
+      <div class="fb-svc-name">Cabinets</div>
+      <div class="fb-svc-stats">
+        <div class="fb-svc-stat"><strong>8.8</strong><span class="lbl">Avg NPS</span></div>
+        <div class="fb-svc-stat"><strong>4.8</strong><span class="lbl">Satisfaction</span></div>
+        <div class="fb-svc-stat"><strong>18</strong><span class="lbl">Reviews</span></div>
+      </div>
+      <div class="fb-svc-fb-row praise"><span class="lbl">Praise</span>"Look brand new" · "Smooth finish, no drips"</div>
+      <div class="fb-svc-fb-row issue"><span class="lbl">Issue</span>"Kitchen unusable during work" (3) — expected</div>
     </div>
-    <div class="svc-card" style="border-top:4px solid #8B6914"><div class="svc-icon">🪵</div><div class="svc-name">Deck</div>
-      <div class="svc-stats"><div class="svc-stat"><strong>7.6</strong>Avg NPS</div><div class="svc-stat"><strong>4.3</strong>Satisfaction</div><div class="svc-stat"><strong>14</strong>Reviews</div></div>
-      <div class="svc-feedback"><div class="svc-fb-row"><span class="lbl">👍 Praise:</span><span>"Deck looks like new wood" · "Great stain color advice"</span></div><div class="svc-fb-row"><span class="lbl">👎 Issue:</span><span>"Stain faded quickly" (2) · "Missed some boards" (1)</span></div></div>
+    <div class="fb-svc">
+      <div class="fb-svc-name">Deck</div>
+      <div class="fb-svc-stats">
+        <div class="fb-svc-stat"><strong>7.6</strong><span class="lbl">Avg NPS</span></div>
+        <div class="fb-svc-stat"><strong>4.3</strong><span class="lbl">Satisfaction</span></div>
+        <div class="fb-svc-stat"><strong>14</strong><span class="lbl">Reviews</span></div>
+      </div>
+      <div class="fb-svc-fb-row praise"><span class="lbl">Praise</span>"Deck looks like new wood" · "Great stain advice"</div>
+      <div class="fb-svc-fb-row issue"><span class="lbl">Issue</span>"Stain faded quickly" (2) · "Missed boards" (1)</div>
     </div>
-    <div class="svc-card" style="border-top:4px solid var(--green)"><div class="svc-icon">🏗️</div><div class="svc-name">Fence</div>
-      <div class="svc-stats"><div class="svc-stat"><strong>7.8</strong>Avg NPS</div><div class="svc-stat"><strong>4.4</strong>Satisfaction</div><div class="svc-stat"><strong>11</strong>Reviews</div></div>
-      <div class="svc-feedback"><div class="svc-fb-row"><span class="lbl">👍 Praise:</span><span>"Even coverage" · "Finished ahead of schedule"</span></div><div class="svc-fb-row"><span class="lbl">👎 Issue:</span><span>"Overspray on driveway" (1)</span></div></div>
+    <div class="fb-svc">
+      <div class="fb-svc-name">Fence</div>
+      <div class="fb-svc-stats">
+        <div class="fb-svc-stat"><strong>7.8</strong><span class="lbl">Avg NPS</span></div>
+        <div class="fb-svc-stat"><strong>4.4</strong><span class="lbl">Satisfaction</span></div>
+        <div class="fb-svc-stat"><strong>11</strong><span class="lbl">Reviews</span></div>
+      </div>
+      <div class="fb-svc-fb-row praise"><span class="lbl">Praise</span>"Even coverage" · "Finished ahead of schedule"</div>
+      <div class="fb-svc-fb-row issue"><span class="lbl">Issue</span>"Overspray on driveway" (1)</div>
     </div>
-    <div class="svc-card" style="border-top:4px solid var(--purple)"><div class="svc-icon">🔨</div><div class="svc-name">Carpentry</div>
-      <div class="svc-stats"><div class="svc-stat"><strong>8.0</strong>Avg NPS</div><div class="svc-stat"><strong>4.5</strong>Satisfaction</div><div class="svc-stat"><strong>9</strong>Reviews</div></div>
-      <div class="svc-feedback"><div class="svc-fb-row"><span class="lbl">👍 Praise:</span><span>"Seamless wood repair" · "Can't tell what's new vs old"</span></div><div class="svc-fb-row"><span class="lbl">👎 Issue:</span><span>"Took longer than estimated" (2)</span></div></div>
+    <div class="fb-svc">
+      <div class="fb-svc-name">Carpentry</div>
+      <div class="fb-svc-stats">
+        <div class="fb-svc-stat"><strong>8.0</strong><span class="lbl">Avg NPS</span></div>
+        <div class="fb-svc-stat"><strong>4.5</strong><span class="lbl">Satisfaction</span></div>
+        <div class="fb-svc-stat"><strong>9</strong><span class="lbl">Reviews</span></div>
+      </div>
+      <div class="fb-svc-fb-row praise"><span class="lbl">Praise</span>"Seamless wood repair" · "Can't tell new vs old"</div>
+      <div class="fb-svc-fb-row issue"><span class="lbl">Issue</span>"Took longer than estimated" (2)</div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- FLAGGED ITEMS -->
-<div class="tab-content" id="tab-flagged">
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-b" style="padding:12px 18px;display:flex;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--text-sec)">
-      <span>🔴 <strong>URGENT:</strong> Rating &lt; 3 stars or "Wouldn't hire again"</span>
-      <span>🟡 <strong>Watch:</strong> NPS &lt; 7 or negative keyword detected</span>
+<section class="fb-panel" id="fb-flagged">
+  <div class="ed-callout" style="margin-top:20px">
+    <div class="ed-callout-label">Flag Criteria</div>
+    <div class="ed-callout-body">
+      <strong>Urgent:</strong> rating &lt; 3 stars or "wouldn't hire again" · <strong>Watch:</strong> NPS &lt; 7 or negative keyword detected.
     </div>
   </div>
-  <div class="card">
-    <div class="card-h"><div class="card-t">⚠️ Items Requiring Follow-Up</div><span style="font-size:12px;color:var(--text-sec)">3 open · 2 resolved</span></div>
-    <div class="flag-item" style="background:var(--red-bg)">
-      <div class="flag-icon">🔴</div>
-      <div class="flag-body">
-        <div class="flag-title">Daniel & Megan P. — Quality Rating: 2/5 Stars</div>
-        <div class="flag-detail">Interior — Kitchen/Living, Murfreesboro · NPS: 4 · Thompson Crew · Feb 20</div>
-        <div class="flag-detail">"The crew left paint drips on the baseboards and missed cutting in around two windows. We expected better for the price."</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <span class="badge badge-red">URGENT — Rating &lt; 3</span>
-          <span class="badge badge-blue">Assigned: Office Manager</span>
-          <span class="badge badge-yellow">Open</span>
-        </div>
-        <div class="flag-actions">
-          <button class="flag-btn">📝 Add Note</button>
-          <button class="flag-btn">🔄 Reassign</button>
-          <button class="flag-btn resolve">✅ Mark Resolved</button>
-        </div>
-      </div>
-    </div>
-    <div class="flag-item" style="background:var(--red-bg)">
-      <div class="flag-icon">🔴</div>
-      <div class="flag-body">
-        <div class="flag-title">Laura G. — "Would Not Hire Again"</div>
-        <div class="flag-detail">Interior — Whole Home, Smyrna · NPS: 3 · Thompson Crew · Feb 15</div>
-        <div class="flag-detail">"Communication was poor after the estimate. The crew changed without notice and the color didn't match what I picked."</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <span class="badge badge-red">URGENT — Would Not Hire Again → Bill Notified</span>
-          <span class="badge badge-blue">Assigned: Bill</span>
-          <span class="badge badge-yellow">In Progress</span>
-        </div>
-        <div class="flag-actions">
-          <button class="flag-btn">📝 Add Note</button>
-          <button class="flag-btn">📞 Log Call</button>
-          <button class="flag-btn resolve">✅ Mark Resolved</button>
-        </div>
-      </div>
-    </div>
-    <div class="flag-item" style="background:var(--yellow-bg)">
-      <div class="flag-icon">🟡</div>
-      <div class="flag-body">
-        <div class="flag-title">Karen & Steve D. — NPS: 6 + Negative Keyword</div>
-        <div class="flag-detail">Interior — Full Home, Nolensville · Thompson Crew · Feb 22</div>
-        <div class="flag-detail">"Overall fine but <u>disappointed</u> with the trim work in the master bedroom. Had to point out spots that were missed."</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <span class="badge badge-yellow">NPS &lt; 7 + "disappointed"</span>
-          <span class="badge badge-blue">Assigned: Office Manager</span>
-          <span class="badge badge-yellow">Open</span>
-        </div>
-        <div class="flag-actions">
-          <button class="flag-btn">📝 Add Note</button>
-          <button class="flag-btn resolve">✅ Mark Resolved</button>
-        </div>
-      </div>
-    </div>
-    <div class="flag-item" style="opacity:.6">
-      <div class="flag-icon">✅</div>
-      <div class="flag-body">
-        <div class="flag-title">Brian T. — Efficiency Rating: 2/5</div>
-        <div class="flag-detail">Exterior — Ranch, Gallatin · Davis Crew · Feb 8 · <strong>Resolved Feb 12</strong></div>
-        <div class="flag-detail" style="font-style:italic">"Crew showed up 2 hours late twice." → Follow-up: Bill called customer, issued 5% credit. Crew counseled on punctuality.</div>
-        <div><span class="badge badge-green">Resolved</span></div>
-      </div>
-    </div>
-    <div class="flag-item" style="opacity:.6">
-      <div class="flag-icon">✅</div>
-      <div class="flag-body">
-        <div class="flag-title">Nancy R. — NPS: 5 + Negative Keyword</div>
-        <div class="flag-detail">Cabinets — Kitchen, Franklin · Williams Crew · Jan 28 · <strong>Resolved Feb 3</strong></div>
-        <div class="flag-detail" style="font-style:italic">"Concerned about overspray on countertops." → Follow-up: Crew returned to clean and buff. Customer satisfied, NPS updated to 8.</div>
-        <div><span class="badge badge-green">Resolved</span></div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- REFERRAL PIPELINE -->
-<div class="tab-content" id="tab-referrals">
-  <div class="ref-kpi-strip">
-    <div class="ref-kpi"><div class="ref-kpi-val">8</div><div class="ref-kpi-lbl">Total Referrals</div></div>
-    <div class="ref-kpi"><div class="ref-kpi-val">37.5%</div><div class="ref-kpi-lbl">Conversion Rate</div></div>
-    <div class="ref-kpi"><div class="ref-kpi-val">$600</div><div class="ref-kpi-lbl">Gift Cards Sent</div></div>
-    <div class="ref-kpi"><div class="ref-kpi-val">$18,450</div><div class="ref-kpi-lbl">Revenue from Referrals</div></div>
+  <div class="fb-section-head">
+    <h2>Items Requiring Follow-Up</h2>
+    <span class="fb-section-meta">3 open · 2 resolved</span>
   </div>
-  <div class="card">
-    <div class="card-h"><div class="card-t">🎁 Referral Pipeline — via LeadChuck</div><span class="card-a">Open LeadChuck →</span></div>
-    <div style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr><th>Referring Customer</th><th>Referral Name</th><th>Status</th><th>Est. Value</th><th>Gift Card</th><th>Date</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Jennifer R.</strong></td><td>Amy & Tom Henderson</td><td><span class="badge badge-green"><span class="pipeline-dot" style="background:var(--green)"></span>Sold — $6,200</span></td><td>$6,200</td><td>✅ $75 sent</td><td>Feb 14</td></tr>
-          <tr><td><strong>Jennifer R.</strong></td><td>Lisa Park</td><td><span class="badge badge-blue"><span class="pipeline-dot" style="background:var(--blue)"></span>Estimated</span></td><td>$4,800</td><td>Pending</td><td>Feb 22</td></tr>
-          <tr><td><strong>Michael S.</strong></td><td>David & Rachel Kim</td><td><span class="badge badge-green"><span class="pipeline-dot" style="background:var(--green)"></span>Sold — $8,950</span></td><td>$8,950</td><td>✅ $75 sent</td><td>Feb 5</td></tr>
-          <tr><td><strong>James H.</strong></td><td>Sandra Mitchell</td><td><span class="badge badge-blue"><span class="pipeline-dot" style="background:var(--blue)"></span>Estimated</span></td><td>$3,200</td><td>Pending</td><td>Feb 25</td></tr>
-          <tr><td><strong>Amanda L.</strong></td><td>Kevin & Diane Foster</td><td><span class="badge badge-purple"><span class="pipeline-dot" style="background:var(--purple)"></span>Contacted</span></td><td>TBD</td><td>Pending</td><td>Feb 27</td></tr>
-          <tr><td><strong>Robert K.</strong></td><td>Mark Williams</td><td><span class="badge badge-green"><span class="pipeline-dot" style="background:var(--green)"></span>Sold — $3,300</span></td><td>$3,300</td><td>✅ $75 sent</td><td>Jan 18</td></tr>
-          <tr><td><strong>Patricia M.</strong></td><td>Jorge & Maria Santos</td><td><span class="badge badge-yellow"><span class="pipeline-dot" style="background:var(--yellow)"></span>New Lead</span></td><td>TBD</td><td>Pending</td><td>Mar 1</td></tr>
-          <tr><td><strong>Susan E.</strong></td><td>Tyler & Jessica Brooks</td><td><span class="badge badge-yellow"><span class="pipeline-dot" style="background:var(--yellow)"></span>New Lead</span></td><td>TBD</td><td>Pending</td><td>Feb 28</td></tr>
-        </tbody>
-      </table>
+
+  <div>
+    <div class="fb-flag">
+      <div class="fb-flag-bar"></div>
+      <div>
+        <div class="fb-flag-title">Daniel &amp; Megan P. — Quality rating 2/5</div>
+        <div class="fb-flag-meta">Interior — Kitchen/Living, Murfreesboro · NPS 4 · Thompson Crew · Feb 20</div>
+        <div class="fb-flag-quote">"The crew left paint drips on the baseboards and missed cutting in around two windows. We expected better for the price."</div>
+        <div class="fb-flag-chips">
+          <span class="fb-chip urgent">Urgent — Rating &lt; 3</span>
+          <span class="fb-chip info">Assigned: Office Manager</span>
+          <span class="fb-chip watch">Open</span>
+        </div>
+        <div class="fb-flag-actions">
+          <button class="fb-flag-btn">Add Note</button>
+          <button class="fb-flag-btn">Reassign</button>
+          <button class="fb-flag-btn resolve">Mark Resolved</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-flag">
+      <div class="fb-flag-bar"></div>
+      <div>
+        <div class="fb-flag-title">Laura G. — "Would not hire again"</div>
+        <div class="fb-flag-meta">Interior — Whole Home, Smyrna · NPS 3 · Thompson Crew · Feb 15</div>
+        <div class="fb-flag-quote">"Communication was poor after the estimate. The crew changed without notice and the color didn't match what I picked."</div>
+        <div class="fb-flag-chips">
+          <span class="fb-chip urgent">Urgent — Bill Notified</span>
+          <span class="fb-chip info">Assigned: Bill</span>
+          <span class="fb-chip in-progress">In Progress</span>
+        </div>
+        <div class="fb-flag-actions">
+          <button class="fb-flag-btn">Add Note</button>
+          <button class="fb-flag-btn">Log Call</button>
+          <button class="fb-flag-btn resolve">Mark Resolved</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-flag watch">
+      <div class="fb-flag-bar"></div>
+      <div>
+        <div class="fb-flag-title">Karen &amp; Steve D. — NPS 6 + negative keyword</div>
+        <div class="fb-flag-meta">Interior — Full Home, Nolensville · Thompson Crew · Feb 22</div>
+        <div class="fb-flag-quote">"Overall fine but <u>disappointed</u> with the trim work in the master bedroom. Had to point out spots that were missed."</div>
+        <div class="fb-flag-chips">
+          <span class="fb-chip watch">NPS &lt; 7 + "disappointed"</span>
+          <span class="fb-chip info">Assigned: Office Manager</span>
+          <span class="fb-chip watch">Open</span>
+        </div>
+        <div class="fb-flag-actions">
+          <button class="fb-flag-btn">Add Note</button>
+          <button class="fb-flag-btn resolve">Mark Resolved</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-flag resolved">
+      <div class="fb-flag-bar"></div>
+      <div>
+        <div class="fb-flag-title">Brian T. — Efficiency rating 2/5</div>
+        <div class="fb-flag-meta">Exterior — Ranch, Gallatin · Davis Crew · Feb 8 · <strong>Resolved Feb 12</strong></div>
+        <div class="fb-flag-quote">"Crew showed up 2 hours late twice." → Bill called customer, issued 5% credit. Crew counseled on punctuality.</div>
+        <div class="fb-flag-chips"><span class="fb-chip resolved">Resolved</span></div>
+      </div>
+    </div>
+
+    <div class="fb-flag resolved">
+      <div class="fb-flag-bar"></div>
+      <div>
+        <div class="fb-flag-title">Nancy R. — NPS 5 + negative keyword</div>
+        <div class="fb-flag-meta">Cabinets — Kitchen, Franklin · Williams Crew · Jan 28 · <strong>Resolved Feb 3</strong></div>
+        <div class="fb-flag-quote">"Concerned about overspray on countertops." → Crew returned to clean and buff. Customer satisfied, NPS updated to 8.</div>
+        <div class="fb-flag-chips"><span class="fb-chip resolved">Resolved</span></div>
+      </div>
     </div>
   </div>
-</div>
-</div>
+</section>
+
+<!-- REFERRALS -->
+<section class="fb-panel" id="fb-referrals">
+  <div class="fb-ref-kpis" style="margin-top:24px">
+    <div class="ed-kpi hl">
+      <div class="ed-cap">Total Referrals</div>
+      <div class="ed-kpi-val">8</div>
+      <div class="ed-kpi-sub">Q1 to date</div>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Conversion Rate</div>
+      <div class="ed-kpi-val">37.5%</div>
+      <span class="ed-kpi-trend up">↑ from 28%</span>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Gift Cards Sent</div>
+      <div class="ed-kpi-val">$600</div>
+      <div class="ed-kpi-sub">8 × $75</div>
+    </div>
+    <div class="ed-kpi">
+      <div class="ed-cap">Referral Revenue</div>
+      <div class="ed-kpi-val">$18.4K</div>
+      <div class="ed-kpi-sub">3 closed · 3 pending</div>
+    </div>
+  </div>
+
+  <div class="fb-section-head">
+    <h2>Referral Pipeline — via LeadChuck</h2>
+    <span class="fb-section-link">Open LeadChuck →</span>
+  </div>
+
+  <table class="ed-ledger">
+    <thead><tr><th>Referring Customer</th><th>Referral Name</th><th>Status</th><th class="num">Est. Value</th><th>Gift Card</th><th>Date</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Jennifer R.</strong></td><td>Amy &amp; Tom Henderson</td><td><span class="fb-pipeline-dot" style="background:var(--ed-green)"></span><span class="fb-chip great">Sold — $6,200</span></td><td class="num">$6,200</td><td>✓ $75 sent</td><td>Feb 14</td></tr>
+      <tr><td><strong>Jennifer R.</strong></td><td>Lisa Park</td><td><span class="fb-pipeline-dot" style="background:#2563EB"></span><span class="fb-chip info">Estimated</span></td><td class="num">$4,800</td><td>Pending</td><td>Feb 22</td></tr>
+      <tr><td><strong>Michael S.</strong></td><td>David &amp; Rachel Kim</td><td><span class="fb-pipeline-dot" style="background:var(--ed-green)"></span><span class="fb-chip great">Sold — $8,950</span></td><td class="num">$8,950</td><td>✓ $75 sent</td><td>Feb 5</td></tr>
+      <tr><td><strong>James H.</strong></td><td>Sandra Mitchell</td><td><span class="fb-pipeline-dot" style="background:#2563EB"></span><span class="fb-chip info">Estimated</span></td><td class="num">$3,200</td><td>Pending</td><td>Feb 25</td></tr>
+      <tr><td><strong>Amanda L.</strong></td><td>Kevin &amp; Diane Foster</td><td><span class="fb-pipeline-dot" style="background:var(--ed-meta)"></span><span class="fb-chip ok">Contacted</span></td><td class="num">TBD</td><td>Pending</td><td>Feb 27</td></tr>
+      <tr><td><strong>Robert K.</strong></td><td>Mark Williams</td><td><span class="fb-pipeline-dot" style="background:var(--ed-green)"></span><span class="fb-chip great">Sold — $3,300</span></td><td class="num">$3,300</td><td>✓ $75 sent</td><td>Jan 18</td></tr>
+      <tr><td><strong>Patricia M.</strong></td><td>Jorge &amp; Maria Santos</td><td><span class="fb-pipeline-dot" style="background:var(--ed-yellow)"></span><span class="fb-chip watch">New Lead</span></td><td class="num">TBD</td><td>Pending</td><td>Mar 1</td></tr>
+      <tr><td><strong>Susan E.</strong></td><td>Tyler &amp; Jessica Brooks</td><td><span class="fb-pipeline-dot" style="background:var(--ed-yellow)"></span><span class="fb-chip watch">New Lead</span></td><td class="num">TBD</td><td>Pending</td><td>Feb 28</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</div><!-- /ed-shell -->
 
 <!-- WEEKLY DIGEST MODAL -->
-<div class="modal-overlay" id="digestModal" onclick="if(event.target===this)closeModal('digestModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">✉️ Weekly Digest Preview</div>
-      <button class="modal-close" onclick="closeModal('digestModal')">✕</button>
+<div class="fb-modal-overlay" id="digestModal" onclick="if(event.target===this)closeModal('digestModal')">
+  <div class="fb-modal">
+    <div class="fb-modal-head">
+      <div class="fb-modal-title">Weekly Digest Preview</div>
+      <button class="fb-modal-close" onclick="closeModal('digestModal')">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="digest">
-        <div class="digest-header"><h2>Nash Painting</h2><p>This Week's Customer Feedback — Feb 24 – Mar 1, 2026</p></div>
-        <div style="padding:20px;background:var(--bg);border-radius:0 0 var(--radius-sm) var(--radius-sm)">
-          <div class="digest-section">
-            <h3>📊 Score Summary</h3>
-            <div class="digest-score">
-              <div class="digest-score-item"><div class="digest-score-val">72</div><div class="digest-score-lbl">NPS Score</div><div class="digest-score-trend" style="color:var(--green)">▲ +4 from last week</div></div>
-              <div class="digest-score-item"><div class="digest-score-val">4.6</div><div class="digest-score-lbl">Avg Satisfaction</div><div class="digest-score-trend" style="color:var(--green)">▲ +0.2</div></div>
-              <div class="digest-score-item"><div class="digest-score-val">78%</div><div class="digest-score-lbl">Response Rate</div><div class="digest-score-trend" style="color:var(--green)">▲ +5%</div></div>
-              <div class="digest-score-item"><div class="digest-score-val">7</div><div class="digest-score-lbl">Surveys This Week</div><div class="digest-score-trend" style="color:var(--green)">▲ +2</div></div>
-            </div>
-          </div>
-          <div class="digest-section">
-            <h3>⚠️ Flagged Concerns (3)</h3>
-            <div style="font-size:13px">
-              <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--red)">🔴 Daniel & Megan P.</strong> — Interior, Murfreesboro — Quality: 2★ — <em>Open</em></div>
-              <div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--red)">🔴 Laura G.</strong> — Interior, Smyrna — "Would Not Hire Again" — <em>In Progress (Bill)</em></div>
-              <div style="padding:8px 0"><strong style="color:var(--yellow)">🟡 Karen & Steve D.</strong> — Interior, Nolensville — NPS: 6 — <em>Open</em></div>
-            </div>
-          </div>
-          <div class="digest-section">
-            <h3>🌟 Top Praise</h3>
-            <div class="testimonial" style="background:var(--white)">
-              <div class="testimonial-text">"Marcus and his crew were incredible. They showed up on time every day, covered everything carefully, and the final result looks better than we imagined."</div>
-              <div class="testimonial-author">— Jennifer R. · NPS: 10</div>
-            </div>
-          </div>
-          <div class="digest-section">
-            <h3>👷 Crew Rankings This Week</h3>
-            <div style="font-size:13px">
-              <div style="display:flex;justify-content:space-between;padding:4px 0"><span>1. Marcus T. Crew</span><span style="font-weight:600;color:var(--green)">4.8 ★</span></div>
-              <div style="display:flex;justify-content:space-between;padding:4px 0"><span>2. Rodriguez Crew</span><span style="font-weight:600;color:var(--green)">4.7 ★</span></div>
-              <div style="display:flex;justify-content:space-between;padding:4px 0"><span>3. Williams Crew</span><span style="font-weight:600">4.6 ★</span></div>
-              <div style="display:flex;justify-content:space-between;padding:4px 0"><span>4. Davis Crew</span><span style="font-weight:600">4.5 ★</span></div>
-              <div style="display:flex;justify-content:space-between;padding:4px 0"><span>5. Johnson Crew</span><span style="font-weight:600">4.3 ★</span></div>
-              <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--red)">6. Thompson Crew</span><span style="font-weight:600;color:var(--red)">3.8 ★ ⚠️</span></div>
-            </div>
-          </div>
-          <div class="digest-section" style="font-size:12px;color:var(--text-sec);text-align:center;border-bottom:none">Action required: <strong>1 unresolved urgent</strong> · 2 watch items</div>
+    <div class="fb-modal-body">
+      <div class="ed-cap" style="color:var(--ed-orange)">Nash Painting</div>
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.02em;margin:4px 0 20px">This Week's Customer Feedback — Feb 24 – Mar 1, 2026</div>
+
+      <div class="ai-sub-section" style="padding-top:0">
+        <div class="ai-sub-title">Score Summary</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
+          <div><div class="fb-person-stat-val">72</div><div class="fb-person-stat-lbl">NPS ↑+4</div></div>
+          <div><div class="fb-person-stat-val">4.6</div><div class="fb-person-stat-lbl">Satisfaction ↑+0.2</div></div>
+          <div><div class="fb-person-stat-val">78%</div><div class="fb-person-stat-lbl">Response ↑+5%</div></div>
+          <div><div class="fb-person-stat-val">7</div><div class="fb-person-stat-lbl">Surveys ↑+2</div></div>
         </div>
       </div>
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Flagged Concerns (3)</div>
+        <div style="font-size:13px;line-height:1.7">
+          <div style="padding:8px 0;border-bottom:1px solid var(--ed-hairline)"><strong style="color:var(--ed-red)">Daniel &amp; Megan P.</strong> — Interior, Murfreesboro — Quality: 2★ — <em>Open</em></div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--ed-hairline)"><strong style="color:var(--ed-red)">Laura G.</strong> — Interior, Smyrna — "Would not hire again" — <em>In Progress (Bill)</em></div>
+          <div style="padding:8px 0"><strong style="color:var(--ed-yellow)">Karen &amp; Steve D.</strong> — Interior, Nolensville — NPS 6 — <em>Open</em></div>
+        </div>
+      </div>
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Top Praise</div>
+        <div class="fb-testimonial">
+          <div class="fb-testimonial-text">"Marcus and his crew were incredible. They showed up on time every day, covered everything carefully, and the final result looks better than we imagined."</div>
+          <div class="fb-testimonial-author">Jennifer R. · NPS 10</div>
+        </div>
+      </div>
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Crew Rankings</div>
+        <div style="font-size:13px">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ed-hairline)"><span>1. Marcus T. Crew</span><strong style="color:var(--ed-green)">4.8 ★</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ed-hairline)"><span>2. Rodriguez Crew</span><strong style="color:var(--ed-green)">4.7 ★</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ed-hairline)"><span>3. Williams Crew</span><strong>4.6 ★</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ed-hairline)"><span>4. Davis Crew</span><strong>4.5 ★</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ed-hairline)"><span>5. Johnson Crew</span><strong>4.3 ★</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--ed-red)">6. Thompson Crew</span><strong style="color:var(--ed-red)">3.8 ★</strong></div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--ed-meta);text-align:center;padding:12px 0">Action required: <strong>1 unresolved urgent</strong> · 2 watch items</div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-outline" style="color:var(--text);border-color:var(--border)" onclick="closeModal('digestModal')">Close</button>
-      <button class="btn-gold">📅 Schedule (Every Monday 7 AM)</button>
-      <button class="btn-gold" style="background:var(--navy);color:#fff">✉️ Send Digest Now</button>
+    <div class="fb-modal-foot">
+      <button class="fb-btn" onclick="closeModal('digestModal')">Close</button>
+      <button class="fb-btn primary">Schedule (Every Mon 7 AM)</button>
+      <button class="fb-btn navy">Send Now</button>
     </div>
   </div>
 </div>
 
 <!-- MEETING REPORT MODAL -->
-<div class="modal-overlay" id="reportModal" onclick="if(event.target===this)closeModal('reportModal')">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">📋 Meeting Report</div>
-      <button class="modal-close" onclick="closeModal('reportModal')">✕</button>
+<div class="fb-modal-overlay" id="reportModal" onclick="if(event.target===this)closeModal('reportModal')">
+  <div class="fb-modal">
+    <div class="fb-modal-head">
+      <div class="fb-modal-title">Meeting Report</div>
+      <button class="fb-modal-close" onclick="closeModal('reportModal')">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="report">
-        <h2>This Week's Customer Feedback</h2>
-        <div class="date">Team Meeting Report · Week of Feb 24 – Mar 1, 2026</div>
-        <div class="report-scores">
-          <div class="report-score"><strong>72</strong><span>NPS (▲ +4)</span></div>
-          <div class="report-score"><strong>4.6</strong><span>Satisfaction (▲ +0.2)</span></div>
-          <div class="report-score"><strong>78%</strong><span>Response Rate</span></div>
-          <div class="report-score"><strong>7</strong><span>Surveys</span></div>
-          <div class="report-score"><strong>3</strong><span style="color:var(--red)">Flagged</span></div>
+    <div class="fb-modal-body">
+      <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.02em">This Week's Customer Feedback</div>
+      <div class="ed-cap" style="margin:4px 0 20px">Team Meeting Report · Week of Feb 24 – Mar 1, 2026</div>
+
+      <div class="ai-sub-section" style="padding-top:0">
+        <div class="ai-sub-title">Scores</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px">
+          <div><div class="fb-person-stat-val">72</div><div class="fb-person-stat-lbl">NPS ↑+4</div></div>
+          <div><div class="fb-person-stat-val">4.6</div><div class="fb-person-stat-lbl">Sat ↑+0.2</div></div>
+          <div><div class="fb-person-stat-val">78%</div><div class="fb-person-stat-lbl">Response</div></div>
+          <div><div class="fb-person-stat-val">7</div><div class="fb-person-stat-lbl">Surveys</div></div>
+          <div><div class="fb-person-stat-val" style="color:var(--ed-red)">3</div><div class="fb-person-stat-lbl">Flagged</div></div>
         </div>
-        <h3>🌟 Notable Praise</h3>
-        <blockquote>"Marcus and his crew were incredible. They showed up on time every day, covered everything carefully, and the final result looks better than we imagined. Our neighbors already asked for Nash Painting's number." — Jennifer R., Interior, Franklin</blockquote>
-        <blockquote>"The exterior of our Tudor looks brand new. The crew was meticulous about prep work, especially around the trim and stonework." — Michael S., Exterior, Belle Meade</blockquote>
-        <h3>⚠️ Concerns for Discussion</h3>
-        <div style="padding:8px 0;font-size:13px">
-          <p><strong style="color:var(--red)">1. Thompson Crew — Declining trend (3.8 avg, 2 flags in 30 days)</strong><br>Two customers flagged quality issues. Daniel P. reported paint drips and missed windows. Laura G. said "would not hire again" — color mismatch and crew change without notice. Coaching session recommended.</p>
-          <p style="margin-top:8px"><strong style="color:var(--yellow)">2. Tom B. (Estimator) — Expectation match at 76%</strong><br>5 instances of "finished result didn't match what was described." Consider ride-along with senior estimator for calibration.</p>
+      </div>
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Notable Praise</div>
+        <div class="fb-testimonial"><div class="fb-testimonial-text">"Marcus and his crew were incredible. The final result looks better than we imagined. Our neighbors already asked for Nash Painting's number."</div><div class="fb-testimonial-author">Jennifer R. · Interior, Franklin</div></div>
+        <div class="fb-testimonial"><div class="fb-testimonial-text">"The exterior of our Tudor looks brand new. The crew was meticulous about prep work, especially around the trim and stonework."</div><div class="fb-testimonial-author">Michael S. · Exterior, Belle Meade</div></div>
+      </div>
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Concerns for Discussion</div>
+        <p style="font-size:13px;line-height:1.6;margin-bottom:10px"><strong style="color:var(--ed-red)">1. Thompson Crew — declining trend (3.8 avg, 2 flags in 30 days).</strong> Daniel P. reported paint drips and missed windows. Laura G. said "would not hire again" — color mismatch and crew change without notice. Coaching session recommended.</p>
+        <p style="font-size:13px;line-height:1.6"><strong style="color:var(--ed-yellow)">2. Tom B. — expectation match at 76%.</strong> 5 instances of "finished result didn't match what was described." Ride-along with senior estimator for calibration.</p>
+      </div>
+
+      <div class="ai-sub-section">
+        <div class="ai-sub-title">Action Items</div>
+        <div style="font-size:13px;line-height:1.8">
+          <div><input type="checkbox" checked> <span style="text-decoration:line-through;color:var(--ed-meta)">Follow up with Brian T. re: late crew — 5% credit issued</span></div>
+          <div><input type="checkbox" checked> <span style="text-decoration:line-through;color:var(--ed-meta)">Williams Crew to return to Nancy R. for countertop cleaning</span></div>
+          <div><input type="checkbox"> <span>Schedule Thompson Crew coaching session</span></div>
+          <div><input type="checkbox"> <span>Bill to call Laura G. — "would not hire again" follow-up</span></div>
+          <div><input type="checkbox"> <span>Tom B. ride-along with Jake M. for estimate calibration</span></div>
         </div>
-        <h3>👷 Crew Performance Rankings</h3>
-        <div style="font-size:13px">
-          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>🥇 Marcus T. Crew</span><span>4.8 ★ · 42 reviews · ▲ trending up</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>🥈 Rodriguez Crew</span><span>4.7 ★ · 38 reviews · ▲ trending up</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>🥉 Williams Crew</span><span>4.6 ★ · 28 reviews · → stable</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>4. Davis Crew</span><span>4.5 ★ · 31 reviews · ▲ trending up</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>5. Johnson Crew</span><span>4.3 ★ · 24 reviews · → stable</span></div>
-          <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--red)">6. Thompson Crew ⚠️</span><span style="color:var(--red)">3.8 ★ · 19 reviews · ▼ declining</span></div>
-        </div>
-        <h3>☑️ Action Items from Last Week</h3>
-        <div class="action-item"><input type="checkbox" checked><span style="text-decoration:line-through;color:var(--text-sec)">Follow up with Brian T. re: late crew (Davis) — 5% credit issued</span></div>
-        <div class="action-item"><input type="checkbox" checked><span style="text-decoration:line-through;color:var(--text-sec)">Williams Crew to return to Nancy R. for countertop cleaning</span></div>
-        <div class="action-item"><input type="checkbox"><span>Schedule Thompson Crew coaching session</span></div>
-        <div class="action-item"><input type="checkbox"><span>Bill to call Laura G. — "would not hire again" follow-up</span></div>
-        <div class="action-item"><input type="checkbox"><span>Tom B. ride-along with Jake M. for estimate calibration</span></div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-outline" style="color:var(--text);border-color:var(--border)" onclick="closeModal('reportModal')">Close</button>
-      <button class="btn-gold" onclick="navigator.clipboard.writeText(document.querySelector('.report').innerText);this.textContent='✓ Copied!'">📋 Copy to Clipboard</button>
-      <button class="btn-gold" style="background:var(--navy);color:#fff" onclick="window.print()">🖨️ Print</button>
+    <div class="fb-modal-foot">
+      <button class="fb-btn" onclick="closeModal('reportModal')">Close</button>
+      <button class="fb-btn primary">Copy</button>
+      <button class="fb-btn navy" onclick="window.print()">Print</button>
     </div>
   </div>
 </div>
 
 <script>
-function showTab(id,btn){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-bar .tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  btn.classList.add('active');
-}
-function openModal(id){document.getElementById(id).classList.add('show');document.body.style.overflow='hidden'}
-function closeModal(id){document.getElementById(id).classList.remove('show');document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.show').forEach(m=>{m.classList.remove('show');document.body.style.overflow=''})});
-function sortCrew(btn,by){
-  btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const grid=document.getElementById('crewGrid'),cards=[...grid.children];
-  cards.sort((a,b)=>{
-    if(by==='rating')return parseFloat(b.dataset.rating)-parseFloat(a.dataset.rating);
-    if(by==='reviews')return parseInt(b.dataset.reviews)-parseInt(a.dataset.reviews);
-    if(by==='trend'){const o={up:0,stable:1,down:2};return(o[a.dataset.trend]||1)-(o[b.dataset.trend]||1)}
-    return 0;
+  function showFbTab(id, btn) {
+    document.querySelectorAll('.fb-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.fb-tab').forEach(function(t){ t.classList.remove('active'); });
+    var panel = document.getElementById('fb-' + id);
+    if (panel) panel.classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+  function toggleAI() {
+    document.getElementById('aiBrief').classList.toggle('collapsed');
+  }
+  function openModal(id) {
+    document.getElementById(id).classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.fb-modal-overlay.show').forEach(function(m){
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      });
+    }
   });
-  cards.forEach(c=>grid.appendChild(c));
-}
-
-function toggleAI(){
-  document.getElementById('aiPanel').classList.toggle('collapsed');
-}
+  function sortCrew(btn, by) {
+    btn.parentElement.querySelectorAll('.fb-sort-opt').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var grid = document.getElementById('crewGrid');
+    var cards = Array.prototype.slice.call(grid.children);
+    cards.sort(function(a, b){
+      if (by === 'rating') return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+      if (by === 'reviews') return parseInt(b.dataset.reviews) - parseInt(a.dataset.reviews);
+      if (by === 'trend') {
+        var o = { up: 0, stable: 1, down: 2 };
+        return (o[a.dataset.trend] || 1) - (o[b.dataset.trend] || 1);
+      }
+      return 0;
+    });
+    cards.forEach(function(c){ grid.appendChild(c); });
+  }
 </script>
 </body>
 </html>
