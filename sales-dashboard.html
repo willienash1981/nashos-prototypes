@@ -257,7 +257,47 @@
     table { min-width: 600px; }
   }
 </style>
-<link rel="stylesheet" href="styles/theme.css"></head>
+<link rel="stylesheet" href="styles/theme.css">
+<style>
+  /* Editorial Industrialism overrides — variable remap + responsive spine */
+  :root {
+    --navy: #FFFFFF !important;
+    --navy-light: #FFFFFF !important;
+    --navy-mid: #F5F6F8 !important;
+    --accent: #FF8200 !important;
+    --accent-light: #CC6600 !important;
+    --text: #0E0E10 !important;
+    --text-dim: #64748B !important;
+    --text-bright: #0E0E10 !important;
+    --border: #E2E5EA !important;
+    --card: #FFFFFF !important;
+    --card-hover: #F5F6F8 !important;
+    --orange: #FF8200 !important;
+    --purple: #0B1F3A !important;
+  }
+  .spine { position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; z-index: 1000 !important; }
+  body { padding-top: 4px !important; background: #FFFFFF !important; color: #0E0E10 !important; }
+  .sidebar { background: #FFFFFF !important; border-right: 1px solid #E2E5EA !important; }
+  .logo-text { color: #0E0E10 !important; font-family: 'Sora', sans-serif !important; }
+  .logo-text span { color: #FF8200 !important; }
+  .logo-icon { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; }
+  .nav-section { color: #9AA4B2 !important; letter-spacing: 0.14em !important; font-family: 'Inter', sans-serif !important; font-size: 10.5px !important; font-weight: 700 !important; }
+  .nav-item { color: #64748B !important; }
+  .nav-item:hover { background: #F5F6F8 !important; color: #0E0E10 !important; }
+  .nav-item.active { background: #FFF4E6 !important; color: #CC6600 !important; border-left-color: #FF8200 !important; }
+  .nav-badge { background: #B91C1C !important; color: #FFFFFF !important; border-radius: 999px !important; }
+  .avatar { background: #FF8200 !important; color: #FFFFFF !important; }
+  .topbar { background: #FFFFFF !important; border-bottom: 1px solid #E2E5EA !important; }
+  .topbar h1 { color: #0E0E10 !important; font-family: 'Sora', sans-serif !important; letter-spacing: -0.02em !important; font-weight: 700 !important; }
+  .date-range { background: #FFFFFF !important; border: 1px solid #E2E5EA !important; color: #0E0E10 !important; border-radius: 4px !important; }
+  .btn-primary { background: #FF8200 !important; color: #FFFFFF !important; border-radius: 4px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; font-size: 12px !important; padding: 12px 18px !important; }
+  .btn-primary:hover { background: #CC6600 !important; }
+
+  @media (max-width: 900px) {
+    body { flex-direction: column !important; display: flex !important; }
+  }
+</style>
+</head>
 <body>
 <div class="spine"></div>
 
