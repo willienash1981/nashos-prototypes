@@ -218,6 +218,15 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
       </div>
     </div>
 
+    <!-- Global 2nd coat — applies to every deck/landing floor -->
+    <div class="addon-card" style="margin:8px 0;padding:10px 12px;box-shadow:none;border:1px solid var(--border)">
+      <div class="left">
+        <div class="aname" style="font-size:12px">2nd coat on all deck floors</div>
+        <div class="adesc" style="font-size:10px">Applies globally to every section · +0.85× floor labor</div>
+      </div>
+      <div class="toggle" id="global-coat2-toggle" onclick="toggleGlobalCoat2()"><div class="knob"></div></div>
+    </div>
+
     <div class="disclaimer info" style="margin-top:4px">ℹ️ Railings stained/painted BEFORE deck flooring</div>
     <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px;font-size:11px;color:var(--text-light);display:grid;grid-template-columns:1fr 1fr;gap:2px 8px">
       <span>Floor: <strong id="sum-floor-sf">0</strong> SF → <strong id="sum-floor-cost">$0</strong></span>
@@ -230,11 +239,38 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <!-- Additional Surfaces -->
   <div class="step-header"><h2 style="font-size:14px"><span class="num" style="width:20px;height:20px;font-size:10px">+</span> Additional Surfaces</h2></div>
 
+  <!-- Lattice -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('lattice')">
+      <div class="left">
+        <div class="toggle" id="lattice-toggle"><div class="knob"></div></div>
+        <div class="name">Lattice <span class="sf-inline" id="lattice-sf"></span></div>
+      </div>
+      <div class="price zero" id="lattice-price">$0</div>
+    </div>
+    <div class="measure-body hidden" id="lattice-body">
+      <div class="input-row">
+        <label>Sq Ft</label>
+        <input type="number" id="lattice-sqft" value="0" oninput="calc()">
+        <div class="unit">SF</div>
+      </div>
+      <div class="input-row">
+        <label>OR dims</label>
+        <input type="number" id="lattice-l" placeholder="L" style="width:70px;min-width:70px" oninput="calcLatticeDims()">
+        <span style="font-size:12px">×</span>
+        <input type="number" id="lattice-h" placeholder="H" style="width:70px;min-width:70px" oninput="calcLatticeDims()">
+        <div class="unit">ft → SF</div>
+      </div>
+      <div class="calc-note">Rate: $1.39/SF</div>
+    </div>
+  </div>
+
+  <!-- Skirting -->
   <div class="measure-card">
     <div class="measure-header" onclick="toggleMeasure('skirting')">
       <div class="left">
         <div class="toggle" id="skirting-toggle"><div class="knob"></div></div>
-        <div class="name">Lattice / Skirting / Posts <span class="sf-inline" id="skirting-sf"></span></div>
+        <div class="name">Skirting <span class="sf-inline" id="skirting-sf"></span></div>
       </div>
       <div class="price zero" id="skirting-price">$0</div>
     </div>
@@ -251,14 +287,33 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
         <input type="number" id="skirting-h" placeholder="H" style="width:70px;min-width:70px" oninput="calcSkirtingDims()">
         <div class="unit">ft → SF</div>
       </div>
-      <div class="input-row" style="margin-top:4px">
-        <label>Posts</label>
-        <input type="number" id="post-h" placeholder="H (ft)" style="width:70px;min-width:70px" oninput="calcPosts()">
-        <span style="font-size:12px">× qty</span>
-        <input type="number" id="post-count" placeholder="Qty" style="width:70px;min-width:70px" oninput="calcPosts()">
-      </div>
-      <div class="calc-note" id="posts-note">Post: 0.5' wide × H × 4 sides × count → adds to SF</div>
       <div class="calc-note">Rate: $1.39/SF</div>
+    </div>
+  </div>
+
+  <!-- Posts -->
+  <div class="measure-card">
+    <div class="measure-header" onclick="toggleMeasure('posts')">
+      <div class="left">
+        <div class="toggle" id="posts-toggle"><div class="knob"></div></div>
+        <div class="name">Posts <span class="sf-inline" id="posts-sf"></span></div>
+      </div>
+      <div class="price zero" id="posts-price">$0</div>
+    </div>
+    <div class="measure-body hidden" id="posts-body">
+      <div class="input-row">
+        <label>Qty</label>
+        <input type="number" id="post-count" placeholder="0" style="width:70px;min-width:70px" value="0" oninput="calcPosts()">
+        <span style="font-size:12px">× H</span>
+        <input type="number" id="post-h" placeholder="ft" style="width:70px;min-width:70px" value="0" oninput="calcPosts()">
+        <div class="unit">ft</div>
+      </div>
+      <div class="input-row" style="margin-top:4px">
+        <label>Sq Ft</label>
+        <input type="number" id="posts-sqft" value="0" oninput="calc()">
+        <div class="unit">SF <span style="font-size:10px;color:var(--text-light)">(auto from qty×H — editable)</span></div>
+      </div>
+      <div class="calc-note" id="posts-calc-note">Auto: qty × H × 4 sides × 0.5' wide = ? SF · Rate: $1.39/SF</div>
     </div>
   </div>
 
@@ -385,14 +440,28 @@ const RAIL_RATES = { wood:13.49, 'wood-metal':18.39, painted:16.50, metal:0 };
 
 const state = {
   q1:'none', q3:'no', q4:'good',
-  toggles: { skirting:false, underside:false },
+  coat2: false, // global 2nd coat — applies to every deck section
+  toggles: { lattice:false, skirting:false, posts:false, underside:false },
   addons: { brush:false, masking:false, diffFinish:false },
   newboards: 0,
   sections: [
-    { id:0, type:'deck', l:0, w:0, coat2:false, sides:{top:false, bottom:true, left:true, right:true} }
+    { id:0, type:'deck', l:0, w:0, sides:{top:false, bottom:true, left:true, right:true} }
   ],
   nextId: 1
 };
+
+function toggleGlobalCoat2() {
+  state.coat2 = !state.coat2;
+  const t = document.getElementById('global-coat2-toggle');
+  if (t) t.classList.toggle('on', state.coat2);
+  renderSections();
+  calc();
+}
+
+function syncGlobalCoat2UI() {
+  const t = document.getElementById('global-coat2-toggle');
+  if (t) t.classList.toggle('on', state.coat2);
+}
 
 function getQ(q) {
   const el = document.querySelector(`[data-q="${q}"] .cq-chip.sel`);
@@ -488,8 +557,8 @@ function updateCondResult() {
       if (stainOpts) stainOpts.style.display = 'none';
       const paintWarn = document.getElementById('paintWarn');
       if (paintWarn) paintWarn.style.display = '';
-      const coat2cb = document.getElementById('coat2');
-      if (coat2cb) { coat2cb.checked = true; coat2cb.disabled = true; }
+      state.coat2 = true; // paint forces 2 coats
+      syncGlobalCoat2UI();
     }
   } else {
     const stainBtn = document.querySelector('[data-prod="Stain"]');
@@ -500,8 +569,6 @@ function updateCondResult() {
       if (stainOpts) stainOpts.style.display = '';
       const paintWarn = document.getElementById('paintWarn');
       if (paintWarn) paintWarn.style.display = 'none';
-      const coat2cb = document.getElementById('coat2');
-      if (coat2cb) coat2cb.disabled = false;
     }
     // auto-select stain opacity
     stainOpt = rec;
@@ -564,6 +631,15 @@ function toggleAddon(key) {
   calc();
 }
 
+function calcLatticeDims() {
+  const l = parseFloat(document.getElementById('lattice-l').value)||0;
+  const h = parseFloat(document.getElementById('lattice-h').value)||0;
+  if (l > 0 && h > 0) {
+    document.getElementById('lattice-sqft').value = Math.round(l * h);
+  }
+  calc();
+}
+
 function calcSkirtingDims() {
   const l = parseFloat(document.getElementById('skirting-l').value)||0;
   const h = parseFloat(document.getElementById('skirting-h').value)||0;
@@ -578,13 +654,10 @@ function calcPosts() {
   const c = parseFloat(document.getElementById('post-count').value)||0;
   // Post: 0.5' wide × height × 4 sides × count = 2 × h × count
   const postSF = Math.round(2 * h * c);
-  const currentSF = parseFloat(document.getElementById('skirting-sqft').value)||0;
-  // Add posts SF to existing skirting SF (from dims if any)
-  const sl = parseFloat(document.getElementById('skirting-l').value)||0;
-  const sh = parseFloat(document.getElementById('skirting-h').value)||0;
-  const dimSF = (sl > 0 && sh > 0) ? Math.round(sl * sh) : 0;
-  document.getElementById('skirting-sqft').value = dimSF + postSF;
-  document.getElementById('posts-note').textContent = `Post: 0.5' wide × ${h||0}' × 4 sides × ${c||0} = ${postSF} SF`;
+  const sqftEl = document.getElementById('posts-sqft');
+  // Only auto-fill if user hasn't focused the SF field (preserves manual edits)
+  if (document.activeElement !== sqftEl) sqftEl.value = postSF;
+  document.getElementById('posts-calc-note').textContent = `Auto: ${c}×${h}'×4 sides×0.5' wide = ${postSF} SF · Rate: $1.39/SF`;
   calc();
 }
 
@@ -648,11 +721,11 @@ function renderSections() {
       const perim = deckPerim(s);
       const netRail = Math.max(0, perim - (perim>0 ? myDed : 0));
 
-      html += `<div class="measure-card" style="margin:6px 12px;padding:12px">
+      html += `<div class="measure-card" data-sect-card="${s.id}" style="margin:6px 12px;padding:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px">
           <div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px">${isFirst?'🏠 Top Deck':'📐 Deck Section'}</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="sf-inline">${sf?sf+' SF':''}</span>
+            <span class="sf-inline" data-sf-inline>${sf?sf+' SF':''}</span>
             <span class="sf-inline" id="sect-rail-${s.id}">${netRail} LF</span>
             ${removable?`<button class="remove-btn" onclick="removeSect(${s.id})">✕</button>`:''}
           </div>
@@ -664,13 +737,8 @@ function renderSections() {
           <label>L</label><input type="number" data-sid="${s.id}" data-field="l" value="${l||''}" placeholder="L" oninput="sectInput(${s.id},'l',this.value)" style="width:70px;min-width:70px">
           <span style="font-size:12px">×</span>
           <label>W</label><input type="number" data-sid="${s.id}" data-field="w" value="${w||''}" placeholder="W" oninput="sectInput(${s.id},'w',this.value)" style="width:70px;min-width:70px">
-          <div class="unit">ft → ${sf} SF</div>
+          <div class="unit">ft → <span data-sf-out>${sf}</span> SF</div>
         </div>
-        <div class="coat-toggle" style="margin:4px 0 10px">
-          <div class="toggle${s.coat2?' on':''}" onclick="toggleSectCoat(${s.id})"><div class="knob"></div></div>
-          <span style="font-size:12px;color:var(--text-light)">2nd coat (×0.85 labor)</span>
-        </div>
-
         <div class="q-label" style="font-size:12px">Railing sides <span style="font-weight:400;color:var(--text-light)">(tap to toggle)</span></div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">`;
       [{key:'top',label:isFirst?'🏠 House':'Back',dim:w},{key:'bottom',label:'Front',dim:w},{key:'left',label:'Left',dim:l},{key:'right',label:'Right',dim:l}].forEach(sd => {
@@ -680,20 +748,21 @@ function renderSections() {
       html += `</div>`;
       if (myDed > 0 && perim > 0) html += `<div class="calc-note">${perim}' − ${myDed}' stair opening = ${netRail}' rail</div>`;
       else if (perim > 0) html += `<div class="calc-note">${perim}' railing</div>`;
-      html += `<div class="calc-note" style="margin-top:2px">Floor: $${Math.round(sf*RATES.floor*(1+(s.coat2?0.85:0)))} · Rail: $<span id="sect-rcost-${s.id}">0</span></div>`;
+      html += `<div class="calc-note" style="margin-top:2px">Floor: $${Math.round(sf*RATES.floor*(1+(state.coat2?0.85:0)))} · Rail: $<span id="sect-rcost-${s.id}">0</span></div>`;
       html += `</div>`;
     }
 
     else if (s.type === 'staircase') {
       const stairSF = Math.round((s.steps||0) * 2 * ((s.widthIn||36)/12));
       const mult = s.railSides==='both'?2 : s.railSides==='one'?1 : 0;
-      const railLf = Math.round((s.railLen||0)*mult);
-      html += `<div class="measure-card" style="margin:6px 12px;padding:12px">
+      const lenPerSide = (s.railLen && s.railLen > 0) ? s.railLen : (s.steps||0);
+      const railLf = Math.round(lenPerSide * mult);
+      html += `<div class="measure-card" data-sect-card="${s.id}" style="margin:6px 12px;padding:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px">
           <div style="font-size:14px;font-weight:700">🪜 Staircase</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="sf-inline">${stairSF} SF</span>
-            <span class="sf-inline">${railLf} LF</span>
+            <span class="sf-inline" data-sf-inline>${stairSF} SF</span>
+            <span class="sf-inline" data-rail-lf-inline>${railLf} LF</span>
             <button class="remove-btn" onclick="removeSect(${s.id})">✕</button>
           </div>
         </div>
@@ -705,7 +774,7 @@ function renderSections() {
         <div class="input-row">
           <label style="min-width:55px">Width</label>
           <input type="number" data-sid="${s.id}" data-field="widthIn" value="${s.widthIn||36}" oninput="sectInput(${s.id},'widthIn',this.value);sectInput(${s.id},'openingFt',Math.round(this.value/12*10)/10)" style="width:70px;min-width:70px">
-          <div class="unit">in → ${((s.widthIn||36)/12).toFixed(1)}' opening</div>
+          <div class="unit">in → <span data-opening-out>${((s.widthIn||36)/12).toFixed(1)}</span>' opening</div>
         </div>
         <div class="calc-note">Surface: ${stairSF} SF @ $${RATES.stair}/SF = $${Math.round(stairSF*RATES.stair)}</div>
 
@@ -715,8 +784,8 @@ function renderSections() {
         </div>
         <div class="input-row">
           <label style="min-width:55px">Rail len</label>
-          <input type="number" data-sid="${s.id}" data-field="railLen" value="${s.railLen||''}" oninput="sectInput(${s.id},'railLen',this.value)" style="width:70px;min-width:70px">
-          <div class="unit">ft/side <span style="font-size:10px;color:var(--text-light)">(≈ # steps)</span></div>
+          <input type="number" data-sid="${s.id}" data-field="railLen" value="${s.railLen||''}" placeholder="auto" oninput="sectInput(${s.id},'railLen',this.value)" style="width:70px;min-width:70px">
+          <div class="unit">ft/side <span style="font-size:10px;color:var(--text-light)">· auto-fills from ${s.steps||0} steps (blank = auto)</span></div>
         </div>
       </div>`;
     }
@@ -725,12 +794,12 @@ function renderSections() {
       const sf = (s.l||4)*(s.w||4);
       const perim = 2*((s.l||4)+(s.w||4));
       const railLf = Math.round(perim*((s.sides!==undefined?s.sides:2)/4));
-      html += `<div class="measure-card" style="margin:6px 12px;padding:12px">
+      html += `<div class="measure-card" data-sect-card="${s.id}" style="margin:6px 12px;padding:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px">
           <div style="font-size:14px;font-weight:700">⬜ Landing</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="sf-inline">${sf} SF</span>
-            <span class="sf-inline">${railLf} LF</span>
+            <span class="sf-inline" data-sf-inline>${sf} SF</span>
+            <span class="sf-inline" data-rail-lf-inline>${railLf} LF</span>
             <button class="remove-btn" onclick="removeSect(${s.id})">✕</button>
           </div>
         </div>
@@ -740,11 +809,7 @@ function renderSections() {
           <input type="number" data-sid="${s.id}" data-field="l" value="${s.l||4}" oninput="sectInput(${s.id},'l',this.value)" style="width:70px;min-width:70px">
           <span style="font-size:12px">×</span>
           <input type="number" data-sid="${s.id}" data-field="w" value="${s.w||4}" oninput="sectInput(${s.id},'w',this.value)" style="width:70px;min-width:70px">
-          <div class="unit">ft → ${sf} SF</div>
-        </div>
-        <div class="coat-toggle" style="margin:4px 0 8px">
-          <div class="toggle${s.coat2?' on':''}" onclick="toggleSectCoat(${s.id})"><div class="knob"></div></div>
-          <span style="font-size:12px;color:var(--text-light)">2nd coat</span>
+          <div class="unit">ft → <span data-sf-out>${sf}</span> SF</div>
         </div>
         <div class="input-row">
           <label>Rail sides</label>
@@ -755,11 +820,11 @@ function renderSections() {
     }
 
     else if (s.type === 'custom') {
-      html += `<div class="measure-card" style="margin:6px 12px;padding:12px">
+      html += `<div class="measure-card" data-sect-card="${s.id}" style="margin:6px 12px;padding:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px">
           <div style="font-size:14px;font-weight:700">📏 Extra Rails</div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="sf-inline">${s.lf||0} LF</span>
+            <span class="sf-inline" data-sf-inline>${s.lf||0} LF</span>
             <button class="remove-btn" onclick="removeSect(${s.id})">✕</button>
           </div>
         </div>
@@ -791,8 +856,8 @@ function addSect(type) {
   const id = state.nextId++;
   let s;
   if (type === 'staircase') s = { id, type:'staircase', steps:0, widthIn:36, openingFt:3, railSides:'both', railLen:0 };
-  else if (type === 'landing') s = { id, type:'landing', l:4, w:4, coat2:false, sides:2 };
-  else if (type === 'deck') s = { id, type:'deck', l:0, w:0, coat2:false, sides:{top:false,bottom:true,left:true,right:true} };
+  else if (type === 'landing') s = { id, type:'landing', l:4, w:4, sides:2 };
+  else if (type === 'deck') s = { id, type:'deck', l:0, w:0, sides:{top:false,bottom:true,left:true,right:true} };
   else if (type === 'custom') s = { id, type:'custom', lf:0 };
   state.sections.push(s);
   renderSections();
@@ -807,7 +872,43 @@ function sectInput(id, field, value) {
   const s = state.sections.find(x => x.id === id);
   if (!s) return;
   s[field] = parseFloat(value) || 0;
-  renderSections();
+  // Update derived previews without tearing down inputs — prevents caret jump & reversed-typing bug
+  updateSectionPreviews();
+  calc();
+}
+
+// Refresh SF/perimeter previews inside existing section cards without innerHTML-rebuild
+function updateSectionPreviews() {
+  state.sections.forEach(s => {
+    const card = document.querySelector(`[data-sect-card="${s.id}"]`);
+    if (!card) return;
+    const sfInline = card.querySelector('[data-sf-inline]');
+    const sfOut = card.querySelector('[data-sf-out]');
+    const railInline = card.querySelector('[data-rail-lf-inline]');
+    if (s.type === 'deck') {
+      const sf = (s.l||0)*(s.w||0);
+      if (sfOut) sfOut.textContent = sf;
+      if (sfInline) sfInline.textContent = sf ? sf + ' SF' : '';
+    } else if (s.type === 'landing') {
+      const sf = (s.l||4)*(s.w||4);
+      const perim = 2*((s.l||4)+(s.w||4));
+      const railLf = Math.round(perim*((s.sides!==undefined?s.sides:2)/4));
+      if (sfOut) sfOut.textContent = sf;
+      if (sfInline) sfInline.textContent = sf + ' SF';
+      if (railInline) railInline.textContent = railLf + ' LF';
+    } else if (s.type === 'staircase') {
+      const stairSF = Math.round((s.steps||0) * 2 * ((s.widthIn||36)/12));
+      const mult = s.railSides==='both'?2 : s.railSides==='one'?1 : 0;
+      const lenPerSide = (s.railLen && s.railLen > 0) ? s.railLen : (s.steps||0);
+      const railLf = Math.round(lenPerSide * mult);
+      if (sfInline) sfInline.textContent = stairSF + ' SF';
+      if (railInline) railInline.textContent = railLf + ' LF';
+      const openingEl = card.querySelector('[data-opening-out]');
+      if (openingEl) openingEl.textContent = ((s.widthIn||36)/12).toFixed(1);
+    } else if (s.type === 'custom') {
+      if (sfInline) sfInline.textContent = (s.lf||0) + ' LF';
+    }
+  });
 }
 
 function toggleSide(id, side) {
@@ -818,10 +919,6 @@ function toggleSide(id, side) {
   }
 }
 
-function toggleSectCoat(id) {
-  const s = state.sections.find(x => x.id === id);
-  if (s) { s.coat2 = !s.coat2; renderSections(); }
-}
 
 function setStairSides(id, value) {
   const s = state.sections.find(x => x.id === id);
@@ -848,7 +945,7 @@ function calc() {
     if (s.type === 'deck') {
       const sf = (s.l||0)*(s.w||0);
       let floorCost = sf * RATES.floor;
-      if (s.coat2) floorCost += sf * RATES.floor * 0.85;
+      if (state.coat2) floorCost += sf * RATES.floor * 0.85;
       sumFloorSF += sf; sumFloorCost += floorCost;
 
       let perim = deckPerim(s);
@@ -867,14 +964,16 @@ function calc() {
       sumStairSF += stairSF; sumStairCost += stairCost;
 
       const mult = s.railSides==='both'?2 : s.railSides==='one'?1 : 0;
-      const railLf = Math.round((s.railLen||0)*mult);
+      // Auto-derive rail length per side from step count (~1 ft/step) unless user set a manual value
+      const lenPerSide = (s.railLen && s.railLen > 0) ? s.railLen : (s.steps||0);
+      const railLf = Math.round(lenPerSide * mult);
       const rCost = railLf * railRate;
       sumRailLF += railLf; sumRailCost += rCost;
     }
     else if (s.type === 'landing') {
       const sf = (s.l||4)*(s.w||4);
       let floorCost = sf * RATES.floor;
-      if (s.coat2) floorCost += sf * RATES.floor * 0.85;
+      if (state.coat2) floorCost += sf * RATES.floor * 0.85;
       sumFloorSF += sf; sumFloorCost += floorCost;
 
       const perim = 2*((s.l||4)+(s.w||4));
@@ -899,19 +998,22 @@ function calc() {
   document.getElementById('sum-rail-cost').textContent = '$'+Math.round(sumRailCost);
   document.getElementById('sum-sect-cost').textContent = '$'+Math.round(total);
 
-  // Skirting
-  if (state.toggles.skirting) {
-    const sf = parseFloat(document.getElementById('skirting-sqft').value)||0;
-    const cost = sf * RATES.skirting;
-    total += cost;
-    document.getElementById('skirting-price').textContent = '$'+Math.round(cost);
-    document.getElementById('skirting-price').classList.toggle('zero', cost===0);
-    document.getElementById('skirting-sf').textContent = sf ? sf+' SF' : '';
-  } else {
-    document.getElementById('skirting-price').textContent = '$0';
-    document.getElementById('skirting-price').classList.add('zero');
-    document.getElementById('skirting-sf').textContent = '';
-  }
+  // Lattice / Skirting / Posts — each billed separately at skirting rate
+  ['lattice','skirting','posts'].forEach(key => {
+    const priceEl = document.getElementById(key+'-price');
+    const sfEl = document.getElementById(key+'-sf');
+    const sqftEl = document.getElementById(key+'-sqft');
+    if (state.toggles[key]) {
+      const sf = sqftEl ? (parseFloat(sqftEl.value)||0) : 0;
+      const cost = sf * RATES.skirting;
+      total += cost;
+      if (priceEl){ priceEl.textContent = '$'+Math.round(cost); priceEl.classList.toggle('zero', cost===0); }
+      if (sfEl) sfEl.textContent = sf ? sf+' SF' : '';
+    } else {
+      if (priceEl){ priceEl.textContent = '$0'; priceEl.classList.add('zero'); }
+      if (sfEl) sfEl.textContent = '';
+    }
+  });
 
   // Underside — auto-fill when toggled on
   if (state.toggles.underside) {
