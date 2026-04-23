@@ -1899,6 +1899,117 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .toast.show { opacity: 1; }
 
+/* ── MARK-FINISHED FAB (sibling of Daily Update) ── */
+.mark-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 88px;                /* 16px base + 56px daily-fab + 16px gap */
+  z-index: 90;
+}
+.mark-fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r);
+  background: var(--orange);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--fab-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: inherit;
+  transition: transform 0.08s, box-shadow 0.08s, background 0.2s;
+}
+.mark-fab-btn svg {
+  width: 26px;
+  height: 26px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mark-fab-btn:active {
+  transform: translateY(4px);
+  box-shadow: var(--fab-shadow-pressed);
+}
+.mark-fab-btn.done {
+  background: var(--navy);
+}
+
+/* ── MARK-FINISHED CONFIRM PANEL (bottom-sheet) ── */
+.mf-warning {
+  padding: 20px 20px 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.mf-warning strong {
+  color: var(--orange-deep);
+  font-weight: 700;
+}
+.mf-standard {
+  margin: 16px 20px 8px;
+  padding: 14px 16px;
+  background: var(--yellow-bg);
+  border-left: 4px solid var(--yellow);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.mf-standard-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange-deep);
+  margin-bottom: 6px;
+  display: block;
+}
+.mf-list {
+  padding: 0 20px 0 38px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--navy);
+  line-height: 1.7;
+  margin: 8px 0 16px;
+}
+.mf-list li { padding: 2px 0; }
+.mf-actions {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px 4px;
+  border-top: 1px solid var(--hairline);
+  margin-top: 8px;
+}
+.mf-btn {
+  flex: 1;
+  padding: 15px 18px;
+  border-radius: var(--r);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, color 0.15s;
+}
+.mf-btn.confirm { background: var(--orange); color: #fff; }
+.mf-btn.confirm:active { background: var(--orange-deep); transform: translateY(1px); }
+.mf-btn.cancel {
+  background: transparent;
+  color: var(--navy);
+  border: 1px solid var(--hairline);
+}
+.mf-btn.cancel:active { background: var(--surface); }
+
 /* ── ROLE-HIDDEN ELEMENTS ── */
 body.role-crew .sup-only-el { display: none !important; }
 body.role-crew .qa-btn.sup-only { display: none !important; }
@@ -2460,6 +2571,13 @@ body.role-crew .scope-item-photo-link { display: none !important; } /* hide esti
 <!-- ── FOOTER ── -->
 <div class="footer">Nash Painting · Nashville, TN<br>Powered by NashOS</div>
 
+<!-- ── MARK-FINISHED FAB (left of Daily Update) ── -->
+<div class="mark-fab">
+  <button class="mark-fab-btn" id="mark-fab" onclick="openPanel('mark-panel')" aria-label="Mark job finished">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 18 19 7"/></svg>
+  </button>
+</div>
+
 <!-- ── DAILY UPDATE FAB ── -->
 <div class="daily-fab">
   <button class="daily-fab-btn" id="daily-fab" onclick="openPanel('daily-panel')">
@@ -2670,6 +2788,34 @@ body.role-crew .scope-item-photo-link { display: none !important; } /* hide esti
   <div class="panel-body">
     <div class="li-photo-intro">📸 Estimate-phase reference photos — READ ONLY. Tap any photo to view full size.</div>
     <div id="li-photo-entries"></div>
+  </div>
+</div>
+
+<!-- ── PANEL: Mark Finished confirmation ── -->
+<div class="panel" id="mark-panel">
+  <div class="panel-header">
+    <span class="panel-title">Mark Job Finished</span>
+    <button class="panel-close" onclick="closePanel('mark-panel')">×</button>
+  </div>
+  <div class="panel-body">
+    <div class="mf-warning">
+      <strong>You're telling the office you're done.</strong>
+      The office will inspect the work and approve payment. Don't tap this unless the job is really finished.
+    </div>
+    <div class="mf-standard">
+      <span class="mf-standard-label">The standard</span>
+      The job looks good to a Nash field supervisor or the customer.
+    </div>
+    <ul class="mf-list">
+      <li>Walk every elevation / room — no misses, no touch-ups pending</li>
+      <li>Trash hauled, drop-cloths out, jobsite clean</li>
+      <li>All tools off the property</li>
+      <li>Photos uploaded from today</li>
+    </ul>
+    <div class="mf-actions">
+      <button class="mf-btn cancel" onclick="closePanel('mark-panel')">Not yet</button>
+      <button class="mf-btn confirm" onclick="confirmMarkFinished()">Yes — I'm finished</button>
+    </div>
   </div>
 </div>
 
@@ -3068,6 +3214,29 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+// ── MARK FINISHED (PRD §24.52.6 · crew-side finish declaration) ──
+const MF_KEY = 'nashos.wo-crew.markedFinished.WO-50281947';
+function confirmMarkFinished() {
+  const nowIso = new Date().toISOString();
+  try {
+    localStorage.setItem(MF_KEY, JSON.stringify({ at: nowIso, by: 'Crew · mobile' }));
+  } catch (e) { /* private browsing — OK, state stays in-memory for the session */ }
+  applyMarkedFinishedState();
+  closePanel('mark-panel');
+  showToast('Marked finished · office has been notified');
+}
+function applyMarkedFinishedState() {
+  const raw = (function(){ try { return localStorage.getItem(MF_KEY); } catch (e) { return null; } })();
+  if (!raw) return;
+  const fab = document.getElementById('mark-fab');
+  if (fab) {
+    fab.classList.add('done');
+    fab.setAttribute('aria-label', 'Job already marked finished');
+    fab.setAttribute('title', 'Marked finished — waiting on office inspection');
+  }
+}
+applyMarkedFinishedState();
 </script>
 </body>
 </html>
