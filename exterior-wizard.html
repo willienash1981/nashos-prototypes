@@ -51,8 +51,10 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 .field-row { display:flex; gap:8px; align-items:flex-end; }
 .field-row .field { flex:1; margin-bottom:0; }
 .calc-hint { font-size:11px; color:var(--green); margin-top:2px; font-weight:600; }
-.entry-card { background:var(--bg); border-radius:8px; padding:12px; margin-bottom:8px; position:relative; }
-.entry-card .del-btn { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--red); font-size:16px; cursor:pointer; padding:4px; }
+.entry-card { background:var(--bg); border-radius:8px; padding:12px 12px 12px 12px; margin-bottom:8px; position:relative; padding-right:36px; }
+.entry-card .del-btn { position:absolute; top:6px; right:6px; background:#fee2e2; border:1px solid #fca5a5; border-radius:50%; color:#b91c1c; width:26px; height:26px; font-size:14px; line-height:1; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center; z-index:2; }
+.entry-card .del-btn:hover { background:#fecaca; border-color:#f87171; }
+.entry-card .del-btn:active { transform:scale(.95); }
 .entry-price { text-align:right; font-size:13px; font-weight:700; color:var(--navy); margin-top:6px; }
 .height-btns { display:flex; gap:4px; }
 .height-btns button { flex:1; padding:6px 4px; border:1px solid var(--border); border-radius:6px; font-size:11px; font-weight:600; background:#fff; cursor:pointer; color:var(--text); transition:.15s; }
@@ -105,8 +107,8 @@ label { font-size:13px; font-weight:600; color:var(--text); display:block; margi
 .sticky-bottom .info { flex:1; }
 .sticky-bottom .sec-name { font-size:12px; color:var(--text-light); }
 .sticky-bottom .sec-price { font-size:18px; font-weight:700; color:var(--navy); }
-.sticky-bottom .save-btn { background:var(--navy); color:#fff; border:none; border-radius:var(--radius); padding:12px 24px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; }
-.sticky-bottom .save-btn:active { background:var(--navy-light); }
+.sticky-bottom .save-btn { background:#15803d; color:#fff; border:none; border-radius:var(--radius); padding:12px 22px; font-size:14px; font-weight:800; cursor:pointer; white-space:nowrap; box-shadow:0 2px 6px rgba(21,128,61,.25); }
+.sticky-bottom .save-btn:active { background:#166534; transform:scale(.97); }
 .inline-qty { width:70px !important; text-align:center; }
 .notes-field { width:100%; }
 .hidden { display:none !important; }
@@ -560,7 +562,8 @@ function renderForm(){
   const s=sections[editingIdx];
   const pm=PKG_MULTS[s.pkg],pp=PREP_MULTS[s.prep];
 
-  let h=`<div class="topbar"><a href="#" class="back" onclick="event.preventDefault();saveAndBack()">← Back</a><div class="title">${s.name||'New Section'}</div></div>`;
+  let h=`<div class="topbar"><a href="#" class="back" onclick="event.preventDefault();saveAndBack()" title="Saves & returns to the estimate">✓ Done</a><div class="title">${s.name||'New Section'}</div></div>
+  <div style="margin:8px 12px 0;padding:6px 10px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;font-size:11px;color:#065f46">Changes save automatically. Tap <strong>✓ Done</strong> or <strong>Save Section</strong> when finished.</div>`;
 
   // 1. Section Name
   h+=`<div class="card fade-in"><div class="card-title">Section Name</div>
@@ -623,7 +626,7 @@ function renderForm(){
 
   // 9. Sticky bar
   h+=`<div class="sticky-bottom"><div class="info"><div class="sec-name">${s.name||'New Section'}</div><div class="sec-price">${fmt(calcSection(s))}</div></div><button id="nightsIconBtn" onclick="toggleNights()" title="Nights / Weekends 1.5×" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 6px;border-radius:8px;transition:background .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'"><span id="nightsIcon" style="font-size:18px;line-height:1">☀️</span><span id="nightsIconLabel" style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);white-space:nowrap">NIGHTS</span></button>
-        <button class="save-btn" onclick="saveAndBack()">Save Section</button></div>`;
+        <button class="save-btn" onclick="saveAndBack()">✓ Save Section</button></div>`;
 
   fv.innerHTML=h;
   bindCalcInputs();
@@ -631,14 +634,14 @@ function renderForm(){
 
 function sidingEntryHTML(e,i,len,s){
   const price=calcSidingEntry(e,s.pkg,s.prep);
-  return `<div class="entry-card" style="padding:10px">
-    ${len>1?`<button class="del-btn" style="top:6px;right:6px" onclick="s().siding.splice(${i},1);renderForm()">✕</button>`:''}
+  return `<div class="entry-card" data-entry="siding-${i}" style="padding:10px">
+    <button class="del-btn" title="Remove this siding type" onclick="s().siding.splice(${i},1);renderForm()">✕</button>
     <div class="field-row" style="gap:6px"><div class="field" style="flex:1"><select style="padding:8px 28px 8px 8px;font-size:13px" onchange="s().siding[${i}].type=this.value;renderForm()">
         ${SIDING_TYPES.map(t=>`<option${e.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
     <div class="field" style="flex:0 0 80px"><input type="text" value="${e.sf||''}" placeholder="SF" style="font-size:13px;padding:8px" oninput="sidingSFInput(${i},this)"></div></div>
     <div class="calc-hint" id="hint-siding-${i}-sf"></div>
     <div style="display:flex;gap:6px;margin-top:6px;align-items:center"><div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().siding[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
-    <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
+    <span class="entry-price" id="price-siding-${i}" style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span></div>
     <div style="display:flex;gap:10px;margin-top:4px;align-items:center;flex-wrap:wrap">
       <label class="check-opt"><input type="checkbox" ${e.stain?'checked':''} onchange="s().siding[${i}].stain=this.checked;renderForm()"> 🪵 Stain</label>
       ${e.type==='Brick'?`<label class="check-opt"><input type="checkbox" ${e.romaBio?'checked':''} onchange="s().siding[${i}].romaBio=this.checked;renderForm()"> Roma Bio</label>`:''}
@@ -672,10 +675,10 @@ function sidingSFInput(i,el){
 
 function eavesEntryHTML(e,i,sec){
   const price=calcEavesEntry(e,sec.pkg,sec.prep);
-  return `<div class="entry-card" style="padding:10px">
-    ${sec.eaves.length>1?`<button class="del-btn" onclick="s().eaves.splice(${i},1);renderForm()">✕</button>`:''}
+  return `<div class="entry-card" data-entry="eaves-${i}" style="padding:10px">
+    <button class="del-btn" title="Remove this eaves entry" onclick="s().eaves.splice(${i},1);renderForm()">✕</button>
     <div class="field-row" style="gap:6px"><div class="height-btns" style="flex:1">${['1-Story','2-Story','3-Story+'].map(h=>`<button class="${e.height===h?'active':''}" onclick="s().eaves[${i}].height='${h}';renderForm()">${h}</button>`).join('')}</div>
-    <span style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span>
+    <span class="entry-price" id="price-eaves-${i}" style="font-weight:700;font-size:13px;color:var(--navy);white-space:nowrap">${fmt(price)}</span>
     <div class="field" style="flex:0 0 80px"><input type="text" value="${e.lf||''}" placeholder="LF" oninput="eavesLFInput(${i},this)"></div></div>
     <div style="display:flex;gap:12px;margin-top:4px;align-items:center;flex-wrap:wrap">
       <label class="check-opt"><input type="checkbox" ${e.difficult?'checked':''} onchange="s().eaves[${i}].difficult=this.checked;renderForm()"> Difficult (+50%)</label>
@@ -878,10 +881,10 @@ function autoCalcHTML(sec){
   const pwCost=Math.max(pwSF*0.15,150);
   if(!sec.pwSkip){
     h+=`<div class="auto-card"><div class="auto-title">🚿 Pressure Wash</div>
-      <div class="auto-detail">Siding: ${sec.siding.reduce((a,e)=>a+effectiveSF(e),0).toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''}
+      <div class="auto-detail" data-auto-detail="pw">Siding: ${sec.siding.reduce((a,e)=>a+effectiveSF(e),0).toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''}
        + Eaves: ${sec.eaves.reduce((a,e)=>a+e.lf,0)} LF × 3 ft = ${sec.eaves.reduce((a,e)=>a+e.lf*3,0)} SF<br>
        Total: ${pwSF.toLocaleString()} SF × $0.15 = ${fmt(pwSF*0.15)}${pwSF*0.15<150?' → $150 minimum':''}</div>
-      <div class="auto-price">${fmt(pwCost)}</div>
+      <div class="auto-price" data-auto-price="pw">${fmt(pwCost)}</div>
       <button class="skip-btn" onclick="s().pwSkip=true;renderForm()">Skip ⚠️</button></div>`;
   } else {
     h+=`<div class="auto-card warn"><div class="auto-title">⚠️ Pressure Wash — SKIPPED</div>
@@ -897,9 +900,9 @@ function autoCalcHTML(sec){
       <span>🔧 Caulking (New/Remodel)</span>
       <label style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)" ${sec.caulkingOn?'checked':''} onchange="s().caulkingOn=this.checked;renderForm()"> ${sec.caulkingOn?'On':'Off'}</label>
     </div>
-    <div class="auto-detail">Auto SF: ${autoSF.toLocaleString()}${sec.caulkingOverride!=null?' → Override: '+sec.caulkingOverride:''} × $0.50/SF</div>
+    <div class="auto-detail" data-auto-detail="caulk">Auto SF: ${autoSF.toLocaleString()}${sec.caulkingOverride!=null?' → Override: '+sec.caulkingOverride:''} × $0.50/SF</div>
     ${sec.caulkingOn?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-      <div class="auto-price" style="margin:0">${fmt(caulkCost)}</div>
+      <div class="auto-price" data-auto-price="caulk" style="margin:0">${fmt(caulkCost)}</div>
       <input class="srow-input" type="text" value="${sec.caulkingOverride!=null?sec.caulkingOverride:''}" placeholder="Override SF" style="width:80px;font-size:11px" oninput="const v=this.value;s().caulkingOverride=v===''?null:(parseInt(v)||0);updFormPrices()">
     </div>`:''}</div>`;
 
@@ -911,9 +914,9 @@ function autoCalcHTML(sec){
       <span>🎨 Exterior Primer (Full Coat)</span>
       <label style="font-size:11px;display:flex;align-items:center;gap:4px;font-weight:400"><input type="checkbox" style="width:16px;height:16px;accent-color:var(--navy)" ${sec.primerOn?'checked':''} onchange="s().primerOn=this.checked;renderForm()"> ${sec.primerOn?'On':'Off'}</label>
     </div>
-    <div class="auto-detail">Auto SF: ${autoSF.toLocaleString()}${sec.primerOverride!=null?' → Override: '+sec.primerOverride:''} × $0.75/SF</div>
+    <div class="auto-detail" data-auto-detail="primer">Auto SF: ${autoSF.toLocaleString()}${sec.primerOverride!=null?' → Override: '+sec.primerOverride:''} × $0.75/SF</div>
     ${sec.primerOn?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px">
-      <div class="auto-price" style="margin:0">${fmt(primerCost)}</div>
+      <div class="auto-price" data-auto-price="primer" style="margin:0">${fmt(primerCost)}</div>
       <input class="srow-input" type="text" value="${sec.primerOverride!=null?sec.primerOverride:''}" placeholder="Override SF" style="width:80px;font-size:11px" oninput="const v=this.value;s().primerOverride=v===''?null:(parseInt(v)||0);updFormPrices()">
     </div>`:''}</div>`;
 
@@ -932,12 +935,51 @@ function autoCalcHTML(sec){
 function s(){return sections[editingIdx]}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function updFormPrices(){
-  // Update sticky bar price
   const sec=s();
+  const pm=PKG_MULTS[sec.pkg],pp=PREP_MULTS[sec.prep];
+
+  // Per-entry siding prices + SF notes
+  sec.siding.forEach((e,i)=>{
+    const priceEl=document.getElementById('price-siding-'+i);
+    if(priceEl) priceEl.textContent=fmt(calcSidingEntry(e,sec.pkg,sec.prep));
+  });
+  sec.eaves.forEach((e,i)=>{
+    const priceEl=document.getElementById('price-eaves-'+i);
+    if(priceEl) priceEl.textContent=fmt(calcEavesEntry(e,sec.pkg,sec.prep));
+  });
+
+  // Auto-calc panel numbers (pressure wash / caulking / primer)
+  let pwSF=0; sec.siding.forEach(e=>pwSF+=effectiveSF(e));
+  pwSF+=sec.foundation||0;
+  sec.eaves.forEach(e=>pwSF+=e.lf*3);
+  const pwCost=Math.max(pwSF*0.15,150);
+  const pwPrice=document.querySelector('[data-auto-price="pw"]');
+  const pwDetail=document.querySelector('[data-auto-detail="pw"]');
+  if(pwPrice) pwPrice.textContent=fmt(pwCost);
+  if(pwDetail){
+    const totalSidSF=sec.siding.reduce((a,e)=>a+effectiveSF(e),0);
+    const totalEavesLF=sec.eaves.reduce((a,e)=>a+e.lf,0);
+    pwDetail.innerHTML=`Siding: ${totalSidSF.toLocaleString()} SF${sec.foundation?' + Foundation: '+sec.foundation+' SF':''} + Eaves: ${totalEavesLF} LF × 3 ft = ${totalEavesLF*3} SF<br>Total: ${pwSF.toLocaleString()} SF × $0.15 = ${fmt(pwSF*0.15)}${pwSF*0.15<150?' → $150 minimum':''}`;
+  }
+
+  const autoSF=getAutoCalcSF(sec);
+  const caulkSF=sec.caulkingOverride!=null?sec.caulkingOverride:autoSF;
+  const caulkCost=caulkSF*0.50*pm*pp;
+  const caulkPrice=document.querySelector('[data-auto-price="caulk"]');
+  const caulkDetail=document.querySelector('[data-auto-detail="caulk"]');
+  if(caulkPrice) caulkPrice.textContent=fmt(caulkCost);
+  if(caulkDetail) caulkDetail.textContent=`Auto SF: ${autoSF.toLocaleString()}${sec.caulkingOverride!=null?' → Override: '+sec.caulkingOverride:''} × $0.50/SF`;
+
+  const primerSF=sec.primerOverride!=null?sec.primerOverride:autoSF;
+  const primerCost=primerSF*0.75*pm*pp;
+  const primerPrice=document.querySelector('[data-auto-price="primer"]');
+  const primerDetail=document.querySelector('[data-auto-detail="primer"]');
+  if(primerPrice) primerPrice.textContent=fmt(primerCost);
+  if(primerDetail) primerDetail.textContent=`Auto SF: ${autoSF.toLocaleString()}${sec.primerOverride!=null?' → Override: '+sec.primerOverride:''} × $0.75/SF`;
+
+  // Sticky bar total
   const bar=document.querySelector('.sticky-bottom .sec-price');
-  if(bar)bar.textContent=fmt(calcSection(sec));
-  // Update entry prices
-  document.querySelectorAll('.entry-price').forEach(el=>{/* re-render handles this */});
+  if(bar) bar.textContent=fmt(calcSection(sec));
 }
 function updForm(){renderForm();}
 
