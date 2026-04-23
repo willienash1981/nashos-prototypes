@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Hub · Johnson Residence · P-2026-0142 · Nash Painting</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/dashboard.css">
+<style>
+  /* ───────── Job Hub — additions over styles/dashboard.css ed-* primitives ───────── */
+
+  /* Project identity subbar — custom, replaces standard ed-subbar */
+  .jh-subbar {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 6px 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .jh-sub-lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-orange);
+    margin-bottom: 8px;
+  }
+  .jh-customer {
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .jh-address {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ed-navy);
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .jh-address::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--ed-orange);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .jh-meta {
+    font-size: 13px;
+    color: var(--ed-meta);
+    margin-top: 12px;
+  }
+  .jh-meta strong { color: var(--ed-ink); font-weight: 600; }
+  .jh-status-tag {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-navy);
+    background: var(--ed-yellow-bg);
+    padding: 2px 8px;
+    margin-left: 4px;
+  }
+  .jh-runvalue { text-align: right; }
+  .jh-runvalue-big {
+    font-family: 'Sora', sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .jh-runvalue-sub {
+    font-size: 12px;
+    color: var(--ed-meta);
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Section eyebrow */
+  .jh-eyebrow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 48px 0 16px;
+    flex-wrap: wrap;
+  }
+  .jh-eyebrow h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .jh-eyebrow h2 .hint {
+    color: var(--ed-meta);
+    font-weight: 500;
+    margin-left: 10px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-size: 11px;
+  }
+
+  /* Contract math panel */
+  .jh-contract {
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+    padding: 24px 0 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  @media(min-width:960px) {
+    .jh-contract { grid-template-columns: 1fr 1fr; gap: 48px; }
+  }
+  .jh-contract-block .ed-cap { color: var(--ed-orange); margin-bottom: 10px; display: block; }
+  .jh-signed-meta { font-size: 13px; color: var(--ed-meta); margin-bottom: 14px; line-height: 1.5; }
+  .jh-signed-meta strong { color: var(--ed-ink); font-weight: 600; }
+  .jh-baseline-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    font-size: 13px;
+  }
+  .jh-baseline-row:last-child { border-bottom: none; }
+  .jh-baseline-row .lbl { color: var(--ed-navy); }
+  .jh-baseline-row .val {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ed-ink);
+  }
+  .jh-baseline-row.total {
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ed-ink);
+    border-bottom: none;
+  }
+  .jh-baseline-row.total .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+  }
+  .jh-baseline-row.total .val { font-size: 22px; letter-spacing: -0.02em; }
+  .jh-co-row {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .jh-co-row:last-child { border-bottom: none; }
+  .jh-co-row-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .jh-co-id {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .jh-co-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ed-ink);
+    margin: 2px 0;
+  }
+  .jh-co-meta { font-size: 12px; color: var(--ed-meta); line-height: 1.4; }
+  .jh-co-delta {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .jh-co-delta.neg { color: var(--ed-navy); }
+  .jh-co-delta.pos { color: var(--ed-orange); }
+  .jh-co-row.pending { opacity: 0.6; }
+  .jh-running-total {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 2px solid var(--ed-ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .jh-running-total .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+  }
+  .jh-running-total .val {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .jh-contract-action { margin-top: 22px; }
+
+  /* Service job blocks */
+  .jh-sjs { display: flex; flex-direction: column; }
+  .jh-sj {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    display: grid;
+    grid-template-columns: 4px 1fr auto;
+    gap: 18px;
+    align-items: start;
+  }
+  .jh-sj:last-child { border-bottom: none; }
+  .jh-sj-accent {
+    align-self: stretch;
+    background: var(--ed-orange);
+    border-radius: 2px;
+  }
+  .jh-sj.paid .jh-sj-accent { background: var(--ed-green); }
+  .jh-sj.not-released .jh-sj-accent { background: var(--ed-navy); }
+  .jh-sj-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .jh-sj-name {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .jh-sj-id {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta-soft);
+  }
+  .jh-sj-sub {
+    font-size: 13px;
+    color: var(--ed-meta);
+    margin-top: 4px;
+  }
+  .jh-sj-sub strong { color: var(--ed-ink); font-weight: 600; }
+  .jh-sj-sub .money {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Flag chip row */
+  .jh-flags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .jh-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ed-meta);
+    background: var(--ed-surface);
+    border-radius: 2px;
+  }
+  .jh-flag.on {
+    background: var(--ed-surface-dim);
+    color: var(--ed-ink);
+  }
+  .jh-flag.on::before {
+    content: '✓';
+    color: var(--ed-green);
+    font-weight: 700;
+  }
+  .jh-flag.off::before {
+    content: '—';
+    color: var(--ed-meta-soft);
+  }
+  .jh-flag strong { font-weight: 700; color: var(--ed-ink); }
+
+  /* Payment status pill */
+  .jh-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .jh-status-pill.paid-full { background: var(--ed-green-bg); color: var(--ed-green); }
+  .jh-status-pill.paid-partial { background: var(--ed-yellow-bg); color: var(--ed-yellow); }
+  .jh-status-pill.not-released { background: var(--ed-surface-dim); color: var(--ed-navy); }
+
+  /* Shared Action Component buttons */
+  .jh-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .jh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: background .15s, color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .jh-btn.primary {
+    background: var(--ed-orange);
+    color: #fff;
+  }
+  .jh-btn.primary:hover { background: var(--ed-orange-deep); }
+  .jh-btn.primary:disabled {
+    background: var(--ed-surface-dim);
+    color: var(--ed-meta-soft);
+    cursor: not-allowed;
+  }
+  .jh-btn.ghost {
+    background: transparent;
+    color: var(--ed-navy);
+    border: 1px solid var(--ed-hairline);
+  }
+  .jh-btn.ghost:hover { border-color: var(--ed-navy); background: var(--ed-surface); }
+  .jh-btn.text {
+    background: transparent;
+    color: var(--ed-navy);
+    padding: 10px 6px;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .jh-btn.text:hover { color: var(--ed-orange); }
+  .jh-btn.danger {
+    background: transparent;
+    color: var(--ed-red);
+    border: 1px solid var(--ed-hairline);
+  }
+  .jh-btn.danger:hover { border-color: var(--ed-red); background: var(--ed-red-bg); }
+
+  .jh-sj-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    min-width: 140px;
+  }
+  .jh-sj-view {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-navy);
+    text-decoration: none;
+  }
+  .jh-sj-view:hover { color: var(--ed-orange); }
+
+  /* Line item assignment table */
+  .jh-filter-row {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 12px;
+    flex-wrap: wrap;
+  }
+  .jh-filter-chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--ed-hairline);
+    background: var(--ed-paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    cursor: pointer;
+  }
+  .jh-filter-chip:hover { color: var(--ed-ink); border-color: var(--ed-navy); }
+  .jh-filter-chip.on {
+    background: var(--ed-ink);
+    color: var(--ed-paper);
+    border-color: var(--ed-ink);
+  }
+
+  .jh-litable { width: 100%; border-collapse: collapse; }
+  .jh-litable thead th {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    text-align: left;
+    background: var(--ed-surface);
+  }
+  .jh-litable thead th.num { text-align: right; }
+  .jh-litable td {
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    font-size: 13px;
+    color: var(--ed-ink);
+    vertical-align: middle;
+  }
+  .jh-litable td.num {
+    text-align: right;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .jh-litable .source-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .jh-litable .source-chip.baseline { background: var(--ed-surface-dim); color: var(--ed-navy); }
+  .jh-litable .source-chip.co { background: var(--ed-orange-tint); color: var(--ed-orange-deep); }
+  .jh-litable .source-chip.co-pending { background: var(--ed-yellow-bg); color: var(--ed-yellow); }
+  .jh-litable tr.removed td {
+    color: var(--ed-meta-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--ed-meta);
+  }
+  .jh-litable tr.removed td.num { color: var(--ed-navy); text-decoration: none; font-weight: 700; }
+  .jh-litable tr.pending td { opacity: 0.65; }
+  .jh-litable .pos { color: var(--ed-orange); }
+  .jh-litable .note { font-size: 11px; color: var(--ed-meta); font-style: italic; }
+
+  /* CO details collapsibles */
+  .jh-co-detail {
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .jh-co-detail summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    cursor: pointer;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+  .jh-co-detail summary::-webkit-details-marker { display: none; }
+  .jh-co-detail summary::before {
+    content: '+';
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ed-orange);
+    margin-right: 10px;
+    width: 16px;
+    display: inline-block;
+  }
+  .jh-co-detail[open] summary::before { content: '−'; }
+  .jh-co-detail-body {
+    padding: 0 0 24px 26px;
+    color: var(--ed-navy);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .jh-co-detail-body .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .jh-co-detail-body .row:last-child { border-bottom: none; }
+  .jh-co-detail-body .row.neg .num { color: var(--ed-navy); }
+  .jh-co-detail-body .row.pos .num { color: var(--ed-orange); }
+  .jh-co-detail-body .num {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .jh-co-detail-body .approval {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--ed-surface);
+    font-size: 12px;
+    color: var(--ed-navy);
+  }
+  .jh-co-detail-body .approval strong { color: var(--ed-ink); }
+
+  /* Declined scope */
+  .jh-declined {
+    background: var(--ed-surface);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .jh-declined-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .jh-declined-item:last-child { border-bottom: none; }
+  .jh-declined-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ed-ink);
+  }
+  .jh-declined-meta {
+    font-size: 11px;
+    color: var(--ed-meta);
+    margin-top: 3px;
+  }
+  .jh-declined-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .jh-declined-price {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ed-navy);
+    font-variant-numeric: tabular-nums;
+  }
+  .jh-reason {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .jh-reason.budget { background: var(--ed-yellow-bg); color: var(--ed-yellow); }
+  .jh-reason.not-now { background: var(--ed-surface-dim); color: var(--ed-navy); }
+  .jh-reason.later { background: #E0E7FF; color: #1E40AF; }
+  .jh-reason.archived { background: var(--ed-hairline); color: var(--ed-meta); }
+  .jh-declined-actions { display: flex; gap: 4px; }
+  .jh-declined-item.archived { opacity: 0.55; }
+
+  /* Invoices */
+  .jh-inv-table { width: 100%; border-collapse: collapse; }
+  .jh-inv-table thead th {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    text-align: left;
+    background: var(--ed-surface);
+  }
+  .jh-inv-table thead th.num { text-align: right; }
+  .jh-inv-table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    font-size: 13px;
+  }
+  .jh-inv-table td.num {
+    text-align: right;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .jh-inv-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .jh-inv-status.paid { background: var(--ed-green-bg); color: var(--ed-green); }
+  .jh-inv-status.sent { background: var(--ed-yellow-bg); color: var(--ed-yellow); }
+  .jh-inv-remaining {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 10px 4px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .jh-inv-remaining .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+  }
+  .jh-inv-remaining .val {
+    font-family: 'Sora', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Activity log */
+  .jh-activity { display: flex; flex-direction: column; }
+  .jh-activity-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    align-items: start;
+  }
+  .jh-activity-row:last-child { border-bottom: none; }
+  .jh-activity-when {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .jh-activity-when .time { display: block; color: var(--ed-meta-soft); font-weight: 500; letter-spacing: 0.04em; margin-top: 2px; }
+  .jh-activity-type {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    background: var(--ed-surface);
+    color: var(--ed-navy);
+    margin-right: 8px;
+  }
+  .jh-activity-type.force { background: var(--ed-red-bg); color: var(--ed-red); }
+  .jh-activity-type.co { background: var(--ed-orange-tint); color: var(--ed-orange-deep); }
+  .jh-activity-type.pay { background: var(--ed-green-bg); color: var(--ed-green); }
+  .jh-activity-text { font-size: 13px; color: var(--ed-ink); line-height: 1.5; }
+  .jh-activity-user {
+    color: var(--ed-meta);
+    font-size: 11.5px;
+    margin-top: 3px;
+  }
+
+  /* QC Confirmation modal — Shared Action Component */
+  .jh-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,31,58,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+  .jh-scrim.open { display: flex; }
+  .jh-modal {
+    background: var(--ed-paper);
+    max-width: 520px;
+    width: 100%;
+    border-top: 4px solid var(--ed-orange);
+    box-shadow: 0 20px 40px rgba(11,31,58,0.12);
+    padding: 28px 28px 20px;
+  }
+  .jh-modal h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .jh-modal .sub {
+    font-size: 13px;
+    color: var(--ed-meta);
+    margin-top: 6px;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .jh-modal-field { margin-bottom: 20px; }
+  .jh-modal-field label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 6px;
+  }
+  .jh-modal-field input,
+  .jh-modal-field select,
+  .jh-modal-field textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--ed-hairline);
+    border-radius: 0;
+    padding: 8px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ed-ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .jh-modal-field input:focus,
+  .jh-modal-field select:focus,
+  .jh-modal-field textarea:focus { border-bottom-color: var(--ed-orange); }
+  .jh-modal-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M0 0h10L5 6z' fill='%230B1F3A'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 20px;
+  }
+  .jh-modal-field textarea { resize: vertical; min-height: 60px; }
+  .jh-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ed-hairline);
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .jh-subbar { grid-template-columns: 1fr; gap: 20px; padding: 6px 16px 20px; }
+    .jh-runvalue { text-align: left; }
+    .jh-runvalue-big { font-size: 34px; }
+    .jh-customer { font-size: 22px; }
+    .jh-sj { grid-template-columns: 4px 1fr; }
+    .jh-sj-right { align-items: flex-start; min-width: 0; margin-top: 10px; }
+    .jh-eyebrow { margin-top: 36px; }
+    .jh-contract { padding: 20px 0 24px; }
+    .jh-running-total .val { font-size: 24px; }
+    .jh-activity-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body class="ed-dashboard">
+
+<div class="ed-spine"></div>
+
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
+  </div>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role" href="executive-dashboard.html">CEO</a>
+    <a class="ed-role" href="cmo-dashboard.html">CMO</a>
+    <a class="ed-role" href="cfr-dashboard.html">CFO</a>
+    <a class="ed-role" href="reporting-hub.html">Reports</a>
+    <a class="ed-role" href="feedback-dashboard.html">Feedback</a>
+  </nav>
+</div>
+
+<!-- Project identity subbar -->
+<div class="jh-subbar">
+  <div>
+    <div class="jh-sub-lbl">Job Hub · Project</div>
+    <h1 class="jh-customer">Johnson Residence</h1>
+    <div class="jh-address">1847 Woodmont Blvd, Nashville TN 37215</div>
+    <div class="jh-meta">
+      Project <strong>#P-2026-0142</strong> &middot; Signed <strong>Jan 2, 2026</strong> &middot; Status <span class="jh-status-tag">In Progress</span>
+    </div>
+  </div>
+  <div class="jh-runvalue">
+    <div class="ed-cap" style="margin-bottom:10px">Current Project Value</div>
+    <div class="jh-runvalue-big">$21,777.50</div>
+    <div class="jh-runvalue-sub">Baseline $20,900.00 &nbsp;+&nbsp; 2 approved COs</div>
+  </div>
+</div>
+
+<div class="ed-shell">
+
+  <!-- ─── Row 1: Contract Math ─── -->
+  <div class="jh-eyebrow">
+    <h2>Contract Math <span class="hint">Read-only · all scope changes go through Change Orders</span></h2>
+    <a class="ed-link">+ Create Change Order</a>
+  </div>
+
+  <div class="jh-contract">
+    <!-- Baseline -->
+    <div class="jh-contract-block">
+      <span class="ed-cap">Contract Baseline</span>
+      <div class="jh-signed-meta">
+        Signed <strong>Jan 2, 2026</strong> &middot; via portal signature &middot; Sarah Johnson
+      </div>
+      <div class="jh-baseline-row"><div class="lbl">Subtotal</div><div class="val">$22,000.00</div></div>
+      <div class="jh-baseline-row"><div class="lbl">Promo — 5% Repeat Customer</div><div class="val">−$1,100.00</div></div>
+      <div class="jh-baseline-row"><div class="lbl">Global adjustment</div><div class="val">+0%</div></div>
+      <div class="jh-baseline-row"><div class="lbl">Extra color surcharge</div><div class="val">included</div></div>
+      <div class="jh-baseline-row total"><div class="lbl">Signed Total</div><div class="val">$20,900.00</div></div>
+    </div>
+
+    <!-- Change Orders -->
+    <div class="jh-contract-block">
+      <span class="ed-cap">Approved Change Orders</span>
+      <div class="jh-co-row">
+        <div class="jh-co-row-head">
+          <div>
+            <div class="jh-co-id">CO-EST-2026-0142-01 · Feb 15</div>
+            <div class="jh-co-title">Remove exterior shutters (reductive)</div>
+            <div class="jh-co-meta">Approved by Sarah Johnson · via text · Feb 15, 2026 10:04 AM</div>
+          </div>
+          <div class="jh-co-delta neg">−$522.50</div>
+        </div>
+      </div>
+      <div class="jh-co-row">
+        <div class="jh-co-row-head">
+          <div>
+            <div class="jh-co-id">CO-EST-2026-0142-02 · Mar 20</div>
+            <div class="jh-co-title">Upgraded shutters + deck stain (mixed)</div>
+            <div class="jh-co-meta">Approved by Sarah Johnson · portal signature · Mar 20, 2026 4:22 PM</div>
+          </div>
+          <div class="jh-co-delta pos">+$1,400.00</div>
+        </div>
+      </div>
+
+      <div class="jh-running-total">
+        <div class="lbl">Current Project Value</div>
+        <div class="val">$21,777.50</div>
+      </div>
+
+      <span class="ed-cap" style="display:block; margin-top:28px">Pending Change Orders</span>
+      <div class="jh-co-row pending">
+        <div class="jh-co-row-head">
+          <div>
+            <div class="jh-co-id">CO-EST-2026-0142-03 · Mar 22</div>
+            <div class="jh-co-title">Accent wall color change (additive)</div>
+            <div class="jh-co-meta">Awaiting customer approval · sent via portal Mar 22</div>
+          </div>
+          <div class="jh-co-delta pos">+$340.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── Row 2: Service Jobs ─── -->
+  <div class="jh-eyebrow">
+    <h2>Service Jobs <span class="hint">3 active · inline actions invoke same flow as Accounting Hub</span></h2>
+  </div>
+
+  <div class="jh-sjs">
+
+    <!-- SJ-1 Interior Painting · PAID_FULL -->
+    <div class="jh-sj paid">
+      <div class="jh-sj-accent"></div>
+      <div>
+        <div class="jh-sj-head">
+          <h3 class="jh-sj-name">Interior Painting</h3>
+          <span class="jh-sj-id">SJ-1</span>
+        </div>
+        <div class="jh-sj-sub">
+          Crew B &middot; <strong>Miguel</strong> &middot; Jan 10–24, 2026 &middot; PO <span class="money">$3,024.00</span>
+        </div>
+        <div class="jh-flags">
+          <span class="jh-flag on">crew_finished <strong>Jan 24</strong></span>
+          <span class="jh-flag on">qc_confirmed <strong>Anthony · In-person · Jan 24</strong></span>
+          <span class="jh-flag on">partial_pay <strong>Barry · Jan 25</strong></span>
+          <span class="jh-flag on">full_pay <strong>Barry · Jan 25</strong></span>
+          <span class="jh-flag on">invoice_sent <strong>INV-001 · Jan 26</strong></span>
+        </div>
+        <div class="jh-actions">
+          <!-- All flags set → no pending actions; history available via detail page -->
+          <a class="jh-btn text" href="service-job.html">View Service Job detail →</a>
+        </div>
+      </div>
+      <div class="jh-sj-right">
+        <span class="jh-status-pill paid-full">Paid Full</span>
+        <div class="ed-cap" style="font-size:10px">Released $3,024.00</div>
+      </div>
+    </div>
+
+    <!-- SJ-2 Exterior Painting · PAID_PARTIAL -->
+    <div class="jh-sj">
+      <div class="jh-sj-accent"></div>
+      <div>
+        <div class="jh-sj-head">
+          <h3 class="jh-sj-name">Exterior Painting</h3>
+          <span class="jh-sj-id">SJ-2</span>
+        </div>
+        <div class="jh-sj-sub">
+          Crew A &middot; <strong>Carlos</strong> &middot; Mar 15–30, 2026 &middot; PO <span class="money">$3,780.00</span>
+        </div>
+        <div class="jh-flags">
+          <span class="jh-flag on">crew_finished <strong>Mar 29</strong></span>
+          <span class="jh-flag off">qc_confirmed <strong>awaiting</strong></span>
+          <span class="jh-flag on">partial_pay <strong>Barry · Mar 29</strong></span>
+          <span class="jh-flag off">full_pay</span>
+          <span class="jh-flag off">invoice_sent</span>
+        </div>
+        <div class="jh-actions">
+          <button class="jh-btn primary" onclick="openQcModal('SJ-2','Exterior Painting')">Log QC Confirmation</button>
+          <button class="jh-btn ghost" disabled title="QC must be logged first">Approve Remaining 50%</button>
+          <button class="jh-btn ghost" disabled title="QC must be logged first">Send Invoice</button>
+          <button class="jh-btn danger">Revert — not done</button>
+          <a class="jh-btn text" href="service-job.html">View detail →</a>
+        </div>
+      </div>
+      <div class="jh-sj-right">
+        <span class="jh-status-pill paid-partial">Paid Partial</span>
+        <div class="ed-cap" style="font-size:10px">Released $1,890.00 · Held $1,890.00</div>
+      </div>
+    </div>
+
+    <!-- SJ-3 Deck Stain · NOT_RELEASED -->
+    <div class="jh-sj not-released">
+      <div class="jh-sj-accent"></div>
+      <div>
+        <div class="jh-sj-head">
+          <h3 class="jh-sj-name">Deck Stain</h3>
+          <span class="jh-sj-id">SJ-3</span>
+        </div>
+        <div class="jh-sj-sub">
+          Crew D &middot; <strong>James</strong> &middot; Scheduled Mar 22, 2026 &middot; PO <span class="money">$504.00</span>
+          <span class="jh-meta" style="margin-left:8px"><em>Added via CO-02</em></span>
+        </div>
+        <div class="jh-flags">
+          <span class="jh-flag off">crew_finished</span>
+          <span class="jh-flag off">qc_confirmed</span>
+          <span class="jh-flag off">partial_pay</span>
+          <span class="jh-flag off">full_pay</span>
+          <span class="jh-flag off">invoice_sent</span>
+        </div>
+        <div class="jh-actions">
+          <button class="jh-btn ghost" disabled title="Crew has not declared finished">Approve 50%</button>
+          <button class="jh-btn ghost" disabled title="Crew has not declared finished">Log QC Confirmation</button>
+          <a class="jh-btn text" href="service-job.html">View detail →</a>
+        </div>
+      </div>
+      <div class="jh-sj-right">
+        <span class="jh-status-pill not-released">Not Released</span>
+        <div class="ed-cap" style="font-size:10px">Held $504.00</div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ─── Row 3: Line Item Assignment ─── -->
+  <div class="jh-eyebrow">
+    <h2>Line Item Assignment <span class="hint">Source of truth for crew routing · frozen at approval</span></h2>
+  </div>
+
+  <div class="jh-filter-row">
+    <button class="jh-filter-chip on">All</button>
+    <button class="jh-filter-chip">Baseline</button>
+    <button class="jh-filter-chip">Approved COs</button>
+    <button class="jh-filter-chip">Pending COs</button>
+    <button class="jh-filter-chip">Unassigned</button>
+  </div>
+
+  <table class="jh-litable">
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th>Description</th>
+        <th>Service Job</th>
+        <th>Crew</th>
+        <th class="num">Price</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="source-chip baseline">Baseline</span></td>
+        <td>Interior painting — full interior</td>
+        <td>SJ-1 Interior</td>
+        <td>Crew B · Miguel</td>
+        <td class="num">$8,000.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr>
+        <td><span class="source-chip baseline">Baseline</span></td>
+        <td>Interior finish &amp; detail</td>
+        <td>SJ-1 Interior</td>
+        <td>Crew B · Miguel</td>
+        <td class="num">$400.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr>
+        <td><span class="source-chip baseline">Baseline</span></td>
+        <td>Exterior painting — body</td>
+        <td>SJ-2 Exterior</td>
+        <td>Crew A · Carlos</td>
+        <td class="num">$8,500.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr>
+        <td><span class="source-chip baseline">Baseline</span></td>
+        <td>Exterior trim</td>
+        <td>SJ-2 Exterior</td>
+        <td>Crew A · Carlos</td>
+        <td class="num">$3,050.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr class="removed">
+        <td><span class="source-chip baseline">Baseline</span></td>
+        <td>Exterior shutters</td>
+        <td>SJ-2 Exterior</td>
+        <td>Crew A · Carlos</td>
+        <td class="num">−$522.50</td>
+        <td class="note" style="text-decoration:none; color: var(--ed-navy)">Removed by CO-01</td>
+      </tr>
+      <tr>
+        <td><span class="source-chip baseline">Baseline</span></td>
+        <td>Extra color surcharge</td>
+        <td>SJ-2 Exterior</td>
+        <td>Crew A · Carlos</td>
+        <td class="num">$1,500.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr>
+        <td><span class="source-chip co">CO-02</span></td>
+        <td>Upgraded shutters — premium</td>
+        <td>SJ-2 Exterior</td>
+        <td>Crew A · Carlos</td>
+        <td class="num pos">+$600.00</td>
+        <td class="note">Added Mar 20 — frozen at full rate (no promo)</td>
+      </tr>
+      <tr>
+        <td><span class="source-chip co">CO-02</span></td>
+        <td>Deck stain (new)</td>
+        <td>SJ-3 Deck Stain</td>
+        <td>Crew D · James</td>
+        <td class="num pos">+$800.00</td>
+        <td class="note">Added Mar 20</td>
+      </tr>
+      <tr class="pending">
+        <td><span class="source-chip co-pending">CO-03 Pending</span></td>
+        <td>Accent wall color change</td>
+        <td>SJ-1 Interior</td>
+        <td>Crew B · Miguel</td>
+        <td class="num pos">+$340.00</td>
+        <td class="note">Awaiting customer approval · will route on accept</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ─── Row 4: Change Order Details ─── -->
+  <div class="jh-eyebrow">
+    <h2>Change Order Details <span class="hint">Click a CO to expand line breakdown + approval record</span></h2>
+  </div>
+
+  <details class="jh-co-detail" open>
+    <summary>
+      <div>
+        <div class="jh-co-id">CO-EST-2026-0142-01 &middot; Feb 15, 2026</div>
+        <div class="jh-co-title">Remove exterior shutters (reductive)</div>
+      </div>
+      <div class="jh-co-delta neg">−$522.50</div>
+    </summary>
+    <div class="jh-co-detail-body">
+      <div class="row neg">
+        <div>
+          <strong>Remove</strong> · Exterior shutters (baseline line)
+          <div style="font-size:11px; color:var(--ed-meta); margin-top:4px">Reductive math: −($550 × 0.95 promo × 1.00 global adj) = <strong>−$522.50</strong></div>
+        </div>
+        <div class="num">−$522.50</div>
+      </div>
+      <div class="approval">
+        <strong>Approval:</strong> Sarah Johnson · via text · Feb 15, 2026 10:04 AM CT<br>
+        <em style="color:var(--ed-meta)">"Let's skip the shutters — we don't need them this season."</em> (office-captured)<br>
+        <strong>Routing:</strong> Line removed from SJ-2 crew packet. Carlos notified Feb 15 1:22 PM.
+      </div>
+    </div>
+  </details>
+
+  <details class="jh-co-detail">
+    <summary>
+      <div>
+        <div class="jh-co-id">CO-EST-2026-0142-02 &middot; Mar 20, 2026</div>
+        <div class="jh-co-title">Upgraded shutters + deck stain (mixed)</div>
+      </div>
+      <div class="jh-co-delta pos">+$1,400.00</div>
+    </summary>
+    <div class="jh-co-detail-body">
+      <div class="row pos">
+        <div>
+          <strong>Add</strong> · Upgraded shutters (premium) → SJ-2 Exterior
+          <div style="font-size:11px; color:var(--ed-meta); margin-top:4px">Full rate · no auto-promo, no auto-modifiers</div>
+        </div>
+        <div class="num">+$600.00</div>
+      </div>
+      <div class="row pos">
+        <div>
+          <strong>Add</strong> · Deck stain → SJ-3 Deck Stain (new Service Job)
+          <div style="font-size:11px; color:var(--ed-meta); margin-top:4px">Full rate · spawned new Service Job + sub PO to Crew D</div>
+        </div>
+        <div class="num">+$800.00</div>
+      </div>
+      <div class="approval">
+        <strong>Approval:</strong> Sarah Johnson · portal signature · Mar 20, 2026 4:22 PM CT<br>
+        <strong>Routing:</strong> SJ-2 updated Mar 20. SJ-3 created Mar 20 + PO $504 issued to James (Crew D).
+      </div>
+    </div>
+  </details>
+
+  <details class="jh-co-detail">
+    <summary>
+      <div>
+        <div class="jh-co-id">CO-EST-2026-0142-03 &middot; Mar 22, 2026 &middot; <span style="color:var(--ed-yellow)">PENDING</span></div>
+        <div class="jh-co-title">Accent wall color change (additive)</div>
+      </div>
+      <div class="jh-co-delta pos">+$340.00</div>
+    </summary>
+    <div class="jh-co-detail-body">
+      <div class="row pos">
+        <div>
+          <strong>Add</strong> · Accent wall color change — dining room → SJ-1 Interior
+          <div style="font-size:11px; color:var(--ed-meta); margin-top:4px">Full rate · pending customer approval</div>
+        </div>
+        <div class="num">+$340.00</div>
+      </div>
+      <div class="approval">
+        <strong>Awaiting:</strong> Customer signature via portal — sent Mar 22, 2026 9:15 AM.<br>
+        <strong>Routing (on accept):</strong> Will add line to SJ-1 crew packet. No new Service Job needed.
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ─── Row 5: Declined Scope ─── -->
+  <div class="jh-eyebrow">
+    <h2>Declined Scope <span class="hint">From original proposal · customer didn't accept · periodic re-pings</span></h2>
+  </div>
+
+  <div class="jh-declined">
+    <div class="jh-declined-item">
+      <div>
+        <div class="jh-declined-title">Rear deck refinish — TWP sealer</div>
+        <div class="jh-declined-meta"><span class="jh-reason budget">Budget</span>Next check-in Apr 2, 2026 · Declined Dec 28</div>
+      </div>
+      <div class="jh-declined-right">
+        <span class="jh-declined-price">$1,600.00</span>
+        <div class="jh-declined-actions">
+          <button class="jh-btn ghost">Ping</button>
+          <button class="jh-btn ghost">Push +3mo</button>
+          <button class="jh-btn text">Archive</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="jh-declined-item">
+      <div>
+        <div class="jh-declined-title">Front porch columns</div>
+        <div class="jh-declined-meta"><span class="jh-reason not-now">Not Now</span>Next check-in Apr 2, 2026 · Declined Dec 28</div>
+      </div>
+      <div class="jh-declined-right">
+        <span class="jh-declined-price">$450.00</span>
+        <div class="jh-declined-actions">
+          <button class="jh-btn ghost">Ping</button>
+          <button class="jh-btn ghost">Push +3mo</button>
+          <button class="jh-btn text">Archive</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="jh-declined-item">
+      <div>
+        <div class="jh-declined-title">Shutters upgrade — front elevation</div>
+        <div class="jh-declined-meta"><span class="jh-reason later">Later Phase</span>Next check-in Jul 2, 2026 · Declined Dec 28</div>
+      </div>
+      <div class="jh-declined-right">
+        <span class="jh-declined-price">$800.00</span>
+        <div class="jh-declined-actions">
+          <button class="jh-btn ghost">Ping</button>
+          <button class="jh-btn ghost">Push +3mo</button>
+          <button class="jh-btn text">Archive</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="jh-declined-item archived">
+      <div>
+        <div class="jh-declined-title">Garage interior</div>
+        <div class="jh-declined-meta"><span class="jh-reason archived">Archived</span>Archived Feb 15, 2026 · Customer confirmed out-of-scope</div>
+      </div>
+      <div class="jh-declined-right">
+        <span class="jh-declined-price">$1,000.00</span>
+        <div class="jh-declined-actions">
+          <button class="jh-btn ghost">Revive</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── Row 6: Invoice Summary ─── -->
+  <div class="jh-eyebrow">
+    <h2>Invoice Summary <span class="hint">Invoices against this Project · scoped by Service Job completion</span></h2>
+    <a class="ed-link">Open Invoice Composer →</a>
+  </div>
+
+  <table class="jh-inv-table">
+    <thead>
+      <tr>
+        <th>Invoice</th>
+        <th>Sent</th>
+        <th>Covers</th>
+        <th class="num">Amount</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>INV-001</strong></td>
+        <td>Jan 26, 2026</td>
+        <td>SJ-1 Interior (complete)</td>
+        <td class="num">$5,200.00</td>
+        <td><span class="jh-inv-status paid">Paid Feb 2</span></td>
+        <td><a class="jh-btn text">View</a></td>
+      </tr>
+      <tr>
+        <td><strong>INV-002</strong></td>
+        <td>Mar 30, 2026</td>
+        <td>SJ-2 Exterior (partial release)</td>
+        <td class="num">$8,200.00</td>
+        <td><span class="jh-inv-status sent">Sent · not paid</span></td>
+        <td><a class="jh-btn text">View</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="jh-inv-remaining">
+    <div class="lbl">Remaining to invoice</div>
+    <div style="display:flex; gap:20px; align-items:baseline">
+      <span class="val">$8,377.50</span>
+      <button class="jh-btn primary">Compose Next Invoice</button>
+    </div>
+  </div>
+
+
+  <!-- ─── Row 7: Activity / Audit Log ─── -->
+  <div class="jh-eyebrow">
+    <h2>Activity &amp; Audit Log <span class="hint">All state transitions on this Project</span></h2>
+  </div>
+
+  <div class="jh-activity">
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Mar 30<span class="time">11:48 AM</span></div>
+      <div>
+        <div><span class="jh-activity-type pay">Invoice Sent</span><strong>INV-002</strong> for $8,200.00 — covers SJ-2 Exterior partial</div>
+        <div class="jh-activity-user">by Barry · Accounting</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Mar 29<span class="time">2:18 PM</span></div>
+      <div>
+        <div><span class="jh-activity-type pay">Partial Pay Approved</span>SJ-2 Exterior · $1,890.00 released to Crew A</div>
+        <div class="jh-activity-user">by Barry · Accounting</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Mar 29<span class="time">10:42 AM</span></div>
+      <div>
+        <div><span class="jh-activity-type">Crew Finished</span>SJ-2 Exterior · Carlos declared work complete via mobile</div>
+        <div class="jh-activity-user">by Carlos · Crew A</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Mar 22<span class="time">9:15 AM</span></div>
+      <div>
+        <div><span class="jh-activity-type co">CO Submitted</span>CO-03 Accent wall color change · +$340.00 · sent to customer for approval</div>
+        <div class="jh-activity-user">by Bill · Admin</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Mar 20<span class="time">4:22 PM</span></div>
+      <div>
+        <div><span class="jh-activity-type co">CO Approved</span>CO-02 Upgraded shutters + deck stain · net +$1,400.00 · portal signature</div>
+        <div class="jh-activity-user">Customer: Sarah Johnson</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Mar 20<span class="time">4:28 PM</span></div>
+      <div>
+        <div><span class="jh-activity-type">Service Job Created</span>SJ-3 Deck Stain · PO $504.00 issued to James (Crew D)</div>
+        <div class="jh-activity-user">by Bill · Admin</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Feb 15<span class="time">10:04 AM</span></div>
+      <div>
+        <div><span class="jh-activity-type co">CO Approved</span>CO-01 Remove exterior shutters · net −$522.50 · office-captured via text</div>
+        <div class="jh-activity-user">Customer: Sarah Johnson · logged by Bill</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Jan 26<span class="time">3:10 PM</span></div>
+      <div>
+        <div><span class="jh-activity-type pay">Invoice Sent</span><strong>INV-001</strong> for $5,200.00 — SJ-1 Interior complete</div>
+        <div class="jh-activity-user">by Barry · Accounting · Paid Feb 2</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Jan 25<span class="time">9:30 AM</span></div>
+      <div>
+        <div><span class="jh-activity-type pay">Full Pay Approved</span>SJ-1 Interior · remaining $1,512.00 released to Crew B</div>
+        <div class="jh-activity-user">by Barry · Accounting</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Jan 24<span class="time">5:14 PM</span></div>
+      <div>
+        <div><span class="jh-activity-type">QC Confirmed</span>SJ-1 Interior · Anthony · In-person · "Walls, trim, ceilings all clean. Sarah happy."</div>
+        <div class="jh-activity-user">by Anthony · Field Sup</div>
+      </div>
+    </div>
+    <div class="jh-activity-row">
+      <div class="jh-activity-when">Jan 2<span class="time">11:02 AM</span></div>
+      <div>
+        <div><span class="jh-activity-type">Contract Signed</span>Baseline $20,900.00 · portal signature · Sarah Johnson</div>
+        <div class="jh-activity-user">Customer: Sarah Johnson</div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- /ed-shell -->
+
+<footer class="ed-footer" style="margin-top:64px">
+  <span class="ed-cap" style="color:var(--ed-meta-soft)">Nash Painting · Internal Office Tool · P-2026-0142 Job Hub</span>
+</footer>
+
+
+<!-- ─── QC Confirmation Modal (Shared Action Component) ─── -->
+<div class="jh-scrim" id="qcScrim">
+  <div class="jh-modal" role="dialog" aria-labelledby="qcTitle">
+    <h3 id="qcTitle">Log QC Confirmation</h3>
+    <div class="sub" id="qcSub">Record who inspected the work, through what channel, and when. Timestamp is editable for after-hours backfill.</div>
+
+    <div class="jh-modal-field">
+      <label for="qcApprover">Approver</label>
+      <select id="qcApprover">
+        <option>Anthony — Field Sup</option>
+        <option>Tony — Field Sup</option>
+        <option>Bill — Admin (override)</option>
+        <option>Sarah Johnson — Customer</option>
+      </select>
+    </div>
+    <div class="jh-modal-field">
+      <label for="qcChannel">Channel</label>
+      <select id="qcChannel">
+        <option>Phone</option>
+        <option>Text</option>
+        <option>Basecamp</option>
+        <option>Email</option>
+        <option selected>In-person</option>
+        <option>Portal-signed</option>
+      </select>
+    </div>
+    <div class="jh-modal-field">
+      <label for="qcTimestamp">Timestamp</label>
+      <input type="datetime-local" id="qcTimestamp" value="2026-03-29T18:15">
+    </div>
+    <div class="jh-modal-field">
+      <label for="qcNote">Note (optional, encouraged)</label>
+      <textarea id="qcNote" placeholder="Any detail — spoke with, what was checked, any punch items"></textarea>
+    </div>
+
+    <div class="jh-modal-actions">
+      <button class="jh-btn ghost" onclick="closeQcModal()">Cancel</button>
+      <button class="jh-btn primary" onclick="saveQc()">Save QC Confirmation</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // Shared Action Component — QC modal plumbing
+  let qcContext = null;
+  function openQcModal(sjId, sjName) {
+    qcContext = { sjId, sjName };
+    document.getElementById('qcTitle').textContent = 'Log QC Confirmation · ' + sjName;
+    document.getElementById('qcSub').textContent = 'Service Job ' + sjId + ' — ' + sjName + '. Record who inspected and when. Timestamp is editable for after-hours backfill.';
+    document.getElementById('qcScrim').classList.add('open');
+  }
+  function closeQcModal() {
+    document.getElementById('qcScrim').classList.remove('open');
+  }
+  function saveQc() {
+    // Prototype stub — no real persistence
+    alert('[Prototype] Saved QC for ' + (qcContext ? qcContext.sjId : 'unknown') + '. In production, this would POST to /api/service-jobs/:id/qc and refresh the row.');
+    closeQcModal();
+  }
+  // Close on scrim click
+  document.getElementById('qcScrim').addEventListener('click', function(e) {
+    if (e.target === this) closeQcModal();
+  });
+  // Filter-chip toggle (visual only for prototype)
+  document.querySelectorAll('.jh-filter-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.jh-filter-chip').forEach(function(c) { c.classList.remove('on'); });
+      chip.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>
