@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accounting Hub · Nash Painting</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/dashboard.css">
+<style>
+  /* ── Accounting Hub — additions over ed-* primitives ── */
+
+  /* Subbar with cutoff countdown */
+  .ah-subbar {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 6px 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .ah-title-block .ed-cap { color: var(--ed-orange); display: block; margin-bottom: 8px; }
+  .ah-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ed-ink);
+    margin: 0;
+    line-height: 1.05;
+  }
+  .ah-title-meta { font-size: 13px; color: var(--ed-meta); margin-top: 8px; }
+  .ah-cutoff {
+    text-align: right;
+    padding: 14px 18px;
+    border-left: 4px solid var(--ed-orange);
+    background: var(--ed-orange-tint);
+    min-width: 260px;
+  }
+  .ah-cutoff .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-orange-deep);
+    margin-bottom: 6px;
+  }
+  .ah-cutoff .val {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+  }
+  .ah-cutoff .amt {
+    display: block;
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+    margin-top: 4px;
+  }
+
+  /* Filter bar */
+  .ah-filters {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px 20px 24px;
+    border-bottom: 1px solid var(--ed-hairline);
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    align-items: end;
+  }
+  .ah-filter { min-width: 140px; display: flex; flex-direction: column; gap: 4px; }
+  .ah-filter label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .ah-filter select,
+  .ah-filter input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--ed-hairline);
+    border-radius: 0;
+    padding: 6px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ed-ink);
+    outline: none;
+    transition: border-color .15s;
+    min-width: 140px;
+  }
+  .ah-filter select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M0 0h10L5 6z' fill='%230B1F3A'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    padding-right: 18px;
+    cursor: pointer;
+  }
+  .ah-filter select:focus,
+  .ah-filter input:focus { border-bottom-color: var(--ed-orange); }
+
+  .ah-week-toggle {
+    display: inline-flex;
+    border-bottom: 2px solid var(--ed-hairline);
+    padding: 4px 0;
+    gap: 18px;
+  }
+  .ah-week-btn {
+    background: none;
+    border: none;
+    padding: 4px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta-soft);
+    cursor: pointer;
+    position: relative;
+  }
+  .ah-week-btn.on {
+    color: var(--ed-ink);
+  }
+  .ah-week-btn.on::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--ed-orange);
+  }
+
+  /* Bucket heading */
+  .ah-bucket-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 48px 0 14px;
+    flex-wrap: wrap;
+  }
+  .ah-bucket-title {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .ah-bucket-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ed-orange);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .ah-bucket-title h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .ah-bucket-count {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ed-meta);
+  }
+  .ah-bucket-right {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .ah-bucket-hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ed-meta);
+    line-height: 1.5;
+    margin: 0 0 16px;
+    max-width: 720px;
+  }
+
+  /* Row — shared across buckets */
+  .ah-row {
+    display: grid;
+    grid-template-columns: 4px 1fr auto;
+    gap: 18px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    align-items: center;
+  }
+  .ah-row:last-child { border-bottom: none; }
+  .ah-row-accent {
+    align-self: stretch;
+    background: var(--ed-orange);
+    border-radius: 2px;
+  }
+  .ah-row.urgent .ah-row-accent { background: var(--ed-red); }
+  .ah-row.ready .ah-row-accent { background: var(--ed-green); }
+  .ah-row.log .ah-row-accent { background: var(--ed-navy); }
+  .ah-row-main { min-width: 0; }
+  .ah-row-project {
+    font-size: 13px;
+    color: var(--ed-meta);
+    font-weight: 500;
+  }
+  .ah-row-project strong { color: var(--ed-ink); font-weight: 600; }
+  .ah-row-project a { color: var(--ed-navy); text-decoration: underline; text-underline-offset: 2px; }
+  .ah-row-project a:hover { color: var(--ed-orange); }
+  .ah-row-sj {
+    font-family: 'Sora', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    margin: 2px 0 4px;
+  }
+  .ah-row-meta {
+    font-size: 12.5px;
+    color: var(--ed-meta);
+    line-height: 1.5;
+  }
+  .ah-row-meta .money {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .ah-row-meta .when {
+    font-weight: 600;
+    color: var(--ed-navy);
+  }
+  .ah-row-meta .afterhours {
+    color: var(--ed-orange-deep);
+    font-weight: 700;
+  }
+  .ah-row-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    min-width: 220px;
+  }
+  .ah-row-pay {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ah-row-pay small {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  /* Action buttons (Shared Action Component) */
+  .ah-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .ah-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: background .15s, color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .ah-btn.primary { background: var(--ed-orange); color: #fff; }
+  .ah-btn.primary:hover { background: var(--ed-orange-deep); }
+  .ah-btn.ghost {
+    background: transparent;
+    color: var(--ed-navy);
+    border: 1px solid var(--ed-hairline);
+  }
+  .ah-btn.ghost:hover { border-color: var(--ed-navy); background: var(--ed-surface); }
+  .ah-btn.danger {
+    background: transparent;
+    color: var(--ed-red);
+    border: 1px solid var(--ed-hairline);
+  }
+  .ah-btn.danger:hover { border-color: var(--ed-red); background: var(--ed-red-bg); }
+
+  /* QC chip — shown after QC is logged */
+  .ah-qc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--ed-green-bg);
+    color: var(--ed-green);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .ah-qc-chip::before { content: '✓'; font-weight: 700; }
+  .ah-qc-chip strong { color: var(--ed-ink); font-weight: 700; }
+
+  /* Bucket 3 — payout group */
+  .ah-payout-group {
+    padding: 20px 20px 18px;
+    margin-bottom: 12px;
+    background: var(--ed-surface);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .ah-payout-crew {
+    font-family: 'Sora', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .ah-payout-sub {
+    font-size: 12px;
+    color: var(--ed-meta);
+    margin-top: 3px;
+  }
+  .ah-payout-amt {
+    font-family: 'Sora', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    text-align: right;
+  }
+  .ah-payout-amt small {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-top: 3px;
+  }
+  .ah-payout-group + .ah-payout-lines {
+    margin-top: -12px;
+    margin-bottom: 12px;
+    padding: 4px 20px 14px 20px;
+    background: var(--ed-surface);
+  }
+  .ah-payout-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 12.5px;
+    color: var(--ed-navy);
+    border-top: 1px solid var(--ed-hairline);
+  }
+  .ah-payout-line .num {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ah-payout-cutoff {
+    margin-top: 24px;
+    padding: 16px 20px;
+    border: 1px dashed var(--ed-orange);
+    background: var(--ed-orange-tint);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .ah-payout-cutoff .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-orange-deep);
+  }
+  .ah-payout-cutoff strong {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ed-ink);
+  }
+
+  /* Force-Release Log table */
+  .ah-frlog { width: 100%; border-collapse: collapse; }
+  .ah-frlog thead th {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    text-align: left;
+    background: var(--ed-surface);
+  }
+  .ah-frlog thead th.num { text-align: right; }
+  .ah-frlog td {
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    font-size: 13px;
+    color: var(--ed-ink);
+  }
+  .ah-frlog td.num {
+    text-align: right;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .ah-frlog .when-cell {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    color: var(--ed-navy);
+    font-weight: 600;
+  }
+  .ah-frlog .trigger {
+    font-size: 11px;
+    color: var(--ed-meta);
+    font-style: italic;
+  }
+
+  /* QC modal (reused from job-hub Shared Action Component) */
+  .ah-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,31,58,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+  .ah-scrim.open { display: flex; }
+  .ah-modal {
+    background: var(--ed-paper);
+    max-width: 520px;
+    width: 100%;
+    border-top: 4px solid var(--ed-orange);
+    box-shadow: 0 20px 40px rgba(11,31,58,0.12);
+    padding: 28px 28px 20px;
+  }
+  .ah-modal h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .ah-modal .sub {
+    font-size: 13px;
+    color: var(--ed-meta);
+    margin-top: 6px;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .ah-modal-field { margin-bottom: 20px; }
+  .ah-modal-field label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 6px;
+  }
+  .ah-modal-field input,
+  .ah-modal-field select,
+  .ah-modal-field textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--ed-hairline);
+    border-radius: 0;
+    padding: 8px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ed-ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .ah-modal-field input:focus,
+  .ah-modal-field select:focus,
+  .ah-modal-field textarea:focus { border-bottom-color: var(--ed-orange); }
+  .ah-modal-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M0 0h10L5 6z' fill='%230B1F3A'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 20px;
+  }
+  .ah-modal-field textarea { resize: vertical; min-height: 60px; }
+  .ah-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ed-hairline);
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .ah-subbar { grid-template-columns: 1fr; gap: 20px; padding: 6px 16px 20px; }
+    .ah-cutoff { text-align: left; min-width: 0; }
+    .ah-title { font-size: 24px; }
+    .ah-filters { padding: 16px; gap: 16px; }
+    .ah-row { grid-template-columns: 4px 1fr; }
+    .ah-row-right { align-items: flex-start; margin-top: 12px; min-width: 0; }
+    .ah-actions { justify-content: flex-start; }
+    .ah-payout-group { grid-template-columns: 1fr; }
+    .ah-payout-amt { text-align: left; }
+  }
+</style>
+</head>
+<body class="ed-dashboard">
+
+<div class="ed-spine"></div>
+
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
+  </div>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role" href="executive-dashboard.html">CEO</a>
+    <a class="ed-role" href="cmo-dashboard.html">CMO</a>
+    <a class="ed-role active" href="cfr-dashboard.html">CFO</a>
+    <a class="ed-role" href="reporting-hub.html">Reports</a>
+    <a class="ed-role" href="feedback-dashboard.html">Feedback</a>
+  </nav>
+</div>
+
+<div class="ah-subbar">
+  <div class="ah-title-block">
+    <div class="ed-cap">Sub Payment Approvals · Barry's Workspace</div>
+    <h1 class="ah-title">Accounting Hub</h1>
+    <div class="ah-title-meta">Thursday, Apr 23, 2026 · 12:47 PM CT · <strong style="color:var(--ed-ink);font-weight:600">3 projects, 5 crews, 11 service jobs in flight</strong></div>
+  </div>
+  <div class="ah-cutoff">
+    <div class="lbl">Thursday Cutoff In</div>
+    <div class="val">1d 4h 12m</div>
+    <span class="amt">$11,450.00 queued</span>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="ah-filters">
+  <div class="ah-filter">
+    <label>Week</label>
+    <div class="ah-week-toggle">
+      <button class="ah-week-btn on">This Week</button>
+      <button class="ah-week-btn">Next Week</button>
+    </div>
+  </div>
+  <div class="ah-filter">
+    <label for="fCrew">Crew</label>
+    <select id="fCrew">
+      <option>All crews</option>
+      <option>Crew A — Carlos Méndez</option>
+      <option>Crew B — Miguel Reyes</option>
+      <option>Crew C — Daniel Park</option>
+      <option>Crew D — James Whitfield</option>
+      <option>Crew F — Liam O'Neil</option>
+    </select>
+  </div>
+  <div class="ah-filter">
+    <label for="fProject">Project</label>
+    <select id="fProject">
+      <option>All projects</option>
+      <option>Johnson Residence · P-2026-0142</option>
+      <option>Smith Residence · P-2026-0138</option>
+      <option>Chen Residence · P-2026-0141</option>
+      <option>Mills Commercial · P-2026-0129</option>
+      <option>Patel Garage · P-2026-0145</option>
+    </select>
+  </div>
+  <div class="ah-filter">
+    <label for="fAmt">Amount threshold</label>
+    <input id="fAmt" type="text" placeholder="e.g. ≥ $1,000" value="">
+  </div>
+  <div class="ah-filter" style="flex: 1 1 200px">
+    <label for="fSearch">Search</label>
+    <input id="fSearch" type="search" placeholder="Crew / Project / SJ / note">
+  </div>
+</div>
+
+<div class="ed-shell">
+
+  <!-- ─── Bucket 1 — Awaiting 50% Approval ─── -->
+  <div class="ah-bucket-head">
+    <div class="ah-bucket-title">
+      <div class="ah-bucket-num">01</div>
+      <h2>Awaiting 50% Approval</h2>
+      <span class="ah-bucket-count">3 service jobs · crew declared finished, 50% not yet released</span>
+    </div>
+    <div class="ah-bucket-right">$6,700.00 pending</div>
+  </div>
+  <p class="ah-bucket-hint">
+    Barry: verify the work actually looks finished (photos / spot-check / Anthony sign-off). If it doesn't,
+    Revert. The 50% release does not require QC — but QC is still needed before the remaining 50% or invoice.
+  </p>
+
+  <div class="ah-row urgent">
+    <div class="ah-row-accent"></div>
+    <div class="ah-row-main">
+      <div class="ah-row-project"><a href="job-hub.html">Chen Residence</a> · P-2026-0141</div>
+      <div class="ah-row-sj">SJ-2 Exterior Painting</div>
+      <div class="ah-row-meta">
+        Crew A · <strong>Carlos Méndez</strong> &nbsp;·&nbsp;
+        PO <span class="money">$5,200.00</span> &nbsp;·&nbsp;
+        Crew declared finished <span class="when">Apr 22, 6:45 PM</span> <span class="afterhours">(Mark-Finished FAB · after-hours)</span>
+      </div>
+    </div>
+    <div class="ah-row-right">
+      <div class="ah-row-pay">$2,600.00<small>50% of PO</small></div>
+      <div class="ah-actions">
+        <button class="ah-btn primary">Approve 50%</button>
+        <button class="ah-btn danger">Revert — not done</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ah-row">
+    <div class="ah-row-accent"></div>
+    <div class="ah-row-main">
+      <div class="ah-row-project"><a href="job-hub.html">Smith Residence</a> · P-2026-0138</div>
+      <div class="ah-row-sj">SJ-1 Interior Painting</div>
+      <div class="ah-row-meta">
+        Crew B · <strong>Miguel Reyes</strong> &nbsp;·&nbsp;
+        PO <span class="money">$4,800.00</span> &nbsp;·&nbsp;
+        Crew declared finished <span class="when">Apr 22, 9:30 AM</span>
+      </div>
+    </div>
+    <div class="ah-row-right">
+      <div class="ah-row-pay">$2,400.00<small>50% of PO</small></div>
+      <div class="ah-actions">
+        <button class="ah-btn primary">Approve 50%</button>
+        <button class="ah-btn danger">Revert — not done</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ah-row">
+    <div class="ah-row-accent"></div>
+    <div class="ah-row-main">
+      <div class="ah-row-project"><a href="job-hub.html">Mills Commercial</a> · P-2026-0129</div>
+      <div class="ah-row-sj">SJ-3 Carpentry Repair</div>
+      <div class="ah-row-meta">
+        Crew C · <strong>Daniel Park</strong> &nbsp;·&nbsp;
+        PO <span class="money">$3,400.00</span> &nbsp;·&nbsp;
+        Crew declared finished <span class="when">Apr 21, 3:12 PM</span>
+      </div>
+    </div>
+    <div class="ah-row-right">
+      <div class="ah-row-pay">$1,700.00<small>50% of PO</small></div>
+      <div class="ah-actions">
+        <button class="ah-btn primary">Approve 50%</button>
+        <button class="ah-btn danger">Revert — not done</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── Bucket 2 — Awaiting QC Confirmation ─── -->
+  <div class="ah-bucket-head">
+    <div class="ah-bucket-title">
+      <div class="ah-bucket-num">02</div>
+      <h2>Awaiting QC Confirmation</h2>
+      <span class="ah-bucket-count">2 service jobs · 50% may be released, remaining 50% + invoice blocked until QC logged</span>
+    </div>
+    <div class="ah-bucket-right">$3,290.00 on hold</div>
+  </div>
+  <p class="ah-bucket-hint">
+    QC is Anthony (or customer) confirming the work looks right. Log it below — the remaining 50% and
+    invoice open up inline the moment QC is saved.
+  </p>
+
+  <!-- Row with QC UNLOGGED: only Log QC button -->
+  <div class="ah-row urgent">
+    <div class="ah-row-accent"></div>
+    <div class="ah-row-main">
+      <div class="ah-row-project"><a href="job-hub.html">Johnson Residence</a> · P-2026-0142</div>
+      <div class="ah-row-sj">SJ-2 Exterior Painting</div>
+      <div class="ah-row-meta">
+        Crew A · <strong>Carlos Méndez</strong> &nbsp;·&nbsp;
+        PO <span class="money">$3,780.00</span> &nbsp;·&nbsp;
+        50% released <span class="when">Mar 29</span> &nbsp;·&nbsp;
+        QC status <strong style="color:var(--ed-red)">not logged</strong>
+      </div>
+    </div>
+    <div class="ah-row-right">
+      <div class="ah-row-pay">$1,890.00<small>remaining 50% held</small></div>
+      <div class="ah-actions">
+        <button class="ah-btn primary" onclick="openQcModal('SJ-2','Exterior Painting — Johnson')">Log QC Confirmation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row with QC LOGGED: chip + two separate actions -->
+  <div class="ah-row ready">
+    <div class="ah-row-accent"></div>
+    <div class="ah-row-main">
+      <div class="ah-row-project"><a href="job-hub.html">Patel Garage</a> · P-2026-0145</div>
+      <div class="ah-row-sj">SJ-1 Garage Interior</div>
+      <div class="ah-row-meta" style="margin-bottom: 8px">
+        Crew B · <strong>Miguel Reyes</strong> &nbsp;·&nbsp;
+        PO <span class="money">$2,800.00</span> &nbsp;·&nbsp;
+        50% released <span class="when">Apr 10</span>
+      </div>
+      <span class="ah-qc-chip"><strong>QC</strong> Anthony · Phone · Apr 18 4:30 PM · <em>"Sanjay walked through, looks good"</em></span>
+    </div>
+    <div class="ah-row-right">
+      <div class="ah-row-pay">$1,400.00<small>remaining 50% ready</small></div>
+      <div class="ah-actions">
+        <button class="ah-btn primary">Approve Remaining 50%</button>
+        <button class="ah-btn ghost">Send Invoice</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── Bucket 3 — Ready for Thursday Payout ─── -->
+  <div class="ah-bucket-head">
+    <div class="ah-bucket-title">
+      <div class="ah-bucket-num">03</div>
+      <h2>Ready for Thursday Payout</h2>
+      <span class="ah-bucket-count">informational · 5 crews · 9 line amounts queued</span>
+    </div>
+    <div class="ah-bucket-right" style="color:var(--ed-green)">$11,450.00 queued</div>
+  </div>
+  <p class="ah-bucket-hint">
+    All flags cleared, sitting in the Thursday queue. This is read-only here — corrections require a
+    revert upstream on the specific Service Job.
+  </p>
+
+  <!-- Crew A group -->
+  <div class="ah-payout-group">
+    <div>
+      <h3 class="ah-payout-crew">Crew A — Carlos Méndez</h3>
+      <div class="ah-payout-sub">2 line amounts · routing to Méndez Painting LLC (ACH)</div>
+    </div>
+    <div class="ah-payout-amt">$2,800.00<small>Thursday</small></div>
+  </div>
+  <div class="ah-payout-lines">
+    <div class="ah-payout-line"><span>Johnson Residence · SJ-2 Exterior · 50% release Mar 29</span><span class="num">$1,890.00</span></div>
+    <div class="ah-payout-line"><span>Larson Residence · SJ-1 Interior · remaining 50% Apr 17</span><span class="num">$910.00</span></div>
+  </div>
+
+  <!-- Crew B group -->
+  <div class="ah-payout-group">
+    <div>
+      <h3 class="ah-payout-crew">Crew B — Miguel Reyes</h3>
+      <div class="ah-payout-sub">3 line amounts · routing to Reyes Painting (ACH)</div>
+    </div>
+    <div class="ah-payout-amt">$3,800.00<small>Thursday</small></div>
+  </div>
+  <div class="ah-payout-lines">
+    <div class="ah-payout-line"><span>Smith Residence · SJ-1 Interior · 50% release Apr 22 (approved today)</span><span class="num">$2,400.00</span></div>
+    <div class="ah-payout-line"><span>Cole Residence · SJ-2 Trim · remaining 50% Apr 19</span><span class="num">$1,400.00</span></div>
+    <div class="ah-payout-line"><span>Ortiz Duplex · SJ-1 Interior · 50% release Apr 21</span><span class="num">—</span></div>
+  </div>
+
+  <!-- Crew C group -->
+  <div class="ah-payout-group">
+    <div>
+      <h3 class="ah-payout-crew">Crew C — Daniel Park</h3>
+      <div class="ah-payout-sub">1 line amount · routing to Park Carpentry (ACH)</div>
+    </div>
+    <div class="ah-payout-amt">$1,700.00<small>Thursday</small></div>
+  </div>
+  <div class="ah-payout-lines">
+    <div class="ah-payout-line"><span>Mills Commercial · SJ-3 Carpentry · 50% release Apr 22 (approved today)</span><span class="num">$1,700.00</span></div>
+  </div>
+
+  <!-- Crew D group -->
+  <div class="ah-payout-group">
+    <div>
+      <h3 class="ah-payout-crew">Crew D — James Whitfield</h3>
+      <div class="ah-payout-sub">2 line amounts · routing to Whitfield Decks (check)</div>
+    </div>
+    <div class="ah-payout-amt">$2,150.00<small>Thursday</small></div>
+  </div>
+  <div class="ah-payout-lines">
+    <div class="ah-payout-line"><span>Henderson Residence · SJ-2 Deck · remaining 50% Apr 18</span><span class="num">$1,400.00</span></div>
+    <div class="ah-payout-line"><span>Tate Residence · SJ-1 Pergola · 50% release Apr 20</span><span class="num">$750.00</span></div>
+  </div>
+
+  <!-- Crew F group -->
+  <div class="ah-payout-group">
+    <div>
+      <h3 class="ah-payout-crew">Crew F — Liam O'Neil</h3>
+      <div class="ah-payout-sub">1 line amount · routing to O'Neil Drywall (ACH)</div>
+    </div>
+    <div class="ah-payout-amt">$1,000.00<small>Thursday</small></div>
+  </div>
+  <div class="ah-payout-lines">
+    <div class="ah-payout-line"><span>Park Residence · SJ-4 Drywall repair · 50% release Apr 21</span><span class="num">$1,000.00</span></div>
+  </div>
+
+  <div class="ah-payout-cutoff">
+    <div>
+      <div class="lbl">Payout Cutoff</div>
+      <div style="margin-top:4px"><strong>Thursday, Apr 24 · 11:59 AM CT</strong> <span style="color:var(--ed-meta); font-size:12px">· NACHA file generates at 12:00 PM, wires leave 12:30 PM</span></div>
+    </div>
+    <button class="ah-btn ghost">Preview NACHA file</button>
+  </div>
+
+
+  <!-- ─── Force-Release Log ─── -->
+  <div class="ah-bucket-head">
+    <div class="ah-bucket-title">
+      <div class="ah-bucket-num" style="color: var(--ed-red)">04</div>
+      <h2>Force-Release Log</h2>
+      <span class="ah-bucket-count">last 30 days · auto-released by customer invoice 100% paid</span>
+    </div>
+    <div class="ah-bucket-right" style="color:var(--ed-red)">3 events · $5,150.00</div>
+  </div>
+  <p class="ah-bucket-hint">
+    Per §24.52.5, a customer paying an invoice in full force-releases any held remaining 50% on the
+    Service Jobs that invoice covers — even if QC was never logged. An audit entry is always written.
+  </p>
+
+  <table class="ah-frlog">
+    <thead>
+      <tr>
+        <th>When</th>
+        <th>Service Job</th>
+        <th>Crew</th>
+        <th>Triggered by</th>
+        <th class="num">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="when-cell">Apr 18 · 2:04 PM</td>
+        <td><strong>Wilson Residence</strong> · SJ-3 Exterior trim<br><span class="trigger">QC had not been logged — auto-released on customer invoice paid-in-full</span></td>
+        <td>Crew A · Carlos Méndez</td>
+        <td class="trigger">INV-W-2026-003 paid Apr 18</td>
+        <td class="num">$1,250.00</td>
+      </tr>
+      <tr>
+        <td class="when-cell">Apr 12 · 9:18 AM</td>
+        <td><strong>Garcia Residence</strong> · SJ-1 Interior paint<br><span class="trigger">QC had been logged · remaining 50% not yet approved when invoice paid</span></td>
+        <td>Crew B · Miguel Reyes</td>
+        <td class="trigger">INV-G-2026-002 paid Apr 12</td>
+        <td class="num">$2,100.00</td>
+      </tr>
+      <tr>
+        <td class="when-cell">Mar 28 · 4:42 PM</td>
+        <td><strong>Lee Residence</strong> · SJ-2 Trim<br><span class="trigger">QC had not been logged — auto-released on customer invoice paid-in-full</span></td>
+        <td>Crew A · Carlos Méndez</td>
+        <td class="trigger">INV-L-2026-001 paid Mar 28</td>
+        <td class="num">$1,800.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div> <!-- /ed-shell -->
+
+<footer class="ed-footer" style="margin-top:64px">
+  <span class="ed-cap" style="color:var(--ed-meta-soft)">Nash Painting · Accounting Hub · Barry Tran · Apr 23, 2026</span>
+</footer>
+
+
+<!-- QC Confirmation modal (Shared Action Component) -->
+<div class="ah-scrim" id="qcScrim">
+  <div class="ah-modal" role="dialog" aria-labelledby="qcTitle">
+    <h3 id="qcTitle">Log QC Confirmation</h3>
+    <div class="sub" id="qcSub">Record who inspected the work, through what channel, and when. Timestamp is editable for after-hours backfill.</div>
+
+    <div class="ah-modal-field">
+      <label for="qcApprover">Approver</label>
+      <select id="qcApprover">
+        <option>Anthony — Field Sup</option>
+        <option>Tony — Field Sup</option>
+        <option>Bill — Admin (override)</option>
+        <option>Customer (Sarah Johnson)</option>
+      </select>
+    </div>
+    <div class="ah-modal-field">
+      <label for="qcChannel">Channel</label>
+      <select id="qcChannel">
+        <option selected>Phone</option>
+        <option>Text</option>
+        <option>Basecamp</option>
+        <option>Email</option>
+        <option>In-person</option>
+        <option>Portal-signed</option>
+      </select>
+    </div>
+    <div class="ah-modal-field">
+      <label for="qcTimestamp">Timestamp</label>
+      <input type="datetime-local" id="qcTimestamp" value="2026-03-29T18:15">
+    </div>
+    <div class="ah-modal-field">
+      <label for="qcNote">Note (optional, encouraged)</label>
+      <textarea id="qcNote" placeholder="Any detail — spoke with, what was checked, any punch items"></textarea>
+    </div>
+
+    <div class="ah-modal-actions">
+      <button class="ah-btn ghost" onclick="closeQcModal()">Cancel</button>
+      <button class="ah-btn primary" onclick="saveQc()">Save QC Confirmation</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // Shared Action Component — QC modal plumbing (same pattern as job-hub.html)
+  let qcContext = null;
+  function openQcModal(sjId, sjName) {
+    qcContext = { sjId, sjName };
+    document.getElementById('qcTitle').textContent = 'Log QC Confirmation · ' + sjName;
+    document.getElementById('qcSub').textContent = 'Service Job ' + sjId + ' — ' + sjName + '. Record who inspected and when. Timestamp is editable for after-hours backfill.';
+    document.getElementById('qcScrim').classList.add('open');
+  }
+  function closeQcModal() {
+    document.getElementById('qcScrim').classList.remove('open');
+  }
+  function saveQc() {
+    alert('[Prototype] Saved QC for ' + (qcContext ? qcContext.sjId : 'unknown') + '. In production, this would POST to /api/service-jobs/:id/qc and transform the bucket-2 row inline.');
+    closeQcModal();
+  }
+  document.getElementById('qcScrim').addEventListener('click', function(e) {
+    if (e.target === this) closeQcModal();
+  });
+  // Week toggle (visual only for prototype)
+  document.querySelectorAll('.ah-week-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.ah-week-btn').forEach(function(b) { b.classList.remove('on'); });
+      btn.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>
