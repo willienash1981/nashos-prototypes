@@ -325,9 +325,6 @@
 
   <!-- PROPOSAL TAB -->
   <div class="page active" id="tab-proposal">
-    <div class="expiration-bar" id="expirationBar">
-      ⏳ This proposal expires <strong style="margin-left:4px;">March 15, 2026</strong> <span style="margin-left:auto;font-size:12px;opacity:0.7;">(14 days)</span>
-    </div>
     <div id="expiredNotice" style="display:none;">
       <div class="card" style="text-align:center;padding:40px 24px;">
         <div style="font-size:48px;margin-bottom:12px;">📋</div>
@@ -337,27 +334,58 @@
       </div>
     </div>
     <div id="proposalContent">
-      <!-- Proposal viewer: embed the same interactive proposal that was approved
-           on mobile. Desktop and phone users both see identical functionality;
-           desktop visuals will be refined in a later pass. -->
-      <div class="card" style="padding:0;overflow:hidden;background:#f4f1ec">
-        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <div>
-            <div class="card-title" style="margin:0">Interior &amp; Exterior Painting</div>
-            <div class="card-subtitle" style="margin-top:2px">Estimate #EST-2026-0142 · Sent Feb 18, 2026 · 1931 Warfield Dr</div>
+      <!-- LIST VIEW — all proposals for this customer -->
+      <div id="proposalListView">
+        <div class="card" onclick="openProposal('EST-2026-0142')" style="cursor:pointer">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Interior &amp; Exterior Painting</div>
+              <div class="card-subtitle">Estimate #EST-2026-0142 · Sent Feb 18, 2026 · 1931 Warfield Dr</div>
+            </div>
+            <span class="status-pill pending">⏳ Awaiting</span>
           </div>
-          <span class="status-pill pending" id="proposalStatus" style="margin-left:auto">⏳ Awaiting</span>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-light)">
+            <span>💰 <strong style="color:var(--text)">$11,200</strong> (Premium)</span>
+            <span>📅 Expires Mar 15, 2026</span>
+            <span style="margin-left:auto;color:var(--blue);font-weight:600">View proposal →</span>
+          </div>
         </div>
-        <div id="proposalFrameWrap" style="background:#e0ddd8;display:flex;justify-content:center;padding:12px 12px 0">
-          <iframe id="proposalFrame" src="proposal.html" title="Interactive proposal"
-            style="width:100%;max-width:440px;height:1600px;border:0;background:#fff;border-radius:10px 10px 0 0;box-shadow:0 2px 14px rgba(0,0,0,.08);display:block"
-            scrolling="no"
-            onload="resizeProposalFrame()"></iframe>
-        </div>
-        <div style="padding:10px 14px 14px;background:#e0ddd8;font-size:11px;color:var(--text-muted);text-align:center">
-          💡 Same proposal, same functionality as on your phone — open it on mobile for the optimized touch layout.
+        <div class="card" onclick="openProposal('EST-2025-0311')" style="cursor:pointer;opacity:.7">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Deck Staining — Back Deck</div>
+              <div class="card-subtitle">Estimate #EST-2025-0311 · Sent Sep 14, 2025 · 1931 Warfield Dr</div>
+            </div>
+            <span class="status-pill" style="background:#f1f1f1;color:#666">❌ Declined</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--text-light)">
+            <span>💰 $2,400</span>
+            <span>📅 Declined Oct 4, 2025</span>
+            <span style="margin-left:auto;color:var(--blue);font-weight:600">View proposal →</span>
+          </div>
         </div>
       </div>
+
+      <!-- DETAIL VIEW — opens when a proposal in the list is tapped -->
+      <div id="proposalDetailView" style="display:none">
+        <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <button onclick="closeProposal()" style="background:none;border:0;font-size:20px;cursor:pointer;color:var(--navy);padding:4px 8px;border-radius:6px">‹</button>
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase">All Proposals</div>
+            <div id="proposalDetailTitle" style="font-size:14px;font-weight:700;color:var(--navy)">Interior &amp; Exterior Painting</div>
+          </div>
+          <span class="status-pill pending" id="proposalStatus">⏳ Awaiting</span>
+        </div>
+        <div class="expiration-bar" id="expirationBar" style="margin:4px 0">
+          ⏳ This proposal expires <strong style="margin-left:4px;">March 15, 2026</strong> <span style="margin-left:auto;font-size:12px;opacity:0.7;">(14 days)</span>
+        </div>
+        <div id="proposalFrameWrap" style="background:#e0ddd8;display:flex;justify-content:center;padding:12px;border-radius:10px;margin-top:-8px">
+          <iframe id="proposalFrame" title="Interactive proposal"
+            style="width:100%;max-width:440px;border:0;background:#fff;border-radius:10px;box-shadow:0 2px 14px rgba(0,0,0,.08);display:block"
+            scrolling="no"></iframe>
+        </div>
+      </div>
+
       <div id="acceptedBadge" style="display:none;">
         <div class="card" style="text-align:center;background:var(--success-bg);border:2px solid var(--success);">
           <div style="font-size:32px;margin-bottom:8px;">✅</div>
@@ -643,7 +671,7 @@ function setState(state) {
       break;
     case 'onboarding':
       document.getElementById('expirationBar').style.display = 'none';
-      document.getElementById('acceptCTA').style.display = 'none';
+      (document.getElementById('acceptCTA')||{style:{}}).style.display = 'none';
       document.getElementById('acceptedBadge').style.display = 'block';
       ps.textContent = '✅ Accepted'; ps.className = 'status-pill complete';
       document.getElementById('onboardingBlock').style.display = 'block';
@@ -653,7 +681,7 @@ function setState(state) {
       break;
     case 'in-progress':
       document.getElementById('expirationBar').style.display = 'none';
-      document.getElementById('acceptCTA').style.display = 'none';
+      (document.getElementById('acceptCTA')||{style:{}}).style.display = 'none';
       document.getElementById('acceptedBadge').style.display = 'block';
       ps.textContent = '✅ Accepted'; ps.className = 'status-pill complete';
       document.getElementById('crewCard').style.display = 'block';
@@ -662,7 +690,7 @@ function setState(state) {
       break;
     case 'complete':
       document.getElementById('expirationBar').style.display = 'none';
-      document.getElementById('acceptCTA').style.display = 'none';
+      (document.getElementById('acceptCTA')||{style:{}}).style.display = 'none';
       document.getElementById('acceptedBadge').style.display = 'block';
       ps.textContent = '✅ Accepted'; ps.className = 'status-pill complete';
       pp.textContent = '✅ Complete'; pp.className = 'status-pill complete';
@@ -772,33 +800,58 @@ function showPayConfirm() {
   document.getElementById('payConfirmACH').style.display = 'block';
 }
 
-// Size the proposal iframe to its own content so the whole proposal scrolls
-// with the portal page instead of inside a nested scroller.
+// ---- Proposal list → detail navigation ----
+const PROPOSAL_META = {
+  'EST-2026-0142': {title: 'Interior & Exterior Painting', status: '⏳ Awaiting', statusClass: 'pending', src: 'proposal.html'},
+  'EST-2025-0311': {title: 'Deck Staining — Back Deck', status: '❌ Declined', statusClass: '', src: 'proposal.html'}
+};
+
+let _proposalResizePoll = null;
+
+function openProposal(id) {
+  const meta = PROPOSAL_META[id];
+  if (!meta) return;
+  document.getElementById('proposalListView').style.display = 'none';
+  document.getElementById('proposalDetailView').style.display = 'block';
+  document.getElementById('proposalDetailTitle').textContent = meta.title;
+  const statusEl = document.getElementById('proposalStatus');
+  statusEl.textContent = meta.status;
+  statusEl.className = 'status-pill ' + (meta.statusClass || '');
+  const frame = document.getElementById('proposalFrame');
+  frame.src = meta.src;
+  frame.onload = () => {
+    // Tear down any previous poll, start fresh
+    if (_proposalResizePoll) clearInterval(_proposalResizePoll);
+    let tries = 0;
+    _proposalResizePoll = setInterval(() => {
+      resizeProposalFrame();
+      if (++tries > 20) { clearInterval(_proposalResizePoll); _proposalResizePoll = null; }
+    }, 200);
+  };
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function closeProposal() {
+  document.getElementById('proposalDetailView').style.display = 'none';
+  document.getElementById('proposalListView').style.display = 'block';
+  const frame = document.getElementById('proposalFrame');
+  frame.src = 'about:blank';
+  if (_proposalResizePoll) { clearInterval(_proposalResizePoll); _proposalResizePoll = null; }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 function resizeProposalFrame() {
   const frame = document.getElementById('proposalFrame');
-  if (!frame || !frame.contentDocument) return;
+  if (!frame || !frame.contentDocument || !frame.contentDocument.body) return;
   try {
-    const h = Math.max(
-      frame.contentDocument.body.scrollHeight,
-      frame.contentDocument.documentElement.scrollHeight
-    );
-    frame.style.height = (h + 40) + 'px';
+    // Use body scrollHeight directly — proposal.html already accounts for its
+    // fixed bottom bar with padding-bottom:110px on body, so no extra buffer
+    const h = frame.contentDocument.body.scrollHeight;
+    if (h > 0) frame.style.height = h + 'px';
   } catch (e) { /* same-origin only; GitHub Pages serves both from same origin */ }
 }
 
-// Keep the iframe sized as the proposal re-renders itself (package switches, etc.)
-window.addEventListener('load', () => {
-  const frame = document.getElementById('proposalFrame');
-  if (!frame) return;
-  // Poll briefly after load — proposal.html does its own innerHTML render on script run
-  let tries = 0;
-  const poll = setInterval(() => {
-    resizeProposalFrame();
-    if (++tries > 20) clearInterval(poll);
-  }, 250);
-  // Also resize on viewport changes
-  window.addEventListener('resize', resizeProposalFrame);
-});
+window.addEventListener('resize', resizeProposalFrame);
 </script>
 </body>
 </html>
