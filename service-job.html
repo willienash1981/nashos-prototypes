@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SJ-2 Exterior Painting · Johnson Residence · Nash Painting</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/dashboard.css">
+<style>
+  /* ── Service Job detail — additions over ed-* primitives ── */
+
+  .sj-breadcrumb {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 6px 20px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .sj-breadcrumb a { color: var(--ed-navy); text-decoration: underline; text-underline-offset: 2px; }
+  .sj-breadcrumb a:hover { color: var(--ed-orange); }
+  .sj-breadcrumb .sep { color: var(--ed-meta-soft); margin: 0 6px; }
+
+  .sj-subbar {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 8px 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .sj-ey {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-orange);
+    margin-bottom: 8px;
+  }
+  .sj-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ed-ink);
+    margin: 0;
+    line-height: 1.05;
+  }
+  .sj-meta {
+    font-size: 13px;
+    color: var(--ed-meta);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+  .sj-meta strong { color: var(--ed-ink); font-weight: 600; }
+  .sj-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    background: var(--ed-yellow-bg);
+    color: var(--ed-yellow);
+    margin-left: 6px;
+  }
+
+  .sj-summary {
+    text-align: right;
+    min-width: 240px;
+  }
+  .sj-summary .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 4px;
+  }
+  .sj-summary .big {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ed-ink);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .sj-summary .sub {
+    font-size: 12px;
+    color: var(--ed-meta);
+    margin-top: 6px;
+  }
+  .sj-summary .released { color: var(--ed-green); font-weight: 700; }
+  .sj-summary .held { color: var(--ed-yellow); font-weight: 700; }
+
+  /* Status strip — five flags + inline actions */
+  .sj-strip {
+    margin-top: 28px;
+    padding: 24px 0;
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .sj-flags {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+  }
+  .sj-flag {
+    padding: 0 18px;
+    border-left: 1px solid var(--ed-hairline);
+    min-width: 0;
+  }
+  .sj-flag:first-child { border-left: none; padding-left: 0; }
+  .sj-flag-key {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .sj-flag-val {
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .sj-flag-val.off {
+    color: var(--ed-meta-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .sj-flag-val .check {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: var(--ed-green);
+    color: #fff;
+    border-radius: 50%;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 14px;
+    margin-right: 4px;
+    vertical-align: 1px;
+  }
+  .sj-flag-sub { font-size: 11px; color: var(--ed-meta); margin-top: 3px; line-height: 1.3; }
+  .sj-strip-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+  .sj-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .sj-btn.primary { background: var(--ed-orange); color: #fff; }
+  .sj-btn.primary:hover { background: var(--ed-orange-deep); }
+  .sj-btn.ghost { background: transparent; color: var(--ed-navy); border: 1px solid var(--ed-hairline); }
+  .sj-btn.ghost:hover { border-color: var(--ed-navy); background: var(--ed-surface); }
+  .sj-btn.ghost:disabled { color: var(--ed-meta-soft); cursor: not-allowed; }
+  .sj-btn.ghost:disabled:hover { border-color: var(--ed-hairline); background: transparent; }
+  .sj-btn.danger { background: transparent; color: var(--ed-red); border: 1px solid var(--ed-hairline); }
+  .sj-btn.danger:hover { border-color: var(--ed-red); background: var(--ed-red-bg); }
+
+  /* Section head */
+  .sj-sec {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 48px 0 14px;
+    flex-wrap: wrap;
+  }
+  .sj-sec h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .sj-sec .hint {
+    color: var(--ed-meta);
+    font-weight: 500;
+    margin-left: 10px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-size: 11px;
+  }
+
+  /* Budget vs actual — three columns */
+  .sj-bva {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--ed-hairline);
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  .sj-bva-cell {
+    background: var(--ed-paper);
+    padding: 22px 20px;
+    min-width: 0;
+  }
+  .sj-bva-cell .sj-ey { margin-bottom: 10px; color: var(--ed-orange); }
+  .sj-bva-cell .est,
+  .sj-bva-cell .act {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--ed-navy);
+  }
+  .sj-bva-cell .est .n,
+  .sj-bva-cell .act .n {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ed-ink);
+  }
+  .sj-bva-cell .delta {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ed-hairline);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .sj-bva-cell .delta .n {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .sj-bva-cell .delta.under { color: var(--ed-green); }
+  .sj-bva-cell .delta.under .n { color: var(--ed-green); }
+  .sj-bva-cell .delta.over { color: var(--ed-red); }
+  .sj-bva-cell .delta.over .n { color: var(--ed-red); }
+
+  .sj-bva-bar {
+    margin-top: 14px;
+    height: 4px;
+    background: var(--ed-surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .sj-bva-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--ed-orange);
+  }
+  .sj-bva-bar.green > span { background: var(--ed-green); }
+  .sj-bva-bar.red > span { background: var(--ed-red); }
+
+  /* PO detail */
+  .sj-po {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 24px 0;
+    border-top: 1px solid var(--ed-hairline);
+    border-bottom: 1px solid var(--ed-hairline);
+  }
+  @media(min-width:960px) { .sj-po { grid-template-columns: 1fr 1fr; gap: 48px; } }
+  .sj-po-block .sj-ey { color: var(--ed-orange); display: block; margin-bottom: 12px; }
+  .sj-po-block .title {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    margin-bottom: 10px;
+  }
+  .sj-po-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    font-size: 13px;
+  }
+  .sj-po-line:last-child { border-bottom: none; }
+  .sj-po-line .lbl { color: var(--ed-navy); }
+  .sj-po-line .val {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ed-ink);
+  }
+  .sj-po-total {
+    margin-top: 10px;
+    padding: 14px 0 2px;
+    border-top: 2px solid var(--ed-ink);
+    display: flex;
+    justify-content: space-between;
+  }
+  .sj-po-total .lbl {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-ink);
+  }
+  .sj-po-total .val {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ed-ink);
+  }
+  .sj-po-status {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--ed-surface);
+    font-size: 12.5px;
+    color: var(--ed-navy);
+    line-height: 1.5;
+  }
+  .sj-po-status strong { color: var(--ed-ink); font-weight: 700; }
+
+  /* Daily crew logs */
+  .sj-logs { display: flex; flex-direction: column; }
+  .sj-log-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 120px;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    align-items: start;
+  }
+  .sj-log-row:last-child { border-bottom: none; }
+  .sj-log-when {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ed-ink);
+  }
+  .sj-log-when small {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ed-meta);
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+  .sj-log-crew {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ed-meta);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .sj-log-crew strong { color: var(--ed-ink); font-weight: 600; }
+  .sj-log-body {
+    font-size: 13px;
+    color: var(--ed-ink);
+    line-height: 1.55;
+  }
+  .sj-log-hours {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: right;
+    color: var(--ed-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .sj-log-hours small {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-top: 2px;
+  }
+
+  /* Photo grid */
+  .sj-photos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+  }
+  @media(max-width:720px) { .sj-photos { grid-template-columns: repeat(2, 1fr); } }
+  .sj-photo {
+    aspect-ratio: 4/3;
+    background: var(--ed-surface);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    color: #fff;
+    cursor: pointer;
+  }
+  .sj-photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--ed-navy) 0%, var(--ed-navy-deep) 100%);
+    opacity: 0.85;
+  }
+  .sj-photo.before-t::before { background: linear-gradient(135deg, #4A5B75 0%, var(--ed-navy) 100%); }
+  .sj-photo.after-t::before { background: linear-gradient(135deg, #C86F18 0%, var(--ed-orange-deep) 100%); opacity: 0.9; }
+  .sj-photo.prog-t::before { background: linear-gradient(135deg, #415B92 0%, var(--ed-navy) 100%); }
+  .sj-photo span {
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .sj-photo .tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 3px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.9);
+    color: var(--ed-ink);
+  }
+
+  /* Line items — reuses jh-litable styles pattern */
+  .sj-litable { width: 100%; border-collapse: collapse; }
+  .sj-litable thead th {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    text-align: left;
+    background: var(--ed-surface);
+  }
+  .sj-litable thead th.num { text-align: right; }
+  .sj-litable td {
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--ed-hairline);
+    font-size: 13px;
+    color: var(--ed-ink);
+    vertical-align: middle;
+  }
+  .sj-litable td.num {
+    text-align: right;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .sj-litable .src {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .sj-litable .src.base { background: var(--ed-surface-dim); color: var(--ed-navy); }
+  .sj-litable .src.co { background: var(--ed-orange-tint); color: var(--ed-orange-deep); }
+  .sj-litable tr.rem td { color: var(--ed-meta-soft); text-decoration: line-through; }
+  .sj-litable tr.rem td.num { color: var(--ed-navy); text-decoration: none; font-weight: 700; }
+  .sj-litable .pos { color: var(--ed-orange); }
+  .sj-litable .note { font-size: 11px; color: var(--ed-meta); font-style: italic; }
+
+  /* Linked COs */
+  .sj-co-card {
+    padding: 18px 20px;
+    background: var(--ed-surface);
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+  .sj-co-card .id {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .sj-co-card .t {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ed-ink);
+    margin: 2px 0;
+  }
+  .sj-co-card .m {
+    font-size: 12px;
+    color: var(--ed-meta);
+  }
+  .sj-co-card .n {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .sj-co-card .n.neg { color: var(--ed-navy); }
+  .sj-co-card .n.pos { color: var(--ed-orange); }
+
+  /* Activity */
+  .sj-activity { display: flex; flex-direction: column; }
+  .sj-act-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    align-items: start;
+  }
+  .sj-act-row:last-child { border-bottom: none; }
+  .sj-act-when {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+  }
+  .sj-act-when .time { display: block; color: var(--ed-meta-soft); font-weight: 500; margin-top: 2px; }
+  .sj-act-type {
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    background: var(--ed-surface);
+    color: var(--ed-navy);
+    margin-right: 8px;
+  }
+  .sj-act-type.pay { background: var(--ed-green-bg); color: var(--ed-green); }
+  .sj-act-type.co { background: var(--ed-orange-tint); color: var(--ed-orange-deep); }
+  .sj-act-text { font-size: 13px; color: var(--ed-ink); line-height: 1.5; }
+  .sj-act-user { color: var(--ed-meta); font-size: 11.5px; margin-top: 3px; }
+
+  /* QC modal (shared action component) */
+  .sj-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,31,58,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+  .sj-scrim.open { display: flex; }
+  .sj-modal {
+    background: var(--ed-paper);
+    max-width: 520px;
+    width: 100%;
+    border-top: 4px solid var(--ed-orange);
+    box-shadow: 0 20px 40px rgba(11,31,58,0.12);
+    padding: 28px 28px 20px;
+  }
+  .sj-modal h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ed-ink);
+    margin: 0;
+  }
+  .sj-modal .sub {
+    font-size: 13px;
+    color: var(--ed-meta);
+    margin-top: 6px;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .sj-modal-field { margin-bottom: 20px; }
+  .sj-modal-field label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ed-meta);
+    margin-bottom: 6px;
+  }
+  .sj-modal-field input,
+  .sj-modal-field select,
+  .sj-modal-field textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--ed-hairline);
+    padding: 8px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ed-ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .sj-modal-field input:focus,
+  .sj-modal-field select:focus,
+  .sj-modal-field textarea:focus { border-bottom-color: var(--ed-orange); }
+  .sj-modal-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M0 0h10L5 6z' fill='%230B1F3A'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 20px;
+  }
+  .sj-modal-field textarea { resize: vertical; min-height: 60px; }
+  .sj-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ed-hairline);
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .sj-subbar { grid-template-columns: 1fr; gap: 20px; padding: 8px 16px 20px; }
+    .sj-summary { text-align: left; min-width: 0; }
+    .sj-title { font-size: 24px; }
+    .sj-strip { grid-template-columns: 1fr; gap: 16px; }
+    .sj-flags { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .sj-flag { border-left: none; padding-left: 0; padding-right: 0; }
+    .sj-bva { grid-template-columns: 1fr; }
+    .sj-log-row { grid-template-columns: 1fr; gap: 4px; }
+    .sj-log-hours { text-align: left; font-size: 15px; }
+    .sj-act-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body class="ed-dashboard">
+
+<div class="ed-spine"></div>
+
+<div class="ed-topbar">
+  <div class="ed-brand">
+    <div class="ed-logo">N</div>
+    <div class="ed-brandname">NASH PAINTING</div>
+  </div>
+  <nav class="ed-roles">
+    <a class="ed-role" href="dashboard.html">Ops</a>
+    <a class="ed-role" href="executive-dashboard.html">CEO</a>
+    <a class="ed-role" href="cmo-dashboard.html">CMO</a>
+    <a class="ed-role" href="cfr-dashboard.html">CFO</a>
+    <a class="ed-role" href="reporting-hub.html">Reports</a>
+    <a class="ed-role" href="feedback-dashboard.html">Feedback</a>
+  </nav>
+</div>
+
+<div class="sj-breadcrumb">
+  <a href="job-hub.html">← Johnson Residence</a>
+  <span class="sep">/</span>
+  <span>SJ-2 Exterior Painting</span>
+</div>
+
+<div class="sj-subbar">
+  <div>
+    <div class="sj-ey">Service Job · SJ-2 · Project P-2026-0142</div>
+    <h1 class="sj-title">Exterior Painting <span class="sj-status-pill">Paid Partial</span></h1>
+    <div class="sj-meta">
+      Crew A &middot; <strong>Carlos Méndez</strong> &middot; Méndez Painting LLC<br>
+      Scheduled <strong>Mar 15 – Mar 30, 2026</strong> &middot; Worked 10 days &middot; Declared finished <strong>Mar 29, 10:42 AM</strong>
+    </div>
+  </div>
+  <div class="sj-summary">
+    <div class="lbl">Sub PO</div>
+    <div class="big">$3,780.00</div>
+    <div class="sub"><span class="released">● Released $1,890.00</span> &middot; <span class="held">● Held $1,890.00</span></div>
+  </div>
+</div>
+
+<div class="ed-shell">
+
+  <!-- Status strip — five flags + inline action component -->
+  <div class="sj-strip">
+    <div class="sj-flags">
+      <div class="sj-flag">
+        <span class="sj-flag-key">Crew Finished</span>
+        <div class="sj-flag-val"><span class="check">✓</span>Mar 29</div>
+        <div class="sj-flag-sub">10:42 AM · via mobile<br>Carlos · Crew A</div>
+      </div>
+      <div class="sj-flag">
+        <span class="sj-flag-key">QC Confirmed</span>
+        <div class="sj-flag-val off">awaiting</div>
+        <div class="sj-flag-sub" style="color: var(--ed-red); font-weight: 600">Blocks remaining 50% &amp; invoice</div>
+      </div>
+      <div class="sj-flag">
+        <span class="sj-flag-key">Partial Pay</span>
+        <div class="sj-flag-val"><span class="check">✓</span>Mar 29</div>
+        <div class="sj-flag-sub">2:18 PM · Barry<br>$1,890.00 released</div>
+      </div>
+      <div class="sj-flag">
+        <span class="sj-flag-key">Full Pay</span>
+        <div class="sj-flag-val off">blocked by QC</div>
+        <div class="sj-flag-sub">$1,890.00 awaiting</div>
+      </div>
+      <div class="sj-flag">
+        <span class="sj-flag-key">Invoice Sent</span>
+        <div class="sj-flag-val off">blocked by QC</div>
+        <div class="sj-flag-sub">Will roll into next composer</div>
+      </div>
+    </div>
+    <div class="sj-strip-actions">
+      <button class="sj-btn primary" onclick="openQcModal('SJ-2','Exterior Painting')">Log QC Confirmation</button>
+      <button class="sj-btn ghost" disabled title="Log QC first">Approve Remaining 50%</button>
+      <button class="sj-btn ghost" disabled title="Log QC first">Send Invoice</button>
+      <button class="sj-btn danger">Revert — not done</button>
+    </div>
+  </div>
+
+
+  <!-- Budget vs Actual -->
+  <div class="sj-sec">
+    <h2>Budget vs Actual <span class="hint">Labor hours + materials · reporting from crew portal and supplier POs</span></h2>
+  </div>
+
+  <div class="sj-bva">
+    <div class="sj-bva-cell">
+      <span class="sj-ey">Labor Hours</span>
+      <div class="est"><span>Estimated</span><span class="n">72.0</span></div>
+      <div class="act"><span>Logged</span><span class="n">68.0</span></div>
+      <div class="delta under">
+        <span>Under by</span>
+        <span class="n">4.0 h</span>
+      </div>
+      <div class="sj-bva-bar green"><span style="width: 94%"></span></div>
+    </div>
+    <div class="sj-bva-cell">
+      <span class="sj-ey">Materials</span>
+      <div class="est"><span>Budget</span><span class="n">$840.00</span></div>
+      <div class="act"><span>Actual</span><span class="n">$912.00</span></div>
+      <div class="delta over">
+        <span>Over by</span>
+        <span class="n">$72.00</span>
+      </div>
+      <div class="sj-bva-bar red"><span style="width: 108%"></span></div>
+    </div>
+    <div class="sj-bva-cell">
+      <span class="sj-ey">Sub PO</span>
+      <div class="est"><span>Contracted</span><span class="n">$3,780.00</span></div>
+      <div class="act"><span>Released to date</span><span class="n">$1,890.00</span></div>
+      <div class="delta">
+        <span>Payment Status</span>
+        <span class="n" style="color: var(--ed-yellow); font-size: 11px; letter-spacing: 0.12em">Paid Partial</span>
+      </div>
+      <div class="sj-bva-bar"><span style="width: 50%"></span></div>
+    </div>
+  </div>
+
+
+  <!-- PO Detail -->
+  <div class="sj-sec">
+    <h2>PO Detail <span class="hint">Sub labor + materials · separate POs, one Service Job</span></h2>
+  </div>
+
+  <div class="sj-po">
+    <div class="sj-po-block">
+      <span class="sj-ey">Sub Labor PO</span>
+      <div class="title">PO-SJ2-CRW-A · Méndez Painting LLC</div>
+      <div class="sj-po-line"><span class="lbl">Exterior body prep &amp; paint (labor)</span><span class="val">$2,400.00</span></div>
+      <div class="sj-po-line"><span class="lbl">Exterior trim (labor)</span><span class="val">$930.00</span></div>
+      <div class="sj-po-line"><span class="lbl">Upgraded shutters install (labor · via CO-02)</span><span class="val">$450.00</span></div>
+      <div class="sj-po-total">
+        <div class="lbl">Sub PO Total</div>
+        <div class="val">$3,780.00</div>
+      </div>
+      <div class="sj-po-status">
+        <strong>Status:</strong> 50% released Mar 29 ($1,890). Remaining 50% held pending QC.
+      </div>
+    </div>
+
+    <div class="sj-po-block">
+      <span class="sj-ey">Materials PO</span>
+      <div class="title">PO-SJ2-MAT · Sherwin-Williams (Nashville Franklin Pike)</div>
+      <div class="sj-po-line"><span class="lbl">Emerald Exterior Acrylic Latex · 8 gal</span><span class="val">$512.00</span></div>
+      <div class="sj-po-line"><span class="lbl">Exterior primer · 3 gal</span><span class="val">$146.00</span></div>
+      <div class="sj-po-line"><span class="lbl">Brushes, rollers, tape (consumables)</span><span class="val">$84.00</span></div>
+      <div class="sj-po-line"><span class="lbl">Premium shutter trim paint (CO-02)</span><span class="val">$170.00</span></div>
+      <div class="sj-po-total">
+        <div class="lbl">Materials Total</div>
+        <div class="val">$912.00</div>
+      </div>
+      <div class="sj-po-status">
+        <strong>Status:</strong> Paid at pickup / account. <strong style="color:var(--ed-red)">Over budget by $72</strong> due to CO-02 adding premium shutter paint.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Daily crew logs -->
+  <div class="sj-sec">
+    <h2>Daily Crew Logs <span class="hint">Data from crew portal · §20</span></h2>
+    <a class="ed-link">View all 10 days →</a>
+  </div>
+
+  <div class="sj-logs">
+    <div class="sj-log-row">
+      <div class="sj-log-when">Mar 29<small>Sun</small></div>
+      <div>
+        <div class="sj-log-crew">Crew A &middot; <strong>Carlos</strong>, Luis, Oscar</div>
+        <div class="sj-log-body">
+          Finished upgraded shutters install on front elevation. Final walk-through by Carlos.
+          <strong>Declared SJ finished 10:42 AM.</strong> Photos uploaded (+4). Punch list: none.
+        </div>
+      </div>
+      <div class="sj-log-hours">8.5<small>Crew hours</small></div>
+    </div>
+    <div class="sj-log-row">
+      <div class="sj-log-when">Mar 28<small>Sat</small></div>
+      <div>
+        <div class="sj-log-crew">Crew A &middot; <strong>Carlos</strong>, Luis, Oscar</div>
+        <div class="sj-log-body">
+          Second coat on exterior trim (north + east elevations). Shutters arrived from supplier 1:30 PM, staged in garage.
+        </div>
+      </div>
+      <div class="sj-log-hours">9.0<small>Crew hours</small></div>
+    </div>
+    <div class="sj-log-row">
+      <div class="sj-log-when">Mar 27<small>Fri</small></div>
+      <div>
+        <div class="sj-log-crew">Crew A &middot; <strong>Carlos</strong>, Luis</div>
+        <div class="sj-log-body">
+          First coat on trim. Oscar out (family). Rain 11:30 AM–1:00 PM, paused coating on west elevation for 90 min.
+        </div>
+      </div>
+      <div class="sj-log-hours">6.5<small>Crew hours</small></div>
+    </div>
+    <div class="sj-log-row">
+      <div class="sj-log-when">Mar 26<small>Thu</small></div>
+      <div>
+        <div class="sj-log-crew">Crew A &middot; <strong>Carlos</strong>, Luis, Oscar</div>
+        <div class="sj-log-body">
+          Body second coat complete (all four elevations). Customer stopped by, pleased with color.
+        </div>
+      </div>
+      <div class="sj-log-hours">8.0<small>Crew hours</small></div>
+    </div>
+    <div class="sj-log-row">
+      <div class="sj-log-when">Mar 25<small>Wed</small></div>
+      <div>
+        <div class="sj-log-crew">Crew A &middot; <strong>Carlos</strong>, Luis, Oscar</div>
+        <div class="sj-log-body">
+          Body first coat — east and south elevations. Started north elevation prep.
+        </div>
+      </div>
+      <div class="sj-log-hours">8.5<small>Crew hours</small></div>
+    </div>
+  </div>
+
+
+  <!-- Photo grid -->
+  <div class="sj-sec">
+    <h2>Site Photos <span class="hint">Uploaded by crew from portal · before / progress / after</span></h2>
+    <a class="ed-link">All 24 photos →</a>
+  </div>
+
+  <div class="sj-photos">
+    <div class="sj-photo before-t"><span class="tag">Before</span><span>Mar 15 · Front elevation</span></div>
+    <div class="sj-photo before-t"><span class="tag">Before</span><span>Mar 15 · Trim condition</span></div>
+    <div class="sj-photo prog-t"><span class="tag">Progress</span><span>Mar 22 · Scraping complete</span></div>
+    <div class="sj-photo prog-t"><span class="tag">Progress</span><span>Mar 25 · Body first coat</span></div>
+    <div class="sj-photo prog-t"><span class="tag">Progress</span><span>Mar 26 · Body second coat</span></div>
+    <div class="sj-photo prog-t"><span class="tag">Progress</span><span>Mar 27 · Trim first coat</span></div>
+    <div class="sj-photo after-t"><span class="tag">After</span><span>Mar 29 · Front finished</span></div>
+    <div class="sj-photo after-t"><span class="tag">After</span><span>Mar 29 · Trim detail</span></div>
+  </div>
+
+
+  <!-- Line items on this Service Job -->
+  <div class="sj-sec">
+    <h2>Line Items on This Service Job <span class="hint">Subset of Baseline + COs that routed to SJ-2</span></h2>
+  </div>
+
+  <table class="sj-litable">
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th>Description</th>
+        <th class="num">Customer Retail</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="src base">Baseline</span></td>
+        <td>Exterior painting — body (siding, fascia, soffits)</td>
+        <td class="num">$8,500.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr>
+        <td><span class="src base">Baseline</span></td>
+        <td>Exterior trim</td>
+        <td class="num">$3,050.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr class="rem">
+        <td><span class="src base">Baseline</span></td>
+        <td>Exterior shutters</td>
+        <td class="num">−$522.50</td>
+        <td class="note" style="text-decoration:none; color:var(--ed-navy)">Removed by CO-01 · Feb 15</td>
+      </tr>
+      <tr>
+        <td><span class="src base">Baseline</span></td>
+        <td>Extra color surcharge (two accent colors)</td>
+        <td class="num">$1,500.00</td>
+        <td class="note">—</td>
+      </tr>
+      <tr>
+        <td><span class="src co">CO-02</span></td>
+        <td>Upgraded shutters — premium trim paint + install</td>
+        <td class="num pos">+$600.00</td>
+        <td class="note">Added Mar 20 · frozen at full rate (no promo)</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align:right; font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ed-ink); padding-top: 18px">Retail on SJ-2 (customer-facing)</td>
+        <td class="num" style="padding-top:18px; font-size: 16px; color: var(--ed-ink)">$13,127.50</td>
+        <td class="note" style="padding-top:18px">Sub PO of $3,780 is the labor portion of this</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- Linked change orders -->
+  <div class="sj-sec">
+    <h2>Linked Change Orders <span class="hint">COs that added or removed scope on SJ-2</span></h2>
+  </div>
+
+  <div class="sj-co-card">
+    <div>
+      <div class="id">CO-EST-2026-0142-01 · Feb 15</div>
+      <div class="t">Remove exterior shutters (reductive)</div>
+      <div class="m">Approved Sarah Johnson · via text · lines removed from SJ-2 crew packet · Carlos notified Feb 15 1:22 PM</div>
+    </div>
+    <div class="n neg">−$522.50</div>
+  </div>
+
+  <div class="sj-co-card">
+    <div>
+      <div class="id">CO-EST-2026-0142-02 · Mar 20</div>
+      <div class="t">Upgraded shutters (premium) — added to SJ-2</div>
+      <div class="m">Approved Sarah Johnson · portal signature · added +$600 to SJ-2 · deck-stain portion routed to new SJ-3</div>
+    </div>
+    <div class="n pos">+$600.00</div>
+  </div>
+
+
+  <!-- Activity log scoped to this SJ -->
+  <div class="sj-sec">
+    <h2>Activity Log <span class="hint">Scoped to SJ-2 only · full project log is on Job Hub</span></h2>
+  </div>
+
+  <div class="sj-activity">
+    <div class="sj-act-row">
+      <div class="sj-act-when">Mar 30<span class="time">11:48 AM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type pay">Invoice Sent</span><strong>INV-002</strong> covers SJ-2 Exterior partial — $8,200.00</div>
+        <div class="sj-act-user">by Barry · Accounting</div>
+      </div>
+    </div>
+    <div class="sj-act-row">
+      <div class="sj-act-when">Mar 29<span class="time">2:18 PM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type pay">Partial Pay Approved</span>$1,890.00 released to Crew A</div>
+        <div class="sj-act-user">by Barry · Accounting · <em>"Work looks done per Carlos's photos. Anthony not yet by."</em></div>
+      </div>
+    </div>
+    <div class="sj-act-row">
+      <div class="sj-act-when">Mar 29<span class="time">10:42 AM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type">Crew Finished</span>Carlos declared work complete via mobile</div>
+        <div class="sj-act-user">by Carlos · Crew A · 4 final photos uploaded</div>
+      </div>
+    </div>
+    <div class="sj-act-row">
+      <div class="sj-act-when">Mar 20<span class="time">4:28 PM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type co">CO Applied</span>CO-02 added +$600 premium shutters line to SJ-2 crew packet</div>
+        <div class="sj-act-user">Auto-routed by scope engine</div>
+      </div>
+    </div>
+    <div class="sj-act-row">
+      <div class="sj-act-when">Mar 15<span class="time">7:00 AM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type">SJ Started</span>Crew A arrived on site · Day 1 kickoff</div>
+        <div class="sj-act-user">Auto-logged from crew portal check-in</div>
+      </div>
+    </div>
+    <div class="sj-act-row">
+      <div class="sj-act-when">Feb 15<span class="time">1:22 PM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type co">CO Applied</span>CO-01 removed "Exterior shutters" from SJ-2 crew packet</div>
+        <div class="sj-act-user">by Bill · Admin · Carlos notified via text</div>
+      </div>
+    </div>
+    <div class="sj-act-row">
+      <div class="sj-act-when">Jan 5<span class="time">9:12 AM</span></div>
+      <div>
+        <div class="sj-act-text"><span class="sj-act-type">SJ Created</span>Scheduled Mar 15–30 · assigned Crew A (Carlos) · Sub PO $3,780 issued</div>
+        <div class="sj-act-user">by Bill · Admin</div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- /ed-shell -->
+
+<footer class="ed-footer" style="margin-top:64px">
+  <span class="ed-cap" style="color:var(--ed-meta-soft)">Nash Painting · SJ-2 Exterior Painting · Johnson Residence · P-2026-0142</span>
+</footer>
+
+
+<!-- QC Confirmation modal -->
+<div class="sj-scrim" id="qcScrim">
+  <div class="sj-modal" role="dialog" aria-labelledby="qcTitle">
+    <h3 id="qcTitle">Log QC Confirmation</h3>
+    <div class="sub" id="qcSub">Record who inspected the work, through what channel, and when. Timestamp is editable for after-hours backfill.</div>
+
+    <div class="sj-modal-field">
+      <label for="qcApprover">Approver</label>
+      <select id="qcApprover">
+        <option>Anthony — Field Sup</option>
+        <option>Tony — Field Sup</option>
+        <option>Bill — Admin (override)</option>
+        <option>Sarah Johnson — Customer</option>
+      </select>
+    </div>
+    <div class="sj-modal-field">
+      <label for="qcChannel">Channel</label>
+      <select id="qcChannel">
+        <option selected>Phone</option>
+        <option>Text</option>
+        <option>Basecamp</option>
+        <option>Email</option>
+        <option>In-person</option>
+        <option>Portal-signed</option>
+      </select>
+    </div>
+    <div class="sj-modal-field">
+      <label for="qcTimestamp">Timestamp</label>
+      <input type="datetime-local" id="qcTimestamp" value="2026-03-29T18:15">
+    </div>
+    <div class="sj-modal-field">
+      <label for="qcNote">Note (optional, encouraged)</label>
+      <textarea id="qcNote" placeholder="Any detail — spoke with, what was checked, any punch items"></textarea>
+    </div>
+
+    <div class="sj-modal-actions">
+      <button class="sj-btn ghost" onclick="closeQcModal()">Cancel</button>
+      <button class="sj-btn primary" onclick="saveQc()">Save QC Confirmation</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  let qcContext = null;
+  function openQcModal(sjId, sjName) {
+    qcContext = { sjId, sjName };
+    document.getElementById('qcTitle').textContent = 'Log QC Confirmation · ' + sjName;
+    document.getElementById('qcSub').textContent = 'Service Job ' + sjId + ' — ' + sjName + '. Record who inspected and when. Timestamp is editable for after-hours backfill.';
+    document.getElementById('qcScrim').classList.add('open');
+  }
+  function closeQcModal() {
+    document.getElementById('qcScrim').classList.remove('open');
+  }
+  function saveQc() {
+    alert('[Prototype] Saved QC for ' + (qcContext ? qcContext.sjId : 'unknown') + '. In production, this would POST to /api/service-jobs/:id/qc and unblock Approve Remaining 50% + Send Invoice inline.');
+    closeQcModal();
+  }
+  document.getElementById('qcScrim').addEventListener('click', function(e) {
+    if (e.target === this) closeQcModal();
+  });
+</script>
+</body>
+</html>
