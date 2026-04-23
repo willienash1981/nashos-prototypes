@@ -337,89 +337,26 @@
       </div>
     </div>
     <div id="proposalContent">
-      <div class="card">
-        <div class="card-header">
+      <!-- Proposal viewer: embed the same interactive proposal that was approved
+           on mobile. Desktop and phone users both see identical functionality;
+           desktop visuals will be refined in a later pass. -->
+      <div class="card" style="padding:0;overflow:hidden;background:#f4f1ec">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <div>
-            <div class="card-title">Interior & Exterior Painting</div>
-            <div class="card-subtitle">Estimate #EST-2026-0142 · Sent Feb 18, 2026</div>
+            <div class="card-title" style="margin:0">Interior &amp; Exterior Painting</div>
+            <div class="card-subtitle" style="margin-top:2px">Estimate #EST-2026-0142 · Sent Feb 18, 2026 · 1931 Warfield Dr</div>
           </div>
-          <span class="status-pill pending" id="proposalStatus">⏳ Awaiting</span>
+          <span class="status-pill pending" id="proposalStatus" style="margin-left:auto">⏳ Awaiting</span>
         </div>
-        <div style="font-size:13px;color:var(--text-light);line-height:1.6;margin-bottom:16px;">
-          Thank you for choosing Nash Painting. Below is your detailed proposal for 1931 Warfield Dr. We've included scope, pricing, and everything you need to know.
+        <div id="proposalFrameWrap" style="background:#e0ddd8;display:flex;justify-content:center;padding:12px 12px 0">
+          <iframe id="proposalFrame" src="proposal.html" title="Interactive proposal"
+            style="width:100%;max-width:440px;height:1600px;border:0;background:#fff;border-radius:10px 10px 0 0;box-shadow:0 2px 14px rgba(0,0,0,.08);display:block"
+            scrolling="no"
+            onload="resizeProposalFrame()"></iframe>
         </div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Select Your Package</div>
-        <div class="package-switcher">
-          <div class="package-card" onclick="selectPackage(this, 8450)">
-            <div class="pkg-name">Value</div>
-            <div class="pkg-price">$8,450</div>
-          </div>
-          <div class="package-card selected" onclick="selectPackage(this, 11200)">
-            <div class="pkg-badge">Popular</div>
-            <div class="pkg-name">Premium</div>
-            <div class="pkg-price">$11,200</div>
-          </div>
-          <div class="package-card" onclick="selectPackage(this, 14800)">
-            <div class="pkg-name">Premium Plus</div>
-            <div class="pkg-price">$14,800</div>
-          </div>
+        <div style="padding:10px 14px 14px;background:#e0ddd8;font-size:11px;color:var(--text-muted);text-align:center">
+          💡 Same proposal, same functionality as on your phone — open it on mobile for the optimized touch layout.
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:14px;">Scope of Work</div>
-        <div class="scope-section">
-          <div class="scope-header" onclick="toggleScope(this)">
-            <span class="label">Interior — Living Room, Kitchen, Hallway</span>
-            <span style="display:flex;align-items:center;gap:8px;"><span class="price">$4,200</span><span class="chevron">▼</span></span>
-          </div>
-          <div class="scope-body">
-            <div class="scope-line"><span>Walls — 3 rooms, ~1,200 SF</span><span>$2,640</span></div>
-            <div class="scope-line"><span>Ceilings — 3 rooms</span><span>$780</span></div>
-            <div class="scope-line"><span>Trim & Baseboards — 280 LF</span><span>$560</span></div>
-            <div class="scope-line"><span>Door painting — 5 doors (both sides)</span><span>$220</span></div>
-          </div>
-        </div>
-        <div class="scope-section">
-          <div class="scope-header" onclick="toggleScope(this)">
-            <span class="label">Exterior — Siding, Trim, Fascia</span>
-            <span style="display:flex;align-items:center;gap:8px;"><span class="price">$5,800</span><span class="chevron">▼</span></span>
-          </div>
-          <div class="scope-body">
-            <div class="scope-line"><span>Siding — ~2,800 SF (2 coats)</span><span>$3,400</span></div>
-            <div class="scope-line"><span>Trim & Fascia — 320 LF</span><span>$1,280</span></div>
-            <div class="scope-line"><span>Shutters — 8 shutters</span><span>$640</span></div>
-            <div class="scope-line"><span>Front door refinish</span><span>$280</span></div>
-            <div class="scope-line"><span>Gutters & Downspouts</span><span>$200</span></div>
-          </div>
-        </div>
-        <div class="scope-section">
-          <div class="scope-header" onclick="toggleScope(this)">
-            <span class="label">Prep & Repairs</span>
-            <span style="display:flex;align-items:center;gap:8px;"><span class="price">$1,200</span><span class="chevron">▼</span></span>
-          </div>
-          <div class="scope-body">
-            <div class="scope-line"><span>Power washing — full exterior</span><span>$450</span></div>
-            <div class="scope-line"><span>Caulking — windows, doors, trim joints</span><span>$380</span></div>
-            <div class="scope-line"><span>Wood repair — 2 fascia boards, 1 window sill</span><span>$370</span></div>
-          </div>
-        </div>
-        <div class="totals-block">
-          <div class="totals-row"><span class="label">Labor</span><span>$9,480</span></div>
-          <div class="totals-row"><span class="label">Materials (Premium — SW Cashmere Int / Duration Ext)</span><span>$1,720</span></div>
-          <div class="totals-row total"><span>Total</span><span id="totalPrice">$11,200</span></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title" style="margin-bottom:12px;">Included With Your Project</div>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;">
-          <div style="display:flex;gap:10px;"><span>🛡️</span><span><strong>10-Year Warranty</strong> — covers peeling, flaking, and application defects</span></div>
-          <div style="display:flex;gap:10px;"><span>🔄</span><span><strong>Lifetime Touchups</strong> — free minor touchups, anytime</span></div>
-          <div style="display:flex;gap:10px;"><span>📄</span><span><a href="#" style="color:var(--blue);">Warranty Details (PDF)</a> · <a href="#" style="color:var(--blue);">Color Guide</a> · <a href="#" style="color:var(--blue);">Understanding Flashing</a></span></div>
-        </div>
-      </div>
-      <div id="acceptCTA">
-        <button class="btn btn-gold" onclick="openAcceptance()">Accept This Proposal</button>
-        <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--text-muted);">No deposit required. Payment due upon completion.</div>
       </div>
       <div id="acceptedBadge" style="display:none;">
         <div class="card" style="text-align:center;background:var(--success-bg);border:2px solid var(--success);">
@@ -834,6 +771,34 @@ function showPayConfirm() {
   document.getElementById('payOptions').style.display = 'none';
   document.getElementById('payConfirmACH').style.display = 'block';
 }
+
+// Size the proposal iframe to its own content so the whole proposal scrolls
+// with the portal page instead of inside a nested scroller.
+function resizeProposalFrame() {
+  const frame = document.getElementById('proposalFrame');
+  if (!frame || !frame.contentDocument) return;
+  try {
+    const h = Math.max(
+      frame.contentDocument.body.scrollHeight,
+      frame.contentDocument.documentElement.scrollHeight
+    );
+    frame.style.height = (h + 40) + 'px';
+  } catch (e) { /* same-origin only; GitHub Pages serves both from same origin */ }
+}
+
+// Keep the iframe sized as the proposal re-renders itself (package switches, etc.)
+window.addEventListener('load', () => {
+  const frame = document.getElementById('proposalFrame');
+  if (!frame) return;
+  // Poll briefly after load — proposal.html does its own innerHTML render on script run
+  let tries = 0;
+  const poll = setInterval(() => {
+    resizeProposalFrame();
+    if (++tries > 20) clearInterval(poll);
+  }, 250);
+  // Also resize on viewport changes
+  window.addEventListener('resize', resizeProposalFrame);
+});
 </script>
 </body>
 </html>
