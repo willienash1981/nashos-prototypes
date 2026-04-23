@@ -684,7 +684,13 @@ body {
   font-family: inherit; transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
-.submit-btn.disabled { background: #ddd; color: #aaa; pointer-events: none; }
+.submit-btn.disabled { background: #ddd; color: #666; cursor: pointer; }
+.submit-btn.disabled:active { background: #ccc; }
+@keyframes needsAttentionFlash {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+  30%      { box-shadow: 0 0 0 4px rgba(251, 191, 36, .6); }
+}
+.needs-attention-flash { animation: needsAttentionFlash 1.2s ease-in-out 2; border-radius: 10px; }
 .submit-btn.active { background: var(--gold); color: #fff; }
 .submit-btn.active:active { background: var(--gold-light); }
 
@@ -778,7 +784,13 @@ body {
 
     <!-- Main Colors -->
     <div class="section-header">Your Main Colors</div>
-    <div class="section-sub">Set your defaults — applies to every room at once.</div>
+    <div class="section-sub" style="line-height:1.5">
+      Start here. These are the colors most of your home will use — pick them once and we'll apply them to every room below so you don't have to choose room-by-room.
+      <br><br>
+      Think of them as your defaults: <strong>wall color</strong>, <strong>trim color</strong>, and <strong>ceiling color</strong>. Most homeowners use the same 2–3 colors throughout, so this covers 90% of the decisions in one step.
+      <br><br>
+      Once these are set, scroll down to <strong>Your Rooms</strong> — you'll see every room already filled in. Tap into any room to customize an accent wall, a kid's bedroom, a powder room, etc.
+    </div>
     <div id="mainColorCards"></div>
 
     <!-- Color Allowance -->
@@ -1267,10 +1279,14 @@ const ESTIMATE = {
     ]},
   ],
   exterior: [
-    {key:'siding', name:'Siding (Body)', defaultSheen:'Flat'},
-    {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Satin'},
-    {key:'front_door', name:'Front Door', defaultSheen:'Satin'},
-    {key:'shutters', name:'Shutters', defaultSheen:'Satin'},
+    // Body
+    {key:'siding', name:'Siding (Body)', defaultSheen:'Flat', group:'Body'},
+    // Trim
+    {key:'ext_trim', name:'Trim & Fascia', defaultSheen:'Satin', group:'Trim'},
+    // Accents — individually colorable
+    {key:'front_door', name:'Front Door', defaultSheen:'Satin', group:'Accents'},
+    {key:'shutters', name:'Shutters', defaultSheen:'Satin', group:'Accents'},
+    {key:'garage_door', name:'Garage Door', defaultSheen:'Satin', group:'Accents'},
   ],
   deck: {
     included: true,
@@ -1358,6 +1374,8 @@ let state = {
   extWarnAccepted: false,
   deckOpacityOpen: false,
   deckActiveFilter: 'recommended',
+  // User-added extra accent walls per room. Map: roomName -> [{key, color, sheen, label}]
+  extraAccents: {},
 };
 
 // Init trim subs — only for available keys
@@ -1593,7 +1611,13 @@ function renderRoomCards() {
   el.innerHTML = ESTIMATE.rooms.map((r,i) => {
     const paintSurfaces = r.surfaces.filter(s => !s.trimType);
     const trimSurfaces = r.surfaces.filter(s => s.trimType);
-    const allFilled = r.surfaces.every(s => getEffective(r.name, s.key).color);
+    const extraAccents = state.extraAccents[r.name] || [];
+    const hasAccent = r.surfaces.some(s => s.key === 'accent');
+    const allSurfaces = [...r.surfaces, ...extraAccents];
+    const allFilled = allSurfaces.every(s => {
+      if (s.key && s.key.startsWith('accent-x')) return !!s.color;
+      return !!getEffective(r.name, s.key).color;
+    });
 
     // Summary line
     const summary = paintSurfaces.map(s => {
@@ -1603,7 +1627,14 @@ function renderRoomCards() {
       return `<span class="room-summary-swatch" style="background:${hex}"></span>${s.label.replace(' ✨','')}: ${name}`;
     }).join(' · ');
 
-    return `<div class="room-card" id="room-${i}">
+    const extraAccentRows = extraAccents.map((xa,xi) => renderExtraAccentRow(r.name, xa, xi)).join('');
+    const addAccentBtn = hasAccent
+      ? `<div class="surface-row" style="justify-content:center;padding:8px 16px;border:1px dashed var(--gold);background:#FFFBF0;margin:4px 12px;border-radius:8px;cursor:pointer" onclick="addExtraAccent('${r.name.replace(/'/g,"\\'")}')">
+           <div style="font-size:12px;font-weight:700;color:#8B6914">+ Add another accent wall</div>
+         </div>`
+      : '';
+
+    return `<div class="room-card" id="room-${i}" data-room-card="${r.name}">
       <div class="room-header" onclick="toggleRoom(${i})">
         <span class="room-check">${allFilled?'✅':'⬜'}</span>
         <span class="room-name">${r.name}</span>
@@ -1612,11 +1643,66 @@ function renderRoomCards() {
       <div class="room-summary" style="padding:0 16px 10px 46px;margin-top:-6px">${summary}</div>
       <div class="room-detail">
         ${paintSurfaces.map(s => renderSurfaceRow(r.name, s)).join('')}
+        ${extraAccentRows}
+        ${addAccentBtn}
         ${trimSurfaces.length > 0 ? '<div class="trim-divider">── Trim ──</div>' : ''}
         ${trimSurfaces.map(s => renderSurfaceRow(r.name, s)).join('')}
       </div>
     </div>`;
   }).join('');
+}
+
+function renderExtraAccentRow(roomName, xa, xi) {
+  const hex = xa.color ? xa.color.hex : '#eee';
+  const cname = xa.color ? xa.color.name : 'Pick a color!';
+  return `<div class="surface-row accent-surface" data-surface-slot="${roomName}|${xa.key}">
+    <div class="surface-swatch${!xa.color ? ' empty accent-empty' : ''}" style="${xa.color ? 'background:'+hex : ''}">${!xa.color ? '✨' : ''}</div>
+    <div class="surface-info">
+      <div class="surface-name">${xa.label}</div>
+      <div class="surface-color">${cname}</div>
+      <div class="surface-sheen">${xa.sheen || 'Flat'}</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <div class="surface-change" onclick="openBrowserForExtraAccent('${roomName.replace(/'/g,"\\'")}', '${xa.key}')">${xa.color ? 'Change' : 'Pick'}</div>
+      <div onclick="removeExtraAccent('${roomName.replace(/'/g,"\\'")}', '${xa.key}')" style="font-size:16px;color:#b91c1c;cursor:pointer;padding:4px 6px" title="Remove this accent wall">✕</div>
+    </div>
+  </div>`;
+}
+
+function addExtraAccent(roomName) {
+  if (!state.extraAccents[roomName]) state.extraAccents[roomName] = [];
+  const nextIdx = state.extraAccents[roomName].length + 2; // main accent is #1
+  const key = 'accent-x' + Date.now();
+  state.extraAccents[roomName].push({
+    key,
+    label: 'Accent Wall ' + nextIdx + ' ✨',
+    color: null,
+    sheen: 'Flat'
+  });
+  render();
+}
+
+function removeExtraAccent(roomName, key) {
+  if (!state.extraAccents[roomName]) return;
+  state.extraAccents[roomName] = state.extraAccents[roomName].filter(a => a.key !== key);
+  // Re-label the remaining ones so numbering stays tidy
+  state.extraAccents[roomName].forEach((a, idx) => { a.label = 'Accent Wall ' + (idx + 2) + ' ✨'; });
+  render();
+}
+
+function openBrowserForExtraAccent(roomName, key) {
+  browserTarget = {type:'extraAccent', roomName, key};
+  applyTargets = new Set();
+  specificTargets = new Set([roomName + '|' + key]);
+  specificOpen = true;
+  selectedBrowserColor = null;
+  const cur = (state.extraAccents[roomName]||[]).find(a => a.key === key);
+  if (cur && cur.color) selectedBrowserColor = cur.color;
+  selectedBrowserSheen = cur ? cur.sheen : 'Flat';
+  document.getElementById('colorOverlay').classList.add('show');
+  renderBrowserColors();
+  renderBrowserSheen();
+  renderApplyTargets();
 }
 
 function renderSurfaceRow(roomName, surfDef) {
@@ -1631,7 +1717,7 @@ function renderSurfaceRow(roomName, surfDef) {
   if (custom) customLabel = '<span class="surface-custom">Custom</span>';
   else if (trimSubCustom) customLabel = '<span class="surface-custom">Custom</span>';
 
-  return `<div class="surface-row${isAccent ? ' accent-surface' : ''}">
+  return `<div class="surface-row${isAccent ? ' accent-surface' : ''}" data-surface-slot="${roomName}|${surfDef.key}">
     <div class="surface-swatch${!e.color && isAccent ? ' empty accent-empty' : ''}" style="${e.color ? 'background:'+hex : ''}">${!e.color && isAccent ? '✨' : ''}</div>
     <div class="surface-info">
       <div class="surface-name">${surfDef.label} ${customLabel}</div>
@@ -1651,23 +1737,43 @@ function toggleRoom(i) {
 
 function renderExtCards() {
   const el = document.getElementById('extCards');
-  el.innerHTML = ESTIMATE.exterior.map(e => {
-    const d = state.exterior[e.key];
-    const col = d.color;
-    const hex = col ? col.hex : '#eee';
-    return `<div class="ext-color-card" onclick="openBrowserFor('ext','${e.key}')">
-      <div class="ext-swatch-row">
-        <div class="mcc-swatch${col?'':' empty'}" style="${col?'background:'+hex:''}">${col?'':'+'}</div>
-        <div class="mcc-color-info">
-          <div class="mcc-color-name">${col ? col.name : 'Tap to choose'}</div>
-          ${col ? `<div class="mcc-color-code">${col.brand} ${col.code}</div>` : ''}
-          <div style="font-size:12px;color:var(--text-light)">${e.name}</div>
+  // Group exterior items (Body / Trim / Accents) so homeowners see how colors roll up
+  const groups = [];
+  ESTIMATE.exterior.forEach(e => {
+    const gname = e.group || 'Other';
+    let g = groups.find(x => x.name === gname);
+    if (!g) { g = {name: gname, items: []}; groups.push(g); }
+    g.items.push(e);
+  });
+
+  el.innerHTML = groups.map(g => {
+    const subtitle = g.name === 'Body'    ? 'Main house color.'
+                   : g.name === 'Trim'    ? 'Fascia, soffits, window & door trim.'
+                   : g.name === 'Accents' ? 'Pick a different color for any of these if you want — front door, shutters, garage door are the usual accent spots.'
+                   : '';
+    const cards = g.items.map(e => {
+      const d = state.exterior[e.key];
+      const col = d.color;
+      const hex = col ? col.hex : '#eee';
+      return `<div class="ext-color-card" data-ext-slot="${e.key}" onclick="openBrowserFor('ext','${e.key}')">
+        <div class="ext-swatch-row">
+          <div class="mcc-swatch${col?'':' empty'}" style="${col?'background:'+hex:''}">${col?'':'+'}</div>
+          <div class="mcc-color-info">
+            <div class="mcc-color-name">${col ? col.name : 'Tap to choose'}</div>
+            ${col ? `<div class="mcc-color-code">${col.brand} ${col.code}</div>` : ''}
+            <div style="font-size:12px;color:var(--text-light)">${e.name}</div>
+          </div>
         </div>
-      </div>
-      <div class="sheen-pills" onclick="event.stopPropagation()">
-        ${SHEENS.map(s => `<div class="sheen-pill${d.sheen===s?' active':''}" onclick="setExtSheen('${e.key}','${s}')">${s}</div>`).join('')}
-      </div>
-      ${col && col.lrv<15 ? '<div style="font-size:11px;color:#856404;margin-top:6px">⚠️ Dark color — may need primer</div>' : ''}
+        <div class="sheen-pills" onclick="event.stopPropagation()">
+          ${SHEENS.map(s => `<div class="sheen-pill${d.sheen===s?' active':''}" onclick="setExtSheen('${e.key}','${s}')">${s}</div>`).join('')}
+        </div>
+        ${col && col.lrv<15 ? '<div style="font-size:11px;color:#856404;margin-top:6px">⚠️ Dark color — may need primer</div>' : ''}
+      </div>`;
+    }).join('');
+    return `<div class="ext-group" style="margin-top:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.4px;padding:4px 16px 2px">${g.name}</div>
+      ${subtitle ? `<div style="font-size:11px;color:var(--text-light);padding:0 16px 6px;line-height:1.4">${subtitle}</div>` : ''}
+      ${cards}
     </div>`;
   }).join('');
 }
@@ -1704,7 +1810,7 @@ function renderDeckSection() {
 
   let html = `<div class="section-header">🪵 Deck Stain</div>
     <div class="section-sub">${deck.totalSF} SF · ${sectionNames}</div>
-    <div class="deck-section">`;
+    <div class="deck-section" data-deck-slot>`;
 
   // Assessment card
   html += `<div class="deck-assessment-card">
@@ -1942,7 +2048,10 @@ function applyStainColor() {
 // ========== SUBMIT BAR ==========
 function renderSubmitBar() {
   let total = 0, filled = 0;
-  ESTIMATE.rooms.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s.key).color) filled++; }));
+  ESTIMATE.rooms.forEach(r => {
+    r.surfaces.forEach(s => { total++; if(getEffective(r.name,s.key).color) filled++; });
+    (state.extraAccents[r.name] || []).forEach(xa => { total++; if (xa.color) filled++; });
+  });
   ESTIMATE.exterior.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
   // Deck counts as 1 surface
   if (ESTIMATE.deck && ESTIMATE.deck.included) { total++; if(state.deck.color) filled++; }
@@ -2231,11 +2340,19 @@ function applyColor() {
     }
   });
 
-  // Specific rooms
+  // Specific rooms (incl. user-added extra accent walls)
   specificTargets.forEach(k => {
     const [room, surface] = k.split('|');
-    state.rooms[room][surface] = {color, sheen};
-    appliedTo.push(room+' '+surface);
+    if (surface && surface.startsWith('accent-x')) {
+      // User-added accent — store on state.extraAccents
+      const list = state.extraAccents[room] || (state.extraAccents[room] = []);
+      const rec = list.find(a => a.key === surface);
+      if (rec) { rec.color = color; rec.sheen = sheen; }
+      appliedTo.push(room + ' ' + (rec ? rec.label : 'accent'));
+    } else {
+      state.rooms[room][surface] = {color, sheen};
+      appliedTo.push(room + ' ' + surface);
+    }
   });
 
   closeBottomSheet();
@@ -2272,11 +2389,54 @@ function dismissSheenModal() {
 }
 
 function submitColors() {
-  let total = 0, filled = 0;
-  ESTIMATE.rooms.forEach(r => r.surfaces.forEach(s => { total++; if(getEffective(r.name,s.key).color) filled++; }));
-  ESTIMATE.exterior.forEach(e => { total++; if(state.exterior[e.key].color) filled++; });
-  if (ESTIMATE.deck && ESTIMATE.deck.included) { total++; if(state.deck.color) filled++; }
-  if (filled < total) return;
+  // Find first unfilled surface, in order
+  let firstMissingEl = null;
+  let firstMissingLabel = '';
+  outer:
+  for (const r of ESTIMATE.rooms) {
+    for (const s of r.surfaces) {
+      if (!getEffective(r.name, s.key).color) {
+        firstMissingEl = document.querySelector(`[data-surface-slot="${r.name}|${s.key}"]`)
+                      || document.querySelector(`[data-room-card="${r.name}"]`);
+        firstMissingLabel = `${r.name} — ${s.label || s.key}`;
+        break outer;
+      }
+    }
+    const extras = state.extraAccents[r.name] || [];
+    for (const xa of extras) {
+      if (!xa.color) {
+        firstMissingEl = document.querySelector(`[data-surface-slot="${r.name}|${xa.key}"]`)
+                      || document.querySelector(`[data-room-card="${r.name}"]`);
+        firstMissingLabel = `${r.name} — ${xa.label}`;
+        break outer;
+      }
+    }
+  }
+  if (!firstMissingEl) {
+    for (const e of ESTIMATE.exterior) {
+      if (!state.exterior[e.key].color) {
+        firstMissingEl = document.querySelector(`[data-ext-slot="${e.key}"]`);
+        firstMissingLabel = `Exterior — ${e.label || e.key}`;
+        break;
+      }
+    }
+  }
+  if (!firstMissingEl && ESTIMATE.deck && ESTIMATE.deck.included && !state.deck.color) {
+    firstMissingEl = document.querySelector('[data-deck-slot]');
+    firstMissingLabel = 'Deck stain';
+  }
+
+  if (firstMissingEl) {
+    // If the missing surface lives inside a collapsed room card, expand it first
+    const parentRoom = firstMissingEl.closest('.room-card');
+    if (parentRoom && !parentRoom.classList.contains('expanded')) parentRoom.classList.add('expanded');
+    firstMissingEl.scrollIntoView({behavior:'smooth', block:'center'});
+    firstMissingEl.classList.add('needs-attention-flash');
+    setTimeout(() => firstMissingEl.classList.remove('needs-attention-flash'), 2400);
+    showToast(`Still needed: ${firstMissingLabel}`);
+    return;
+  }
+
   document.getElementById('successScreen').classList.add('show');
   document.getElementById('submitBar').style.display = 'none';
 }
