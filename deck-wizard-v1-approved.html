@@ -150,21 +150,14 @@ body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg);
   <div class="card">
     <div class="cq-label">Previous coating?</div>
     <div class="cq-chips" data-q="q1">
-      <div class="cq-chip sel" data-v="bare" onclick="pick(this)">None (bare/new wood)</div>
-      <div class="cq-chip" data-v="semi" onclick="pick(this)">Semi-transparent</div>
+      <div class="cq-chip sel" data-v="none" onclick="pick(this)">None (bare/new wood)</div>
+      <div class="cq-chip" data-v="clear" onclick="pick(this)">Clear</div>
+      <div class="cq-chip" data-v="toner" onclick="pick(this)">Toner</div>
+      <div class="cq-chip" data-v="semi-trans" onclick="pick(this)">Semi Transparent</div>
+      <div class="cq-chip" data-v="semi-solid" onclick="pick(this)">Semi Solid</div>
       <div class="cq-chip" data-v="solid" onclick="pick(this)">Solid</div>
-      <div class="cq-chip" data-v="paint" onclick="pick(this)">Paint</div>
-      <div class="cq-chip" data-v="thick-coat" onclick="pick(this)">Thick Paint (DeckOver / Elastomeric)</div>
-    </div>
-
-    <div id="q2-section" style="display:none">
-      <div class="cq-label">Previous material type?</div>
-      <div class="cq-chips" data-q="q2">
-        <div class="cq-chip sel" data-v="semi-stain" onclick="pick(this)">Semi-transparent stain</div>
-        <div class="cq-chip" data-v="solid-stain" onclick="pick(this)">Solid stain</div>
-        <div class="cq-chip" data-v="thin-paint" onclick="pick(this)">Thin paint</div>
-        <div class="cq-chip" data-v="thick-paint" onclick="pick(this)">Thick paint (DeckOver / Rustoleum Restore / SuperDeck Elastomeric)</div>
-      </div>
+      <div class="cq-chip" data-v="thin-paint" onclick="pick(this)">Thin Paint</div>
+      <div class="cq-chip" data-v="thick-paint" onclick="pick(this)">Thick Paint (DeckOver/Restore)</div>
     </div>
 
     <div class="cq-label">Active water beading on surface?</div>
@@ -391,7 +384,7 @@ const RATES = { floor:2.03, stair:3.35, skirting:1.39, underside:1.39 };
 const RAIL_RATES = { wood:13.49, 'wood-metal':18.39, painted:16.50, metal:0 };
 
 const state = {
-  q1:'bare', q2:'semi-stain', q3:'no', q4:'good',
+  q1:'none', q3:'no', q4:'good',
   toggles: { skirting:false, underside:false },
   addons: { brush:false, masking:false, diffFinish:false },
   newboards: 0,
@@ -419,7 +412,6 @@ function pick(el) {
 
 function updateCondResult() {
   const prev = getQ('q1');
-  const material = getQ('q2');
   const beading = getQ('q3');
   const cond = getQ('q4');
 
@@ -430,7 +422,7 @@ function updateCondResult() {
   let isPaintJob = false;
   let cardColor = 'green';
 
-  const isPaintedSurface = prev === 'paint' || prev === 'thick-coat' || material === 'thick-paint' || material === 'thin-paint';
+  const isPaintedSurface = prev === 'thin-paint' || prev === 'thick-paint';
 
   // SELF-PRIMING SOLID triggers (highest priority)
   if (beading === 'yes') {
@@ -454,7 +446,7 @@ function updateCondResult() {
     cardColor = 'red';
   }
   // SOLID triggers
-  else if (prev === 'solid' || material === 'solid-stain') {
+  else if (prev === 'solid' || prev === 'semi-solid') {
     rec = 'solid';
     title = '✅ SW SuperDeck Solid Stain';
     reason = 'Previously coated with solid stain — cannot revert to semi-transparent. Solid maintains coverage and adhesion.';
@@ -478,9 +470,11 @@ function updateCondResult() {
     rec = 'semi-trans';
     title = '✅ SW SuperDeck Semi-Transparent';
     const condLabel = cond === 'great' ? 'great condition' : 'good condition with some patchiness';
-    reason = prev === 'bare'
+    reason = prev === 'none'
       ? 'Bare or new wood — semi-transparent preserves the natural grain and color.'
-      : `Previously semi-transparent in ${condLabel} — maintain with semi-transparent.`;
+      : (prev === 'clear' || prev === 'toner')
+        ? `Previously ${prev} coating in ${condLabel} — semi-transparent recoats cleanly.`
+        : `Previously semi-transparent in ${condLabel} — maintain with semi-transparent.`;
     cardColor = 'green';
   }
 
@@ -513,10 +507,6 @@ function updateCondResult() {
     stainOpt = rec;
     document.querySelectorAll('[data-so]').forEach(b => b.classList.toggle('active', b.dataset.so === rec));
   }
-
-  // Show/hide Q2 based on Q1
-  const q2section = document.getElementById('q2-section');
-  if (q2section) q2section.style.display = (prev === 'bare') ? 'none' : '';
 
   // Update result card
   const resultCard = document.getElementById('condResult');

@@ -209,6 +209,11 @@ input[type=text].has-val{border-color:var(--success);background:rgba(46,125,50,.
 </div>
 
 <script>
+// ---- ADMIN / COMPANY SETTINGS (would live in admin-config) ----
+// Specialty capabilities — off means the option is hidden from estimators
+// because no crew is available to perform the work. Toggle in the Admin card.
+const ADMIN = { specialtyHinges: false };
+
 // ---- CONSTANTS ----
 const RATES = {
   body_sf:12.48, door_2side:129.22, door_1side:86.22,
@@ -378,6 +383,18 @@ function render() {
   }[state.condition]||'';
 
   let h = '';
+
+  // Admin / Company Settings — gates specialty work the crew can do
+  h+=`<div class="card" style="border:1px dashed var(--gold);background:#FFFBF0">
+    <div class="card-title" style="font-size:13px">⚙ Company Settings <span style="font-size:10px;font-weight:500;color:var(--text-light);margin-left:6px">(admin — normally lives in admin-config)</span></div>
+    <div class="rare-toggle" style="border-top:none;padding:4px 0">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Specialty hinge work available</div>
+        <div style="font-size:10px;color:var(--text-light);margin-top:2px">New pattern + hidden hinges. Leave off if no crew can perform this work.</div>
+      </div>
+      <label class="switch"><input type="checkbox" ${ADMIN.specialtyHinges?'checked':''} onchange="ADMIN.specialtyHinges=this.checked;render()"><span class="slider"></span></label>
+    </div>
+  </div>`;
 
   // Location Name — at the very top
   const loc0 = state.locations[0];
@@ -591,15 +608,25 @@ function renderHardware() {
     h+=`<div class="srow">${srowCount('Count','','hw_knob',hw.knobCount,-1,'_hwKnobCount').replace(/<div class="srow">/,'').replace(/<\/div>$/,'')}</div>`;
   }
 
-  // Hinges
+  // Hinges — specialty options gated by admin setting (no crew available by default)
   h+=`<div class="sgrp-title">Hinges</div>`;
   h+=`<div class="radio-group">`;
   h+=radioOpt('hinges','keep','Keep Existing','');
-  h+=radioOpt('hinges','new','New Pattern',`$${RATES.hinge_new}/ea`);
-  h+=radioOpt('hinges','hidden','Hidden Hinges',`$${RATES.hinge_hidden}/ea`);
+  if(ADMIN.specialtyHinges){
+    h+=radioOpt('hinges','new','New Pattern',`$${RATES.hinge_new}/ea`);
+    h+=radioOpt('hinges','hidden','Hidden Hinges',`$${RATES.hinge_hidden}/ea`);
+  }
   h+=`</div>`;
-  if(hw.hinges==='new'||hw.hinges==='hidden'){
+  if(!ADMIN.specialtyHinges){
+    h+=`<div class="info-note">Specialty hinge work (new pattern / hidden) is currently disabled in Company Settings.</div>`;
+  }
+  if(ADMIN.specialtyHinges && (hw.hinges==='new'||hw.hinges==='hidden')){
     h+=`<div class="srow"><div class="srow-lbl">Count</div>${qtyField('hw_hinge',hw.hingeCount,-1,'_hwHingeCount','Hinges')}</div>`;
+  }
+  // Force state back to 'keep' if specialty is disabled and a specialty was selected
+  if(!ADMIN.specialtyHinges && (hw.hinges==='new'||hw.hinges==='hidden')){
+    state.hardware.hinges = 'keep';
+    state.hardware.hingeCount = 0;
   }
 
   // Bore fill
