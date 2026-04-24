@@ -213,6 +213,17 @@ meant this page)
 ## Rules going into the rebuild
 
 From Bill's feedback + global CLAUDE.md:
+- **ALWAYS READ THE SOURCE PAGE BEFORE REDESIGNING.** Open the existing
+  `.html` file and catalog every section, sub-head, copy block, and data
+  point BEFORE prompting Stitch or writing code. Do not invent plausible-
+  sounding content to fill gaps — content must match the working page
+  exactly. Bill flagged this rule on 2026-04-23 after I inserted
+  "Cancellation" and "Late" sub-heads into the Payment Terms accordion
+  that actually live in the Acceptance Overlay's Contract Terms copy.
+  Lesson: splicing similar-looking content from one section of the same
+  file into another is still hallucination. If unsure whether something
+  belongs, quote the exact line number from the source file in the
+  Stitch prompt.
 - **Screenshot before reporting done.** Use `gstack` skill or
   `webapp-testing` to pull the live URL, eyeball it, catch the mismatch.
   Bill's time is not free and he's already frustrated from one pass of
