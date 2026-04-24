@@ -61,34 +61,47 @@
     height: 4px; background: var(--orange); z-index: 1000; pointer-events: none;
   }
 
-  /* Proto Banner */
-  .proto-banner {
-    background: var(--navy); color: var(--orange); text-align: center;
-    padding: 9px 8px; font-family: var(--inter); font-size: 10.5px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    position: sticky; top: 4px; z-index: 100;
-  }
-  .proto-banner select {
-    background: rgba(255,255,255,0.1); color: var(--orange);
-    border: 1px solid var(--orange); border-radius: 4px;
-    padding: 3px 8px; font-size: 10.5px; font-weight: 700;
-    letter-spacing: 0.08em; margin-left: 8px; cursor: pointer;
-    font-family: var(--inter);
-  }
+  /* Proto Banner — hidden in the UI but state-switcher JS still works.
+     Toggle developer-only via DOM if needed. */
+  .proto-banner { display: none; }
 
-  /* Header */
+  /* Header — matches approved Overview design: wordmark left, user chip right */
   .header {
-    background: var(--white); padding: 22px 20px 18px;
-    border-bottom: 1px solid var(--hairline); text-align: center;
+    background: var(--white); padding: 16px 20px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; position: sticky; top: 4px; z-index: 100;
   }
   .header .logo {
-    font-family: var(--sora); font-size: 20px; font-weight: 800;
+    font-family: var(--sora); font-size: 18px; font-weight: 800;
     color: var(--navy); letter-spacing: 0.02em; text-transform: uppercase;
+    line-height: 1;
   }
-  .header .logo span { color: var(--navy); }   /* no more orange "PAINTING" */
+  .header .logo span { color: var(--navy); }
+  .header-user {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .header-user .user-name {
+    font-family: var(--inter); font-size: 10.5px; font-weight: 700;
+    color: var(--text-light); text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .header-user .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--navy); color: #fff;
+    font-family: var(--inter); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0.04em; flex-shrink: 0;
+  }
   .header .customer-greeting {
+    /* Legacy class — kept hidden; greeting now shown as sub-line below nav if needed */
+    display: none;
+  }
+  /* Optional sub-greeting strip under the header */
+  .sub-greeting {
+    background: var(--white); padding: 10px 20px 14px;
+    border-bottom: 1px solid var(--hairline);
     font-family: var(--inter); font-size: 11px; color: var(--text-light);
-    margin-top: 6px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
   }
 
   /* Nav Tabs */
@@ -352,9 +365,13 @@
 </div>
 
 <div class="header">
-  <div class="logo">Nash <span>Painting</span></div>
-  <div class="customer-greeting">Welcome, Mark — 1931 Warfield Dr</div>
+  <div class="logo">NASH PAINTING</div>
+  <div class="header-user">
+    <span class="user-name">Mark Frei</span>
+    <div class="user-avatar">MF</div>
+  </div>
 </div>
+<div class="sub-greeting">Welcome back · 1931 Warfield Dr</div>
 
 <div class="nav-tabs" id="navTabs">
   <div class="nav-tab active" data-tab="proposal" onclick="switchTab('proposal')">Proposal</div>
