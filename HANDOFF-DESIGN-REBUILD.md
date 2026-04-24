@@ -14,7 +14,43 @@
 I'm picking up the NashOS prototype review loop with Bill. Round 1 (19
 feature/bug fixes across deck, fence, cabinet, exterior wizards + customer
 portal + color submission + customer-portal-detail) is done, pushed, and
-live on GitHub Pages. Round 2 is a DESIGN-SYSTEM rebuild.
+live. Round 2 is a DESIGN-SYSTEM rebuild — Editorial Industrialism
+(Navy #0B1F3A, Tennessee Orange #FF8200, Sora + Inter, hairlines only,
+no bordered cards, 4px radii).
+
+Round-2 progress so far (all live on GitHub Pages):
+✅ proposal.html — fully rebuilt (commit 0bdd1da)
+✅ customer-portal-detail.html — shell rebuilt, proto banner killed, header
+   matches approved Overview pattern (commit c4701e8). Inner proposal tab
+   iframes the rebuilt proposal.html.
+✅ customer-portal.html Overview tab — rebuilt (commit 19e2d76). Other 8
+   tabs inherit token changes but may need per-tab polish.
+
+Still pending in round 2:
+• customer-portal.html — visual pass on Estimates / Projects / Invoices /
+  Maintenance / Referrals / Colors / Documents / Settings tabs
+• color-submission.html — full EI rebuild
+• All the wizards (lower priority — user-facing but different aesthetic)
+• hiring.html, crew-management.html, etc. (secondary internal pages)
+
+CRITICAL RULES learned the hard way on 2026-04-23:
+1. ALWAYS READ THE SOURCE PAGE BEFORE REDESIGNING. Open the existing .html
+   and catalog every section/sub-head/copy-block BEFORE prompting Stitch
+   or writing code. Do NOT invent content to fill gaps. Splicing copy
+   from one accordion into another in the same file is still hallucination.
+2. SCREENSHOT BEFORE REPORTING DONE. Use `gstack`/`webapp-testing` or
+   headless Chrome (/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome
+   --headless --screenshot=X file://...). Don't trust "diffs look right."
+3. DON'T CONFUSE customer-portal.html (the MAIN homeowner portal with
+   Overview/Estimates/etc. tabs) WITH customer-portal-detail.html (the
+   per-project drill-down with Proposal/Status/Payments tabs). Bill will
+   say "Overview page" meaning customer-portal.html.
+4. The proto-banner "NASHOS PROTOTYPE — CUSTOMER PORTAL" strip should be
+   HIDDEN via CSS display:none on customer-facing pages. Bill called it
+   "ugly". State-switcher JS stays intact for dev use.
+5. Tennessee Orange is a SIGNAL color, not a reading color. Only on: top
+   spine, active tab underline, CTAs, section-header dots, primary row
+   accent bars, status "REVIEW" pills. Never for body text.
 
 Before doing anything else:
 
@@ -125,10 +161,10 @@ These can be cribbed from for patterns:
 ## What is NOT rebuilt (the design-round-2 backlog)
 
 In rough priority order for the customer-facing path:
-1. customer-portal.html           ← entry point homeowner sees (Stitch Overview + Estimates tabs approved, other 7 tabs pending, full build pending)
-2. customer-portal-detail.html    ← iframes proposal.html — should look correct automatically now that proposal.html is rebuilt; re-verify
+1. customer-portal.html           ← ✅ Overview tab REBUILT 2026-04-24 02:50 CT (commit 19e2d76, approved screenshot). Other 8 tabs (Estimates/Projects/Invoices/Maintenance/Referrals/Colors/Documents/Settings) inherit tokens but need tab-specific polish.
+2. ~~customer-portal-detail.html~~ ← ✅ Shell REBUILT (commit c4701e8). Proto banner removed, header matches Overview (left NASH PAINTING + right MF avatar). Iframes proposal.html so Proposal tab renders in new design.
 3. ~~proposal.html~~              ← ✅ REBUILT 2026-04-23 (commit 0bdd1da, approved by Bill live at /proposal.html)
-4. color-submission.html          ← post-acceptance color flow
+4. color-submission.html          ← post-acceptance color flow — NOT STARTED
 
 Internal / secondary:
 5. crew-management.html
