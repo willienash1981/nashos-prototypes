@@ -125,9 +125,9 @@ These can be cribbed from for patterns:
 ## What is NOT rebuilt (the design-round-2 backlog)
 
 In rough priority order for the customer-facing path:
-1. customer-portal.html           ← entry point homeowner sees
-2. customer-portal-detail.html    ← what Bill screenshotted
-3. proposal.html                  ← the interactive proposal (also embedded by #2)
+1. customer-portal.html           ← entry point homeowner sees (Stitch Overview + Estimates tabs approved, other 7 tabs pending, full build pending)
+2. customer-portal-detail.html    ← iframes proposal.html — should look correct automatically now that proposal.html is rebuilt; re-verify
+3. ~~proposal.html~~              ← ✅ REBUILT 2026-04-23 (commit 0bdd1da, approved by Bill live at /proposal.html)
 4. color-submission.html          ← post-acceptance color flow
 
 Internal / secondary:
