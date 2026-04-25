@@ -167,7 +167,7 @@ In rough priority order for the customer-facing path:
 4. ~~color-submission.html~~      ← ✅ REBUILT 2026-04-25 (commit 26a2831). CSS-only swap into existing render() pipeline; Google Fonts Sora + Inter added in <head>, EI tokens applied to all class names (.topbar, .section-header, .main-color-card, .sheen-pill, .room-card, .deck-assessment-card, .deck-recommendation, .stain-filter-pill, .stain-card, .submit-bar). JS untouched.
 
 Internal / secondary:
-5. crew-management.html
+5. ~~crew-management.html~~      ← ✅ REBUILT 2026-04-25 (commit 83da68b). First internal admin tool in EI; sets the desktop baseline (max-width 1280, hairline KPI tiles, navy/orange dense table) for the remaining 7 internal pages.
 6. hiring.html
 7. pre-project-checklist.html
 8. touch-point-logger.html
