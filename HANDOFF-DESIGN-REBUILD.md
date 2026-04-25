@@ -169,7 +169,7 @@ In rough priority order for the customer-facing path:
 Internal / secondary:
 5. ~~crew-management.html~~      ← ✅ REBUILT 2026-04-25 (commit 83da68b). First internal admin tool in EI; sets the desktop baseline (max-width 1280, hairline KPI tiles, navy/orange dense table) for the remaining 7 internal pages.
 6. ~~hiring.html~~              ← ✅ REBUILT 2026-04-25 (commit ea19de6). Mobile internal admin (430px max); sets EI mobile admin baseline (orange spine, white topbar with orange logo square, hairline KPI grid, kanban pipeline cards with orange left rule).
-7. pre-project-checklist.html
+7. ~~pre-project-checklist.html~~ ← ✅ REBUILT 2026-04-25 (commit 06454b2). Customer-facing intake form; matches proposal/customer-portal family (orange spine, hairline sections, orange section dots, yes/no pills with green/red/navy tints).
 8. touch-point-logger.html
 9. work-order-crew.html
 10. invoice-payments.html
