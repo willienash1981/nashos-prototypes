@@ -164,7 +164,7 @@ In rough priority order for the customer-facing path:
 1. customer-portal.html           ← ✅ Overview tab REBUILT 2026-04-24 02:50 CT (commit 19e2d76, approved screenshot). Other 8 tabs (Estimates/Projects/Invoices/Maintenance/Referrals/Colors/Documents/Settings) inherit tokens but need tab-specific polish.
 2. ~~customer-portal-detail.html~~ ← ✅ Shell REBUILT (commit c4701e8). Proto banner removed, header matches Overview (left NASH PAINTING + right MF avatar). Iframes proposal.html so Proposal tab renders in new design.
 3. ~~proposal.html~~              ← ✅ REBUILT 2026-04-23 (commit 0bdd1da, approved by Bill live at /proposal.html)
-4. color-submission.html          ← post-acceptance color flow — NOT STARTED
+4. ~~color-submission.html~~      ← ✅ REBUILT 2026-04-25 (commit 26a2831). CSS-only swap into existing render() pipeline; Google Fonts Sora + Inter added in <head>, EI tokens applied to all class names (.topbar, .section-header, .main-color-card, .sheen-pill, .room-card, .deck-assessment-card, .deck-recommendation, .stain-filter-pill, .stain-card, .submit-bar). JS untouched.
 
 Internal / secondary:
 5. crew-management.html
