@@ -172,7 +172,7 @@ Internal / secondary:
 7. ~~pre-project-checklist.html~~ ← ✅ REBUILT 2026-04-25 (commit 06454b2). Customer-facing intake form; matches proposal/customer-portal family (orange spine, hairline sections, orange section dots, yes/no pills with green/red/navy tints).
 8. ~~touch-point-logger.html~~  ← ✅ REBUILT 2026-04-25 (commit 1bd9888). Internal field-sales mobile tool; bronze/silver/gold medal tiers mapped onto an orange-tint ramp so the gamification reads in the EI palette.
 9. work-order-crew.html
-10. invoice-payments.html
+10. ~~invoice-payments.html~~  ← ✅ REBUILT 2026-04-25 (commit c67fc74). Internal billing/AR mobile tool; 2x2 hairline summary tiles, A/B/C/D collection step dots, milestone tracker with paid/due/upcoming state circles, navy invoice-preview header.
 11. po-system.html
 12. direct-mail.html
 13. campaign-builder.html
