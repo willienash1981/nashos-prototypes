@@ -173,8 +173,8 @@ Internal / secondary:
 8. ~~touch-point-logger.html~~  ← ✅ REBUILT 2026-04-25 (commit 1bd9888). Internal field-sales mobile tool; bronze/silver/gold medal tiers mapped onto an orange-tint ramp so the gamification reads in the EI palette.
 9. work-order-crew.html
 10. ~~invoice-payments.html~~  ← ✅ REBUILT 2026-04-25 (commit c67fc74). Internal billing/AR mobile tool; 2x2 hairline summary tiles, A/B/C/D collection step dots, milestone tracker with paid/due/upcoming state circles, navy invoice-preview header.
-11. po-system.html
-12. direct-mail.html
+11. ~~po-system.html~~        ← ✅ REBUILT 2026-04-25 (commit 1023c8c, approved by Bill 2026-04-26). Internal AP/PO desktop tool; 5-tile flat KPI strip, surface-bg PO# reveal block with orange left rule, supplier cards with navy avatars + orange initials, flat orange/navy bar charts, wizard step indicators with orange active underline + green done state.
+12. ~~direct-mail.html~~      ← ✅ REBUILT 2026-04-26 (commit 6643998). Internal marketing/outreach desktop tool; hairline KPI strip with up/down trend chips, 9-tab navy-active strip, flat navy postcard previews with paper backs (no gradient), API code blocks with orange POST/WEBHOOK keywords on navy bg (replaces dracula syntax theme), referral share-portal-mock with orange left rule, flat funnel bars with sora tabular numbers. Instagram social-share button flattened from multi-stop gradient to solid #E1306C since EI bans gradients.
 13. campaign-builder.html
 
 Estimator wizards (different track — the "tools" aesthetic; Bill has been
