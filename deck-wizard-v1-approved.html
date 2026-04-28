@@ -4,112 +4,175 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NashOS — Deck Staining Wizard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy: #1B2A4A;
-  --navy-light: #2A3F6A;
-  --gold: #C4A962;
-  --gold-light: #D4C182;
-  --bg: #F5F3EF;
-  --card: #FFFFFF;
-  --text: #2C2C2C;
-  --text-light: #6B7280;
-  --green: #10B981;
-  --green-bg: #ECFDF5;
-  --red: #EF4444;
-  --red-bg: #FEF2F2;
-  --blue: #3B82F6;
-  --orange: #F59E0B;
-  --purple: #8B5CF6;
-  --border: #E5E7EB;
-  --radius: 12px;
+/* ============================================================
+   Nash Painting · Editorial Industrialism — Deck Staining Wizard
+   Customer-facing deck stain estimator (mobile, max 430px)
+   Class names preserved — JS untouched.
+   ============================================================ */
+:root{
+  --navy:#0B1F3A;
+  --navy-light:#0F2742;
+  --navy-deep:#061228;
+  --ink:#0E0E10;
+  --orange:#FF8200;
+  --orange-deep:#CC6600;
+  --orange-bg:#FFF4E6;
+  --gold:#FF8200;
+  --gold-light:#FFB785;
+  --green:#15803D;
+  --green-bg:#DCFCE7;
+  --red:#B91C1C;
+  --red-bg:#FEE2E2;
+  --blue:#0B1F3A;
+  --purple:#0B1F3A;
+  --paper:#FFFFFF;
+  --card:#FFFFFF;
+  --bg:#F5F6F8;
+  --surface:#F5F6F8;
+  --surface-dim:#EDEFF3;
+  --hairline:#E2E5EA;
+  --border:#E2E5EA;
+  --text:#0E0E10;
+  --text-light:#64748B;
+  --text-sec:#64748B;
+  --radius:4px;
+  --r:4px;
+  --sora:'Sora',-apple-system,BlinkMacSystemFont,sans-serif;
+  --inter:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-html { overflow-x:hidden; max-width:100vw; }
-body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; overflow-x:hidden; max-width:100vw; }
-.shell { max-width:430px; width:100%; margin:0 auto; padding-bottom:100px; overflow-x:hidden; }
-.topbar { background: var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; max-width:100%; }
-.topbar h1 { font-size:16px; font-weight:700; }
-.topbar .badge { background:var(--gold); color:var(--navy); font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
-.running-total { position:sticky; top:52px; z-index:99; background:var(--navy-light); color:#fff; padding:6px 16px; font-size:11px; line-height:1.4; max-width:100%; overflow-wrap:break-word; }
-.running-total .big { font-size:18px; font-weight:700; color:var(--gold); }
-.running-total .detail { opacity:.8; }
-.step-header { padding:12px 12px 4px; }
-.step-header h2 { font-size:14px; font-weight:700; color:var(--navy); display:flex; align-items:center; gap:6px; }
-.step-header h2 .num { background:var(--navy); color:#fff; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; }
-.card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); max-width:calc(100% - 24px); overflow:hidden; }
-.card-title { font-size:14px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
-.cq-label{font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin:10px 0 5px;padding:0 12px}
-.cq-chips{display:flex;flex-wrap:wrap;gap:5px;padding:0 12px 8px}
-.cq-chip{padding:5px 11px;border-radius:20px;border:1.5px solid #e5e7eb;background:white;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;color:#374151;white-space:nowrap}
-.cq-chip.sel{border-color:#1a2332;background:#1a2332;color:white}
-.result-card { border:1.5px solid var(--green); background:var(--green-bg); border-radius:var(--radius); margin:6px 12px; padding:8px 10px; max-width:calc(100% - 24px); overflow:hidden; }
-.result-card.warn { border-color:var(--orange); background:#FFFBEB; }
-.result-card.error { border-color:var(--red); background:var(--red-bg); }
-.result-card h3 { font-size:13px; font-weight:700; margin-bottom:4px; overflow-wrap:break-word; word-break:break-word; }
-.result-card p { font-size:11px; line-height:1.4; color:var(--text-light); overflow-wrap:break-word; word-break:break-word; }
-.disclaimer { font-size:11px; padding:6px 10px; border-radius:6px; margin-top:6px; display:flex; align-items:flex-start; gap:4px; line-height:1.3; overflow-wrap:break-word; word-break:break-word; }
-.disclaimer.warning { background:#FFFBEB; color:#92400E; }
-.disclaimer.danger { background:var(--red-bg); color:#991B1B; }
-.disclaimer.info { background:#EFF6FF; color:#1E40AF; }
-.measure-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:0; box-shadow:0 1px 3px rgba(0,0,0,.06); overflow:hidden; max-width:calc(100% - 24px); }
-.measure-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer; }
-.measure-header .left { display:flex; align-items:center; gap:10px; }
-.measure-header .name { font-size:14px; font-weight:600; }
-.measure-header .price { font-size:16px; font-weight:700; color:var(--navy); }
-.measure-header .price.zero { color:var(--text-light); }
-.toggle { width:44px; height:24px; border-radius:12px; background:var(--border); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
-.toggle.on { background:var(--green); }
-.toggle .knob { width:20px; height:20px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
-.toggle.on .knob { left:22px; }
-.measure-body { padding:0 16px 16px; }
-.measure-body.hidden { display:none; }
-.input-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap; max-width:100%; }
-.input-row label { font-size:11px; color:var(--text-light); min-width:30px; flex-shrink:0; }
-.input-row input, .input-row select { flex:1; min-width:0; padding:7px 10px; border:1.5px solid var(--border); border-radius:8px; font-size:13px; font-family:inherit; max-width:100%; }
-.input-row input:focus, .input-row select:focus { outline:none; border-color:var(--gold); }
-.input-row .unit { font-size:11px; color:var(--text-light); }
-.calc-note { font-size:11px; color:var(--text-light); margin-top:4px; }
-.coat-toggle { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--text-light); }
-.addon-card { background:var(--card); border-radius:var(--radius); margin:6px 12px; padding:10px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; max-width:calc(100% - 24px); overflow:hidden; }
-.addon-card .left { flex:1; }
-.addon-card .aname { font-size:13px; font-weight:600; }
-.addon-card .adesc { font-size:11px; color:var(--text-light); }
-.addon-card .aprice { font-size:14px; font-weight:700; color:var(--navy); margin-right:12px; }
-.counter { display:flex; align-items:center; gap:8px; }
-.counter button { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); background:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-.counter button:hover { border-color:var(--gold); }
-.counter span { font-size:14px; font-weight:600; min-width:20px; text-align:center; }
-.color-input { margin:8px 16px; }
-.color-input .card { margin:0; }
-.bottom-bar { position:fixed; bottom:0; left:0; right:0; width:100%; max-width:min(430px,100vw); margin:0 auto; background:var(--navy); color:#fff; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
-.bottom-bar .label { font-size:11px; opacity:.8; }
-.bottom-bar .total { font-size:20px; font-weight:700; color:var(--gold); }
-.bottom-bar .save-btn { background:var(--gold); color:var(--navy); border:none; padding:10px 24px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
-.bottom-bar .save-btn:hover { background:var(--gold-light); }
-.hidden { display:none !important; }
-.app-note { font-size:11px; color:var(--text-light); padding:4px 16px; line-height:1.4; }
-.sf-inline { font-size:12px; color:var(--gold); font-weight:600; }
-.rail-sect { background:#f9fafb; border-radius:8px; padding:12px; margin-bottom:8px; border:1px solid var(--border); }
-.rail-sect-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-.rail-sect-head .title { font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; }
-.rail-sect-head .lf-badge { font-size:12px; font-weight:700; color:var(--gold); }
-.rail-sect-head .remove-btn { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:2px 6px; }
-.rail-sect-head .remove-btn:hover { color:var(--red); }
-.rail-add-btn { background:#fff; border:1.5px solid var(--border); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--navy); }
-.rail-add-btn:hover { border-color:var(--gold); background:rgba(196,169,98,.05); }
-.side-btn { flex:1; min-width:42%; padding:6px 4px; border-radius:8px; cursor:pointer; text-align:center; font-size:11px; transition:all .15s; }
-.side-btn.on { border:1.5px solid var(--green); background:rgba(16,185,129,.06); font-weight:600; }
-.side-btn.off { border:1.5px solid var(--border); background:#fff; }
-.opt-btn { flex:1; padding:8px; border-radius:8px; cursor:pointer; text-align:center; font-size:12px; transition:all .15s; }
-.opt-btn.active { border:1.5px solid var(--gold); background:rgba(196,169,98,.08); font-weight:600; }
-.opt-btn.inactive { border:1.5px solid var(--border); background:#fff; }
-.note-pill{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;border:1.5px solid #e5e7eb;background:white;color:#6b7280;cursor:pointer;transition:all .15s;font-family:inherit}
-.note-pill.active{background:#1a2332;color:white;border-color:#1a2332}
-.note-textarea{width:100%;min-height:60px;border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 10px;font-size:12px;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box}
-.note-textarea:focus{border-color:#c8a85c}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{overflow-x:hidden;max-width:100vw}
+body{font-family:var(--inter);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;max-width:100vw;font-size:14px;line-height:1.4}
 
-.toggle{width:36px;height:20px;background:#d1d5db;border-radius:10px;cursor:pointer;position:relative;transition:background .15s;flex-shrink:0}.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:2px;left:2px;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15)}.toggle.on{background:#4f46e5}.toggle.on::after{transform:translateX(16px)}
+.shell{max-width:430px;width:100%;margin:0 auto;padding-bottom:100px;overflow-x:hidden;position:relative}
+
+/* TOPBAR — orange spine + white bar with Sora wordmark + nav-deep BETA badge */
+.topbar{background:var(--paper);color:var(--ink);padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;max-width:100%;border-bottom:1px solid var(--hairline)}
+.topbar h1{font-family:var(--sora);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.005em}
+.topbar .badge{background:var(--orange);color:#fff;font-family:var(--inter);font-size:10px;font-weight:700;padding:3px 8px;border-radius:var(--r);text-transform:uppercase;letter-spacing:.08em}
+
+/* RUNNING TOTAL — navy-deep band with orange Sora total */
+.running-total{position:sticky;top:48px;z-index:99;background:var(--navy-deep);color:#fff;padding:12px 16px;font-family:var(--inter);font-size:11px;line-height:1.5;max-width:100%;overflow-wrap:break-word}
+.running-total .big{font-family:var(--sora);font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.025em;font-variant-numeric:tabular-nums;margin-right:8px}
+.running-total .detail{color:rgba(255,255,255,.7);font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:10px}
+
+/* STEP HEADER — numbered step pill + sora title */
+.step-header{padding:14px 12px 4px}
+.step-header h2{font-family:var(--sora);font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;letter-spacing:-.005em}
+.step-header h2 .num{background:var(--navy-deep);color:#fff;width:22px;height:22px;border-radius:var(--r);display:inline-flex;align-items:center;justify-content:center;font-family:var(--sora);font-size:12px;font-weight:700}
+
+/* CARDS — white surface, hairline border */
+.card{background:var(--paper);border:1px solid var(--hairline);border-radius:var(--r);margin:8px 12px;padding:12px;box-shadow:none;max-width:calc(100% - 24px);overflow:hidden}
+.card-title{font-family:var(--sora);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:-.005em}
+
+/* CONDITION QUESTION LABEL + CHIPS */
+.cq-label{font-family:var(--inter);font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 6px;padding:0 12px}
+.cq-chips{display:flex;flex-wrap:wrap;gap:5px;padding:0 12px 10px}
+.cq-chip{padding:7px 12px;border-radius:var(--r);border:1px solid var(--hairline);background:var(--paper);font-family:var(--inter);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--ink);white-space:nowrap}
+.cq-chip.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+
+/* RESULT CARD — recommendation callout (green default, orange warn, red error) */
+.result-card{border:1px solid var(--hairline);border-left:3px solid var(--green);background:var(--surface);border-radius:var(--r);margin:8px 12px;padding:12px 14px;max-width:calc(100% - 24px);overflow:hidden}
+.result-card.warn{border-left-color:var(--orange)}
+.result-card.error{border-left-color:var(--red)}
+.result-card h3{font-family:var(--sora);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.005em;overflow-wrap:break-word;word-break:break-word}
+.result-card p{font-family:var(--inter);font-size:12px;line-height:1.5;color:var(--text-sec);font-weight:500;overflow-wrap:break-word;word-break:break-word}
+
+/* DISCLAIMER — small inline notice */
+.disclaimer{font-family:var(--inter);font-size:11px;font-weight:600;padding:8px 10px;border-radius:var(--r);margin-top:6px;display:flex;align-items:flex-start;gap:4px;line-height:1.4;overflow-wrap:break-word;word-break:break-word}
+.disclaimer.warning{background:var(--orange-bg);color:var(--orange-deep);border-left:3px solid var(--orange)}
+.disclaimer.danger{background:var(--red-bg);color:var(--red);border-left:3px solid var(--red)}
+.disclaimer.info{background:var(--surface-dim);color:var(--ink);border-left:3px solid var(--navy)}
+/* MEASURE CARD — collapsible deck section block */
+.measure-card{background:var(--paper);border:1px solid var(--hairline);border-radius:var(--r);margin:8px 12px;padding:0;box-shadow:none;overflow:hidden;max-width:calc(100% - 24px)}
+.measure-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;gap:10px}
+.measure-header .left{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.measure-header .name{font-family:var(--inter);font-size:14px;font-weight:600;color:var(--ink)}
+.measure-header .price{font-family:var(--sora);font-size:16px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.measure-header .price.zero{color:var(--text-sec);opacity:.6}
+
+/* TOGGLE — pill switch, orange when on */
+.toggle{width:40px;height:22px;border-radius:999px;background:var(--hairline);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--orange)}
+.toggle .knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s}
+.toggle.on .knob{left:20px}
+.toggle::after{display:none}
+
+.measure-body{padding:0 16px 16px}
+.measure-body.hidden{display:none}
+
+/* INPUT ROW — label + input + unit */
+.input-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;max-width:100%}
+.input-row label{font-family:var(--inter);font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;min-width:30px;flex-shrink:0}
+.input-row input,.input-row select{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--hairline);border-radius:var(--r);font-family:var(--inter);font-size:13px;font-weight:500;background:var(--paper);color:var(--ink);max-width:100%}
+.input-row input:focus,.input-row select:focus{outline:none;border-color:var(--navy)}
+.input-row .unit{font-family:var(--inter);font-size:10px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.06em}
+.calc-note{font-family:var(--inter);font-size:11px;color:var(--text-sec);margin-top:4px;font-weight:500}
+.coat-toggle{display:flex;align-items:center;gap:8px;margin-top:10px;font-family:var(--inter);font-size:12px;font-weight:600;color:var(--ink)}
+
+/* ADDON CARD — single-line surface row with counter */
+.addon-card{background:var(--paper);border:1px solid var(--hairline);border-radius:var(--r);margin:6px 12px;padding:12px;box-shadow:none;display:flex;align-items:center;justify-content:space-between;max-width:calc(100% - 24px);overflow:hidden;gap:10px}
+.addon-card .left{flex:1;min-width:0}
+.addon-card .aname{font-family:var(--inter);font-size:13px;font-weight:600;color:var(--ink)}
+.addon-card .adesc{font-family:var(--inter);font-size:11px;color:var(--text-sec);font-weight:500;margin-top:2px}
+.addon-card .aprice{font-family:var(--sora);font-size:14px;font-weight:700;color:var(--ink);margin-right:10px;font-variant-numeric:tabular-nums}
+
+/* COUNTER — qty stepper */
+.counter{display:flex;align-items:center;gap:8px}
+.counter button{width:28px;height:28px;border-radius:var(--r);border:1px solid var(--hairline);background:var(--paper);font-family:var(--sora);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.counter button:hover{border-color:var(--navy);background:var(--surface)}
+.counter button:active{background:var(--surface-dim)}
+.counter span{font-family:var(--sora);font-size:14px;font-weight:700;color:var(--ink);min-width:20px;text-align:center;font-variant-numeric:tabular-nums}
+
+.color-input{margin:8px 16px}
+.color-input .card{margin:0}
+
+/* BOTTOM BAR — sticky navy band, orange total + orange CTA */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;width:100%;max-width:min(430px,100vw);margin:0 auto;background:var(--navy-deep);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:12px}
+.bottom-bar .label{font-family:var(--inter);font-size:11px;color:rgba(255,255,255,.7);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.bottom-bar .total{font-family:var(--sora);font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.bottom-bar .save-btn{background:var(--orange);color:#fff;border:none;padding:12px 22px;border-radius:var(--r);font-family:var(--inter);font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.bottom-bar .save-btn:hover{background:var(--orange-deep)}
+.bottom-bar .save-btn:active{background:var(--orange-deep);transform:scale(.97)}
+
+.hidden{display:none !important}
+.app-note{font-family:var(--inter);font-size:11px;color:var(--text-sec);padding:4px 16px;line-height:1.5;font-weight:500}
+.sf-inline{font-family:var(--sora);font-size:12px;color:var(--orange);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* RAIL SECTION — railing entry sub-card */
+.rail-sect{background:var(--surface);border:1px solid var(--hairline);border-left:3px solid var(--navy);border-radius:var(--r);padding:12px;margin-bottom:8px}
+.rail-sect-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+.rail-sect-head .title{font-family:var(--inter);font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:6px}
+.rail-sect-head .lf-badge{font-family:var(--sora);font-size:13px;font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums}
+.rail-sect-head .remove-btn{background:transparent;border:none;color:var(--text-sec);cursor:pointer;font-size:16px;padding:2px 6px;font-weight:700}
+.rail-sect-head .remove-btn:hover{color:var(--red)}
+.rail-add-btn{background:transparent;border:1px dashed var(--orange);border-radius:var(--r);padding:8px 14px;font-family:var(--inter);font-size:12px;font-weight:700;cursor:pointer;color:var(--orange-deep);text-transform:uppercase;letter-spacing:.05em}
+.rail-add-btn:hover{background:var(--orange-bg)}
+
+/* SIDE BUTTONS — both/one toggles */
+.side-btn{flex:1;min-width:42%;padding:8px 6px;border-radius:var(--r);cursor:pointer;text-align:center;font-family:var(--inter);font-size:11px;font-weight:600;color:var(--ink);transition:all .15s}
+.side-btn.on{border:1px solid var(--navy);background:var(--surface-dim);font-weight:700}
+.side-btn.off{border:1px solid var(--hairline);background:var(--paper)}
+
+/* OPT BUTTONS — option selectors (e.g. coating types) */
+.opt-btn{flex:1;padding:9px 8px;border-radius:var(--r);cursor:pointer;text-align:center;font-family:var(--inter);font-size:12px;font-weight:600;color:var(--ink);transition:all .15s}
+.opt-btn.active{border:1px solid var(--navy);background:var(--navy);color:#fff;font-weight:700}
+.opt-btn.inactive{border:1px solid var(--hairline);background:var(--paper)}
+
+/* NOTE PILLS — Estimate / Crew / Internal tabs */
+.note-pill{padding:7px 14px;border-radius:var(--r);font-family:var(--inter);font-size:11px;font-weight:700;border:1px solid var(--hairline);background:var(--paper);color:var(--text-sec);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.06em}
+.note-pill.active{background:var(--navy-deep);color:#fff;border-color:var(--navy-deep)}
+
+.note-textarea{width:100%;min-height:70px;border:1px solid var(--hairline);border-radius:var(--r);padding:10px 12px;font-family:var(--inter);font-size:13px;font-weight:500;background:var(--surface);color:var(--ink);resize:vertical;outline:none;box-sizing:border-box;line-height:1.5}
+.note-textarea:focus{border-color:var(--navy);background:var(--paper)}
+.note-textarea::placeholder{color:var(--text-sec)}
+
+/* Orange spine on left edge of shell */
+.shell::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);z-index:101;pointer-events:none}
 </style>
 </head>
 <body>
